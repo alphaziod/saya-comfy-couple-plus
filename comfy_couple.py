@@ -19,6 +19,7 @@ class ComfyCouple:
                 "center": ("FLOAT", {"default": 0.5, "min": 0, "max": 1.0, "step": 0.01}),
                 "width": ("INT", {"default": 512, "min": 16, "max": MAX_RESOLUTION, "step": 8}),
                 "height": ("INT", {"default": 512, "min": 16, "max": MAX_RESOLUTION, "step": 8}),
+                "use_couple_attention": ("BOOLEAN", {"default": True}),
             }
         }
 
@@ -60,7 +61,36 @@ class ComfyCouple:
             center,
             width,
             height,
+            use_couple_attention,
     ):
+        solid_mask_zero = SolidMask().solid(0.0, width, height)[0]
+        solid_mask_full = SolidMask().solid(1.0, width, height)[0]
+
+        person_1_context = ConditioningConcat().concat(
+            main_positive,
+            person_1_positive,
+        )[0]
+
+        # SAFE SOLO MODE:
+        # use_couple_attention OFF:
+        # - Person 1 uses the full image
+        # - Person 2 is ignored
+        # - AttentionCouple is disabled
+        # - mask_positive_1 is full screen
+        # - mask_positive_2 is empty
+        if not use_couple_attention:
+            return (
+                model,
+                person_1_context,
+                negative,
+                main_positive,
+                person_1_positive,
+                person_2_positive,
+                person_1_positive,
+                solid_mask_full,
+                solid_mask_zero,
+            )
+
         mask_rect_first_x = None
         mask_rect_first_y = None
         mask_rect_first_width = None
@@ -97,8 +127,6 @@ class ComfyCouple:
             mask_rect_second_width = width
             mask_rect_second_height = height_first
 
-        solid_mask_zero = SolidMask().solid(0.0, width, height)[0]
-
         solid_mask_first = SolidMask().solid(1.0, mask_rect_first_width, mask_rect_first_height)[0]
         solid_mask_second = SolidMask().solid(1.0, mask_rect_second_width, mask_rect_second_height)[0]
 
@@ -118,16 +146,9 @@ class ComfyCouple:
             "add",
         )[0]
 
-        # Même convention que le node original :
+        # Same convention as the original node:
         # mask_composite_second = mask_positive_1
         # mask_composite_first  = mask_positive_2
-
-        # Contextes régionaux forts :
-        # au lieu de main / p1 / p2 séparés, chaque zone reçoit main + son perso en un seul conditioning concaténé.
-        person_1_context = ConditioningConcat().concat(
-            main_positive,
-            person_1_positive,
-        )[0]
 
         person_2_context = ConditioningConcat().concat(
             main_positive,
