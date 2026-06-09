@@ -2,32 +2,30 @@
 
 Saya Comfy Couple+ is a modified Comfy Couple node for ComfyUI.
 
-It is made for cleaner solo, duo, and dual-character workflows where you want to keep:
+It is made for cleaner solo, duo, and dual-character workflows where you want better control over:
 
-* the main scene prompt
-* Person 1 identity prompt
-* Person 2 identity prompt
-* negative prompt
-* automasks
-* IPAdapter routing
-* detailer routing
+* shared scene prompts
+* Person 1 identity prompts
+* Person 2 identity prompts
+* negative prompts
+* automatic region masks
+* IPAdapter `attn_mask` routing
+* detailer prompt routing
 
-separated and easier to control.
-
-The goal is simple:
+The main goal is simple:
 
 ```text
-MAIN = shared scene, composition, action, mood, background
+MAIN = shared scene, composition, pose, action, mood, background
 PERSON 1 = first character identity
 PERSON 2 = second character identity
 NEGATIVE = shared negative prompt
 ```
 
-Instead of forcing everything into two regional prompts, Saya Comfy Couple+ gives you cleaner routing and stronger prompt reading.
+Instead of forcing scene context and character identity into only two regional prompts, Saya Comfy Couple+ gives you cleaner prompt separation and stronger routing.
 
 ## Why this fork exists
 
-The original Comfy Couple node works well for two-character regional prompting, but its structure is limited:
+The original Comfy Couple node is useful for two-character regional prompting, but its prompt structure is limited:
 
 ```text
 positive_1
@@ -35,9 +33,13 @@ positive_2
 negative
 ```
 
-That means the main scene prompt, character identity, IPAdapter logic, and detailer routing can easily become mixed together.
+That often forces users to mix too much logic together:
 
-Saya Comfy Couple+ changes the structure to:
+```text
+scene + character identity + regional prompt + detailer logic
+```
+
+Saya Comfy Couple+ changes the node structure to:
 
 ```text
 main_positive
@@ -46,27 +48,265 @@ person_2_positive
 negative
 ```
 
-This makes the workflow much clearer.
+This makes the workflow easier to understand and easier to control.
 
-You can keep global scene logic in `main_positive`, then keep character-specific identity inside `person_1_positive` and `person_2_positive`.
+You can keep the global scene in `main_positive`, then keep each character identity in its own input.
 
-## Main internal logic
+## What the node does
 
-Saya Comfy Couple+ does not simply send `main_positive`, `person_1_positive`, and `person_2_positive` as weak separated conditions.
+Saya Comfy Couple+ builds two regional contexts internally.
 
-Instead, it builds stronger regional contexts internally:
+For Person 1:
 
 ```text
 Person 1 region = main_positive + person_1_positive
+```
+
+For Person 2:
+
+```text
 Person 2 region = main_positive + person_2_positive
 ```
 
-This means each region receives both:
+This means each region receives:
 
 * the shared scene context
 * the correct character identity
 
-This usually gives stronger prompt reading than keeping the main prompt and character prompt as separate attention conditions.
+This usually gives stronger prompt reading than sending the main prompt and character prompts as weak separated conditions.
+
+The node also exposes useful routing outputs:
+
+```text
+full_positive
+main_positive
+person_1_positive
+person_2_positive
+duo_positive
+mask_positive_1
+mask_positive_2
+```
+
+## Main features
+
+* Main / Person 1 / Person 2 prompt routing
+* Stronger regional context using `main + person` prompt concatenation
+* `full_positive` output for the main sampler
+* `duo_positive` output for detailers
+* `mask_positive_1` and `mask_positive_2` outputs for automask routing
+* IPAdapter-friendly `attn_mask` workflow support
+* Solo and duo workflow support
+* Safer handling of different encoded CLIP context lengths
+
+## Installation
+
+Install it like a normal ComfyUI custom node.
+
+Clone the repository inside your ComfyUI `custom_nodes` folder, then restart ComfyUI.
+
+Repository:
+
+```text
+https://github.com/alphaziod/saya-comfy-couple-plus.git
+```
+
+## Windows installation
+
+### Standard ComfyUI install
+
+Open PowerShell.
+
+Go to your ComfyUI `custom_nodes` folder:
+
+```powershell
+cd C:\ComfyUI\custom_nodes
+```
+
+Clone the node:
+
+```powershell
+git clone https://github.com/alphaziod/saya-comfy-couple-plus.git
+```
+
+Restart ComfyUI.
+
+### ComfyUI portable
+
+If you use ComfyUI portable, the path is usually:
+
+```powershell
+cd C:\ComfyUI_windows_portable\ComfyUI\custom_nodes
+```
+
+Clone the node:
+
+```powershell
+git clone https://github.com/alphaziod/saya-comfy-couple-plus.git
+```
+
+Restart ComfyUI portable.
+
+## macOS installation
+
+Open Terminal.
+
+Go to your ComfyUI `custom_nodes` folder:
+
+```bash
+cd ~/ComfyUI/custom_nodes
+```
+
+Clone the node:
+
+```bash
+git clone https://github.com/alphaziod/saya-comfy-couple-plus.git
+```
+
+Restart ComfyUI.
+
+If your ComfyUI folder is somewhere else, use your own path:
+
+```bash
+cd /path/to/ComfyUI/custom_nodes
+```
+
+## Linux installation
+
+Open a terminal.
+
+Go to your ComfyUI `custom_nodes` folder:
+
+```bash
+cd ~/ComfyUI/custom_nodes
+```
+
+Clone the node:
+
+```bash
+git clone https://github.com/alphaziod/saya-comfy-couple-plus.git
+```
+
+Restart ComfyUI.
+
+If your ComfyUI folder is somewhere else, use your own path:
+
+```bash
+cd /path/to/ComfyUI/custom_nodes
+```
+
+## Arch Linux installation
+
+Install Git if needed:
+
+```bash
+sudo pacman -S git
+```
+
+Clone the node:
+
+```bash
+cd ~/ComfyUI/custom_nodes
+git clone https://github.com/alphaziod/saya-comfy-couple-plus.git
+```
+
+Restart ComfyUI.
+
+## Fedora installation
+
+Install Git if needed:
+
+```bash
+sudo dnf install git
+```
+
+Clone the node:
+
+```bash
+cd ~/ComfyUI/custom_nodes
+git clone https://github.com/alphaziod/saya-comfy-couple-plus.git
+```
+
+Restart ComfyUI.
+
+## Debian / Ubuntu installation
+
+Install Git if needed:
+
+```bash
+sudo apt update
+sudo apt install git
+```
+
+Clone the node:
+
+```bash
+cd ~/ComfyUI/custom_nodes
+git clone https://github.com/alphaziod/saya-comfy-couple-plus.git
+```
+
+Restart ComfyUI.
+
+## NixOS installation
+
+If Git is already available:
+
+```bash
+cd ~/ComfyUI/custom_nodes
+git clone https://github.com/alphaziod/saya-comfy-couple-plus.git
+```
+
+If Git is not available, open a temporary shell with Git:
+
+```bash
+nix shell nixpkgs#git
+```
+
+Then clone:
+
+```bash
+cd ~/ComfyUI/custom_nodes
+git clone https://github.com/alphaziod/saya-comfy-couple-plus.git
+```
+
+Restart ComfyUI.
+
+## Updating
+
+To update the node later:
+
+```bash
+cd ~/ComfyUI/custom_nodes/saya-comfy-couple-plus
+git pull
+```
+
+Then restart ComfyUI.
+
+On Windows portable, the path may be:
+
+```powershell
+cd C:\ComfyUI_windows_portable\ComfyUI\custom_nodes\saya-comfy-couple-plus
+git pull
+```
+
+Then restart ComfyUI portable.
+
+## Uninstalling
+
+Remove the folder from `custom_nodes`.
+
+Linux / macOS:
+
+```bash
+rm -rf ~/ComfyUI/custom_nodes/saya-comfy-couple-plus
+```
+
+Windows PowerShell:
+
+```powershell
+Remove-Item -Recurse -Force C:\ComfyUI\custom_nodes\saya-comfy-couple-plus
+```
+
+Then restart ComfyUI.
 
 ## Inputs
 
@@ -74,7 +314,7 @@ This usually gives stronger prompt reading than keeping the main prompt and char
 
 The model to patch with Comfy Couple attention logic.
 
-Connect your checkpoint or LoRA-loaded model here.
+Connect your checkpoint-loaded or LoRA-loaded model here.
 
 ### main_positive
 
@@ -193,7 +433,7 @@ Connect this to the main sampler negative input and to other nodes that need the
 
 Raw main prompt passthrough.
 
-Useful for debug, extra routing, or workflow logic.
+Useful for debug, extra routing, or custom workflow logic.
 
 ### person_1_positive
 
@@ -401,6 +641,70 @@ This helps avoid tensor size mismatch errors when one character prompt is longer
 
 This does not remove the CLIP token limit. It only makes the internal attention logic safer when the encoded conditioning lengths differ.
 
+## Troubleshooting
+
+### The node does not appear in ComfyUI
+
+Check that the folder is inside:
+
+```text
+ComfyUI/custom_nodes/
+```
+
+The folder should look like this:
+
+```text
+ComfyUI/custom_nodes/saya-comfy-couple-plus/
+```
+
+Then restart ComfyUI.
+
+### The old Comfy Couple node still appears
+
+Restart ComfyUI fully.
+
+If your workflow already had the old node loaded, you may need to delete and recreate the node inside the workflow so ComfyUI refreshes the ports.
+
+### The masks seem inverted
+
+Check your `orientation` and `center` values.
+
+Also check that:
+
+```text
+mask_positive_1 -> IPAdapter Person 1 attn_mask
+mask_positive_2 -> IPAdapter Person 2 attn_mask
+```
+
+### The character prompt feels weak
+
+Make sure your character identity is in `person_1_positive` or `person_2_positive`, not only in `main_positive`.
+
+The node internally builds:
+
+```text
+main_positive + person_1_positive
+main_positive + person_2_positive
+```
+
+so both the main prompt and the person prompt matter.
+
+### Detailers read too much scene context
+
+Use:
+
+```text
+duo_positive -> detailer positive
+```
+
+instead of:
+
+```text
+full_positive -> detailer positive
+```
+
+`duo_positive` contains Person 1 + Person 2 without the main scene prompt.
+
 ## Notes
 
 Saya Comfy Couple+ is mainly useful for advanced workflows using:
@@ -408,7 +712,7 @@ Saya Comfy Couple+ is mainly useful for advanced workflows using:
 * two characters
 * solo or duo prompt routing
 * regional attention control
-* IPAdapter with attn_mask
+* IPAdapter with `attn_mask`
 * detailers
 * separated character identity prompts
 * reusable main / character prompt blocks
