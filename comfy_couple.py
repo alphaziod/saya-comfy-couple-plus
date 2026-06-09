@@ -1,7 +1,8 @@
-from nodes import MAX_RESOLUTION, ConditioningCombine, ConditioningSetMask
+from nodes import MAX_RESOLUTION, ConditioningCombine, ConditioningConcat, ConditioningSetMask
 from comfy_extras.nodes_mask import MaskComposite, SolidMask
 
 from .attention_couple import AttentionCouple
+
 
 class ComfyCouple:
 
@@ -10,8 +11,9 @@ class ComfyCouple:
         return {
             "required": {
                 "model": ("MODEL",),
-                "positive_1": ("CONDITIONING",),
-                "positive_2": ("CONDITIONING",),
+                "main_positive": ("CONDITIONING",),
+                "person_1_positive": ("CONDITIONING",),
+                "person_2_positive": ("CONDITIONING",),
                 "negative": ("CONDITIONING",),
                 "orientation": (["horizontal", "vertical"],),
                 "center": ("FLOAT", {"default": 0.5, "min": 0, "max": 1.0, "step": 0.01}),
@@ -24,14 +26,22 @@ class ComfyCouple:
         "MODEL",
         "CONDITIONING",
         "CONDITIONING",
+        "CONDITIONING",
+        "CONDITIONING",
+        "CONDITIONING",
+        "CONDITIONING",
         "MASK",
         "MASK",
     )
 
     RETURN_NAMES = (
         "model",
-        "positive",
+        "full_positive",
         "negative",
+        "main_positive",
+        "person_1_positive",
+        "person_2_positive",
+        "duo_positive",
         "mask_positive_1",
         "mask_positive_2",
     )
@@ -42,8 +52,9 @@ class ComfyCouple:
     def process(
             self,
             model,
-            positive_1,
-            positive_2,
+            main_positive,
+            person_1_positive,
+            person_2_positive,
             negative,
             orientation,
             center,
@@ -67,10 +78,12 @@ class ComfyCouple:
             mask_rect_first_y = 0
             mask_rect_first_width = width - width_first
             mask_rect_first_height = height
+
             mask_rect_second_x = 0
             mask_rect_second_y = 0
             mask_rect_second_width = width_first
             mask_rect_second_height = height
+
         elif orientation == "vertical":
             height_first = int(height * center)
 
@@ -78,6 +91,7 @@ class ComfyCouple:
             mask_rect_first_y = height_first
             mask_rect_first_width = width
             mask_rect_first_height = height - height_first
+
             mask_rect_second_x = 0
             mask_rect_second_y = 0
             mask_rect_second_width = width
@@ -88,23 +102,81 @@ class ComfyCouple:
         solid_mask_first = SolidMask().solid(1.0, mask_rect_first_width, mask_rect_first_height)[0]
         solid_mask_second = SolidMask().solid(1.0, mask_rect_second_width, mask_rect_second_height)[0]
 
-        mask_composite_first = MaskComposite().combine(solid_mask_zero, solid_mask_first, mask_rect_first_x, mask_rect_first_y, "add")[0]
-        mask_composite_second = MaskComposite().combine(solid_mask_zero, solid_mask_second, mask_rect_second_x, mask_rect_second_y, "add")[0]
+        mask_composite_first = MaskComposite().combine(
+            solid_mask_zero,
+            solid_mask_first,
+            mask_rect_first_x,
+            mask_rect_first_y,
+            "add",
+        )[0]
 
-        conditioning_mask_first = ConditioningSetMask().append(positive_1, mask_composite_second, "default", 1.0)[0]
-        conditioning_mask_second = ConditioningSetMask().append(positive_2, mask_composite_first, "default", 1.0)[0]
+        mask_composite_second = MaskComposite().combine(
+            solid_mask_zero,
+            solid_mask_second,
+            mask_rect_second_x,
+            mask_rect_second_y,
+            "add",
+        )[0]
 
-        positive_combined = ConditioningCombine().combine(conditioning_mask_first, conditioning_mask_second)[0]
+        # Même convention que le node original :
+        # mask_composite_second = mask_positive_1
+        # mask_composite_first  = mask_positive_2
 
-        couple_model, couple_positive, couple_negative = AttentionCouple().attention_couple(model, positive_combined, negative, "Attention")
+        # Contextes régionaux forts :
+        # au lieu de main / p1 / p2 séparés, chaque zone reçoit main + son perso en un seul conditioning concaténé.
+        person_1_context = ConditioningConcat().concat(
+            main_positive,
+            person_1_positive,
+        )[0]
+
+        person_2_context = ConditioningConcat().concat(
+            main_positive,
+            person_2_positive,
+        )[0]
+
+        conditioning_mask_person_1 = ConditioningSetMask().append(
+            person_1_context,
+            mask_composite_second,
+            "default",
+            1.0,
+        )[0]
+
+        conditioning_mask_person_2 = ConditioningSetMask().append(
+            person_2_context,
+            mask_composite_first,
+            "default",
+            1.0,
+        )[0]
+
+        positive_combined = ConditioningCombine().combine(
+            conditioning_mask_person_1,
+            conditioning_mask_person_2,
+        )[0]
+
+        duo_positive = ConditioningConcat().concat(
+            person_1_positive,
+            person_2_positive,
+        )[0]
+
+        couple_model, couple_positive, couple_negative = AttentionCouple().attention_couple(
+            model,
+            positive_combined,
+            negative,
+            "Attention",
+        )
 
         return (
             couple_model,
             couple_positive,
             couple_negative,
+            main_positive,
+            person_1_positive,
+            person_2_positive,
+            duo_positive,
             mask_composite_second,
             mask_composite_first,
         )
+
 
 NODE_CLASS_MAPPINGS = {
     "Comfy Couple": ComfyCouple

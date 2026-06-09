@@ -1,0 +1,7 @@
+*.bak-*
+*.saya-*
+*.saya-backup-*
+*.save
+.tracking
+__pycache__/
+*.pyc
