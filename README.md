@@ -1,227 +1,418 @@
-# ComfyCouple IPAdapter AutoMask Patch
+# Saya Comfy Couple+
 
-A patched version of the ComfyUI Comfy Couple node for dual-character and dual-persona workflows.
+Saya Comfy Couple+ is a modified Comfy Couple node for ComfyUI.
 
-This patch improves Comfy Couple so it can work more cleanly with IPAdapter, expose automatic region masks, and handle regional prompts with different encoded token lengths without crashing.
+It is made for cleaner solo, duo, and dual-character workflows where you want to keep:
 
-## What it does
+* the main scene prompt
+* Person 1 identity prompt
+* Person 2 identity prompt
+* negative prompt
+* automasks
+* IPAdapter routing
+* detailer routing
 
-This patch adds:
+separated and easier to control.
 
-- IPAdapter compatibility for Comfy Couple attention patches
-- automatic `mask_positive_1` and `mask_positive_2` outputs
-- safer conditioning padding when regional prompts have different encoded lengths
-- a practical dual-persona workflow structure using Comfy Couple regions plus IPAdapter references
-
-## Token length note
-
-This patch does **not** remove the CLIP token limit.
-
-Instead, it pads shorter conditioning tensors so that `positive_1`, `positive_2`, and negative conditioning can be combined safely when their encoded token lengths are different.
-
-This helps prevent tensor size mismatch crashes when one regional prompt is longer than the other.
-
-## Main use case
-
-This is useful for workflows like:
+The goal is simple:
 
 ```text
-Main prompt = scene, framing, mood, lighting
-Positive 1 = left character identity
-Positive 2 = right character identity
-Comfy Couple = spatial separation
-IPAdapter 1 = visual reference for character 1
-IPAdapter 2 = visual reference for character 2
-Auto masks = region control for each IPAdapter
+MAIN = shared scene, composition, action, mood, background
+PERSON 1 = first character identity
+PERSON 2 = second character identity
+NEGATIVE = shared negative prompt
 ```
 
-This behaves like a lightweight regional prompting system, but using Comfy Couple regions and IPAdapter references together.
+Instead of forcing everything into two regional prompts, Saya Comfy Couple+ gives you cleaner routing and stronger prompt reading.
 
-## Example workflow logic
+## Why this fork exists
+
+The original Comfy Couple node works well for two-character regional prompting, but its structure is limited:
 
 ```text
-Checkpoint model
--> Comfy Couple
--> IPAdapter for persona 1 using mask_positive_1
--> IPAdapter for persona 2 using mask_positive_2
--> Sampler
-```
-
-## Modified files
-
-```text
-attention_couple.py
-comfy_couple.py
-```
-
-## Installation
-
-### 1. Install Git
-
-#### Windows
-
-Install Git from:
-
-```text
-https://git-scm.com/download/win
-```
-
-#### macOS
-
-Install Git from:
-
-```text
-https://git-scm.com/download/mac
-```
-
-Or install it with Homebrew:
-
-```bash
-brew install git
-```
-
-#### Arch Linux
-
-```bash
-sudo pacman -S git
-```
-
-#### Fedora
-
-```bash
-sudo dnf install git
-```
-
-#### Debian / Ubuntu
-
-```bash
-sudo apt install git
-```
-
-#### Nix / NixOS
-
-Temporary shell:
-
-```bash
-nix shell nixpkgs#git
-```
-
-Or add Git to your NixOS configuration.
-
-### 2. Go to your ComfyUI custom nodes folder
-
-#### Windows PowerShell
-
-```powershell
-cd C:\ComfyUI\custom_nodes
-```
-
-#### macOS / Linux
-
-```bash
-cd ~/ComfyUI/custom_nodes
-```
-
-If your ComfyUI folder is somewhere else, use your own path.
-
-### 3. Backup your existing Comfy Couple folder
-
-#### Windows PowerShell
-
-```powershell
-Rename-Item comfyui-comfycouple comfyui-comfycouple-backup
-```
-
-#### macOS / Linux
-
-```bash
-mv comfyui-comfycouple comfyui-comfycouple-backup
-```
-
-### 4. Clone this patched version
-
-```bash
-git clone https://github.com/YOUR_USERNAME/comfycouple-ipadapter-automask.git comfyui-comfycouple
-```
-
-Replace `YOUR_USERNAME` with the GitHub username that owns this repository.
-
-### 5. Restart ComfyUI
-
-Fully stop ComfyUI, then start it again.
-
-The Comfy Couple node should now expose:
-
-```text
-model
-positive
+positive_1
+positive_2
 negative
+```
+
+That means the main scene prompt, character identity, IPAdapter logic, and detailer routing can easily become mixed together.
+
+Saya Comfy Couple+ changes the structure to:
+
+```text
+main_positive
+person_1_positive
+person_2_positive
+negative
+```
+
+This makes the workflow much clearer.
+
+You can keep global scene logic in `main_positive`, then keep character-specific identity inside `person_1_positive` and `person_2_positive`.
+
+## Main internal logic
+
+Saya Comfy Couple+ does not simply send `main_positive`, `person_1_positive`, and `person_2_positive` as weak separated conditions.
+
+Instead, it builds stronger regional contexts internally:
+
+```text
+Person 1 region = main_positive + person_1_positive
+Person 2 region = main_positive + person_2_positive
+```
+
+This means each region receives both:
+
+* the shared scene context
+* the correct character identity
+
+This usually gives stronger prompt reading than keeping the main prompt and character prompt as separate attention conditions.
+
+## Inputs
+
+### model
+
+The model to patch with Comfy Couple attention logic.
+
+Connect your checkpoint or LoRA-loaded model here.
+
+### main_positive
+
+The shared positive prompt.
+
+Use this for global image logic:
+
+* number of characters
+* scene
+* pose
+* framing
+* mood
+* lighting
+* background
+* shared action
+* global style
+
+Examples:
+
+```text
+solo, one character, on bed, intimate framing, modern gamer bedroom
+```
+
+or:
+
+```text
+two characters, sitting together, bedroom scene, soft lighting, medium shot
+```
+
+### person_1_positive
+
+Prompt for Person 1.
+
+Use this for the first character identity:
+
+* face
+* hair
+* eyes
+* ears
+* body type
+* outfit
+* accessories
+* character-specific details
+
+### person_2_positive
+
+Prompt for Person 2.
+
+Use this for the second character identity.
+
+For solo generation, this can be routed to an empty or disabled conditioning depending on your workflow.
+
+### negative
+
+Shared negative conditioning.
+
+Use your normal negative prompt here.
+
+### orientation
+
+Controls the mask split direction.
+
+Available values:
+
+```text
+horizontal
+vertical
+```
+
+### center
+
+Controls where the split happens.
+
+Examples:
+
+```text
+0.5 = centered split
+0.4 = one side smaller, the other larger
+0.6 = opposite balance
+```
+
+### width / height
+
+Canvas size used for the internal automasks.
+
+These should match the generation canvas or the canvas used by your workflow.
+
+## Outputs
+
+### model
+
+The patched model.
+
+Connect this to the main sampler model input.
+
+### full_positive
+
+Main generation positive conditioning.
+
+This is the output you normally connect to the main sampler positive input.
+
+Internally, it contains:
+
+```text
+Person 1 region = main_positive + person_1_positive
+Person 2 region = main_positive + person_2_positive
+```
+
+### negative
+
+Negative conditioning passthrough.
+
+Connect this to the main sampler negative input and to other nodes that need the same negative conditioning.
+
+### main_positive
+
+Raw main prompt passthrough.
+
+Useful for debug, extra routing, or workflow logic.
+
+### person_1_positive
+
+Raw Person 1 prompt passthrough.
+
+Useful for Person 1 detailers, debug routing, or identity-specific workflow branches.
+
+### person_2_positive
+
+Raw Person 2 prompt passthrough.
+
+Useful for Person 2 detailers, debug routing, or identity-specific workflow branches.
+
+### duo_positive
+
+Person 1 + Person 2 conditioning without the main scene prompt.
+
+Recommended use:
+
+```text
+duo_positive -> detailer positive
+```
+
+This is useful because detailers often should focus on character identity without being influenced too much by the full scene prompt, background prompt, or lighting prompt.
+
+### mask_positive_1
+
+Automask for Person 1.
+
+Recommended use:
+
+```text
+mask_positive_1 -> IPAdapter Person 1 attn_mask
+```
+
+### mask_positive_2
+
+Automask for Person 2.
+
+Recommended use:
+
+```text
+mask_positive_2 -> IPAdapter Person 2 attn_mask
+```
+
+## Recommended wiring
+
+### Main generation
+
+```text
+Checkpoint / LoRA model -> model
+
+main prompt conditioning -> main_positive
+Person 1 conditioning -> person_1_positive
+Person 2 conditioning -> person_2_positive
+negative conditioning -> negative
+
+Saya Comfy Couple+ model -> sampler model
+Saya Comfy Couple+ full_positive -> sampler positive
+Saya Comfy Couple+ negative -> sampler negative
+```
+
+### IPAdapter
+
+```text
+Saya Comfy Couple+ mask_positive_1 -> IPAdapter Person 1 attn_mask
+Saya Comfy Couple+ mask_positive_2 -> IPAdapter Person 2 attn_mask
+```
+
+This lets each IPAdapter reference affect its own region.
+
+### Detailers
+
+Recommended simple setup:
+
+```text
+Saya Comfy Couple+ duo_positive -> detailer positive
+Saya Comfy Couple+ negative -> detailer negative
+```
+
+This gives detailers access to both character identity prompts without making them read the full scene prompt.
+
+This is useful when you do not want to split detailers into separate Person 1 and Person 2 branches, because splitting detailers can increase generation time.
+
+## Solo generation
+
+Saya Comfy Couple+ can also work well for solo generation.
+
+Recommended solo setup:
+
+```text
+main_positive = solo, one character, scene, pose, framing, background
+person_1_positive = character identity
+person_2_positive = empty or disabled conditioning
+negative = normal negative prompt
+```
+
+The node still builds:
+
+```text
+Person 1 region = main_positive + person_1_positive
+Person 2 region = main_positive + person_2_positive
+```
+
+If `person_2_positive` is empty and `main_positive` clearly says `solo`, the workflow can behave like a normal solo generation setup while still keeping the clean routing structure.
+
+## Duo generation
+
+Recommended duo setup:
+
+```text
+main_positive = two characters, shared scene, pose, action, background
+person_1_positive = first character identity
+person_2_positive = second character identity
+negative = normal negative prompt
+```
+
+The node builds:
+
+```text
+Person 1 region = main_positive + person_1_positive
+Person 2 region = main_positive + person_2_positive
+```
+
+This keeps the global scene shared while letting each character keep its own identity.
+
+## Prompt organization advice
+
+Use `main_positive` for shared image logic.
+
+Good for `main_positive`:
+
+```text
+two characters, bedroom scene, sitting together, soft lighting, medium shot
+```
+
+Good for `person_1_positive`:
+
+```text
+short blue hair, white eyes, rabbit ears, petite body
+```
+
+Good for `person_2_positive`:
+
+```text
+long pink hair, red eyes, horns, taller body
+```
+
+Avoid putting character-specific identity details into `main_positive` unless both characters should share them.
+
+For example, do not put this in `main_positive`:
+
+```text
+blue hair, white eyes
+```
+
+unless both characters should have blue hair and white eyes.
+
+## Difference from original Comfy Couple
+
+Original Comfy Couple:
+
+```text
+positive_1
+positive_2
+negative
+```
+
+Saya Comfy Couple+:
+
+```text
+main_positive
+person_1_positive
+person_2_positive
+negative
+```
+
+Extra routing outputs:
+
+```text
+main_positive
+person_1_positive
+person_2_positive
+duo_positive
 mask_positive_1
 mask_positive_2
 ```
 
-## Requirements
-
-This repository is not a full ComfyUI workflow.
-
-It only provides a patched version of the Comfy Couple custom node files.
-
-You still need:
-
-- ComfyUI
-- Comfy Couple dependencies
-- IPAdapter or IPAdapter Plus nodes
-- your own checkpoint
-- your own CLIP Vision model
-- your own IPAdapter model
-
-## Prompt structure recommendation
-
-For best results, keep prompt roles separated:
+Main internal improvement:
 
 ```text
-Main prompt = scene, framing, action, mood, lighting
-Positive 1 = character 1 identity
-Positive 2 = character 2 identity
-Negative = light cleanup only
+Person 1 region = main_positive + person_1_positive
+Person 2 region = main_positive + person_2_positive
 ```
 
-Avoid putting full character identities inside the main prompt when using dual IPAdapters, because each region may try to recreate the full scene.
+This makes the prompt structure easier to understand and often improves prompt reading strength.
 
-A clean setup looks like this:
+## Token length safety patch
 
-```text
-Main prompt:
-romantic couple scene, close framing, medieval street, sunset lighting
+This fork also keeps a safety patch for different encoded conditioning lengths.
 
-Positive 1:
-left character identity, outfit, expression, body type, hair, eyes
+When regional prompts have different token lengths, shorter context tensors are padded before concatenation.
 
-Positive 2:
-right character identity, outfit, expression, body type, hair, eyes
+This helps avoid tensor size mismatch errors when one character prompt is longer than the other.
 
-Negative:
-duplicate, clone, extra characters, merged bodies, bad hands, bad anatomy
-```
+This does not remove the CLIP token limit. It only makes the internal attention logic safer when the encoded conditioning lengths differ.
 
 ## Notes
 
-This patch is mainly intended for:
+Saya Comfy Couple+ is mainly useful for advanced workflows using:
 
-- dual-character generation
-- couple scenes
-- persona references
-- masked IPAdapter control
-- Comfy Couple based regional prompting
+* two characters
+* solo or duo prompt routing
+* regional attention control
+* IPAdapter with attn_mask
+* detailers
+* separated character identity prompts
+* reusable main / character prompt blocks
 
-It is experimental and mainly focused on practical ComfyUI workflows.
+It is not meant to replace every regional prompting method.
 
-## Development note
-
-This patch was developed through hands-on ComfyUI testing and debugging, with AI assistance used to help analyze errors, write code changes, and document the workflow.
-
-## Credits
-
-Original Comfy Couple node by its original author.
-
-This repository contains a modified version focused on IPAdapter compatibility, automatic mask outputs, and safer dual-prompt handling.
+It is a cleaner Comfy Couple fork for users who want stronger routing control between scene prompt, character prompts, automasks, IPAdapter, and detailers.
