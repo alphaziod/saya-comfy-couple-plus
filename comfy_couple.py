@@ -20,6 +20,10 @@ class ComfyCouple:
                 "width": ("INT", {"default": 512, "min": 16, "max": MAX_RESOLUTION, "step": 8}),
                 "height": ("INT", {"default": 512, "min": 16, "max": MAX_RESOLUTION, "step": 8}),
                 "use_couple_attention": ("BOOLEAN", {"default": True}),
+            },
+            "optional": {
+                "support_model_1": ("MODEL",),
+                "support_model_2": ("MODEL",),
             }
         }
 
@@ -33,6 +37,8 @@ class ComfyCouple:
         "CONDITIONING",
         "MASK",
         "MASK",
+        "MODEL",
+        "MODEL",
     )
 
     RETURN_NAMES = (
@@ -45,6 +51,8 @@ class ComfyCouple:
         "duo_positive",
         "mask_positive_1",
         "mask_positive_2",
+        "support_model_1",
+        "support_model_2",
     )
 
     FUNCTION = "process"
@@ -62,6 +70,8 @@ class ComfyCouple:
             width,
             height,
             use_couple_attention,
+            support_model_1=None,
+            support_model_2=None,
     ):
         solid_mask_zero = SolidMask().solid(0.0, width, height)[0]
         solid_mask_full = SolidMask().solid(1.0, width, height)[0]
@@ -89,6 +99,8 @@ class ComfyCouple:
                 person_1_positive,
                 solid_mask_full,
                 solid_mask_zero,
+                support_model_1,
+                support_model_2,
             )
 
         mask_rect_first_x = None
@@ -186,6 +198,22 @@ class ComfyCouple:
             "Attention",
         )
 
+        if support_model_1 is not None:
+            support_model_1 = AttentionCouple().attention_couple(
+                support_model_1,
+                positive_combined,
+                negative,
+                "Attention",
+            )[0]
+
+        if support_model_2 is not None:
+            support_model_2 = AttentionCouple().attention_couple(
+                support_model_2,
+                positive_combined,
+                negative,
+                "Attention",
+            )[0]
+
         return (
             couple_model,
             couple_positive,
@@ -196,6 +224,8 @@ class ComfyCouple:
             duo_positive,
             mask_composite_second,
             mask_composite_first,
+            support_model_1,
+            support_model_2,
         )
 
 
