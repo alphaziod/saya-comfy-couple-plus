@@ -6,8 +6,8 @@ from typing import Any
 from urllib.parse import unquote
 
 
-def list_registered_model_files(kind: str) -> list[str]:
-    """Return the ComfyUI filename list for one model category (``[]`` on failure)."""
+def list_registered_model_files(kind: str) -> Any:
+    """Return model filenames registered by ComfyUI for one model category."""
     try:
         import folder_paths
 
@@ -16,23 +16,18 @@ def list_registered_model_files(kind: str) -> list[str]:
         return []
 
 
-def build_model_choice_list(kind: str, extras: Any = ()) -> list[str]:
-    """Return ``extras`` then the registered files, de-duplicated by string value.
-
-    Order is preserved; ``None`` entries are dropped; an empty result becomes
-    ``["none"]`` so the widget always has a choice.
-    """
-    candidates = list(extras) + list_registered_model_files(kind)
-    seen: set[str] = set()
-    choices: list[str] = []
-    for candidate in candidates:
-        if candidate is None:
+def build_model_choice_list(kind: str, extras: Any = ()) -> Any:
+    """Build a stable and deduplicated list of model choices for a node widget."""
+    vals = list(extras) + list_registered_model_files(kind)
+    seen, out = (set(), [])
+    for v in vals:
+        if v is None:
             continue
-        text = str(candidate)
-        if text not in seen:
-            seen.add(text)
-            choices.append(text)
-    return choices or ["none"]
+        s = str(v)
+        if s not in seen:
+            seen.add(s)
+            out.append(s)
+    return out or ["none"]
 
 
 def resolve_registered_model_path(kind: str, name: str) -> Any:

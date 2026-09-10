@@ -1,13 +1,3 @@
-"""Resolution / upscale-target calculator nodes.
-
-* :class:`SayaResolutionScaleCalculator` - pick an exact generation resolution
-  from a preset ladder, or derive one from a source image / custom aspect.
-* :class:`SayaUpscalePresetModelLoader` - choose a final-upscale pixel budget and
-  load the upscale model.
-* :class:`SayaUpscaleTargetCalculator` - turn that budget into concrete
-  aspect-preserving, 16-divisible dimensions for a source image.
-"""
-
 from __future__ import annotations
 
 import math
@@ -17,10 +7,9 @@ from typing import Any
 class SayaResolutionScaleCalculator:
     """Resolution calculator copied from the local DaSiWa node and simplified for Saya."""
 
-    # Existing exact presets are preserved. Missing useful aspect ratios are appended
-    # with one AI-friendly ~1 MP size divisible by 32.
+    # Clean, exact AI-friendly generation presets only.
     FIXED_RESOLUTION_PRESETS = {
-        # Existing 16:9 ladder
+        # 16:9 ladder
         "Landscape 16:9 · 768x432": (768, 432),
         "Landscape 16:9 · 896x512": (896, 512),
         "Landscape 16:9 · 1024x576": (1024, 576),
@@ -29,57 +18,37 @@ class SayaResolutionScaleCalculator:
         "Landscape 16:9 · 1344x768": (1344, 768),
         "Landscape 16:9 · 1536x864": (1536, 864),
 
-        # Existing wide ladder
+        # wide ladder
         "Landscape Wide · 1024x576": (1024, 576),
         "Landscape Wide · 1152x640": (1152, 640),
         "Landscape Wide · 1280x704": (1280, 704),
         "Landscape Wide · 1408x768": (1408, 768),
         "Landscape Wide · 1536x832": (1536, 832),
 
-        # Existing 3:2 ladder
+        # 3:2 ladder
         "Landscape 3:2 · 960x640": (960, 640),
         "Landscape 3:2 · 1152x768": (1152, 768),
         "Landscape 3:2 · 1216x832": (1216, 832),
 
-        # Existing portrait ladders
+        # portrait ladders
         "Portrait 2:3 · 768x1152": (768, 1152),
         "Portrait 2:3 · 832x1216": (832, 1216),
         "Portrait 7:9 · 768x992": (768, 992),
         "Portrait 7:9 · 896x1152": (896, 1152),
 
-        # Existing square ladder
+        # square ladder
         "Square · 896x896": (896, 896),
         "Square · 1024x1024": (1024, 1024),
-
-        # Added missing portrait ratios, ~1 MP and Div32
-        "Portrait 4:5 · 896x1120": (896, 1120),
-        "Portrait 3:4 · 864x1152": (864, 1152),
-        "Portrait 9:16 · 768x1376": (768, 1376),
-        "Portrait 5:12 · 640x1536": (640, 1536),
-
-        # Added missing landscape ratios, ~1 MP and Div32
-        "Landscape 5:4 · 1120x896": (1120, 896),
-        "Landscape 4:3 · 1152x864": (1152, 864),
-        "Landscape 9:7 · 1152x896": (1152, 896),
-        "Landscape 12:5 · 1536x640": (1536, 640),
     }
 
     PRESETS = FIXED_RESOLUTION_PRESETS
 
     ASPECT_PRESETS = {
         "1:1 - Square": (1, 1),
-        "4:5 - Portrait": (4, 5),
-        "3:4 - Portrait": (3, 4),
-        "7:9 - Portrait": (7, 9),
         "2:3 - Portrait": (2, 3),
-        "9:16 - Portrait": (9, 16),
-        "5:12 - Portrait": (5, 12),
-        "5:4 - Landscape": (5, 4),
-        "4:3 - Landscape": (4, 3),
-        "9:7 - Landscape": (9, 7),
         "3:2 - Landscape": (3, 2),
+        "9:16 - Portrait": (9, 16),
         "16:9 - Landscape": (16, 9),
-        "12:5 - Landscape": (12, 5),
         "CUSTOM": (0, 0),
     }
 
@@ -334,7 +303,8 @@ class SayaUpscalePresetModelLoader:
 
 
 class SayaUpscaleTargetCalculator:
-    """Calculate an aspect-preserving target close to the selected pixel budget.
+    """
+    Calculate an aspect-preserving target close to the selected pixel budget.
 
     The selected 1080p / 2K / 3K / 4K preset represents a standard 16:9
     pixel budget. Landscape, portrait, square, and wide source ratios are

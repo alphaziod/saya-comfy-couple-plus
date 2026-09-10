@@ -1,0 +1,61 @@
+SAYA FORGE COUPLE - USDU BRIDGE 1
+=================================
+
+Added two Saya-owned node aliases:
+- SayaUSDU1IdentitySafe
+- SayaUSDU2IdentitySafe
+
+They appear under:
+Saya / Forge Couple / USDU
+
+Important:
+- The bridge does NOT duplicate or fork UltimateSDUpscale code.
+- It delegates execution to the installed UltimateSDUpscaleCustomSample.
+- It requires the audited Identity Safe V2.1 patch with structure_preservation.
+- New bridge nodes default structure_preservation to 0.75.
+- Existing Couple 2.4.1 attention_couple.py is unchanged byte-for-byte.
+- Existing P1/P2/MAIN routing constants are unchanged.
+- SAYA_USDU_COUPLE_CROP remains controlled by the installed USDU patch/environment.
+
+
+SAYA FORGE COUPLE - 2.4.1 DETAILER CROP SAFE
+============================================
+
+FIX (attention_couple.py, attn2 output hook only):
+- SayaDetailerForEach crops now re-map the full-image P1/P2/MAIN routing
+  masks to the active detailer crop region via the existing
+  `transformer_options['saya_couple_crop']` metadata (same contract the
+  previous Comfy-Couple engine used). Before this fix, every detailer crop
+  received the WHOLE image's left/right ownership gradient squeezed into
+  the crop, so e.g. the right half of an eye crop was conditioned as the
+  other character -> "eyes correct before Detailers, wrong after".
+- Passes that sample a much smaller region WITHOUT crop metadata (e.g.
+  small USDU tiles if tile size is ever reduced below the image) now fall
+  back to base-branch-only routing instead of squeezing the full-image
+  gradient. Same neutral behavior as the old engine's
+  masks_match_attention_pass guard.
+
+Unchanged:
+- node.py, node sockets, workflow contract
+- mask geometry, contact band, coarse-main values, Naturalize I/O
+- full-frame passes (master, dual sampler, hires refines, USDU
+  single-tile, final naturalize) are bit-for-bit unaffected.
+
+SAYA FORGE COUPLE - CONTACT SAFE 2.4
+
+Only two routing values changed from the supplied 2.3 NATURALIZE-IO build:
+- shared contact strength: 0.75 -> 0.90
+- contact width: 0.15 -> 0.24
+
+Intent:
+- give MAIN/scene conditioning more authority where P1 and P2 touch;
+- reduce malformed seams/fused limbs caused by hard character ownership near contact;
+- preserve original P1/P2 routing outside the contact band.
+
+Unchanged:
+- attention_couple.py
+- attention_masks.py
+- node sockets / workflow contract
+- coarse-main values
+- Naturalize I/O
+- character masks away from contact

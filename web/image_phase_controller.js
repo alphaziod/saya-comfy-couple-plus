@@ -17,8 +17,6 @@ let nextTimer = null;
 let sequenceGeneration = 0;
 let resetPromise = Promise.resolve();
 let resetPending = false;
-let pendingPhaseCompletion = null;
-let phaseCompletionPromise = Promise.resolve();
 const handledTransactions = new Set();
 
 function nodes() {
@@ -93,7 +91,8 @@ async function post(path, payload = {}) {
 }
 
 async function freeMemory() {
-    return await post("/saya/image-phases/unload");
+    // Automatic MODEL / CLIP / VAE unloading is disabled.
+    return { disabled: true };
 }
 
 function clearNextTimer() {
@@ -115,7 +114,6 @@ async function resetToBeginning(reason) {
     activePhase = 0;
     internalQueue = false;
     handledTransactions.clear();
-    pendingPhaseCompletion = null;
     closePopup();
 
     try {
@@ -298,36 +296,14 @@ function registerReviewNode(node) {
     };
 }
 
-function rememberPhaseCompletion(payload) {
+function scheduleAfterPhase(payload) {
     if (!sequenceRunning) return;
     const transaction = String(payload?.transaction_uuid ?? "");
     if (transaction && handledTransactions.has(transaction)) return;
     if (transaction) handledTransactions.add(transaction);
     const phase = Number(payload?.phase ?? 0);
-    if (phase !== activePhase) return;
-    // This event is emitted from the output node while the prompt is still alive.
-    // Keep it pending: unloading here can hit AIMDO/VBAR pages that are still pinned.
-    pendingPhaseCompletion = payload;
-}
-
-async function finishPhaseAfterExecutionSuccess() {
-    const payload = pendingPhaseCompletion;
-    if (!payload || !sequenceRunning) return;
-    pendingPhaseCompletion = null;
-    const phase = Number(payload?.phase ?? 0);
     const next = Number(payload?.next_phase ?? 0);
     if (phase !== activePhase) return;
-
-    try {
-        // execution_success means ComfyUI has finished the current prompt and
-        // AIMDO has had a chance to unpin the VBAR pages used by this phase.
-        await freeMemory();
-    } catch (error) {
-        void armResetToBeginning(`unload après passe ${phase}`);
-        window.alert(`Déchargement VRAM impossible après la passe ${phase}:\n${error.message}`);
-        return;
-    }
-
     if (next === 0) {
         clearNextTimer();
         sequenceRunning = false;
@@ -335,13 +311,7 @@ async function finishPhaseAfterExecutionSuccess() {
         sequenceGeneration += 1;
         return;
     }
-    await queuePhase(next, AUTO_DELAY_MS);
-}
-
-function scheduleAfterExecutionSuccess() {
-    phaseCompletionPromise = phaseCompletionPromise
-        .catch(() => undefined)
-        .then(() => finishPhaseAfterExecutionSuccess());
+    void queuePhase(next, AUTO_DELAY_MS);
 }
 
 app.registerExtension({
@@ -359,9 +329,8 @@ app.registerExtension({
     },
     setup() {
         api.addEventListener("saya_image_phase_complete", (event) => {
-            rememberPhaseCompletion(event.detail ?? {});
+            scheduleAfterPhase(event.detail ?? {});
         });
-        api.addEventListener("execution_success", scheduleAfterExecutionSuccess);
         const resetAfterFailure = (event) => {
             if (!sequenceRunning && !nextTimer && !popup) return;
             const message = String(event?.detail?.exception_message ?? "arrêt manuel");

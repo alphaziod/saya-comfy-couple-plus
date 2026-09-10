@@ -1,1 +1,1 @@
-"""Implementation package for Saya Couple nodes and services."""
+# Internal package for comfy_saya_couple.

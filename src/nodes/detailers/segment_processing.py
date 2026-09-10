@@ -37,7 +37,6 @@ def clone_models_for_segment(
             full_width=full_width,
             full_height=full_height,
             label=f"{label} · refiner",
-            segment_mask=segment.cropped_mask,
         )
     if not is_dummy_model(model) and hasattr(model, "clone"):
         detail_model = clone_model_with_detailer_crop(
@@ -46,7 +45,6 @@ def clone_models_for_segment(
             full_width=full_width,
             full_height=full_height,
             label=label,
-            segment_mask=segment.cropped_mask,
         )
         if runtime.detailer_debug_enabled():
             print(
@@ -139,14 +137,8 @@ def process_single_segment(
     if (segment.cropped_mask == 0).all().item():
         runtime.logging.info("Detailer: segment skip [empty mask]")
         return (image, "continue")
-    # Derive the default seed from the segment's own position rather than its
-    # rank in the ordered list, so the same physical location keeps the same
-    # seed regardless of detector ordering jitter between runs.
-    position_offset = (
-        int(segment.bbox[0]) * 73856093 ^ int(segment.bbox[1]) * 19349663
-    ) % 1_000_000
     segment_seed, wildcard_item = select_segment_wildcard(
-        wildcard_selection, segment, options.seed + position_offset
+        wildcard_selection, segment, options.seed + index
     )
     if wildcard_item and wildcard_item.strip() == "[SKIP]":
         return (image, "continue")

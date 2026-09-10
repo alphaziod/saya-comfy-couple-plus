@@ -1,95 +1,60 @@
-"""Low-level attention execution helpers for the regional-attention patches.
-
-Two small helpers used by the cross-attention patch:
-
-* :func:`try_standard_attention` runs ComfyUI's unmodified attention for one CFG
-  branch. Its result is blended with the regional output as a safety fallback.
-* :func:`calculate_regional_blend` picks how strongly the regional output should
-  replace the standard one for a given mode.
-"""
+"""Attention execution helpers and regional/standard blend selection."""
 
 from __future__ import annotations
 
-import torch
+from typing import Any
+
 from comfy.ldm.modules.attention import optimized_attention
 
 from .context import attention_debug_enabled, resolve_attention_mode
 
-_LOG_PREFIX = "[ComfyCouple SayaPatch v3.3]"
-
 
 def try_standard_attention(
-    query: torch.Tensor,
-    original_keys: torch.Tensor | None,
-    original_values: torch.Tensor | None,
-    chunks: int,
-    branch_index: int,
-    n_heads: int,
-) -> torch.Tensor | None:
-    """Run ComfyUI's native attention for one CFG branch, or ``None`` on any issue.
-
-    ``original_keys`` / ``original_values`` are the full (all-branch) projected
-    K/V tensors handed to the patch; they are split into ``chunks`` along the
-    batch axis and only ``branch_index`` is used. K/V are broadcast/repeated to
-    the query batch size and cast to the query dtype when needed.
-
-    Returns ``None`` (rather than raising) whenever the fallback cannot be
-    computed, so the caller can simply skip the blend.
-    """
+    q_i: Any, orig_k: Any, orig_v: Any, chunks: Any, idx: Any, n_heads: int
+) -> Any:
+    """Compute the unmodified attention output used as a local fallback blend."""
     try:
-        if original_keys is None or original_values is None:
+        if orig_k is None or orig_v is None:
             return None
-
         chunks = max(1, int(chunks))
-        branch_index = int(branch_index)
-        key_parts = original_keys.chunk(chunks, dim=0)
-        value_parts = original_values.chunk(chunks, dim=0)
-        if branch_index >= len(key_parts) or branch_index >= len(value_parts):
+        idx = int(idx)
+        k_parts = orig_k.chunk(chunks, dim=0)
+        v_parts = orig_v.chunk(chunks, dim=0)
+        if idx >= len(k_parts) or idx >= len(v_parts):
             return None
-
-        keys = key_parts[branch_index]
-        values = value_parts[branch_index]
-
-        target_batch = query.shape[0]
-        if keys.shape[0] != target_batch:
-            if keys.shape[0] == 1:
-                keys = keys.expand(target_batch, -1, -1)
-                values = values.expand(target_batch, -1, -1)
+        kk = k_parts[idx]
+        vv = v_parts[idx]
+        target_b = q_i.shape[0]
+        if kk.shape[0] != target_b:
+            if kk.shape[0] == 1:
+                kk = kk.expand(target_b, -1, -1)
+                vv = vv.expand(target_b, -1, -1)
             else:
-                reps = (target_batch + keys.shape[0] - 1) // keys.shape[0]
-                keys = keys.repeat(reps, 1, 1)[:target_batch]
-                values = values.repeat(reps, 1, 1)[:target_batch]
-
-        if keys.dtype != query.dtype:
-            keys = keys.to(query.dtype)
-        if values.dtype != query.dtype:
-            values = values.to(query.dtype)
-
-        return optimized_attention(query, keys, values, n_heads)
-    except Exception as error:
+                reps = (target_b + kk.shape[0] - 1) // kk.shape[0]
+                kk = kk.repeat(reps, 1, 1)[:target_b]
+                vv = vv.repeat(reps, 1, 1)[:target_b]
+        if kk.dtype != q_i.dtype:
+            kk = kk.to(q_i.dtype)
+        if vv.dtype != q_i.dtype:
+            vv = vv.to(q_i.dtype)
+        return optimized_attention(q_i, kk, vv, n_heads)
+    except Exception as e:
         if attention_debug_enabled():
-            print(f"{_LOG_PREFIX} normal attention fallback unavailable: {error}")
+            print(f"[ComfyCouple SayaPatch v3.3] normal attention fallback unavailable: {e}")
         return None
 
 
 def calculate_regional_blend(
-    mode: str,
-    masks_aligned: bool = True,
-    custom_strength: float | None = None,  # noqa: ARG001 - kept for call-site compatibility
-) -> float:
-    """Return the blend factor in ``[0, 1]`` for regional vs. standard attention.
-
-    ``1.0`` means "use the regional output only". ``REFINER`` and ``DETAILER``
-    keep a small amount of the standard output; a non-aligned mask forces at
-    least ``0.98`` regional.
-    """
+    mode: str, masks_aligned: bool = True, custom_strength: float = None
+) -> Any:
+    """Choose how strongly regional attention should replace standard attention."""
     mode = resolve_attention_mode(mode)
+    if not masks_aligned:
+        return 0.0
     if mode == "REFINER":
         base = 0.92
     elif mode == "DETAILER":
         base = 0.99
     else:
         base = 1.0
-    if not masks_aligned:
-        base = max(base, 0.98)
     return max(0.0, min(1.0, float(base)))

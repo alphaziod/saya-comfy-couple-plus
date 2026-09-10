@@ -26,7 +26,6 @@ def register_image_phase_routes() -> None:
 
     @routes.post("/saya/image-phases/validate")
     async def validate_phase(request: Any) -> Any:
-        """POST: promote the current phase candidate to a validated checkpoint."""
         try:
             payload = await request.json()
             phase = parse_phase(payload.get("phase"))
@@ -40,7 +39,6 @@ def register_image_phase_routes() -> None:
 
     @routes.post("/saya/image-phases/redo")
     async def redo_phase(request: Any) -> Any:
-        """POST: discard the current phase candidate so it can be re-generated."""
         try:
             payload = await request.json()
             phase = parse_phase(payload.get("phase"))
@@ -51,13 +49,11 @@ def register_image_phase_routes() -> None:
 
     @routes.post("/saya/image-phases/unload")
     async def unload_phase(request: Any) -> Any:
-        """POST: free every loaded model and cache (emergency VRAM/RAM unload)."""
         del request
-        return web.json_response({"ok": True, "unload": unload_everything()})
+        return web.json_response({"ok": True, "unload": {"disabled": True, "reason": "automatic model unload removed"}})
 
     @routes.post("/saya/image-phases/status")
     async def status_phase(request: Any) -> Any:
-        """POST: return the on-disk + memory status for one phase."""
         try:
             payload = await request.json()
             phase = parse_phase(payload.get("phase"))

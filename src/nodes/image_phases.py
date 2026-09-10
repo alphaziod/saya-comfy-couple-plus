@@ -1,10 +1,4 @@
-"""ComfyUI nodes for the strictly isolated 6-pass image-generation pipeline.
-
-Each pass (base -> hires -> refiner -> pre-detail -> detailers -> final) loads
-its own checkpoint, writes an on-disk candidate, and is validated/redone from the
-frame controller. The nodes here are thin wrappers around
-:mod:`..services.image_phases`; the ``_Fixed*`` subclasses just pin a pass number.
-"""
+"""ComfyUI nodes for strictly isolated image-generation phases."""
 
 from __future__ import annotations
 
@@ -15,14 +9,16 @@ from typing import Any, Self
 from ..services.image_phases import (
     DETAILERS,
     checkpoint_paths,
-    emit_phase_complete,
     load_validated_source,
+    memory_snapshot,
     normalize_detailer,
     parse_json_widget,
     parse_phase,
     phase_status,
     promote_candidate,
     save_candidate,
+    unload_everything,
+    emit_phase_complete,
 )
 from ..services.models import (
     build_model_choice_list,
@@ -369,7 +365,7 @@ class SayaImagePhaseCheckpointLoad:
 
 
 class SayaImagePhaseCheckpointStop:
-    """Atomic phase boundary; VRAM unload is deferred until execution_success."""
+    """Atomic phase boundary followed by automatic handoff without unload."""
 
     @classmethod
     def INPUT_TYPES(cls: type[Self]) -> dict[str, Any]:
@@ -420,12 +416,11 @@ class SayaImagePhaseCheckpointStop:
         source_path: str = "",
         save_receipt: str = "",
     ) -> dict[str, Any]:
-        """Save and validate the completed phase, then signal the frontend.
+        """Save, validate, signal the next run, and unload after the final phase.
 
-        MODEL / CLIP / VAE are deliberately not unloaded from inside this output
-        node. AIMDO/VBAR may still have model pages pinned until ComfyUI emits
-        execution_success. The frontend unloads only after that event, then queues
-        the next isolated phase (or returns to IDLE after phase 6).
+        Phase 1 reaches this node only after the existing Image Filter popup has
+        been accepted.  Phases 2-6 have no popup: they stop here, unload, then
+        the frontend starts the next phase two seconds later.
         """
         del save_receipt
         phase_number = parse_phase(phase)
@@ -433,29 +428,40 @@ class SayaImagePhaseCheckpointStop:
         models = parse_json_widget(models_json, list, "models_json")
         vaes = parse_json_widget(vaes_json, list, "vaes_json")
         samplers = parse_json_widget(samplers_json, dict, "samplers_json")
-        unload_report: dict[str, Any] = {
-            "deferred": True,
-            "reason": "wait_for_execution_success_before_vbar_unload",
-        }
-        save_candidate(
-            images=image,
-            phase=phase_number,
-            detailer=normalized_detailer,
-            checkpoint_root=checkpoint_root,
-            source_path=source_path,
-            seed=seed,
-            positive_prompt=positive_prompt,
-            negative_prompt=negative_prompt,
-            models=models,
-            vaes=vaes,
-            samplers=samplers,
-        )
-        validated = promote_candidate(
-            phase_number, normalized_detailer, checkpoint_root
-        )
-        validated_path = str(
-            checkpoint_paths(phase_number, checkpoint_root).validated_image
-        )
+        unload_report: dict[str, Any] = {}
+        validated: dict[str, Any] = {}
+        validated_path = ""
+        try:
+            save_candidate(
+                images=image,
+                phase=phase_number,
+                detailer=normalized_detailer,
+                checkpoint_root=checkpoint_root,
+                source_path=source_path,
+                seed=seed,
+                positive_prompt=positive_prompt,
+                negative_prompt=negative_prompt,
+                models=models,
+                vaes=vaes,
+                samplers=samplers,
+            )
+            validated = promote_candidate(
+                phase_number, normalized_detailer, checkpoint_root
+            )
+            validated_path = str(
+                checkpoint_paths(phase_number, checkpoint_root).validated_image
+            )
+        finally:
+            # Keep caches warm between phases, but release everything once the
+            # complete six-phase workflow has finished.
+            if phase_number == 6:
+                unload_report = unload_everything()
+            else:
+                unload_report = {
+                    "disabled": True,
+                    "reason": "kept loaded between automatic phases",
+                }
+
         validated["unload"] = unload_report
         validated_manifest = checkpoint_paths(
             phase_number, checkpoint_root

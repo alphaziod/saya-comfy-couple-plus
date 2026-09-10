@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Self
+from typing import Any
 
 
 def _runtime_sampler_lists() -> tuple[list[str], list[str]]:
@@ -32,8 +32,7 @@ class SayaKSamplerConfig:
     """
 
     @classmethod
-    def INPUT_TYPES(cls: type[Self]) -> dict[str, dict[str, Any]]:
-        """Return the ComfyUI input schema, with COMBO types taken from the live KSampler."""
+    def INPUT_TYPES(cls) -> dict[str, dict[str, Any]]:
         return {
             "required": {
                 "steps_total": (
@@ -76,14 +75,13 @@ class SayaKSamplerConfig:
     CATEGORY = "Saya/Sampling"
 
     def configure(
-        self: Self,
+        self,
         steps_total: int,
         refiner_step: int,
         cfg: float,
         sampler_name: str,
         scheduler: str,
     ) -> tuple[int, int, float, str, str]:
-        """Return the coerced ``(steps, refiner_step, cfg, sampler_name, scheduler)``."""
         return (
             int(steps_total),
             int(refiner_step),

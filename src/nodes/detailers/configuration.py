@@ -81,16 +81,7 @@ def parse_wildcard_selection(wildcard: str | None) -> WildcardSelection:
 
 
 def order_segments(segments: list[Any], mode: str | None) -> list[Any]:
-    """Return segments in the ordering requested by the wildcard mode.
-
-    When no explicit mode is requested, the order previously fell back to
-    whatever the detector pipeline produced (list(segments)). That order is
-    not guaranteed stable across runs on near-identical images, and each
-    segment's default seed is derived from its index in this list (see
-    segment_processing.py), so a permutation silently swaps which seed lands
-    on which segment. The default is therefore a deterministic top-to-bottom,
-    left-to-right spatial sort.
-    """
+    """Return segments in the ordering requested by the wildcard mode."""
     if mode == "ASC":
         return sorted(segments, key=lambda segment: (segment.bbox[0], segment.bbox[1]))
     if mode == "DSC":
@@ -101,7 +92,7 @@ def order_segments(segments: list[Any], mode: str | None) -> list[Any]:
         return sorted(segments, key=segment_area)
     if mode == "DSC-SIZE":
         return sorted(segments, key=segment_area, reverse=True)
-    return sorted(segments, key=lambda segment: (segment.bbox[1], segment.bbox[0]))
+    return list(segments)
 
 
 def crop_conditioning(conditioning: Any, image: Any, crop_region: Any) -> Any:

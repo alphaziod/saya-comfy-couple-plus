@@ -31,12 +31,8 @@ def find_loaded_impact_pack_module() -> Any:
     return None
 
 
-def initialize_impact_pack_runtime() -> None:
-    """Import Impact Pack once and re-export its ``core``/``utils``/``wildcards`` here.
-
-    Idempotent (guarded by ``_IMPACT_READY``). Raises ``RuntimeError`` if Impact
-    Pack is present but not fully loaded yet.
-    """
+def initialize_impact_pack_runtime() -> Any:
+    """Initialize and expose the Impact Pack runtime dependencies used by detailer nodes."""
     global _IMPACT_READY, _impact_pack
     if _IMPACT_READY:
         return
