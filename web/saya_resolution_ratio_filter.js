@@ -53,10 +53,25 @@ function deriveAspectLabel(presetName) {
     return kind ? `${ratio} - ${kind}` : ratio;
 }
 
+// aspect_preset_when_not_image is now a derived, read-only display: nothing
+// should hand-pick it any more once resolution_preset decides it. Disabling
+// it (rather than removing it from INPUT_TYPES) keeps every saved
+// workflow's positional widgets_values array intact -- it sits in the
+// middle of that array, so removing the widget entirely would shift every
+// later value (swap_aspect_when_not_image, custom_aspect_width/height,
+// mode, custom_divisor) in every already-saved graph.
+function disableAspectWidget(aspectWidget) {
+    aspectWidget.disabled = true;
+    aspectWidget.options ??= {};
+    aspectWidget.options.disabled = true;
+}
+
 function syncAspectFromPreset(node) {
     const presetWidget = findWidget(node, PRESET_WIDGET);
     const aspectWidget = findWidget(node, ASPECT_WIDGET);
     if (!presetWidget || !aspectWidget) return;
+
+    disableAspectWidget(aspectWidget);
 
     const derived = deriveAspectLabel(presetWidget.value);
     if (derived === null || derived === String(aspectWidget.value ?? "")) return;

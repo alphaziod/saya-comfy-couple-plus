@@ -248,6 +248,15 @@ class RatioFilterJsTests(unittest.TestCase):
         self.assertNotIn("presetWidget.value =", self.code)
         self.assertNotIn("presetWidget.options.values =", self.code)
 
+    def test_aspect_widget_is_disabled_not_removed(self):
+        # aspect_preset_when_not_image must stay a real, present widget
+        # (disabled/read-only) -- it sits in the middle of INPUT_TYPES'
+        # required order, so removing it would shift every later value in
+        # every already-saved workflow's positional widgets_values array.
+        self.assertIn("aspectWidget.disabled = true", self.code)
+        input_types = load_module().SayaResolutionScaleCalculator.INPUT_TYPES()
+        self.assertIn("aspect_preset_when_not_image", input_types["required"])
+
 
 if __name__ == "__main__":
     unittest.main()

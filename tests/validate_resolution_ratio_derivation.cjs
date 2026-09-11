@@ -80,4 +80,15 @@ console.log('PASS never writes an aspect value that is not a real option');
 }
 console.log('PASS resolution_preset option list is never filtered');
 
+// aspect_preset_when_not_image must become non-interactive (disabled), not
+// removed from the node -- removing it would shift every later widget's
+// position in old saved workflows' positional widgets_values arrays.
+{
+    const node = makeNode('Landscape 16:9 · 896x512', '4:3 - Landscape', allAspectOptions);
+    context.install(node);
+    assert.equal(node.aspectWidget.disabled, true, 'aspect widget must be disabled');
+    assert.equal(node.aspectWidget.options.disabled, true, 'aspect widget options.disabled must be set (Vue combo renderer reads this)');
+}
+console.log('PASS aspect_preset_when_not_image is disabled (read-only), not removed');
+
 console.log('ALL RESOLUTION RATIO DERIVATION TESTS PASSED');
