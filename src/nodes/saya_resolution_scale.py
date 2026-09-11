@@ -8,47 +8,46 @@ class SayaResolutionScaleCalculator:
     """Resolution calculator copied from the local DaSiWa node and simplified for Saya."""
 
     # Clean, exact AI-friendly generation presets only.
-    FIXED_RESOLUTION_PRESETS = {
-        # 16:9 ladder
-        "Landscape 16:9 · 768x432": (768, 432),
-        "Landscape 16:9 · 896x512": (896, 512),
-        "Landscape 16:9 · 1024x576": (1024, 576),
-        "Landscape 16:9 · 1152x648": (1152, 648),
-        "Landscape 16:9 · 1280x720": (1280, 720),
-        "Landscape 16:9 · 1344x768": (1344, 768),
-        "Landscape 16:9 · 1536x864": (1536, 864),
-
-        # wide ladder
-        "Landscape Wide · 1024x576": (1024, 576),
-        "Landscape Wide · 1152x640": (1152, 640),
-        "Landscape Wide · 1280x704": (1280, 704),
-        "Landscape Wide · 1408x768": (1408, 768),
-        "Landscape Wide · 1536x832": (1536, 832),
-
-        # 3:2 ladder
-        "Landscape 3:2 · 960x640": (960, 640),
-        "Landscape 3:2 · 1152x768": (1152, 768),
-        "Landscape 3:2 · 1216x832": (1216, 832),
-
-        # portrait ladders
-        "Portrait 2:3 · 768x1152": (768, 1152),
-        "Portrait 2:3 · 832x1216": (832, 1216),
-        "Portrait 7:9 · 768x992": (768, 992),
-        "Portrait 7:9 · 896x1152": (896, 1152),
-
-        # square ladder
-        "Square · 896x896": (896, 896),
-        "Square · 1024x1024": (1024, 1024),
+    #
+    # Every pair below is divisible by 64 (so also by 32 and by 8), which keeps
+    # them safe generation sizes for SDXL/FLUX (div-8), WAN/LTX (div-32), and
+    # any div-64 latent bucket. The name before " · " is the ratio family used
+    # by the on-canvas "ratio_filter" widget (web/saya_resolution_ratio_filter.js)
+    # to only show the presets that match the chosen aspect ratio — keep the
+    # family text and the RATIO_FAMILIES list below in sync if you add more.
+    _RATIO_FAMILIES: dict[str, list[tuple[int, int]]] = {
+        "Square 1:1": [(768, 768), (1024, 1024), (1280, 1280)],
+        "Landscape 4:3": [(1024, 768), (1280, 960), (1536, 1152)],
+        "Portrait 3:4": [(768, 1024), (960, 1280), (1152, 1536)],
+        "Landscape 3:2": [(960, 640), (1152, 768), (1216, 832), (1344, 896)],
+        "Portrait 2:3": [(640, 960), (768, 1152), (832, 1216), (896, 1344)],
+        "Landscape 16:9": [(896, 512), (1152, 640), (1344, 768), (1600, 896)],
+        "Portrait 9:16": [(512, 896), (640, 1152), (768, 1344), (896, 1600)],
+        "Ultrawide 21:9": [(1344, 576), (1600, 704), (1792, 768)],
+        "Ultrawide Portrait 9:21": [(576, 1344), (704, 1600), (768, 1792)],
     }
+
+    FIXED_RESOLUTION_PRESETS = {
+        f"{family} · {w}x{h}": (w, h)
+        for family, sizes in _RATIO_FAMILIES.items()
+        for w, h in sizes
+    }
+
+    # Filter options for the "ratio_filter" widget: "All" plus every family.
+    RATIO_FILTERS = ["All", *_RATIO_FAMILIES.keys()]
 
     PRESETS = FIXED_RESOLUTION_PRESETS
 
     ASPECT_PRESETS = {
         "1:1 - Square": (1, 1),
-        "2:3 - Portrait": (2, 3),
+        "4:3 - Landscape": (4, 3),
+        "3:4 - Portrait": (3, 4),
         "3:2 - Landscape": (3, 2),
-        "9:16 - Portrait": (9, 16),
+        "2:3 - Portrait": (2, 3),
         "16:9 - Landscape": (16, 9),
+        "9:16 - Portrait": (9, 16),
+        "21:9 - Ultrawide": (21, 9),
+        "9:21 - Ultrawide Portrait": (9, 21),
         "CUSTOM": (0, 0),
     }
 
@@ -155,6 +154,17 @@ class SayaResolutionScaleCalculator:
                         "description": "Divisor used when Custom Divisor is selected.",
                     },
                 ),
+                "ratio_filter": (
+                    cls.RATIO_FILTERS,
+                    {
+                        "default": "All",
+                        "description": (
+                            "Only show resolution_preset options matching this "
+                            "aspect ratio family. Purely a display filter; it "
+                            "does not affect the calculation."
+                        ),
+                    },
+                ),
             },
             "optional": {
                 "image": ("IMAGE",),
@@ -177,6 +187,7 @@ class SayaResolutionScaleCalculator:
         custom_aspect_height: int,
         mode: str,
         custom_divisor: int,
+        ratio_filter: str,
         image=None,
     ):
         if image is not None:
@@ -189,8 +200,10 @@ class SayaResolutionScaleCalculator:
         # was forked from): only fixed presets are offered by INPUT_TYPES, so the
         # aspect / divisor / custom widgets never affect the result. They are left
         # on the node so old saved workflows keep loading without a socket error.
-        del scale_from_image, aspect_preset_when_not_image, custom_aspect_width
-        del custom_aspect_height, mode, custom_divisor
+        # ratio_filter is a pure display filter applied client-side (see
+        # web/saya_resolution_ratio_filter.js) and never affects the calculation.
+        del ratio_filter, scale_from_image, aspect_preset_when_not_image
+        del custom_aspect_width, custom_aspect_height, mode, custom_divisor
 
         if no_scale:
             width, height = source_w, source_h
