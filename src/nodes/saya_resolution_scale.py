@@ -102,7 +102,9 @@ class SayaResolutionScaleCalculator:
                     {
                         "default": "16:9 - Landscape",
                         "description": (
-                            "Used only by megapixel targets when IMAGE ASPECT is off."
+                            "Used only by megapixel targets when IMAGE ASPECT is off. "
+                            "Does NOT filter resolution_preset — use the ratio_filter "
+                            "widget below for that."
                         ),
                     },
                 ),
