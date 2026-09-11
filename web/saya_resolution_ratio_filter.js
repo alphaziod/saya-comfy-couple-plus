@@ -8,15 +8,30 @@ import { app } from "../../scripts/app.js";
 // src/nodes/saya_resolution_scale.py) embed the same plain "A:B" ratio text,
 // so filtering is a text match — no ratio table duplicated here.
 //
-// IMPORTANT: this does NOT match on node type/class. When
-// SayaResolutionScaleCalculator sits inside a subgraph with its ratio
-// widgets exposed as subgraph inputs, the interactive combo the user
-// actually clicks lives on the subgraph's own proxy node in the parent
-// graph — a node whose type is a per-workflow UUID, not
-// "SayaResolutionScaleCalculator". There is no stable class name to hook
-// via beforeRegisterNodeDef for that proxy. Matching by widget NAME instead
-// (any node that happens to carry both widgets) works for the real node,
-// the subgraph proxy, and any future node reusing these names alike.
+// Two things that broke earlier attempts at this, both worked around below:
+//
+// 1. Node type: when SayaResolutionScaleCalculator sits inside a subgraph
+//    with its ratio widgets exposed as subgraph inputs (as in the real
+//    "Ilust simple" workflow), the interactive combo the user actually
+//    clicks lives on the subgraph's own proxy node in the parent graph — a
+//    node whose type is a per-workflow UUID, not
+//    "SayaResolutionScaleCalculator". There is no stable class name to hook
+//    via beforeRegisterNodeDef for that proxy, so this matches by widget
+//    NAME instead of node type — works for the real node, the subgraph
+//    proxy, or any future node reusing these widget names alike.
+//
+// 2. Lifecycle timing: this ComfyUI build can render node widgets through a
+//    Vue-based path (Comfy.VueNodes.Enabled) instead of the classic
+//    canvas/litegraph one. Pre-computing a filtered array and writing it
+//    into resolution_preset's options at some lifecycle hook (nodeCreated /
+//    onConfigure / loadedGraphNode) is a race: a loaded node's real saved
+//    values land at a different point than schema defaults, and it was
+//    never possible to reliably tell "the real values are in now, filter
+//    again" apart from "still just the defaults". Both the Vue widget
+//    (WidgetSelectDefault) and classic litegraph combos explicitly support
+//    options.values being a FUNCTION, calling it fresh on every read. Using
+//    that instead of a static array means the filter is always correct at
+//    the moment the dropdown opens, with nothing to race.
 const ASPECT_WIDGET = "aspect_preset_when_not_image";
 const PRESET_WIDGET = "resolution_preset";
 const CUSTOM_WIDTH_WIDGET = "custom_aspect_width";
@@ -50,88 +65,65 @@ function targetRatioToken(node) {
     return match ? `${match[1]}:${match[2]}` : null; // no match => "All (no filter)"
 }
 
-function applyFilter(node) {
-    const presetWidget = findWidget(node, PRESET_WIDGET);
-    if (!presetWidget) return;
-
-    const allPresets = node.__sayaAllPresets ?? presetWidget.options?.values ?? [];
-    node.__sayaAllPresets = allPresets;
-
-    const targetRatio = targetRatioToken(node);
-    const filtered = targetRatio === null
-        ? allPresets
-        : allPresets.filter((name) => name.match(RATIO_PATTERN)?.[0] === targetRatio);
-
-    presetWidget.options.values = filtered.length ? filtered : allPresets;
-
-    if (!presetWidget.options.values.includes(presetWidget.value)) {
-        presetWidget.value = presetWidget.options.values[0];
-        presetWidget.callback?.(presetWidget.value);
-    }
-    node.graph?.setDirtyCanvas?.(true, true);
-    node.setDirtyCanvas?.(true, true);
-}
-
-function wrapCallback(widget, node) {
-    // Marked per WIDGET OBJECT, not per node: if the host ever recreates the
-    // widgets (e.g. loading a saved graph), the new widget objects are
-    // unwrapped and get wrapped again here instead of leaving a dangling
-    // wrap on the discarded old ones.
-    if (widget.__sayaRatioFilterWrapped) return;
-    widget.__sayaRatioFilterWrapped = true;
-    const previousCallback = widget.callback;
-    widget.callback = function (...args) {
-        const result = previousCallback?.apply(this, args);
-        applyFilter(node);
-        return result;
-    };
-}
-
 function installFilter(node) {
     const aspectWidget = findWidget(node, ASPECT_WIDGET);
     const presetWidget = findWidget(node, PRESET_WIDGET);
     if (!aspectWidget || !presetWidget) return;
 
-    // Re-run on every call (nodeCreated, onConfigure, loadedGraphNode):
-    // a node is first created with schema DEFAULTS, before configure()
-    // writes a loaded graph's actual saved widget values, so the filter
-    // must be re-applied once the real values are in place.
-    if (node.__sayaAllPresets === undefined) {
-        node.__sayaAllPresets = [...(presetWidget.options?.values ?? [])];
-    }
+    // Guard on the WIDGET OBJECT, not the node: if the host ever recreates
+    // widgets (e.g. loading a saved graph, or a Vue node remount), the new
+    // widget object is unwrapped and gets a fresh capture here instead of
+    // silently keeping a dangling reference to the discarded old one.
+    if (presetWidget.__sayaRatioFilterInstalled) return;
+    presetWidget.__sayaRatioFilterInstalled = true;
 
-    wrapCallback(aspectWidget, node);
-    const widthWidget = findWidget(node, CUSTOM_WIDTH_WIDGET);
-    const heightWidget = findWidget(node, CUSTOM_HEIGHT_WIDGET);
-    if (widthWidget) wrapCallback(widthWidget, node);
-    if (heightWidget) wrapCallback(heightWidget, node);
+    const currentValues = presetWidget.options?.values;
+    const allPresets = Array.isArray(currentValues) ? [...currentValues] : [];
+    if (!allPresets.length) return;
 
-    applyFilter(node);
-}
-
-function watchConfigure(node) {
-    if (node.__sayaConfigureWatched) return;
-    node.__sayaConfigureWatched = true;
-    const previousConfigure = node.onConfigure;
-    node.onConfigure = function (...args) {
-        const result = previousConfigure?.apply(this, args);
-        installFilter(this);
-        return result;
+    // Read live on every access (dropdown open, Vue re-render, whatever) —
+    // never stale, nothing to re-trigger on aspect/custom-width/height
+    // change.
+    presetWidget.options.values = function () {
+        const target = targetRatioToken(node);
+        if (target === null) return allPresets;
+        const filtered = allPresets.filter((name) => name.match(RATIO_PATTERN)?.[0] === target);
+        return filtered.length ? filtered : allPresets;
     };
+
+    // Nicety, not required for filtering to work: snap the current value to
+    // one that matches as soon as the user changes the ratio, instead of
+    // leaving a now-mismatched preset selected until they open the dropdown.
+    for (const widget of [aspectWidget, findWidget(node, CUSTOM_WIDTH_WIDGET), findWidget(node, CUSTOM_HEIGHT_WIDGET)]) {
+        if (!widget || widget.__sayaRatioFilterWrapped) continue;
+        widget.__sayaRatioFilterWrapped = true;
+        const previousCallback = widget.callback;
+        widget.callback = function (...args) {
+            const result = previousCallback?.apply(this, args);
+            const options = typeof presetWidget.options.values === "function"
+                ? presetWidget.options.values()
+                : presetWidget.options.values;
+            if (!options.includes(presetWidget.value)) {
+                presetWidget.value = options[0];
+                presetWidget.callback?.(presetWidget.value);
+            }
+            node.graph?.setDirtyCanvas?.(true, true);
+            node.setDirtyCanvas?.(true, true);
+            return result;
+        };
+    }
 }
 
 app.registerExtension({
     name: "Saya.ResolutionRatioFilter",
-    // Instance-level hooks (not beforeRegisterNodeDef/prototype patching):
+    // Instance-level hook, not beforeRegisterNodeDef/prototype patching:
     // works for ANY node exposing these widget names, regardless of its
     // type — required for the subgraph-proxy case described above, since
     // that type is a per-workflow UUID with no fixed class to register for.
     nodeCreated(node) {
-        watchConfigure(node);
         installFilter(node);
     },
     loadedGraphNode(node) {
-        watchConfigure(node);
         installFilter(node);
     },
 });
