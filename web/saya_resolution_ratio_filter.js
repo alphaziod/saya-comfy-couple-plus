@@ -1,14 +1,22 @@
 // @ts-expect-error ComfyUI injects this runtime module.
 import { app } from "../../scripts/app.js";
 
-// Filters the "resolution_preset" combo of SayaResolutionScaleCalculator down
-// to the presets matching "aspect_preset_when_not_image" (CUSTOM uses
-// custom_aspect_width/custom_aspect_height instead). Both the aspect labels
-// (e.g. "16:9 - Landscape") and the preset names (e.g. "Landscape 16:9 ·
-// 1344x768", see src/nodes/saya_resolution_scale.py) embed the same plain
-// "A:B" ratio text, so filtering is a text match — no ratio table duplicated
-// here that could drift out of sync with the Python side.
-const NODE_CLASS = "SayaResolutionScaleCalculator";
+// Filters a "resolution_preset" combo down to the presets matching
+// "aspect_preset_when_not_image" (CUSTOM uses custom_aspect_width/
+// custom_aspect_height instead). Both the aspect labels (e.g. "16:9 -
+// Landscape") and the preset names (e.g. "Landscape 16:9 · 1344x768", see
+// src/nodes/saya_resolution_scale.py) embed the same plain "A:B" ratio text,
+// so filtering is a text match — no ratio table duplicated here.
+//
+// IMPORTANT: this does NOT match on node type/class. When
+// SayaResolutionScaleCalculator sits inside a subgraph with its ratio
+// widgets exposed as subgraph inputs, the interactive combo the user
+// actually clicks lives on the subgraph's own proxy node in the parent
+// graph — a node whose type is a per-workflow UUID, not
+// "SayaResolutionScaleCalculator". There is no stable class name to hook
+// via beforeRegisterNodeDef for that proxy. Matching by widget NAME instead
+// (any node that happens to carry both widgets) works for the real node,
+// the subgraph proxy, and any future node reusing these names alike.
 const ASPECT_WIDGET = "aspect_preset_when_not_image";
 const PRESET_WIDGET = "resolution_preset";
 const CUSTOM_WIDTH_WIDGET = "custom_aspect_width";
@@ -30,8 +38,7 @@ function ratioToken(width, height) {
 }
 
 function targetRatioToken(node) {
-    const aspectWidget = findWidget(node, ASPECT_WIDGET);
-    const aspectValue = String(aspectWidget?.value ?? "");
+    const aspectValue = String(findWidget(node, ASPECT_WIDGET)?.value ?? "");
 
     if (aspectValue === CUSTOM_VALUE) {
         const width = Number(findWidget(node, CUSTOM_WIDTH_WIDGET)?.value ?? 0);
@@ -61,14 +68,15 @@ function applyFilter(node) {
         presetWidget.value = presetWidget.options.values[0];
         presetWidget.callback?.(presetWidget.value);
     }
+    node.graph?.setDirtyCanvas?.(true, true);
     node.setDirtyCanvas?.(true, true);
 }
 
 function wrapCallback(widget, node) {
-    // Marked per WIDGET OBJECT, not per node: if ComfyUI ever recreates the
-    // widgets during configure() (loading a saved graph), the new widget
-    // objects are unwrapped and will get wrapped again here, instead of
-    // silently keeping a dangling wrap on the discarded old objects.
+    // Marked per WIDGET OBJECT, not per node: if the host ever recreates the
+    // widgets (e.g. loading a saved graph), the new widget objects are
+    // unwrapped and get wrapped again here instead of leaving a dangling
+    // wrap on the discarded old ones.
     if (widget.__sayaRatioFilterWrapped) return;
     widget.__sayaRatioFilterWrapped = true;
     const previousCallback = widget.callback;
@@ -84,12 +92,10 @@ function installFilter(node) {
     const presetWidget = findWidget(node, PRESET_WIDGET);
     if (!aspectWidget || !presetWidget) return;
 
-    // Re-run on every call (onNodeCreated, onConfigure, loadedGraphNode):
-    // onNodeCreated fires with schema DEFAULTS, before ComfyUI's configure()
-    // writes the saved widget values into a loaded graph's node, so the
-    // filter must be re-applied once the real values are in place — and
-    // widget objects may have been rebuilt in between, so re-find and
-    // re-wrap them too (wrapCallback is a no-op on an already-wrapped one).
+    // Re-run on every call (nodeCreated, onConfigure, loadedGraphNode):
+    // a node is first created with schema DEFAULTS, before configure()
+    // writes a loaded graph's actual saved widget values, so the filter
+    // must be re-applied once the real values are in place.
     if (node.__sayaAllPresets === undefined) {
         node.__sayaAllPresets = [...(presetWidget.options?.values ?? [])];
     }
@@ -103,26 +109,29 @@ function installFilter(node) {
     applyFilter(node);
 }
 
+function watchConfigure(node) {
+    if (node.__sayaConfigureWatched) return;
+    node.__sayaConfigureWatched = true;
+    const previousConfigure = node.onConfigure;
+    node.onConfigure = function (...args) {
+        const result = previousConfigure?.apply(this, args);
+        installFilter(this);
+        return result;
+    };
+}
+
 app.registerExtension({
     name: "Saya.ResolutionRatioFilter",
-    async beforeRegisterNodeDef(nodeType, nodeData) {
-        if (nodeData.name !== NODE_CLASS) return;
-        const createdCallback = nodeType.prototype.onNodeCreated;
-        nodeType.prototype.onNodeCreated = function (...args) {
-            const result = createdCallback?.apply(this, args);
-            installFilter(this);
-            return result;
-        };
-        const configuredCallback = nodeType.prototype.onConfigure;
-        nodeType.prototype.onConfigure = function (...args) {
-            const result = configuredCallback?.apply(this, args);
-            installFilter(this);
-            return result;
-        };
+    // Instance-level hooks (not beforeRegisterNodeDef/prototype patching):
+    // works for ANY node exposing these widget names, regardless of its
+    // type — required for the subgraph-proxy case described above, since
+    // that type is a per-workflow UUID with no fixed class to register for.
+    nodeCreated(node) {
+        watchConfigure(node);
+        installFilter(node);
     },
     loadedGraphNode(node) {
-        if (String(node?.comfyClass ?? node?.type ?? "") === NODE_CLASS) {
-            installFilter(node);
-        }
+        watchConfigure(node);
+        installFilter(node);
     },
 });
