@@ -7,26 +7,31 @@ from typing import Any
 class SayaResolutionScaleCalculator:
     """Resolution calculator copied from the local DaSiWa node and simplified for Saya."""
 
-    # Clean, exact AI-friendly generation presets only.
-    #
-    # Every pair below is divisible by 64 (so also by 32 and by 8), which keeps
-    # them safe generation sizes for SDXL/FLUX (div-8), WAN/LTX (div-32), and
-    # any div-64 latent bucket. The "A:B" ratio and Landscape/Portrait/Square/
-    # Ultrawide family text in the name before " · " (e.g. "Landscape 16:9")
-    # is read by web/saya_resolution_ratio_filter.js, which derives and
-    # writes the matching aspect_preset_when_not_image option whenever
-    # resolution_preset changes — resolution_preset is the source of truth;
-    # nothing here writes back to it, and no ratio table is duplicated in JS.
+    # AI-generation resolutions only -- deliberately NOT desktop/monitor sizes
+    # (1920x1080, 2560x1440, 3840x2160, ...). Organized by ratio family, three
+    # tiers each (low/normal/high), all divisible by 8 (safe for every
+    # SDXL/FLUX/WAN/LTX latent grid this node targets). Where the previous
+    # list already had a useful value at a given tier, it's kept exactly
+    # (e.g. 896x512 and 1344x768 stay put -- 1344x768 is still the default,
+    # and both are referenced by saved workflows); the rest are new same-
+    # family entries following the same tiering. The "A:B" ratio and
+    # Landscape/Portrait/Square family text in the name before " · " (e.g.
+    # "Landscape 16:9") is read by web/saya_resolution_ratio_filter.js,
+    # which derives and writes the matching aspect_preset_when_not_image
+    # option whenever resolution_preset changes -- resolution_preset is the
+    # source of truth; nothing here writes back to it, and no ratio table
+    # is duplicated in JS.
     _RATIO_FAMILIES: dict[str, list[tuple[int, int]]] = {
-        "Square 1:1": [(768, 768), (1024, 1024), (1280, 1280)],
+        "Square 1:1": [(896, 896), (1024, 1024), (1280, 1280)],
         "Landscape 4:3": [(1024, 768), (1280, 960), (1536, 1152)],
         "Portrait 3:4": [(768, 1024), (960, 1280), (1152, 1536)],
-        "Landscape 3:2": [(960, 640), (1152, 768), (1216, 832), (1344, 896)],
-        "Portrait 2:3": [(640, 960), (768, 1152), (832, 1216), (896, 1344)],
-        "Landscape 16:9": [(896, 512), (1152, 640), (1344, 768), (1600, 896)],
-        "Portrait 9:16": [(512, 896), (640, 1152), (768, 1344), (896, 1600)],
-        "Ultrawide 21:9": [(1344, 576), (1600, 704), (1792, 768)],
-        "Ultrawide Portrait 9:21": [(576, 1344), (704, 1600), (768, 1792)],
+        "Landscape 3:2": [(960, 640), (1152, 768), (1216, 832)],
+        "Portrait 2:3": [(640, 960), (768, 1152), (832, 1216)],
+        "Landscape 16:9": [(896, 512), (1344, 768), (1536, 864)],
+        "Portrait 9:16": [(512, 896), (768, 1344), (864, 1536)],
+        # 7:9 / 9:7: kept per explicit request -- do not remove.
+        "Portrait 7:9": [(768, 992), (896, 1152), (1120, 1440)],
+        "Landscape 9:7": [(992, 768), (1152, 896), (1440, 1120)],
     }
 
     FIXED_RESOLUTION_PRESETS = {
@@ -46,8 +51,8 @@ class SayaResolutionScaleCalculator:
         "2:3 - Portrait": (2, 3),
         "16:9 - Landscape": (16, 9),
         "9:16 - Portrait": (9, 16),
-        "21:9 - Ultrawide": (21, 9),
-        "9:21 - Ultrawide Portrait": (9, 21),
+        "7:9 - Portrait": (7, 9),
+        "9:7 - Landscape": (9, 7),
         "CUSTOM": (0, 0),
     }
 

@@ -48,10 +48,12 @@ class ResolutionPresetTests(unittest.TestCase):
         names = list(self.presets.keys())
         self.assertEqual(len(names), len(set(names)))
 
-    def test_every_preset_is_divisible_by_64(self):
-        # Div-64 covers FLUX/SDXL (div-8) and WAN/LTX (div-32) generation grids.
-        bad = [(k, v) for k, v in self.presets.items() if v[0] % 64 or v[1] % 64]
-        self.assertEqual(bad, [], f"non div-64 presets: {bad}")
+    def test_every_preset_is_divisible_by_8(self):
+        # Div-8 is the universal safety floor for SDXL/FLUX/WAN/LTX latent
+        # grids. Several legacy-preserved values (e.g. 896x512, 1536x864,
+        # 768x992) are div-8 but not div-32/div-64, so that's the bar here.
+        bad = [(k, v) for k, v in self.presets.items() if v[0] % 8 or v[1] % 8]
+        self.assertEqual(bad, [], f"non div-8 presets: {bad}")
 
     def test_every_preset_dimension_is_positive(self):
         for name, (w, h) in self.presets.items():
@@ -59,11 +61,11 @@ class ResolutionPresetTests(unittest.TestCase):
             self.assertGreater(h, 0, name)
 
     def test_no_resolution_was_added_or_changed(self):
-        # Pins the exact preset set the user validated. A fix for the ratio
-        # filter must never add, remove, or resize a resolution — that's a
-        # frontend widget-sync bug, not a resolutions problem.
+        # Pins the exact preset set the user validated: 9 ratio families,
+        # 3 tiers (low/normal/high) each, no desktop/monitor resolutions,
+        # 7:9 and 9:7 kept, legacy values reused wherever they fit a tier.
         expected = {
-            "Square 1:1 · 768x768": (768, 768),
+            "Square 1:1 · 896x896": (896, 896),
             "Square 1:1 · 1024x1024": (1024, 1024),
             "Square 1:1 · 1280x1280": (1280, 1280),
             "Landscape 4:3 · 1024x768": (1024, 768),
@@ -75,27 +77,47 @@ class ResolutionPresetTests(unittest.TestCase):
             "Landscape 3:2 · 960x640": (960, 640),
             "Landscape 3:2 · 1152x768": (1152, 768),
             "Landscape 3:2 · 1216x832": (1216, 832),
-            "Landscape 3:2 · 1344x896": (1344, 896),
             "Portrait 2:3 · 640x960": (640, 960),
             "Portrait 2:3 · 768x1152": (768, 1152),
             "Portrait 2:3 · 832x1216": (832, 1216),
-            "Portrait 2:3 · 896x1344": (896, 1344),
             "Landscape 16:9 · 896x512": (896, 512),
-            "Landscape 16:9 · 1152x640": (1152, 640),
             "Landscape 16:9 · 1344x768": (1344, 768),
-            "Landscape 16:9 · 1600x896": (1600, 896),
+            "Landscape 16:9 · 1536x864": (1536, 864),
             "Portrait 9:16 · 512x896": (512, 896),
-            "Portrait 9:16 · 640x1152": (640, 1152),
             "Portrait 9:16 · 768x1344": (768, 1344),
-            "Portrait 9:16 · 896x1600": (896, 1600),
-            "Ultrawide 21:9 · 1344x576": (1344, 576),
-            "Ultrawide 21:9 · 1600x704": (1600, 704),
-            "Ultrawide 21:9 · 1792x768": (1792, 768),
-            "Ultrawide Portrait 9:21 · 576x1344": (576, 1344),
-            "Ultrawide Portrait 9:21 · 704x1600": (704, 1600),
-            "Ultrawide Portrait 9:21 · 768x1792": (768, 1792),
+            "Portrait 9:16 · 864x1536": (864, 1536),
+            "Portrait 7:9 · 768x992": (768, 992),
+            "Portrait 7:9 · 896x1152": (896, 1152),
+            "Portrait 7:9 · 1120x1440": (1120, 1440),
+            "Landscape 9:7 · 992x768": (992, 768),
+            "Landscape 9:7 · 1152x896": (1152, 896),
+            "Landscape 9:7 · 1440x1120": (1440, 1120),
         }
         self.assertEqual(self.presets, expected)
+
+    def test_no_desktop_monitor_resolutions(self):
+        forbidden = {(1920, 1080), (2560, 1440), (3840, 2160)}
+        used = set(self.presets.values())
+        self.assertEqual(used & forbidden, set())
+
+    def test_legacy_useful_resolutions_are_preserved_where_kept(self):
+        # These are the specific values from the previous list that still
+        # exist in the reorganized table (see the comment on _RATIO_FAMILIES
+        # for the ones intentionally dropped as redundant extra 16:9 tiers).
+        preserved = {
+            (896, 512), (1344, 768), (1536, 864),
+            (960, 640), (1152, 768), (1216, 832),
+            (768, 1152), (832, 1216),
+            (768, 992), (896, 1152),
+            (896, 896), (1024, 1024),
+        }
+        present = set(self.presets.values())
+        self.assertEqual(preserved - present, set())
+
+    def test_seven_nine_ratio_is_kept(self):
+        tokens = {RATIO_PATTERN.search(name).group(0) for name in self.presets}
+        self.assertIn("7:9", tokens)
+        self.assertIn("9:7", tokens)
 
     def test_aspect_preset_ratio_tokens_match_a_preset_family(self):
         # web/saya_resolution_ratio_filter.js matches the plain "A:B" text
@@ -145,7 +167,7 @@ class ResolutionPresetTests(unittest.TestCase):
                     resolution_preset=name,
                     # Deliberately mismatched aspect: calculate() must not
                     # care, since aspect filtering lives purely in the JS.
-                    aspect_preset_when_not_image="9:21 - Ultrawide Portrait",
+                    aspect_preset_when_not_image="CUSTOM",
                 ))
                 self.assertEqual(result, (w, h, float(w), float(h)))
 

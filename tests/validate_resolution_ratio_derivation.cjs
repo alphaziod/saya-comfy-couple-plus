@@ -10,26 +10,26 @@ vm.createContext(context);
 vm.runInContext(source, context);
 
 // --- deriveAspectLabel: resolution_preset name -> aspect_preset_when_not_image option ---
-// Every case the user asked to be covered (16:9, 4:3, 1:1, 2:3, 3:4, 9:16).
-// "7:9" is intentionally not listed: no "7:9" preset exists in
-// src/nodes/saya_resolution_scale.py's current, unchanged preset set.
+// Every case the user asked to be covered: 16:9, 4:3, 1:1, 2:3, 3:4, 9:16,
+// plus 7:9 and its 9:7 landscape counterpart (both now real ratio families
+// in src/nodes/saya_resolution_scale.py's reorganized preset table).
 const cases = [
     ['Landscape 16:9 · 896x512', '16:9 - Landscape'],
     ['Landscape 16:9 · 1344x768', '16:9 - Landscape'],
     ['Landscape 4:3 · 1024x768', '4:3 - Landscape'],
-    ['Square 1:1 · 768x768', '1:1 - Square'],
+    ['Square 1:1 · 896x896', '1:1 - Square'],
     ['Portrait 2:3 · 832x1216', '2:3 - Portrait'],
     ['Portrait 3:4 · 768x1024', '3:4 - Portrait'],
     ['Portrait 9:16 · 512x896', '9:16 - Portrait'],
     ['Landscape 3:2 · 960x640', '3:2 - Landscape'],
-    ['Ultrawide 21:9 · 1344x576', '21:9 - Ultrawide'],
-    ['Ultrawide Portrait 9:21 · 576x1344', '9:21 - Ultrawide Portrait'],
+    ['Portrait 7:9 · 896x1152', '7:9 - Portrait'],
+    ['Landscape 9:7 · 1152x896', '9:7 - Landscape'],
 ];
 for (const [presetName, expectedAspect] of cases) {
     const derived = context.deriveAspectLabel(presetName);
     assert.equal(derived, expectedAspect, `${presetName} -> expected "${expectedAspect}", got "${derived}"`);
 }
-console.log('PASS deriveAspectLabel matches ASPECT_PRESETS keys for 16:9, 4:3, 1:1, 2:3, 3:4, 3:2, 9:16, 21:9, 9:21');
+console.log('PASS deriveAspectLabel matches ASPECT_PRESETS keys for 16:9, 4:3, 1:1, 2:3, 3:4, 3:2, 9:16, 7:9, 9:7');
 
 // --- syncAspectFromPreset: one-way, only writes an option that really exists ---
 function makeNode(presetValue, aspectValue, aspectOptions) {
