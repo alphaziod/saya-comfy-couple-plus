@@ -11,11 +11,12 @@ class SayaResolutionScaleCalculator:
     #
     # Every pair below is divisible by 64 (so also by 32 and by 8), which keeps
     # them safe generation sizes for SDXL/FLUX (div-8), WAN/LTX (div-32), and
-    # any div-64 latent bucket. The "A:B" ratio embedded in the name before
-    # " · " (e.g. "Landscape 16:9") is read by
-    # web/saya_resolution_ratio_filter.js, which filters this list down to the
-    # presets matching whatever ratio is picked in aspect_preset_when_not_image
-    # — matched as plain "A:B" text, so no ratio table is duplicated in JS.
+    # any div-64 latent bucket. The "A:B" ratio and Landscape/Portrait/Square/
+    # Ultrawide family text in the name before " · " (e.g. "Landscape 16:9")
+    # is read by web/saya_resolution_ratio_filter.js, which derives and
+    # writes the matching aspect_preset_when_not_image option whenever
+    # resolution_preset changes — resolution_preset is the source of truth;
+    # nothing here writes back to it, and no ratio table is duplicated in JS.
     _RATIO_FAMILIES: dict[str, list[tuple[int, int]]] = {
         "Square 1:1": [(768, 768), (1024, 1024), (1280, 1280)],
         "Landscape 4:3": [(1024, 768), (1280, 960), (1536, 1152)],
@@ -101,10 +102,10 @@ class SayaResolutionScaleCalculator:
                     {
                         "default": "16:9 - Landscape",
                         "description": (
-                            "Filters resolution_preset down to matching-ratio "
-                            "sizes (pick CUSTOM to filter by the width/height "
-                            "below). Also used by megapixel targets when IMAGE "
-                            "ASPECT is off."
+                            "Read-only display of resolution_preset's ratio: "
+                            "auto-updated whenever resolution_preset changes "
+                            "(see web/saya_resolution_ratio_filter.js). Also "
+                            "used by megapixel targets when IMAGE ASPECT is off."
                         ),
                     },
                 ),

@@ -234,11 +234,19 @@ class RatioFilterJsTests(unittest.TestCase):
         self.assertIn('"resolution_preset"', self.code)
 
     def test_no_hardcoded_duplicate_resolution_table(self):
-        # The filter must read the real widget's own preset list (captured
-        # once from options.values) instead of a second, hand-maintained
-        # copy that can drift from src/nodes/saya_resolution_scale.py.
+        # No second, hand-maintained copy of the preset list that could
+        # drift from src/nodes/saya_resolution_scale.py.
         self.assertNotIn("1024x1024", self.code)
         self.assertNotIn("1344x768", self.code)
+
+    def test_direction_is_resolution_to_aspect_only(self):
+        # resolution_preset is the source of truth: the fix must derive and
+        # write aspect_preset_when_not_image, and must never write to
+        # resolution_preset's value or filter its option list.
+        self.assertIn("deriveAspectLabel", self.code)
+        self.assertIn("aspectWidget.value =", self.code)
+        self.assertNotIn("presetWidget.value =", self.code)
+        self.assertNotIn("presetWidget.options.values =", self.code)
 
 
 if __name__ == "__main__":
