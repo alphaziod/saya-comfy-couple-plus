@@ -2,10 +2,34 @@
 
 **V1 · 1.0.0** — regional prompting and model routing for two-character ComfyUI workflows.
 
-Give the scene and each character their own prompt. Couple combines the shared
-scene with each person's identity and routes the resulting conditioning to that
-person's region. MASTER defines the layout; COPY reuses it in later passes.
-The V1 example includes an adult woman and an adult man sharing a book in an apartment.
+## What this is
+
+Normal prompting gives you **one** prompt for the whole image, so two characters
+in the same frame bleed into each other (wrong hair color on the wrong person,
+merged outfits, etc.). Saya Comfy Couple Plus splits the image into two regions
+and gives each region its own prompt, while a shared **Base Prompt** still
+describes the scene, framing and interaction both characters are part of.
+
+At generation time the plugin combines `Base + Person 1` in Person 1's region
+and `Base + Person 2` in Person 2's region, and applies that split either as an
+attention patch on the SDXL model (**Forge engine**) or as separate masked
+conditionings on HiDream (**Architecture E**) — see [How it works](#how-it-works).
+
+The V1 example workflow shows this with an adult woman and an adult man sharing
+a book in an apartment, then optionally refining the result through HiDream,
+detailers and an upscale pass.
+
+## Table of contents
+
+- [Features](#features)
+- [How it works](#how-it-works)
+- [Installation](#installation)
+- [Example workflow](#example-workflow)
+- [The four prompts](#the-four-prompts)
+- [HiDream phase](#hidream-phase)
+- [Lazy loading, cache and memory](#lazy-loading-cache-and-memory)
+- [Validation and development](#validation-and-development)
+- [Credits and licensing](#credits-and-licensing)
 
 ## Features
 
@@ -17,6 +41,38 @@ The V1 example includes an adult woman and an adult man sharing a book in an apa
 - Independent Naturalize conditioning and late cleanup routing.
 - Six automatic phase boundaries with review, checkpoint save/load and optional model offload.
 - Regional detailer routing and optional hires/upscale passes.
+
+## How it works
+
+Two node "families" cover the two model families you can drive with this pack.
+Both share the same **MASTER / COPY** pattern: the MASTER node exposes the
+layout controls (orientation, center, transition, ...) and outputs a
+`SAYA_COUPLE_CONFIG` bundle; every later pass reuses that exact layout through a
+COPY node instead of re-exposing (and risking drifting) the same widgets.
+
+```text
+                 ┌──────────────────────┐
+ Base/P1/P2/Neg  │   MASTER (per phase   │  couple_config ──► reused by every
+ conditioning ──►│   family: Forge or    │                    COPY node later
+ + latent        │   HiDream)            │
+                 └──────────┬────────────┘
+                            │
+              regional conditioning (+ patched MODEL for Forge)
+                            │
+                            ▼
+                     KSampler.positive
+```
+
+| | SDXL — `SayaComfyCoupleForge` (+ Copy) | HiDream — `SayaComfyCoupleHiDream` (+ Copy) |
+| --- | --- | --- |
+| Technique | Patches a cloned MODEL's attention (`set_model_attn2_patch`), so regions are split at the UNet level | No MODEL socket at all — builds separate masked `CONDITIONING` entries; the stock ComfyUI sampler runs one forward per region and composites by mask |
+| Contact band | Yes — a soft MAIN-only blend right on the seam between the two regions, so a hug or held hands aren't torn in half | Optional (`include_main_contact`), same idea, no attention patch needed |
+| When you use it | Any SDXL/Illustrious checkpoint | Any HiDream checkpoint (GGUF or full weights) |
+
+A regional conditioning that doesn't actually match the active model family is
+rejected loudly instead of silently degrading — e.g. wiring plain SDXL
+conditioning into a HiDream Couple node raises a clear "not a native HiDream
+conditioning" error rather than producing a broken, unmasked image.
 
 ## Installation
 
@@ -67,10 +123,13 @@ The example was checked against the locally installed ComfyUI 0.34 / frontend 1.
 These example-only dependencies are not all required for a small custom Couple graph.
 No model weights are distributed or downloaded by this project.
 
-## Example Workflow
+## Example workflow
 
 Download and open **[workflows/Ilust-Simple-V1.json](workflows/Ilust-Simple-V1.json)**.
-This replaces the previous example; it is the single public V1 template.
+This replaces the previous example; it is the single public V1 template. It is a
+**phased** workflow: it runs in six numbered stages (checkpoint generation,
+optional HiDream refine, detailers, upscale, ...) instead of one flat graph, so
+you can inspect and redo any stage before committing to the next.
 
 Before queuing:
 
@@ -197,8 +256,9 @@ python /path/to/saya-comfy-couple-plus/tests/validate_public_workflow.py
 
 For the first command, use ComfyUI's Python environment and install ComfyUI-GGUF.
 You can alternatively set `COMFYUI_PATH`. The public workflow test uses only the
-Python standard library. [ARCHITECTURE.md](ARCHITECTURE.md) explains implementation
-boundaries; [HIDREAM_LORA_REPORT.md](HIDREAM_LORA_REPORT.md) records the LoRA/cache design.
+Python standard library. [ARCHITECTURE.md](ARCHITECTURE.md) is the maintainer-facing
+deep dive (module layout, both attention engines, the cache format, the phase state
+machine); [HIDREAM_LORA_REPORT.md](HIDREAM_LORA_REPORT.md) records the LoRA/cache design.
 
 Active development continues. Include your ComfyUI version, enabled node packs,
 model family and a minimal workflow when reporting an issue. Existing public

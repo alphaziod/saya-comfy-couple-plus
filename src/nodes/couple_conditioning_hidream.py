@@ -104,6 +104,7 @@ import comfy.utils
 
 from .regional_attention.hidream_masks import pixel_masks, routing_masks
 from ..services import hidream_cache
+from ..services.conditioning import copy_conditioning as _shared_copy_conditioning
 
 COUPLE_CONFIG_TYPE = "SAYA_COUPLE_CONFIG"
 
@@ -398,16 +399,8 @@ class _HiDreamCoupleBase:
             out.append((context, meta))
         return out
 
-    @staticmethod
-    def _copy_conditioning(conditioning: Any) -> list[list]:
-        """Shallow-copy a CONDITIONING so downstream edits never touch the source.
-
-        Tensors are shared by reference (read-only by contract); the metadata
-        dict is copied so adding a mask key does not mutate the caller's object.
-        """
-        if not conditioning:
-            return []
-        return [[entry[0], dict(entry[1])] for entry in conditioning]
+    # Shared with the Forge couple node; see src/services/conditioning.py.
+    _copy_conditioning = staticmethod(_shared_copy_conditioning)
 
     @staticmethod
     def _read_latent(latent: Any) -> tuple[int, int, int]:
@@ -674,6 +667,7 @@ class _HiDreamCoupleBase:
         mask_p1_pixel: torch.Tensor,
         mask_p2_pixel: torch.Tensor,
         couple_active: bool,
+        solo: bool = True,
     ) -> list[list]:
         """Per-person conditioning for detailers — NOT for the main KSampler.
 
@@ -682,10 +676,15 @@ class _HiDreamCoupleBase:
         Pairing is explicit `(conditioning, mask)`: P1 entries always get
         `mask_p1`, P2 entries always get `mask_p2`, regardless of list length or
         identity. When the couple engine is not active, Forge parity
-        (forge/node.py:442,458-459): a plain P1 copy with NO mask metadata.
+        (forge/node.py:435,452): SOLO keeps the original defensive `person_1 or
+        person_2` copy (no mask metadata); FALLBACK concatenates P1+P2 so a
+        missing person/negative never silently drops the other person's detailer
+        conditioning.
         """
         if not couple_active:
-            return cls._copy_conditioning(person_1 or person_2)
+            if solo:
+                return cls._copy_conditioning(person_1 or person_2)
+            return cls._copy_conditioning(person_1) + cls._copy_conditioning(person_2)
         pairs = [(person_1, mask_p1_pixel)]
         if person_2:
             pairs.append((person_2, mask_p2_pixel))
@@ -752,10 +751,11 @@ class _HiDreamCoupleBase:
 
         # ---- SOLO / FALLBACK (Forge parity) --------------------------------
         if not couple_active:
+            solo = not bool(config["requested_use_couple_attention"])
             main_public = cls._copy_conditioning(main_positive)
             p1_public = cls._copy_conditioning(person_1_positive)
             p2_public = cls._copy_conditioning(person_2_positive) if person_2_present else []
-            if not bool(config["requested_use_couple_attention"]):
+            if solo:
                 # SOLO: concat MAIN + P1 (or whichever exists).
                 if main_public and p1_public:
                     from nodes import ConditioningConcat
@@ -768,7 +768,7 @@ class _HiDreamCoupleBase:
                 # plain list so nothing is silently dropped.
                 positive = main_public + p1_public + p2_public
             detailer_positive = cls._masked_detailer_positive(
-                person_1_positive, person_2_positive, None, None, couple_active=False
+                person_1_positive, person_2_positive, None, None, couple_active=False, solo=solo
             )
             mask_p1, mask_p2 = cls._public_pixel_masks(batch, lat_h, lat_w, config, couple_active=False)
             print("[Saya HiDream Couple E] engine=off (SOLO/FALLBACK): no regional conditioning built")
@@ -1028,8 +1028,8 @@ class SayaComfyCoupleHiDreamCopy(_HiDreamCoupleBase):
             incoming["context_mode"] = context_mode
         # A COPY still derives "does person 2 exist" from its OWN inputs.
         incoming["person_2_enabled"] = bool(person_2_positive)
-        if "include_main_contact" not in incoming or include_main_contact:
-            incoming["include_main_contact"] = include_main_contact or incoming.get("include_main_contact", False)
+        # OR-merge: True wins, otherwise keep whatever the config already carried.
+        incoming["include_main_contact"] = include_main_contact or incoming.get("include_main_contact", False)
         if add_global_main_entry:
             incoming["add_global_main_entry"] = True
         config = normalize_config(incoming)

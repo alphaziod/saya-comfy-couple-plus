@@ -143,7 +143,13 @@ def prepare(source, destination):
         if value.endswith((".safetensors", ".ckpt", ".gguf", ".pth", ".pt")) and "SELECT_" not in value:
             return "SELECT_MODEL" + Path(value).suffix
         for word in ("Breasts","Buttocks","Anus","Vulva","Penis","NSFW"):
-            value = re.sub(r"\b"+word+r"\b", parts[word], value, flags=re.I)
+            replacement = parts.get(word)
+            if replacement is None:
+                raise KeyError(
+                    f"prepare_public_workflow: no detailer group titled {word!r} to sanitize "
+                    "with \u2014 add/rename a group in the source workflow before publishing"
+                )
+            value = re.sub(r"\b"+word+r"\b", replacement, value, flags=re.I)
         return value
     workflow = sanitize(workflow)
     graphs = [workflow, *workflow["definitions"]["subgraphs"]]
