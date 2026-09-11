@@ -65,6 +65,12 @@ function applyFilter(node) {
 }
 
 function wrapCallback(widget, node) {
+    // Marked per WIDGET OBJECT, not per node: if ComfyUI ever recreates the
+    // widgets during configure() (loading a saved graph), the new widget
+    // objects are unwrapped and will get wrapped again here, instead of
+    // silently keeping a dangling wrap on the discarded old objects.
+    if (widget.__sayaRatioFilterWrapped) return;
+    widget.__sayaRatioFilterWrapped = true;
     const previousCallback = widget.callback;
     widget.callback = function (...args) {
         const result = previousCallback?.apply(this, args);
@@ -74,18 +80,23 @@ function wrapCallback(widget, node) {
 }
 
 function installFilter(node) {
-    if (node.__sayaRatioFilterInstalled) return;
-
     const aspectWidget = findWidget(node, ASPECT_WIDGET);
     const presetWidget = findWidget(node, PRESET_WIDGET);
-    const widthWidget = findWidget(node, CUSTOM_WIDTH_WIDGET);
-    const heightWidget = findWidget(node, CUSTOM_HEIGHT_WIDGET);
     if (!aspectWidget || !presetWidget) return;
-    node.__sayaRatioFilterInstalled = true;
 
-    node.__sayaAllPresets = [...(presetWidget.options?.values ?? [])];
+    // Re-run on every call (onNodeCreated, onConfigure, loadedGraphNode):
+    // onNodeCreated fires with schema DEFAULTS, before ComfyUI's configure()
+    // writes the saved widget values into a loaded graph's node, so the
+    // filter must be re-applied once the real values are in place — and
+    // widget objects may have been rebuilt in between, so re-find and
+    // re-wrap them too (wrapCallback is a no-op on an already-wrapped one).
+    if (node.__sayaAllPresets === undefined) {
+        node.__sayaAllPresets = [...(presetWidget.options?.values ?? [])];
+    }
 
     wrapCallback(aspectWidget, node);
+    const widthWidget = findWidget(node, CUSTOM_WIDTH_WIDGET);
+    const heightWidget = findWidget(node, CUSTOM_HEIGHT_WIDGET);
     if (widthWidget) wrapCallback(widthWidget, node);
     if (heightWidget) wrapCallback(heightWidget, node);
 
@@ -96,9 +107,15 @@ app.registerExtension({
     name: "Saya.ResolutionRatioFilter",
     async beforeRegisterNodeDef(nodeType, nodeData) {
         if (nodeData.name !== NODE_CLASS) return;
-        const created = nodeType.prototype.onNodeCreated;
+        const createdCallback = nodeType.prototype.onNodeCreated;
         nodeType.prototype.onNodeCreated = function (...args) {
-            const result = created?.apply(this, args);
+            const result = createdCallback?.apply(this, args);
+            installFilter(this);
+            return result;
+        };
+        const configuredCallback = nodeType.prototype.onConfigure;
+        nodeType.prototype.onConfigure = function (...args) {
+            const result = configuredCallback?.apply(this, args);
             installFilter(this);
             return result;
         };
