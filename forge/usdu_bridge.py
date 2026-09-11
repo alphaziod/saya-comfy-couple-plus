@@ -12,7 +12,7 @@ Reason:
 
 Requirements:
 - UltimateSDUpscaleCustomSample must be installed.
-- The installed class must expose the V2.1 `structure_preservation` optional input.
+- Nonzero structure_preservation requires the V2.1 optional input; zero supports stock UltimateSDUpscale.
 """
 
 from __future__ import annotations
@@ -34,13 +34,6 @@ def _resolve_base():
             "Install/enable ComfyUI_UltimateSDUpscale first."
         )
 
-    schema = base.INPUT_TYPES()
-    optional = schema.get("optional", {})
-    if "structure_preservation" not in optional:
-        raise RuntimeError(
-            "Saya USDU bridge: the loaded UltimateSDUpscaleCustomSample does not "
-            "contain structure_preservation. Install the audited Identity Safe V2.1 patch."
-        )
     return base
 
 
@@ -55,19 +48,24 @@ class _SayaUSDUIdentitySafeBridge:
         schema = copy.deepcopy(base.INPUT_TYPES())
 
         # New Saya aliases default to the tested starting value.
-        spec = schema["optional"]["structure_preservation"]
+        optional = schema.setdefault("optional", {})
+        supported = "structure_preservation" in optional
+        spec = optional.get("structure_preservation", ("FLOAT", {"min": 0.0, "max": 1.0, "step": 0.05}))
         typ, opts = spec
         opts = dict(opts)
-        opts["default"] = 0.75
+        opts["default"] = 0.75 if supported else 0.0
         opts["tooltip"] = (
             "Saya Identity Safe V2.1 structure lock. "
-            "0 = exact upstream behavior, 0.75 = recommended first real-image test."
+            "0 = stock UltimateSDUpscale. Nonzero requires the Identity Safe V2.1 backend."
         )
         schema["optional"]["structure_preservation"] = (typ, opts)
         return schema
 
     def upscale(self, **kwargs):
         base = _resolve_base()
+        if "structure_preservation" not in base.INPUT_TYPES().get("optional", {}):
+            if kwargs.pop("structure_preservation", 0.0) != 0.0:
+                raise ValueError("Nonzero structure_preservation requires UltimateSDUpscale Identity Safe V2.1; use 0 for stock UltimateSDUpscale.")
         return base().upscale(**kwargs)
 
 

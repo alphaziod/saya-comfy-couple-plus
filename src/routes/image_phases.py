@@ -11,7 +11,6 @@ from ..services.image_phases import (
     parse_phase,
     phase_status,
     promote_candidate,
-    unload_everything,
 )
 
 LOGGER = logging.getLogger(__name__)

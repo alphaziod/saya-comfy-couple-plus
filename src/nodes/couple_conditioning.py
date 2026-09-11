@@ -11,6 +11,7 @@ except Exception:
     torch = None
 
 from .regional_attention.node import RegionalAttentionNode
+from ..services.conditioning import copy_conditioning, describe_conditioning_error
 
 
 class CoupleConditioningNode:
@@ -67,28 +68,9 @@ class CoupleConditioningNode:
     FUNCTION = "run"
     CATEGORY = "saya/rescue"
 
-    @staticmethod
-    def copy_conditioning(conditioning: Any) -> Any:
-        """Clone conditioning entries while preserving tensor ownership and metadata."""
-        if not conditioning:
-            return []
-        return [[entry[0], dict(entry[1])] for entry in conditioning]
-
-    @staticmethod
-    def describe_conditioning_error(name: str, conditioning: Any) -> Any:
-        """Return a human-readable conditioning validation error, or None when valid."""
-        if conditioning is None or conditioning == []:
-            return None
-        if not isinstance(conditioning, list):
-            return f"{name} is not a CONDITIONING list"
-        for index, entry in enumerate(conditioning):
-            if not isinstance(entry, (list, tuple)) or len(entry) != 2:
-                return f"{name}[{index}] is not a [tensor, metadata] entry"
-            if not isinstance(entry[0], torch.Tensor) or entry[0].ndim != 3:
-                return f"{name}[{index}] context is not a rank-3 tensor"
-            if not isinstance(entry[1], dict):
-                return f"{name}[{index}] metadata is not a dictionary"
-        return None
+    # Shared with the Forge couple node; see src/services/conditioning.py.
+    copy_conditioning = staticmethod(copy_conditioning)
+    describe_conditioning_error = staticmethod(describe_conditioning_error)
 
     @classmethod
     def build_regional_conditioning(cls: type[Self], conditioning: Any, mask: Any) -> Any:
@@ -116,9 +98,14 @@ class CoupleConditioningNode:
         return cls.build_regional_conditioning(region, mask)
 
     @staticmethod
-    def log_debug_message(message: str) -> Any:
+    def debug_enabled() -> bool:
+        """Return whether SAYA_COUPLE_DEBUG diagnostics are on."""
+        return os.environ.get("SAYA_COUPLE_DEBUG", "0") == "1"
+
+    @classmethod
+    def log_debug_message(cls, message: str) -> Any:
         """Write a debug message when couple-node diagnostics are enabled."""
-        if os.environ.get("SAYA_COUPLE_DEBUG", "0") == "1":
+        if cls.debug_enabled():
             print(f"[Saya Comfy Couple] {message}")
 
     @staticmethod
@@ -298,9 +285,17 @@ class CoupleConditioningNode:
         self.log_debug_message(
             f"mode={mode} entries(base,p1,p2,neg)={counts} fallback={fallback_reason or 'none'}"
         )
-        self.log_debug_message(
-            f"masks p1(min={mask_p1.min().item():.3f},max={mask_p1.max().item():.3f},mean={mask_p1.float().mean().item():.3f}) p2(min={mask_p2.min().item():.3f},max={mask_p2.max().item():.3f},mean={mask_p2.float().mean().item():.3f}) sum(min={(mask_p1 + mask_p2).min().item():.3f},max={(mask_p1 + mask_p2).max().item():.3f},mean={(mask_p1 + mask_p2).float().mean().item():.3f})"
-        )
+        if self.debug_enabled():
+            # Each .item() is a GPU->CPU sync; only pay it when logging is on.
+            mask_sum = mask_p1 + mask_p2
+            self.log_debug_message(
+                f"masks p1(min={mask_p1.min().item():.3f},max={mask_p1.max().item():.3f},"
+                f"mean={mask_p1.float().mean().item():.3f}) "
+                f"p2(min={mask_p2.min().item():.3f},max={mask_p2.max().item():.3f},"
+                f"mean={mask_p2.float().mean().item():.3f}) "
+                f"sum(min={mask_sum.min().item():.3f},max={mask_sum.max().item():.3f},"
+                f"mean={mask_sum.float().mean().item():.3f})"
+            )
         if mode == "COUPLE":
             region_p1 = self.build_couple_region(main_public, p1_public, mask_p1)
             region_p2 = self.build_couple_region(main_public, p2_public, mask_p2)

@@ -82,23 +82,6 @@ def resolve_registered_model_path(kind: str, name: str) -> Any:
     return None
 
 
-def load_checkpoint_bundle(name: str) -> Any:
-    """Load a checkpoint and return its model, CLIP encoder, and VAE."""
-    path = resolve_registered_model_path("checkpoints", name)
-    if not path:
-        raise RuntimeError(f"Checkpoint introuvable: {name}")
-    import comfy.sd
-    import folder_paths
-
-    model, clip, vae, _ = comfy.sd.load_checkpoint_guess_config(
-        path,
-        output_vae=True,
-        output_clip=True,
-        embedding_directory=folder_paths.get_folder_paths("embeddings"),
-    )
-    return (model, clip, vae)
-
-
 def load_vae_or_fallback(name: str, fallback: Any = None) -> Any:
     """Load a standalone VAE or return the supplied fallback when unavailable."""
     if not name or str(name) == "none":
@@ -114,19 +97,3 @@ def load_vae_or_fallback(name: str, fallback: Any = None) -> Any:
         return comfy.sd.VAE(sd=sd)
     except Exception:
         return fallback
-
-
-def load_selected_model_family(
-    kind: str, sdxl_name: str, anima_name: str, fallback: Any = None
-) -> Any:
-    """Load the model selected for one model family while preserving a fallback."""
-    kind = str(kind or "none")
-    if kind == "none":
-        return fallback
-    name = anima_name if kind == "anima" else sdxl_name
-    try:
-        return load_checkpoint_bundle(name)
-    except Exception:
-        if fallback is not None:
-            return fallback
-        raise

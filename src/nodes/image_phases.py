@@ -9,8 +9,8 @@ from typing import Any, Self
 from ..services.image_phases import (
     DETAILERS,
     checkpoint_paths,
+    emit_phase_complete,
     load_validated_source,
-    memory_snapshot,
     normalize_detailer,
     parse_json_widget,
     parse_phase,
@@ -18,7 +18,11 @@ from ..services.image_phases import (
     promote_candidate,
     save_candidate,
     unload_everything,
-    emit_phase_complete,
+)
+from ..services.couple_runtime import (
+    clear_master_payload,
+    get_hidream_payload,
+    get_naturalize_payload,
 )
 from ..services.models import (
     build_model_choice_list,
@@ -365,7 +369,7 @@ class SayaImagePhaseCheckpointLoad:
 
 
 class SayaImagePhaseCheckpointStop:
-    """Atomic phase boundary followed by automatic handoff without unload."""
+    """Atomic phase boundary with optional model offload before automatic handoff."""
 
     @classmethod
     def INPUT_TYPES(cls: type[Self]) -> dict[str, Any]:
@@ -386,6 +390,7 @@ class SayaImagePhaseCheckpointStop:
             "optional": {
                 "source_path": ("STRING", {"default": ""}),
                 "save_receipt": ("STRING", {"forceInput": True}),
+                "unload_after_phase": ("BOOLEAN", {"default": False}),
             },
         }
 
@@ -415,6 +420,7 @@ class SayaImagePhaseCheckpointStop:
         samplers_json: str,
         source_path: str = "",
         save_receipt: str = "",
+        unload_after_phase: bool = False,
     ) -> dict[str, Any]:
         """Save, validate, signal the next run, and unload after the final phase.
 
@@ -452,9 +458,9 @@ class SayaImagePhaseCheckpointStop:
                 checkpoint_paths(phase_number, checkpoint_root).validated_image
             )
         finally:
-            # Keep caches warm between phases, but release everything once the
-            # complete six-phase workflow has finished.
-            if phase_number == 6:
+            # Public templates can offload weights at each boundary. Patcher
+            # references and the disk conditioning cache remain reusable.
+            if phase_number == 6 or unload_after_phase:
                 unload_report = unload_everything()
             else:
                 unload_report = {
@@ -476,6 +482,8 @@ class SayaImagePhaseCheckpointStop:
             manifest=validated,
             unload_report=unload_report,
         )
+        if phase_number == 6:
+            clear_master_payload()
         message = (
             f"Phase {phase_number} sauvegardée. "
             + (f"Passe {next_phase} dans 2 s." if next_phase else "Retour IDLE.")
@@ -523,6 +531,19 @@ class SayaImagePhase2Load(_FixedPhaseLoad):
 
 class SayaImagePhase3Load(_FixedPhaseLoad):
     PHASE = 3
+    RETURN_TYPES = SayaImagePhaseCheckpointLoad.RETURN_TYPES + (
+        "CONDITIONING", "CONDITIONING", "CONDITIONING", "CONDITIONING",
+    )
+    RETURN_NAMES = SayaImagePhaseCheckpointLoad.RETURN_NAMES + (
+        "hidream_main_positive",
+        "hidream_person_1_positive",
+        "hidream_person_2_positive",
+        "hidream_negative",
+    )
+
+    def load(self: Self) -> tuple[Any, ...]:
+        base = super().load()
+        return base + get_hidream_payload()
 
 
 class SayaImagePhase4Load(_FixedPhaseLoad):
@@ -535,6 +556,18 @@ class SayaImagePhase5Load(_FixedPhaseLoad):
 
 class SayaImagePhase6Load(_FixedPhaseLoad):
     PHASE = 6
+    RETURN_TYPES = SayaImagePhaseCheckpointLoad.RETURN_TYPES + (
+        "MODEL", "CONDITIONING", "CONDITIONING",
+    )
+    RETURN_NAMES = SayaImagePhaseCheckpointLoad.RETURN_NAMES + (
+        "naturalize_model",
+        "naturalize_positive",
+        "naturalize_negative",
+    )
+
+    def load(self: Self) -> tuple[Any, ...]:
+        base = super().load()
+        return base + get_naturalize_payload()
 
 
 class _FixedPhaseStop(SayaImagePhaseCheckpointStop):
@@ -557,6 +590,7 @@ class _FixedPhaseStop(SayaImagePhaseCheckpointStop):
             "optional": {
                 "source_path": ("STRING", {"default": ""}),
                 "save_receipt": ("STRING", {"forceInput": True}),
+                "unload_after_phase": ("BOOLEAN", {"default": False}),
             },
         }
 
@@ -571,6 +605,7 @@ class _FixedPhaseStop(SayaImagePhaseCheckpointStop):
         samplers_json: Any,
         source_path: str = "",
         save_receipt: str = "",
+        unload_after_phase: bool = False,
     ) -> dict[str, Any]:
         return super().stop(
             image=image,
@@ -585,6 +620,7 @@ class _FixedPhaseStop(SayaImagePhaseCheckpointStop):
             samplers_json=samplers_json,
             source_path=source_path,
             save_receipt=save_receipt,
+            unload_after_phase=unload_after_phase,
         )
 
 

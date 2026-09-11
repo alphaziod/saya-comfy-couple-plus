@@ -185,49 +185,22 @@ class SayaResolutionScaleCalculator:
         else:
             source_w, source_h = 1024, 1024
 
+        # Unused-but-kept widgets (megapixel-target legacy of the DaSiWa node this
+        # was forked from): only fixed presets are offered by INPUT_TYPES, so the
+        # aspect / divisor / custom widgets never affect the result. They are left
+        # on the node so old saved workflows keep loading without a socket error.
+        del scale_from_image, aspect_preset_when_not_image, custom_aspect_width
+        del custom_aspect_height, mode, custom_divisor
+
         if no_scale:
             width, height = source_w, source_h
-            if swap_aspect_when_not_image:
-                width, height = height, width
-            return width, height, float(width), float(height)
-
-        if resolution_preset in self.FIXED_RESOLUTION_PRESETS:
-            width, height = self.FIXED_RESOLUTION_PRESETS[resolution_preset]
-            if swap_aspect_when_not_image:
-                width, height = height, width
-            return width, height, float(width), float(height)
-
-        target_mp = float(self.PRESETS[resolution_preset])
-
-        if scale_from_image and image is not None:
-            aspect_w, aspect_h = source_w, source_h
         else:
-            if aspect_preset_when_not_image == "CUSTOM":
-                aspect_w, aspect_h = custom_aspect_width, custom_aspect_height
-            else:
-                aspect_w, aspect_h = self.ASPECT_PRESETS[aspect_preset_when_not_image]
-
-            if swap_aspect_when_not_image:
-                aspect_w, aspect_h = aspect_h, aspect_w
-
-        if aspect_w <= 0 or aspect_h <= 0:
-            aspect_w, aspect_h = 16, 9
-
-        ratio = aspect_w / aspect_h
-        total_pixels = target_mp * 1_000_000
-        width = math.sqrt(total_pixels * ratio)
-        height = width / ratio
-
-        if mode == "WAN/LTX (Div32)":
-            divisor = 32
-        elif mode == "FLUX/SDXL (Div8)":
-            divisor = 8
-        else:
-            divisor = max(1, int(custom_divisor))
-
-        width = max(divisor, round(width / divisor) * divisor)
-        height = max(divisor, round(height / divisor) * divisor)
-
+            width, height = self.FIXED_RESOLUTION_PRESETS.get(
+                resolution_preset,
+                self.FIXED_RESOLUTION_PRESETS["Landscape 16:9 · 1344x768"],
+            )
+        if swap_aspect_when_not_image:
+            width, height = height, width
         return int(width), int(height), float(width), float(height)
 
 
@@ -246,8 +219,7 @@ class SayaUpscalePresetModelLoader:
         import folder_paths
 
         models = list(folder_paths.get_filename_list("upscale_models"))
-        preferred = "RealESRGAN_x4plus_anime_6B.safetensors"
-        default_model = preferred if preferred in models else (models[0] if models else "")
+        default_model = models[0] if models else ""
 
         model_options: tuple[Any, ...]
         if models:

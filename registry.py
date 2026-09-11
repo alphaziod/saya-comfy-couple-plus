@@ -2,13 +2,21 @@ from __future__ import annotations
 
 from typing import Any
 
+from .src.nodes.hidream_lora import SayaHiDreamLoraLoader, SayaHiDreamLoraSettings
+
 from .src.nodes.couple_conditioning import CoupleConditioningNode
+
+from .src.nodes.couple_conditioning_hidream import (
+    SayaComfyCoupleHiDream,
+    SayaComfyCoupleHiDreamCopy,
+)
 
 from .src.nodes.couple_phase_prompts import (
     SayaCouplePromptBundlePack,
     SayaCouplePromptBundleUnpack,
     SayaLatentShapeFromImage,
 )
+
 
 from .src.nodes.image_phases import (
     SayaImageGenerationReview,
@@ -60,6 +68,8 @@ from .forge.usdu_bridge import (
 
 
 NODE_CLASS_MAPPINGS: dict[str, type[Any]] = {
+    "SayaHiDreamLoraLoader": SayaHiDreamLoraLoader,
+    "SayaHiDreamLoraSettings": SayaHiDreamLoraSettings,
     "SayaImageGenerationReview": SayaImageGenerationReview,
     "SayaImagePhaseController": SayaImagePhaseController,
     "SayaImageModelHubSettings": SayaImageModelHubSettings,
@@ -81,6 +91,8 @@ NODE_CLASS_MAPPINGS: dict[str, type[Any]] = {
     "SayaImagePhase6Stop": SayaImagePhase6Stop,
 
     "SayaComfyCouple": CoupleConditioningNode,
+    "SayaComfyCoupleHiDream": SayaComfyCoupleHiDream,
+    "SayaComfyCoupleHiDreamCopy": SayaComfyCoupleHiDreamCopy,
     "SayaCouplePromptBundlePack": SayaCouplePromptBundlePack,
     "SayaCouplePromptBundleUnpack": SayaCouplePromptBundleUnpack,
     "SayaLatentShapeFromImage": SayaLatentShapeFromImage,
@@ -104,6 +116,8 @@ NODE_CLASS_MAPPINGS: dict[str, type[Any]] = {
 
 
 NODE_DISPLAY_NAME_MAPPINGS = {
+    "SayaHiDreamLoraLoader": "Saya HiDream LoRA · MODEL Loader",
+    "SayaHiDreamLoraSettings": "Saya HiDream LoRA · Settings & Trigger Prompt",
     "SayaImageGenerationReview": "Saya Image Review · Continue / Restart New Seed",
     "SayaImagePhaseController": "Saya Image Auto Phase Controller",
     "SayaImageModelHubSettings": "Saya Image Model Hub · Settings Only",
@@ -125,6 +139,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "SayaImagePhase6Stop": "AUTO PASS 6 · STOP / UNLOAD",
 
     "SayaComfyCouple": "Saya Comfy Couple",
+    "SayaComfyCoupleHiDream": "Saya Comfy Couple - HiDream (native regional)",
+    "SayaComfyCoupleHiDreamCopy": "Saya Comfy Couple - HiDream - COPY",
     "SayaCouplePromptBundlePack": "Saya Couple Prompt Bundle PACK",
     "SayaCouplePromptBundleUnpack": "Saya Couple Prompt Bundle UNPACK",
     "SayaLatentShapeFromImage": "Saya Latent Shape From Image",

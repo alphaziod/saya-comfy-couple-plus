@@ -57,6 +57,20 @@ function setMode(node, mode) {
     else node.mode = mode;
 }
 
+function pruneDisabledLazyBranches(prompt) {
+    // Validation visits both links even when execution is lazy. For a literal
+    // switch, route the unused input to the selected one in the API prompt only.
+    // The saved workflow retains both branches for later activation.
+    for (const node of Object.values(prompt?.output ?? {})) {
+        const inputs = node.inputs;
+        if (node.class_type !== "LazySwitchKJ" || typeof inputs?.switch !== "boolean") continue;
+        const selected = inputs.switch ? "on_true" : "on_false";
+        const unused = inputs.switch ? "on_false" : "on_true";
+        if (inputs[selected] !== undefined) inputs[unused] = inputs[selected];
+    }
+    return prompt;
+}
+
 async function graphPromptForCurrentPhase(previousGraphToPrompt, context, args) {
     if (!sequenceRunning || activePhase < 1 || activePhase > 6) {
         sequenceRunning = true;
@@ -70,7 +84,7 @@ async function graphPromptForCurrentPhase(previousGraphToPrompt, context, args) 
         setMode(node, modeForPhase(node, activePhase));
     }
     try {
-        return await previousGraphToPrompt.apply(context, args);
+        return pruneDisabledLazyBranches(await previousGraphToPrompt.apply(context, args));
     } finally {
         for (const [node, mode] of snapshots) setMode(node, mode);
         app.graph?.setDirtyCanvas?.(true, true);

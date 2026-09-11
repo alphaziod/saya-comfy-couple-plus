@@ -17,6 +17,9 @@ from typing import Any, Self
 import torch
 
 from .attention_couple import AttentionCouple
+from ..src.services.conditioning import copy_conditioning, describe_conditioning_error
+from ..src.services.couple_runtime import store_master_payload
+from ..src.nodes.text_and_model_routing import resolve_hidream_conditioning
 
 COUPLE_CONFIG_TYPE = "SAYA_COUPLE_CONFIG"
 CONFIG_VERSION = 10
@@ -106,6 +109,13 @@ class SayaComfyCoupleForge:
                 "naturalize_person_1_positive": ("CONDITIONING",),
                 "naturalize_person_2_positive": ("CONDITIONING",),
                 "naturalize_negative": ("CONDITIONING",),
+                # Native HiDream conditionings are produced by the same four
+                # external prompt encoders. The MASTER receives them only so it
+                # can hand them to Phase 03 through Saya's invisible backend.
+                "hidream_main_positive": ("CONDITIONING",),
+                "hidream_person_1_positive": ("CONDITIONING",),
+                "hidream_person_2_positive": ("CONDITIONING",),
+                "hidream_negative": ("CONDITIONING",),
             },
         }
 
@@ -135,26 +145,9 @@ class SayaComfyCoupleForge:
     FUNCTION = "run"
     CATEGORY = "saya/rescue"
 
-    @staticmethod
-    def copy_conditioning(conditioning: Any) -> Any:
-        if not conditioning:
-            return []
-        return [[entry[0], dict(entry[1])] for entry in conditioning]
-
-    @staticmethod
-    def describe_conditioning_error(name: str, conditioning: Any) -> Any:
-        if conditioning is None or conditioning == []:
-            return None
-        if not isinstance(conditioning, list):
-            return f"{name} is not a CONDITIONING list"
-        for index, entry in enumerate(conditioning):
-            if not isinstance(entry, (list, tuple)) or len(entry) != 2:
-                return f"{name}[{index}] is not a [tensor, metadata] entry"
-            if not isinstance(entry[0], torch.Tensor) or entry[0].ndim != 3:
-                return f"{name}[{index}] context is not a rank-3 tensor"
-            if not isinstance(entry[1], dict):
-                return f"{name}[{index}] metadata is not a dictionary"
-        return None
+    # Shared with the legacy couple node; see src/services/conditioning.py.
+    copy_conditioning = staticmethod(copy_conditioning)
+    describe_conditioning_error = staticmethod(describe_conditioning_error)
 
     @classmethod
     def build_regional_conditioning(cls: type[Self], conditioning: Any, mask: Any) -> Any:
@@ -536,7 +529,22 @@ class SayaComfyCoupleForge:
         naturalize_person_1_positive: Any = None,
         naturalize_person_2_positive: Any = None,
         naturalize_negative: Any = None,
+        hidream_main_positive: Any = None,
+        hidream_person_1_positive: Any = None,
+        hidream_person_2_positive: Any = None,
+        hidream_negative: Any = None,
     ) -> Any:
+        # The four SayaDualCLIPTextEncode nodes defer their HiDream branch and
+        # hand us inert request tokens. ComfyUI cannot run this MASTER until all
+        # four have executed, so resolving here -- before any SDXL UNet work --
+        # flushes every pending HiDream prompt in ONE quad-CLIP load instead of
+        # a per-node SDXL<->HiDream ping-pong. Plain (non-request) values pass
+        # straight through.
+        hidream_main_positive = resolve_hidream_conditioning(hidream_main_positive)
+        hidream_person_1_positive = resolve_hidream_conditioning(hidream_person_1_positive)
+        hidream_person_2_positive = resolve_hidream_conditioning(hidream_person_2_positive)
+        hidream_negative = resolve_hidream_conditioning(hidream_negative)
+
         config = normalize_couple_config(
             {
                 "person_2_enabled": bool(person_2_positive),
@@ -600,6 +608,27 @@ class SayaComfyCoupleForge:
             naturalize_positive = normal[5]
             naturalize_negative_out = normal[7]
             self.log_debug_message("naturalize=disabled fallback=normal_outputs")
+
+        special_routing_requested = naturalize_ready or any(
+            value is not None and value != []
+            for value in (
+                hidream_main_positive,
+                hidream_person_1_positive,
+                hidream_person_2_positive,
+                hidream_negative,
+            )
+        )
+        if special_routing_requested:
+            store_master_payload(
+                hidream_main=hidream_main_positive,
+                hidream_person_1=hidream_person_1_positive,
+                hidream_person_2=hidream_person_2_positive,
+                hidream_negative=hidream_negative,
+                naturalize_model=naturalize_model,
+                naturalize_positive=naturalize_positive,
+                naturalize_negative=naturalize_negative_out,
+                naturalize_ready=naturalize_ready,
+            )
 
         return normal + (
             naturalize_model,
