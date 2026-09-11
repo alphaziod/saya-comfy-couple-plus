@@ -1,57 +1,48 @@
 // @ts-expect-error ComfyUI injects this runtime module.
 import { app } from "../../scripts/app.js";
 
-// ComfyUI 1.45.x promoted/subgraph combo widgets keep their own option state.
-// Changing the Python INPUT_TYPES or only wrapping node callbacks is therefore
-// not enough: the host combo can be re-synchronised back to the source options.
-// This extension treats the aspect selector as authoritative and reconciles the
-// visible resolution combo itself.  It also rescans because promoted widgets can
-// be created after nodeCreated/loadedGraphNode has already fired.
-
+// Filters resolution_preset down to the presets matching
+// aspect_preset_when_not_image (CUSTOM uses custom_aspect_width/
+// custom_aspect_height instead). Both the aspect labels (e.g. "16:9 -
+// Landscape") and the preset names (e.g. "Landscape 16:9 · 1344x768", see
+// src/nodes/saya_resolution_scale.py) embed the same plain "A:B" ratio text,
+// so filtering is a text match — no ratio table duplicated here.
+//
+// ROOT CAUSE (traced against the installed comfyui_frontend_package):
+//
+// SayaResolutionScaleCalculator sits inside a subgraph ("02 · Resolution /
+// T2I") with its ratio widgets exposed as subgraph inputs. The combo the
+// user actually clicks is on the subgraph's own proxy node in the parent
+// graph. That proxy does NOT keep its widgets in a plain, static array:
+// `SubgraphNode.widgets` is a getter that projects each promoted input
+// through `_projectPromotedWidget()`, which returns an object whose
+// `value` / `options` / `callback` all read and write through a global
+// Pinia store (the "widgetValue" store), keyed by
+// `(rootGraphId, subgraphNodeId, widgetName)` — NOT the inner node's own
+// `node.widgets`. That store entry only exists once ComfyUI has resolved
+// the link from the subgraph's input to the inner widget and called
+// `_setWidget()`, which fires a `widget-promoted` event on
+// `subgraphNode.subgraph.events`.
+//
+// Earlier attempts failed because they either targeted the wrong node (the
+// inner SayaResolutionScaleCalculator, whose widgets are link-driven and
+// invisible once converted to subgraph inputs) or ran once at
+// nodeCreated/loadedGraphNode — before that promotion had necessarily
+// completed — with nothing to retry later. The fix: also listen for the
+// `widget-promoted` event on the specific subgraph node's own event
+// target. That is a targeted, one-shot-per-promotion signal (not a poll or
+// a global listener), which is exactly the moment the projected widget
+// object becomes available/refreshed.
+//
+// The projected widget's `options` getter returns the *live* store object
+// by reference (not a copy), so mutating a property on it (e.g. `.values`)
+// writes straight into the reactive store — no extra sync step needed.
 const ASPECT_WIDGET = "aspect_preset_when_not_image";
 const PRESET_WIDGET = "resolution_preset";
 const CUSTOM_WIDTH_WIDGET = "custom_aspect_width";
 const CUSTOM_HEIGHT_WIDGET = "custom_aspect_height";
 const CUSTOM_VALUE = "CUSTOM";
-const ALL_VALUE = "All (no filter)";
 const RATIO_PATTERN = /(\d+):(\d+)/;
-
-// Deliberate fallback copy of the Python list.  Do not depend on the host combo
-// to give us the full list: the exact bug we are fixing can expose only the stale
-// 16:9 options on the promoted proxy widget.
-const ALL_PRESETS = [
-    "Square 1:1 · 768x768",
-    "Square 1:1 · 1024x1024",
-    "Square 1:1 · 1280x1280",
-    "Landscape 4:3 · 1024x768",
-    "Landscape 4:3 · 1280x960",
-    "Landscape 4:3 · 1536x1152",
-    "Portrait 3:4 · 768x1024",
-    "Portrait 3:4 · 960x1280",
-    "Portrait 3:4 · 1152x1536",
-    "Landscape 3:2 · 960x640",
-    "Landscape 3:2 · 1152x768",
-    "Landscape 3:2 · 1216x832",
-    "Landscape 3:2 · 1344x896",
-    "Portrait 2:3 · 640x960",
-    "Portrait 2:3 · 768x1152",
-    "Portrait 2:3 · 832x1216",
-    "Portrait 2:3 · 896x1344",
-    "Landscape 16:9 · 896x512",
-    "Landscape 16:9 · 1152x640",
-    "Landscape 16:9 · 1344x768",
-    "Landscape 16:9 · 1600x896",
-    "Portrait 9:16 · 512x896",
-    "Portrait 9:16 · 640x1152",
-    "Portrait 9:16 · 768x1344",
-    "Portrait 9:16 · 896x1600",
-    "Ultrawide 21:9 · 1344x576",
-    "Ultrawide 21:9 · 1600x704",
-    "Ultrawide 21:9 · 1792x768",
-    "Ultrawide Portrait 9:21 · 576x1344",
-    "Ultrawide Portrait 9:21 · 704x1600",
-    "Ultrawide Portrait 9:21 · 768x1792",
-];
 
 function findWidget(node, name) {
     return node?.widgets?.find((widget) => widget?.name === name);
@@ -65,13 +56,12 @@ function gcd(a, b) {
 }
 
 function ratioToken(width, height) {
-    const d = gcd(width, height);
-    return `${Math.round(width) / d}:${Math.round(height) / d}`;
+    const divisor = gcd(width, height);
+    return `${Math.round(width) / divisor}:${Math.round(height) / divisor}`;
 }
 
 function targetRatioToken(node) {
     const aspectValue = String(findWidget(node, ASPECT_WIDGET)?.value ?? "");
-    if (!aspectValue || aspectValue === ALL_VALUE) return null;
 
     if (aspectValue === CUSTOM_VALUE) {
         const width = Number(findWidget(node, CUSTOM_WIDTH_WIDGET)?.value ?? 0);
@@ -80,7 +70,7 @@ function targetRatioToken(node) {
     }
 
     const match = aspectValue.match(RATIO_PATTERN);
-    return match ? `${Number(match[1])}:${Number(match[2])}` : null;
+    return match ? `${Number(match[1])}:${Number(match[2])}` : null; // no match => "All (no filter)"
 }
 
 function presetRatioToken(name) {
@@ -92,132 +82,96 @@ function presetPixels(name) {
     return match ? Number(match[1]) * Number(match[2]) : 0;
 }
 
-function choicesFor(node) {
-    const ratio = targetRatioToken(node);
-    if (ratio === null) return ALL_PRESETS;
-    const filtered = ALL_PRESETS.filter((name) => presetRatioToken(name) === ratio);
-    return filtered.length ? filtered : ALL_PRESETS;
-}
-
-function sameValues(a, b) {
-    if (!Array.isArray(a) || a.length !== b.length) return false;
-    return a.every((value, index) => String(value) === b[index]);
-}
-
-function nearestChoice(current, choices) {
-    if (choices.includes(String(current))) return String(current);
-    const pixels = presetPixels(current);
-    if (!pixels) return choices[0];
+// Picks the compatible preset closest in pixel count to the one that was
+// selected before, instead of always resetting to the first option — this
+// keeps whatever resolution "tier" the user had (fast/balanced/high) when
+// they simply change the aspect ratio.
+function nearestCompatible(previousName, choices) {
+    const previousPixels = presetPixels(previousName);
+    if (!previousPixels) return choices[0];
     return choices.reduce((best, candidate) =>
-        Math.abs(presetPixels(candidate) - pixels) < Math.abs(presetPixels(best) - pixels)
+        Math.abs(presetPixels(candidate) - previousPixels) < Math.abs(presetPixels(best) - previousPixels)
             ? candidate
             : best
     , choices[0]);
 }
 
-function reconcile(node) {
-    const aspectWidget = findWidget(node, ASPECT_WIDGET);
-    const presetWidget = findWidget(node, PRESET_WIDGET);
-    if (!aspectWidget || !presetWidget) return false;
-
-    presetWidget.options ??= {};
-    const choices = choicesFor(node);
-
-    // Use a plain array.  Vue promoted widgets clone combo option objects, and
-    // current ComfyUI explicitly syncs source combo options into promoted host
-    // state; a function-valued options.values was not reliable here.
-    const existing = presetWidget.options.values;
-    if (!sameValues(existing, choices)) {
-        presetWidget.options.values = [...choices];
-    }
-
-    const next = nearestChoice(presetWidget.value, choices);
-    if (String(presetWidget.value ?? "") !== next) {
-        presetWidget.value = next;
-        presetWidget.callback?.(next);
-        node.graph?.setDirtyCanvas?.(true, true);
-        node.setDirtyCanvas?.(true, true);
-    }
-    return true;
-}
-
-function wrapWidget(widget, node) {
-    if (!widget || widget.__sayaResolutionRatioWrapped) return;
-    widget.__sayaResolutionRatioWrapped = true;
-    const previous = widget.callback;
-    widget.callback = function (...args) {
-        const result = previous?.apply(this, args);
-        queueMicrotask(() => reconcile(node));
-        return result;
-    };
-}
-
 function install(node) {
     const aspectWidget = findWidget(node, ASPECT_WIDGET);
     const presetWidget = findWidget(node, PRESET_WIDGET);
-    if (!aspectWidget || !presetWidget) return false;
+    if (!aspectWidget || !presetWidget) return;
 
-    wrapWidget(aspectWidget, node);
-    wrapWidget(findWidget(node, CUSTOM_WIDTH_WIDGET), node);
-    wrapWidget(findWidget(node, CUSTOM_HEIGHT_WIDGET), node);
+    // Guard on the WIDGET OBJECT (stable/cached per promoted input slot, or
+    // per plain-node widget), not the node: a fresh widget object (e.g. a
+    // widget re-promoted after a link change) gets a fresh capture instead
+    // of silently keeping a dangling reference to a discarded old one.
+    if (presetWidget.__sayaRatioFilterInstalled) return;
 
-    if (!node.__sayaResolutionRatioOnWidgetChangedWrapped) {
-        node.__sayaResolutionRatioOnWidgetChangedWrapped = true;
-        const previous = node.onWidgetChanged;
-        node.onWidgetChanged = function (name, value, oldValue, widget) {
-            const result = previous?.call(this, name, value, oldValue, widget);
-            if (
-                name === ASPECT_WIDGET ||
-                name === CUSTOM_WIDTH_WIDGET ||
-                name === CUSTOM_HEIGHT_WIDGET
-            ) {
-                queueMicrotask(() => reconcile(this));
+    const currentValues = presetWidget.options?.values;
+    if (!Array.isArray(currentValues) || !currentValues.length) return; // not resolved yet; retry on widget-promoted
+    presetWidget.__sayaRatioFilterInstalled = true;
+    const allPresets = [...currentValues];
+
+    // Read live on every access (dropdown open, whatever renderer is in
+    // use) — both classic litegraph combos and this ComfyUI build's Vue
+    // combo widget call options.values() when it is a function.
+    presetWidget.options.values = function () {
+        const target = targetRatioToken(node);
+        if (target === null) return allPresets;
+        const filtered = allPresets.filter((name) => presetRatioToken(name) === target);
+        return filtered.length ? filtered : allPresets;
+    };
+
+    // Nicety, not required for filtering to work: snap the current value to
+    // a matching one (closest existing tier) as soon as the ratio changes.
+    for (const widget of [aspectWidget, findWidget(node, CUSTOM_WIDTH_WIDGET), findWidget(node, CUSTOM_HEIGHT_WIDGET)]) {
+        if (!widget || widget.__sayaRatioFilterWrapped) continue;
+        widget.__sayaRatioFilterWrapped = true;
+        const previousCallback = widget.callback;
+        widget.callback = function (...args) {
+            const result = previousCallback?.apply(this, args);
+            const options = presetWidget.options.values();
+            if (!options.includes(presetWidget.value)) {
+                const next = nearestCompatible(presetWidget.value, options);
+                presetWidget.value = next;
+                presetWidget.callback?.(next);
             }
+            node.graph?.setDirtyCanvas?.(true, true);
+            node.setDirtyCanvas?.(true, true);
             return result;
         };
     }
-
-    return reconcile(node);
 }
 
-function scanGraph(graph, seen = new Set()) {
-    if (!graph || seen.has(graph)) return;
-    seen.add(graph);
-
-    const nodes = graph._nodes ?? graph.nodes ?? [];
-    for (const node of nodes) {
-        install(node);
-        if (node?.subgraph) scanGraph(node.subgraph, seen);
-    }
+// Subgraph proxy widgets are only fully resolved (and their options/value
+// available) once ComfyUI links the subgraph input to the inner widget and
+// promotes it — which dispatches this event on the subgraph's own event
+// target. Listening here (once per subgraph node instance) is what lets
+// `install` retry exactly when the widget becomes available, instead of
+// racing nodeCreated/loadedGraphNode timing or polling the graph.
+function watchPromotion(node) {
+    if (node.__sayaWidgetPromotedWatched) return;
+    const events = node?.subgraph?.events;
+    if (!events?.addEventListener) return;
+    node.__sayaWidgetPromotedWatched = true;
+    events.addEventListener("widget-promoted", () => install(node));
 }
 
-function scan() {
-    try {
-        if (app?.graph) scanGraph(app.graph);
-    } catch (error) {
-        console.warn("[Saya] resolution ratio sync failed", error);
-    }
+function attach(node) {
+    install(node);
+    watchPromotion(node);
 }
 
 app.registerExtension({
-    name: "Saya.ResolutionRatioFilter.V3",
-
-    setup() {
-        // Promoted subgraph widgets are not guaranteed to exist when the normal
-        // creation hooks fire.  A lightweight reconciliation loop makes this
-        // deterministic and also repairs any option overwrite done by ComfyUI.
-        setInterval(scan, 200);
-        document.addEventListener("pointerdown", scan, true);
-        window.addEventListener("focus", scan);
-        setTimeout(scan, 0);
-        setTimeout(scan, 250);
-    },
-
+    name: "Saya.ResolutionRatioFilter",
+    // Instance-level hooks, not beforeRegisterNodeDef/prototype patching:
+    // matches by widget NAME so this works for the real
+    // SayaResolutionScaleCalculator node and for a subgraph's dynamically
+    // typed proxy node alike.
     nodeCreated(node) {
-        install(node);
+        attach(node);
     },
-
     loadedGraphNode(node) {
-        install(node);
+        attach(node);
     },
 });

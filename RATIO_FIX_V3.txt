@@ -1,5 +1,0 @@
-Saya resolution ratio fix V3
-- aspect selector is authoritative in Python (stale 16:9 preset cannot win)
-- visible resolution combo is reconciled on promoted/subgraph widgets
-- full preset list fallback does not depend on a stale proxy combo
-- ratio changes preserve the nearest pixel/resolution tier
