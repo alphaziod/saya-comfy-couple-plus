@@ -2,36 +2,58 @@
 import { app } from "../../scripts/app.js";
 
 // Filters the "resolution_preset" combo of SayaResolutionScaleCalculator down
-// to the presets matching the chosen "ratio_filter" family. Presets are named
-// "<Family> · <W>x<H>" (see src/nodes/saya_resolution_scale.py), so filtering
-// is a plain prefix match — no duplicated ratio data needed on the JS side.
+// to the presets matching "aspect_preset_when_not_image" (CUSTOM uses
+// custom_aspect_width/custom_aspect_height instead). Both the aspect labels
+// (e.g. "16:9 - Landscape") and the preset names (e.g. "Landscape 16:9 ·
+// 1344x768", see src/nodes/saya_resolution_scale.py) embed the same plain
+// "A:B" ratio text, so filtering is a text match — no ratio table duplicated
+// here that could drift out of sync with the Python side.
 const NODE_CLASS = "SayaResolutionScaleCalculator";
-const FILTER_WIDGET = "ratio_filter";
+const ASPECT_WIDGET = "aspect_preset_when_not_image";
 const PRESET_WIDGET = "resolution_preset";
-const ALL = "All";
-const SEPARATOR = " · ";
-
-function familyOf(presetName) {
-    const index = presetName.indexOf(SEPARATOR);
-    return index === -1 ? presetName : presetName.slice(0, index);
-}
+const CUSTOM_WIDTH_WIDGET = "custom_aspect_width";
+const CUSTOM_HEIGHT_WIDGET = "custom_aspect_height";
+const CUSTOM_VALUE = "CUSTOM";
+const RATIO_PATTERN = /(\d+):(\d+)/;
 
 function findWidget(node, name) {
     return node.widgets?.find((widget) => widget.name === name);
 }
 
+function gcd(a, b) {
+    return b === 0 ? a : gcd(b, a % b);
+}
+
+function ratioToken(width, height) {
+    const divisor = gcd(Math.max(1, Math.round(width)), Math.max(1, Math.round(height))) || 1;
+    return `${Math.round(width) / divisor}:${Math.round(height) / divisor}`;
+}
+
+function targetRatioToken(node) {
+    const aspectWidget = findWidget(node, ASPECT_WIDGET);
+    const aspectValue = String(aspectWidget?.value ?? "");
+
+    if (aspectValue === CUSTOM_VALUE) {
+        const width = Number(findWidget(node, CUSTOM_WIDTH_WIDGET)?.value ?? 0);
+        const height = Number(findWidget(node, CUSTOM_HEIGHT_WIDGET)?.value ?? 0);
+        return width > 0 && height > 0 ? ratioToken(width, height) : null;
+    }
+
+    const match = aspectValue.match(RATIO_PATTERN);
+    return match ? `${match[1]}:${match[2]}` : null; // no match => "All (no filter)"
+}
+
 function applyFilter(node) {
-    const filterWidget = findWidget(node, FILTER_WIDGET);
     const presetWidget = findWidget(node, PRESET_WIDGET);
-    if (!filterWidget || !presetWidget) return;
+    if (!presetWidget) return;
 
     const allPresets = node.__sayaAllPresets ?? presetWidget.options?.values ?? [];
     node.__sayaAllPresets = allPresets;
 
-    const family = String(filterWidget.value ?? ALL);
-    const filtered = family === ALL
+    const targetRatio = targetRatioToken(node);
+    const filtered = targetRatio === null
         ? allPresets
-        : allPresets.filter((name) => familyOf(name) === family);
+        : allPresets.filter((name) => name.match(RATIO_PATTERN)?.[0] === targetRatio);
 
     presetWidget.options.values = filtered.length ? filtered : allPresets;
 
@@ -42,22 +64,30 @@ function applyFilter(node) {
     node.setDirtyCanvas?.(true, true);
 }
 
-function installFilter(node) {
-    if (node.__sayaRatioFilterInstalled) return;
-    node.__sayaRatioFilterInstalled = true;
-
-    const filterWidget = findWidget(node, FILTER_WIDGET);
-    const presetWidget = findWidget(node, PRESET_WIDGET);
-    if (!filterWidget || !presetWidget) return;
-
-    node.__sayaAllPresets = [...(presetWidget.options?.values ?? [])];
-
-    const previousCallback = filterWidget.callback;
-    filterWidget.callback = function (...args) {
+function wrapCallback(widget, node) {
+    const previousCallback = widget.callback;
+    widget.callback = function (...args) {
         const result = previousCallback?.apply(this, args);
         applyFilter(node);
         return result;
     };
+}
+
+function installFilter(node) {
+    if (node.__sayaRatioFilterInstalled) return;
+
+    const aspectWidget = findWidget(node, ASPECT_WIDGET);
+    const presetWidget = findWidget(node, PRESET_WIDGET);
+    const widthWidget = findWidget(node, CUSTOM_WIDTH_WIDGET);
+    const heightWidget = findWidget(node, CUSTOM_HEIGHT_WIDGET);
+    if (!aspectWidget || !presetWidget) return;
+    node.__sayaRatioFilterInstalled = true;
+
+    node.__sayaAllPresets = [...(presetWidget.options?.values ?? [])];
+
+    wrapCallback(aspectWidget, node);
+    if (widthWidget) wrapCallback(widthWidget, node);
+    if (heightWidget) wrapCallback(heightWidget, node);
 
     applyFilter(node);
 }

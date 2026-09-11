@@ -11,10 +11,11 @@ class SayaResolutionScaleCalculator:
     #
     # Every pair below is divisible by 64 (so also by 32 and by 8), which keeps
     # them safe generation sizes for SDXL/FLUX (div-8), WAN/LTX (div-32), and
-    # any div-64 latent bucket. The name before " · " is the ratio family used
-    # by the on-canvas "ratio_filter" widget (web/saya_resolution_ratio_filter.js)
-    # to only show the presets that match the chosen aspect ratio — keep the
-    # family text and the RATIO_FAMILIES list below in sync if you add more.
+    # any div-64 latent bucket. The "A:B" ratio embedded in the name before
+    # " · " (e.g. "Landscape 16:9") is read by
+    # web/saya_resolution_ratio_filter.js, which filters this list down to the
+    # presets matching whatever ratio is picked in aspect_preset_when_not_image
+    # — matched as plain "A:B" text, so no ratio table is duplicated in JS.
     _RATIO_FAMILIES: dict[str, list[tuple[int, int]]] = {
         "Square 1:1": [(768, 768), (1024, 1024), (1280, 1280)],
         "Landscape 4:3": [(1024, 768), (1280, 960), (1536, 1152)],
@@ -33,12 +34,10 @@ class SayaResolutionScaleCalculator:
         for w, h in sizes
     }
 
-    # Filter options for the "ratio_filter" widget: "All" plus every family.
-    RATIO_FILTERS = ["All", *_RATIO_FAMILIES.keys()]
-
     PRESETS = FIXED_RESOLUTION_PRESETS
 
     ASPECT_PRESETS = {
+        "All (no filter)": (0, 0),
         "1:1 - Square": (1, 1),
         "4:3 - Landscape": (4, 3),
         "3:4 - Portrait": (3, 4),
@@ -102,9 +101,10 @@ class SayaResolutionScaleCalculator:
                     {
                         "default": "16:9 - Landscape",
                         "description": (
-                            "Used only by megapixel targets when IMAGE ASPECT is off. "
-                            "Does NOT filter resolution_preset — use the ratio_filter "
-                            "widget below for that."
+                            "Filters resolution_preset down to matching-ratio "
+                            "sizes (pick CUSTOM to filter by the width/height "
+                            "below). Also used by megapixel targets when IMAGE "
+                            "ASPECT is off."
                         ),
                     },
                 ),
@@ -156,17 +156,6 @@ class SayaResolutionScaleCalculator:
                         "description": "Divisor used when Custom Divisor is selected.",
                     },
                 ),
-                "ratio_filter": (
-                    cls.RATIO_FILTERS,
-                    {
-                        "default": "All",
-                        "description": (
-                            "Only show resolution_preset options matching this "
-                            "aspect ratio family. Purely a display filter; it "
-                            "does not affect the calculation."
-                        ),
-                    },
-                ),
             },
             "optional": {
                 "image": ("IMAGE",),
@@ -189,7 +178,6 @@ class SayaResolutionScaleCalculator:
         custom_aspect_height: int,
         mode: str,
         custom_divisor: int,
-        ratio_filter: str,
         image=None,
     ):
         if image is not None:
@@ -202,9 +190,11 @@ class SayaResolutionScaleCalculator:
         # was forked from): only fixed presets are offered by INPUT_TYPES, so the
         # aspect / divisor / custom widgets never affect the result. They are left
         # on the node so old saved workflows keep loading without a socket error.
-        # ratio_filter is a pure display filter applied client-side (see
-        # web/saya_resolution_ratio_filter.js) and never affects the calculation.
-        del ratio_filter, scale_from_image, aspect_preset_when_not_image
+        # aspect_preset_when_not_image (plus custom_aspect_width/height for
+        # CUSTOM) also drives the resolution_preset filter client-side, see
+        # web/saya_resolution_ratio_filter.js — that filtering never reaches
+        # here, so these stay unused for the actual calculation.
+        del scale_from_image, aspect_preset_when_not_image
         del custom_aspect_width, custom_aspect_height, mode, custom_divisor
 
         if no_scale:
