@@ -102,10 +102,49 @@ class ResolutionPresetTests(unittest.TestCase):
 
     def test_calculate_returns_exact_preset_dimensions(self):
         calculator = self.calculator_cls()
+        aspect_by_ratio = {
+            "1:1": "1:1 - Square",
+            "4:3": "4:3 - Landscape",
+            "3:4": "3:4 - Portrait",
+            "3:2": "3:2 - Landscape",
+            "2:3": "2:3 - Portrait",
+            "16:9": "16:9 - Landscape",
+            "9:16": "9:16 - Portrait",
+            "21:9": "21:9 - Ultrawide",
+            "9:21": "9:21 - Ultrawide Portrait",
+        }
         for name, (w, h) in self.presets.items():
+            ratio = RATIO_PATTERN.search(name).group(0)
             with self.subTest(preset=name):
-                result = calculator.calculate(**self.base_kwargs(resolution_preset=name))
+                result = calculator.calculate(**self.base_kwargs(
+                    resolution_preset=name,
+                    aspect_preset_when_not_image=aspect_by_ratio[ratio],
+                ))
                 self.assertEqual(result, (w, h, float(w), float(h)))
+
+    def test_aspect_is_authoritative_when_saved_preset_is_stale(self):
+        calculator = self.calculator_cls()
+        cases = {
+            "1:1 - Square": (1024, 1024),
+            "4:3 - Landscape": (1280, 960),
+            "3:4 - Portrait": (960, 1280),
+            "9:16 - Portrait": (768, 1344),
+        }
+        for aspect, expected in cases.items():
+            with self.subTest(aspect=aspect):
+                result = calculator.calculate(**self.base_kwargs(
+                    resolution_preset="Landscape 16:9 · 1344x768",
+                    aspect_preset_when_not_image=aspect,
+                ))
+                self.assertEqual(result[:2], expected)
+
+    def test_current_workflow_mismatch_cannot_generate_16_9(self):
+        calculator = self.calculator_cls()
+        result = calculator.calculate(**self.base_kwargs(
+            resolution_preset="Landscape 16:9 · 896x512",
+            aspect_preset_when_not_image="4:3 - Landscape",
+        ))
+        self.assertEqual(result[:2], (1024, 768))
 
     def test_swap_flips_width_and_height(self):
         calculator = self.calculator_cls()

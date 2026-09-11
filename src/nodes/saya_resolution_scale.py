@@ -186,22 +186,66 @@ class SayaResolutionScaleCalculator:
         else:
             source_w, source_h = 1024, 1024
 
-        # Unused-but-kept widgets (megapixel-target legacy of the DaSiWa node this
-        # was forked from): only fixed presets are offered by INPUT_TYPES, so the
-        # aspect / divisor / custom widgets never affect the result. They are left
-        # on the node so old saved workflows keep loading without a socket error.
-        # aspect_preset_when_not_image (plus custom_aspect_width/height for
-        # CUSTOM) also drives the resolution_preset filter client-side, see
-        # web/saya_resolution_ratio_filter.js — that filtering never reaches
-        # here, so these stay unused for the actual calculation.
-        del scale_from_image, aspect_preset_when_not_image
-        del custom_aspect_width, custom_aspect_height, mode, custom_divisor
+        # aspect_preset_when_not_image is authoritative.  The frontend normally
+        # filters resolution_preset to the same ratio family, but promoted
+        # subgraph widgets in newer ComfyUI builds can keep a stale combo value.
+        # Never let a stale 16:9 value force the actual generation back to 16:9.
+        del scale_from_image, mode, custom_divisor
+
+        effective_preset = resolution_preset
+        requested_ratio: tuple[int, int] | None = None
+
+        if aspect_preset_when_not_image == "CUSTOM":
+            custom_w = max(1, int(custom_aspect_width))
+            custom_h = max(1, int(custom_aspect_height))
+            divisor = math.gcd(custom_w, custom_h)
+            requested_ratio = (custom_w // divisor, custom_h // divisor)
+        elif aspect_preset_when_not_image != "All (no filter)":
+            requested_ratio = self.ASPECT_PRESETS.get(aspect_preset_when_not_image)
+
+        if requested_ratio and requested_ratio != (0, 0):
+            ratio_token = f"{requested_ratio[0]}:{requested_ratio[1]}"
+
+            def preset_ratio_token(name: str) -> str | None:
+                family = name.split(" · ", 1)[0]
+                for token in family.split():
+                    if ":" in token:
+                        left, _, right = token.partition(":")
+                        if left.isdigit() and right.isdigit():
+                            return f"{int(left)}:{int(right)}"
+                return None
+
+            if preset_ratio_token(effective_preset) != ratio_token:
+                candidates = [
+                    name
+                    for name in self.FIXED_RESOLUTION_PRESETS
+                    if preset_ratio_token(name) == ratio_token
+                ]
+                if candidates:
+                    # Preserve the user's approximate resolution tier when the
+                    # ratio changes.  Example: 1344x768 (about 1.03 MP) ->
+                    # 1024x1024 for 1:1, rather than always taking the smallest.
+                    old_dims = self.FIXED_RESOLUTION_PRESETS.get(effective_preset)
+                    old_pixels = (
+                        old_dims[0] * old_dims[1]
+                        if old_dims
+                        else self.FIXED_RESOLUTION_PRESETS["Landscape 16:9 · 1344x768"][0]
+                        * self.FIXED_RESOLUTION_PRESETS["Landscape 16:9 · 1344x768"][1]
+                    )
+                    effective_preset = min(
+                        candidates,
+                        key=lambda name: abs(
+                            self.FIXED_RESOLUTION_PRESETS[name][0]
+                            * self.FIXED_RESOLUTION_PRESETS[name][1]
+                            - old_pixels
+                        ),
+                    )
 
         if no_scale:
             width, height = source_w, source_h
         else:
             width, height = self.FIXED_RESOLUTION_PRESETS.get(
-                resolution_preset,
+                effective_preset,
                 self.FIXED_RESOLUTION_PRESETS["Landscape 16:9 · 1344x768"],
             )
         if swap_aspect_when_not_image:
