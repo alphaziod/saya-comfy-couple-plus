@@ -1,0 +1,9 @@
+{
+ "source": "prompt of the pure-RNG gain campaign (80 images, g 0.68-0.83); negative made neutral for the public release",
+ "gain": 0.78,
+ "notes": "two adult characters, casual clothes, everyday scene; random seed per image",
+ "MAIN": "best quality, very aesthetic, 2girls, two adult women, fully clothed, casual clothes,\n\n(cowboy shot:1.2), two-shot, (seated hug from behind:1.3), pink-haired woman sitting behind the brown-haired woman on the bed, arms wrapped around her shoulders, brown-haired woman leaning back against her, both facing forward, (both faces visible:1.4), heads separated, cozy friendly hug, relaxed smiles,\n\n(highly detailed cluttered anime gamer room:1.2), (rich detailed background:1.2), many objects, (pink neon:1.1), (cyan neon:1.2), (violet ambient light:1.1), multicolored led strips, neon sign on the wall, glowing RGB gaming pc tower, gaming desk, RGB monitor, second monitor, mechanical keyboard with rainbow backlight, gaming mouse, headphones on stand, speakers, desk lamp, energy drink cans, cables, game controllers, manga stacks, anime posters and art prints on the walls, shelf with figures and plushies, small potted plants, fairy lights, fluffy pink bedding, colorful patterned pillows, rug, window with night city lights and blue skyscrapers, dark room lit by many colored light sources,\n\ncinematic anime lighting, colored room lights, gentle shadows, matte skin, moody vibrant atmosphere",
+ "P1": "adult woman, medium-short deep dark pink hair, fluffy messy hair, side bangs, white eyes, black dot pupils, long white floppy rabbit ears, fluffy white rabbit tail, timid expression, oversized hoodie, casual clothes",
+ "P2": "adult woman, medium-length layered dark ash-brown hair, visible red streaks, pale skin, deep red eyes, calm detached expression, black t-shirt, jeans, casual clothes",
+ "NEGATIVE": "lowres, worst quality, bad anatomy, extra limbs, fused bodies, duplicate person, blurry, watermark, text"
+}

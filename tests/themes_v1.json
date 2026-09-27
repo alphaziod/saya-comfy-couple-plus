@@ -1,0 +1,69 @@
+{
+ "common_main_head": "best quality, very aesthetic, 2girls, two adult women, fully clothed, (cowboy shot:1.2), two-shot, (both faces visible:1.4), heads separated, pink-haired rabbit-eared woman and brown-haired woman together, ",
+ "common_main_tail": ", rich detailed background, many objects, cinematic anime lighting, colored light sources, gentle shadows, matte skin",
+ "p1_base": "adult woman, medium-short deep dark pink hair, fluffy messy hair, side bangs, white eyes, black dot pupils, long white floppy rabbit ears, fluffy white rabbit tail, timid expression, ",
+ "p2_base": "adult woman, medium-length layered dark ash-brown hair, visible red streaks, pale skin, deep red eyes, calm detached expression, ",
+ "negative": "lowres, worst quality, bad anatomy, extra limbs, fused bodies, duplicate person, blurry, watermark, text",
+ "scenes": [
+  {
+   "id": "s01_cafe",
+   "main": "sitting side by side at a window table in a cozy parisian cafe, sharing a slice of strawberry cake with forks, warm morning light, wooden shelves with jars, espresso machine, hanging plants, chalkboard menu, pastries display, street with awnings outside, warm orange and green tones",
+   "p1": "cream knitted cardigan, pastel pink skirt",
+   "p2": "burgundy turtleneck sweater, black trousers"
+  },
+  {
+   "id": "s02_beach",
+   "main": "sitting together on a beach towel at sunset, building a small sandcastle, golden sky, purple clouds, turquoise sea, palm trees, seashells, beach umbrella, lighthouse in the distance, seagulls, orange pink and teal colors",
+   "p1": "white sundress, straw hat",
+   "p2": "black linen shirt, denim shorts"
+  },
+  {
+   "id": "s03_winter",
+   "main": "standing close at a snowy christmas market at night, holding cups of hot chocolate, wooden stalls with lights, big decorated christmas tree, snowflakes, lanterns, gingerbread, red and gold ornaments, warm light against blue snow",
+   "p1": "long white winter coat, pink scarf, mittens",
+   "p2": "black wool coat, red scarf, leather gloves"
+  },
+  {
+   "id": "s04_library",
+   "main": "sitting together on a window seat in an old grand library, reading one big book together, tall wooden bookshelves, rolling ladder, green reading lamps, stained glass window, globe, stacks of books, dust in sunbeams, warm brown gold and green tones",
+   "p1": "oversized cream sweater, long skirt",
+   "p2": "dark academia outfit, vest over white shirt"
+  },
+  {
+   "id": "s05_festival",
+   "main": "at a japanese summer festival at night, holding sparklers together, rows of red paper lanterns, food stalls, torii gate, fireworks in the sky, goldfish scooping stall, crowd bokeh, red orange and deep blue colors",
+   "p1": "pink floral yukata with white obi",
+   "p2": "dark red yukata with black obi"
+  },
+  {
+   "id": "s06_rooftop",
+   "main": "sitting on the edge of a rooftop at night taking a selfie together with a smartphone, city skyline with neon signs, water tower, string lights, potted plants, graffiti wall, full moon, purple and teal city glow",
+   "p1": "white bomber jacket, pink hoodie underneath",
+   "p2": "black leather jacket, band t-shirt, ripped jeans"
+  },
+  {
+   "id": "h07_sky_library",
+   "main": "fantasy floating library island in the sky, both casting a glowing spell together over an open grimoire, floating books and candles, spiral staircases, magic circles, crystal chandeliers, clouds and waterfalls falling off the island, two moons, violet gold and cyan magic glow",
+   "p1": "white and pink witch robe, witch hat with rabbit ears through it",
+   "p2": "black and crimson sorceress cloak, silver jewelry"
+  },
+  {
+   "id": "h08_airship",
+   "main": "on the deck of a steampunk airship above the clouds, looking through a brass telescope together, giant balloon envelope, propellers, ropes and rigging, brass gears and pipes, map table with compass, other airships in the distance, sunset clouds, copper orange and sky blue",
+   "p1": "aviator jacket, goggles on head, cream blouse",
+   "p2": "dark captain coat, corset vest over shirt, leather gloves"
+  },
+  {
+   "id": "h09_cyberpunk",
+   "main": "sitting at a tiny ramen stall in a rainy cyberpunk street market at night, eating ramen with chopsticks, holographic advertisements, neon kanji signs, wet reflective ground, drones, cables overhead, vending machines, steam, magenta cyan and yellow neon",
+   "p1": "white techwear jacket with glowing pink lines",
+   "p2": "black techwear coat with red accents, fingerless gloves"
+  },
+  {
+   "id": "h10_forest",
+   "main": "sitting on a mossy root in an enchanted forest at night, feeding a small glowing fox spirit together, giant bioluminescent mushrooms, fireflies, floating lanterns, ancient stone ruins with runes, glowing flowers, misty waterfall, emerald teal and violet glow",
+   "p1": "white elven ranger outfit, pink cape, leaf ornaments",
+   "p2": "dark green and black hunter cloak, leather armor, red gem brooch"
+  }
+ ]
+}

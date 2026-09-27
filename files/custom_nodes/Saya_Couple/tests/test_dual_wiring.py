@@ -1,0 +1,260 @@
+"""SayaMultiCouple -> core saya_dual_mode wiring: strict OFF, exact ON payload, fail-closed."""
+
+import ast
+import copy
+from types import SimpleNamespace
+
+import torch
+from torch import nn
+
+from harness import PACK_ROOT, Check, load_pack
+from test_multi_couple import _FakeClip, _FakeModel as _OldFakeModel, _attn2_patches, _cond, _mask, _run_patch
+
+DIM, HEADS, DHEAD, CTX = 16, 2, 8, 8
+NODES = PACK_ROOT / "src" / "nodes"
+
+
+class _Holder(nn.Module):
+    def __init__(self, block):
+        super().__init__()
+        self.transformer_blocks = nn.ModuleList([block])
+
+
+class _RawModel:
+    """ModelPatcher double: real BasicTransformerBlock modules, ModelPatcher-like clone()."""
+
+    def __init__(self, block_class=None):
+        load_pack()
+        import comfy.ldm.modules.attention as attention
+        import comfy.ops
+
+        from comfy.ldm.modules.diffusionmodules.openaimodel import UNetModel
+
+        unet = UNetModel(image_size=8, in_channels=4, model_channels=32, out_channels=4, num_res_blocks=[1, 1], dropout=0, channel_mult=(1, 2),
+                         use_spatial_transformer=True, transformer_depth=[0, 1], transformer_depth_output=[0, 0, 1, 1], transformer_depth_middle=1,
+                         context_dim=CTX, num_head_channels=8, use_linear_in_transformer=True, operations=comfy.ops.disable_weight_init)
+        if block_class is not None:
+            for module in unet.modules():
+                if isinstance(module, attention.BasicTransformerBlock):
+                    module.__class__ = block_class
+        self.model = SimpleNamespace(diffusion_model=unet)
+        self.model_options = {"transformer_options": {}}
+        self.object_patches = {}
+        self.wrappers = {}
+
+    def clone(self):
+        new = _RawModel.__new__(_RawModel)
+        new.model = self.model
+        new.model_options = copy.deepcopy(self.model_options)
+        new.object_patches = dict(self.object_patches)
+        new.wrappers = copy.deepcopy(self.wrappers)
+        return new
+
+
+def _node():
+    load_pack()
+    import saya_couple.src.nodes.saya_multi_couple as module
+    return module, module.SayaMultiCouple()
+
+
+def _inputs():
+    return dict(clip=_FakeClip(), mask_1=_mask(1), mask_2=_mask(0), pos_1=_cond(1.0), neg_1=_cond(0.3), pos_2=_cond(2.0), neg_2=_cond(-0.3), main=_cond(9.0))
+
+
+def _leaves(obj):
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            yield from _leaves(k)
+            yield from _leaves(v)
+    else:
+        yield obj
+
+
+def test_dual_off_is_historic():
+    module, node = _node()
+    c = Check("dual_off_is_historic")
+    called = []
+    original = module.enable_dual_attention
+    module.enable_dual_attention = lambda *a, **k: called.append(1)
+    try:
+        args = _inputs()
+        default = node.apply(_OldFakeModel(), model_2=_OldFakeModel(), **args)
+        explicit = node.apply(_OldFakeModel(), model_2=_OldFakeModel(), dual_attention_enabled=False, **args)
+    finally:
+        module.enable_dual_attention = original
+    c.eq(called, [], "OFF never reaches the dual engine")
+    for label, out in (("default", default), ("explicit False", explicit)):
+        m1, m2, positive, negative = out
+        c.ok(positive is args["main"], f"{label}: positive is MAIN")
+        c.ok(negative is args["neg_1"], f"{label}: NEGATIVE is neg_1")
+        c.eq(len(_attn2_patches(m1)), 1, f"{label}: historic attn2 replace on MODEL_1")
+        c.eq(len(_attn2_patches(m2)), 1, f"{label}: historic attn2 replace on MODEL_2")
+        c.ok("saya_dual_mode" not in m1.model_options["transformer_options"], f"{label}: no dual flag")
+    c.ok(torch.equal(_run_patch(default[0]), _run_patch(explicit[0])), "default and explicit OFF give the same MODEL_1 patch output")
+    return c.report()
+
+
+def test_dual_on_positive_flag_payload():
+    module, node = _node()
+    c = Check("dual_on_positive_flag_payload")
+    args = _inputs()
+    model = _RawModel()
+    m1, m2, positive, negative = node.apply(model, dual_attention_enabled=True, **args)
+    c.ok(positive is args["main"], "positive for Sampler 1 is exactly MAIN")
+    c.ok(negative is args["neg_1"], "NEGATIVE unchanged")
+    c.ok(m2 is None, "no model_2 -> MODEL_2_PATCHED None")
+    options = m1.model_options["transformer_options"]
+    c.ok(options.get("saya_dual_mode") is True, "MODEL_1 carries saya_dual_mode=True")
+    c.ok("saya_dual_mode" not in model.model_options["transformer_options"] and "saya_dual" not in model.model_options["transformer_options"], "raw model untouched (clone)")
+    c.ok("patches_replace" not in options and "patches" not in options, "no historic couple patch on MODEL_1")
+    payload = options["saya_dual"]
+    c.eq(set(payload), {"p1", "p2", "mask_1", "mask_2", "fusion_mode", "params"}, "payload keys are exactly the contract")
+    c.eq(payload["fusion_mode"], "main_locked_delta", "fusion_mode")
+    c.eq(payload["params"], {}, "params empty")
+    c.ok(payload["p1"] is args["pos_1"][0][0] and payload["p2"] is args["pos_2"][0][0], "P1/P2 are the independent CLIP conditionings")
+    c.ok(payload["mask_1"] is args["mask_1"] and payload["mask_2"] is args["mask_2"], "masks transported untouched (swap/geometry as given)")
+    c.ok(not any(callable(v) for v in _leaves(options["saya_dual"])), "no callable anywhere in the payload")
+    ctx = {id(payload["p1"]), id(payload["p2"]), id(args["main"][0][0])}
+    ptrs = {payload["p1"].data_ptr(), payload["p2"].data_ptr(), args["main"][0][0].data_ptr()}
+    c.eq((len(ctx), len(ptrs)), (3, 3), "MAIN, P1, P2 are three separate tensors")
+    return c.report()
+
+
+def test_dual_on_builds_no_historic_region_for_model_1():
+    module, node = _node()
+    c = Check("dual_on_builds_no_historic_region_for_model_1")
+    trace = []
+    node._masked = lambda *a, **k: trace.append("masked")
+    node._couple = lambda *a, **k: trace.append("couple")
+    node.apply(_RawModel(), dual_attention_enabled=True, **_inputs())
+    c.eq(trace, [], "no ConditioningSetMask region and no AttentionCouple for MODEL_1")
+    return c.report()
+
+
+def test_dual_on_model_2_is_historic():
+    module, node = _node()
+    c = Check("dual_on_model_2_is_historic")
+    args = _inputs()
+    _, ref_node = _node()
+    _, m2_off, _, _ = ref_node.apply(_OldFakeModel(), model_2=_OldFakeModel(), **args)
+    m1, m2_on, positive, negative = node.apply(_RawModel(), model_2=_OldFakeModel(), dual_attention_enabled=True, **args)
+    c.eq(len(_attn2_patches(m2_on)), 1, "MODEL_2 has the historic attn2 replace")
+    c.ok(torch.equal(_run_patch(m2_on), _run_patch(m2_off)), "MODEL_2 patch output identical to the OFF path")
+    c.ok("saya_dual_mode" not in m2_on.model_options["transformer_options"], "MODEL_2 has no dual flag")
+    c.ok(positive is args["main"] and negative is args["neg_1"], "other outputs unchanged")
+    return c.report()
+
+
+def test_dual_fail_closed_inputs():
+    module, node = _node()
+    c = Check("dual_fail_closed_inputs")
+
+    def run(label, **override):
+        args = _inputs()
+        args.update(override)
+        c.raises(RuntimeError, lambda: node.apply(_RawModel(), dual_attention_enabled=True, **args), label)
+
+    run("main missing", main=None)
+    run("pos_1 missing", pos_1=None)
+    run("pos_2 missing", pos_2=None)
+    run("mask_1 missing", mask_1=None)
+    run("mask_2 wrong type", mask_2=[1, 2])
+    run("mask wrong ndim", mask_1=torch.zeros(4))
+    run("pos_1 with two entries", pos_1=_cond(1.0) + _cond(2.0))
+    run("pos_2 not 3-D", pos_2=[[torch.zeros(5, 8), {}]])
+    args = _inputs(); args["pos_1"] = args["main"]
+    c.raises(RuntimeError, lambda: node.apply(_RawModel(), dual_attention_enabled=True, **args), "pos_1 is MAIN itself (not separate)")
+    args = _inputs(); args["pos_2"] = args["pos_1"]
+    c.raises(RuntimeError, lambda: node.apply(_RawModel(), dual_attention_enabled=True, **args), "pos_2 is pos_1 itself (not separate)")
+    c.raises(RuntimeError, lambda: node.apply(None, dual_attention_enabled=True, **_inputs()), "MODEL_1 missing")
+    c.raises(RuntimeError, lambda: node.apply(_RawModel(), dual_attention_enabled=True, solo=True, **_inputs()), "solo + dual")
+    return c.report()
+
+
+def test_dual_fail_closed_model():
+    module, node = _node()
+    c = Check("dual_fail_closed_model")
+
+    def refused(model, label, needle=None):
+        try:
+            node.apply(model, dual_attention_enabled=True, **_inputs())
+        except RuntimeError as error:
+            c.ok(needle is None or needle in str(error), f"{label}: message {str(error)!r} lacks {needle!r}")
+            return
+        c.failures.append(f"{label}: no RuntimeError")
+
+    m = _RawModel(); m.object_patches["diffusion_model.input_blocks.1.1.transformer_blocks.0.__class__"] = object
+    refused(m, "object patch __class__ (ReSDPatcher style)", "__class__")
+    m = _RawModel(); m.object_patches["diffusion_model.__class__"] = object
+    refused(m, "object patch on diffusion_model.__class__", "__class__")
+    import comfy.ldm.modules.attention as attention
+
+    class ReBlock(attention.BasicTransformerBlock):
+        pass
+    refused(_RawModel(block_class=ReBlock), "block class already replaced", "ReBlock")
+    empty = _RawModel()
+    for module in empty.model.diffusion_model.modules():
+        if hasattr(module, "attn2") and hasattr(module, "norm2"):
+            del module.norm2
+    refused(empty, "no transformer block", "no cross-attention")
+
+    m = _RawModel(); m.model_options["transformer_options"]["patches_replace"] = {"attn2": {("middle", 0, 0): lambda *a: None}}
+    refused(m, "historic attn2 replace already present", "attn2 patches_replace")
+    m = _RawModel(); m.model_options["transformer_options"]["patches"] = {"attn2_patch": [lambda *a: None]}
+    refused(m, "attn2_patch already present", "attn2_patch")
+    m = _RawModel(); m.model_options["transformer_options"]["patches"] = {"attn2_output_patch": [lambda *a: None]}
+    refused(m, "attn2_output_patch already present", "attn2_output_patch")
+
+    # a real historic AttentionCouple already installed on the model
+    from custom_nodes.MultiMaskCouple.attention_couple import AttentionCouple
+    m = _RawModel()
+    coupled, _, _ = AttentionCouple().attention_couple(model=m, clip=_FakeClip(), positive=_cond(1.0), negative=_cond(0.3), mode="Attention")
+    c.ok(bool(coupled.model_options["transformer_options"]["patches_replace"]["attn2"]), "precondition: real AttentionCouple installed patches")
+    refused(coupled, "MODEL_1 that already received the historic AttentionCouple", "historic couple")
+
+    m = _RawModel(); m.model_options["transformer_options"].update(saya_dual_mode=True)
+    refused(m, "already carries saya_dual_mode", "already carries")
+    m = _RawModel(); m.model_options["transformer_options"]["optimized_attention_override"] = lambda *a: None
+    refused(m, "optimized_attention_override", "optimized_attention_override")
+
+    # wrappers: potentially able to rewrite context / transformer_options -> refused
+    m = _RawModel(); m.model_options["model_function_wrapper"] = lambda *a: None
+    refused(m, "model_function_wrapper", "model_function_wrapper")
+    m = _RawModel(); m.model_options["sampler_calc_cond_batch_function"] = lambda *a: None
+    refused(m, "sampler_calc_cond_batch_function", "sampler_calc_cond_batch_function")
+    for kind in ("diffusion_model", "apply_model", "calc_cond_batch", "predict_noise", "outer_sample", "sampler_sample", "prepare_sampling"):
+        m = _RawModel(); m.wrappers = {kind: {"some.key": [lambda *a: None]}}
+        refused(m, f"WrappersMP.{kind.upper()} on the patcher", kind)
+        m = _RawModel(); m.model_options["transformer_options"]["wrappers"] = {kind: {None: [lambda *a: None]}}
+        refused(m, f"WrappersMP.{kind.upper()} in model_options", kind)
+
+    # orthogonal: empty wrapper containers and prediction-side sampler functions stay allowed
+    m = _RawModel()
+    m.wrappers = {"diffusion_model": {}, "apply_model": {"k": []}}
+    m.model_options.update(sampler_post_cfg_function=[lambda a: a], sampler_pre_cfg_function=[lambda a: a], sampler_cfg_function=lambda a: a)
+    out = node.apply(m, dual_attention_enabled=True, **_inputs())
+    c.ok(out[0].model_options["transformer_options"]["saya_dual_mode"] is True, "empty wrappers and sampler_*_cfg functions (APG/CFGZeroStar/Epsilon/PAG) allowed")
+    return c.report()
+
+
+def test_dual_no_legacy_fallback_in_wiring():
+    module, node = _node()
+    c = Check("dual_no_legacy_fallback_in_wiring")
+    tree = ast.parse((NODES / "saya_dual_attention.py").read_text())
+    c.eq([n for n in ast.walk(tree) if isinstance(n, ast.Try)], [], "no try/except in the dual wiring module")
+    text = (NODES / "saya_dual_attention.py").read_text()
+    c.ok("AttentionCouple" not in text and "ConditioningSetMask" not in text and "_couple" not in text, "dual wiring never references the historic couple")
+    apply_dual = next(n for n in ast.walk(ast.parse((NODES / "saya_multi_couple.py").read_text())) if isinstance(n, ast.FunctionDef) and n.name == "_apply_dual")
+    c.eq([n for n in ast.walk(apply_dual) if isinstance(n, ast.Try)], [], "no try/except in _apply_dual")
+    return c.report()
+
+
+TESTS = (
+    test_dual_off_is_historic,
+    test_dual_on_positive_flag_payload,
+    test_dual_on_builds_no_historic_region_for_model_1,
+    test_dual_on_model_2_is_historic,
+    test_dual_fail_closed_inputs,
+    test_dual_fail_closed_model,
+    test_dual_no_legacy_fallback_in_wiring,
+)

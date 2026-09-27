@@ -1,0 +1,319 @@
+{
+ "3": {
+  "inputs": {
+   "ckpt_name": "SELECT_YOUR_MODEL.safetensors"
+  },
+  "class_type": "CheckpointLoaderSimple",
+  "_meta": {
+   "title": "MODEL_1 · main checkpoint (Saya dual path)"
+  }
+ },
+ "4": {
+  "inputs": {
+   "ckpt_name": "SELECT_YOUR_REFINER_MODEL.safetensors"
+  },
+  "class_type": "CheckpointLoaderSimple",
+  "_meta": {
+   "title": "MODEL_2 · refiner checkpoint"
+  }
+ },
+ "5": {
+  "inputs": {
+   "text": "best quality, very aesthetic, 2girls, two adult women, fully clothed, casual clothes,\n\n(cowboy shot:1.2), two-shot, (seated hug from behind:1.3), pink-haired woman sitting behind the brown-haired woman on the bed, arms wrapped around her shoulders, brown-haired woman leaning back against her, both facing forward, (both faces visible:1.4), heads separated, cozy friendly hug, relaxed smiles,\n\n(highly detailed cluttered anime gamer room:1.2), (rich detailed background:1.2), many objects, (pink neon:1.1), (cyan neon:1.2), (violet ambient light:1.1), multicolored led strips, neon sign on the wall, glowing RGB gaming pc tower, gaming desk, RGB monitor, second monitor, mechanical keyboard with rainbow backlight, gaming mouse, headphones on stand, speakers, desk lamp, energy drink cans, cables, game controllers, manga stacks, anime posters and art prints on the walls, shelf with figures and plushies, small potted plants, fairy lights, fluffy pink bedding, colorful patterned pillows, rug, window with night city lights and blue skyscrapers, dark room lit by many colored light sources,\n\ncinematic anime lighting, colored room lights, gentle shadows, matte skin, moody vibrant atmosphere",
+   "clip": [
+    "3",
+    1
+   ]
+  },
+  "class_type": "CLIPTextEncode",
+  "_meta": {
+   "title": "MAIN · scene / background"
+  }
+ },
+ "6": {
+  "inputs": {
+   "text": "adult woman, medium-short deep dark pink hair, fluffy messy hair, side bangs, white eyes, black dot pupils, long white floppy rabbit ears, fluffy white rabbit tail, timid expression, oversized hoodie, casual clothes",
+   "clip": [
+    "3",
+    1
+   ]
+  },
+  "class_type": "CLIPTextEncode",
+  "_meta": {
+   "title": "P1 · first character"
+  }
+ },
+ "7": {
+  "inputs": {
+   "text": "adult woman, medium-length layered dark ash-brown hair, visible red streaks, pale skin, deep red eyes, calm detached expression, black t-shirt, jeans, casual clothes",
+   "clip": [
+    "3",
+    1
+   ]
+  },
+  "class_type": "CLIPTextEncode",
+  "_meta": {
+   "title": "P2 · second character"
+  }
+ },
+ "8": {
+  "inputs": {
+   "text": "lowres, worst quality, bad anatomy, extra limbs, fused bodies, duplicate person, blurry, watermark, text",
+   "clip": [
+    "3",
+    1
+   ]
+  },
+  "class_type": "CLIPTextEncode",
+  "_meta": {
+   "title": "NEGATIVE"
+  }
+ },
+ "9": {
+  "inputs": {
+   "width": 832,
+   "height": 1216,
+   "batch_size": 1
+  },
+  "class_type": "EmptyLatentImage",
+  "_meta": {
+   "title": "Latent 832x1216"
+  }
+ },
+ "10": {
+  "inputs": {
+   "direction": "vertical",
+   "split": 50,
+   "blur": 0,
+   "swap": true,
+   "latent": [
+    "9",
+    0
+   ]
+  },
+  "class_type": "SayaSplitMask",
+  "_meta": {
+   "title": "Saya Split Mask (P1 | P2)"
+  }
+ },
+ "11": {
+  "inputs": {
+   "strength_1": 1,
+   "strength_2": 1,
+   "solo": false,
+   "dual_attention_enabled": true,
+   "model_1": [
+    "3",
+    0
+   ],
+   "clip": [
+    "3",
+    1
+   ],
+   "mask_1": [
+    "10",
+    0
+   ],
+   "mask_2": [
+    "10",
+    1
+   ],
+   "pos_1": [
+    "6",
+    0
+   ],
+   "neg_1": [
+    "8",
+    0
+   ],
+   "pos_2": [
+    "7",
+    0
+   ],
+   "neg_2": [
+    "8",
+    0
+   ],
+   "model_2": [
+    "4",
+    0
+   ],
+   "main": [
+    "5",
+    0
+   ]
+  },
+  "class_type": "SayaMultiCouple",
+  "_meta": {
+   "title": "Saya Multi Couple · dual attention ON"
+  }
+ },
+ "12": {
+  "inputs": {
+   "scaling_factor": 1.003,
+   "model": [
+    "11",
+    0
+   ]
+  },
+  "class_type": "Epsilon Scaling",
+  "_meta": {
+   "title": "Epsilon Scaling"
+  }
+ },
+ "13": {
+  "inputs": {
+   "model": [
+    "12",
+    0
+   ]
+  },
+  "class_type": "CFGZeroStar",
+  "_meta": {
+   "title": "CFGZeroStar"
+  }
+ },
+ "14": {
+  "inputs": {
+   "eta": 0.8,
+   "norm_threshold": 5,
+   "momentum": 0.11,
+   "model": [
+    "13",
+    0
+   ]
+  },
+  "class_type": "APG",
+  "_meta": {
+   "title": "APG"
+  }
+ },
+ "15": {
+  "inputs": {
+   "scale": 0.8,
+   "model": [
+    "14",
+    0
+   ]
+  },
+  "class_type": "PerturbedAttentionGuidance",
+  "_meta": {
+   "title": "PAG"
+  }
+ },
+ "16": {
+  "inputs": {
+   "weight": 0.42,
+   "method": "sampler",
+   "mode": "hard",
+   "eta": 0.5,
+   "start_step": 3,
+   "end_step": 12
+  },
+  "class_type": "ClownOptions_DetailBoost_Beta",
+  "_meta": {
+   "title": "Detail Boost (Sampler 1 options)"
+  }
+ },
+ "17": {
+  "inputs": {
+   "eta": 0.5,
+   "sampler_name": "exponential/dpmpp_2s",
+   "scheduler": "beta",
+   "steps": 16,
+   "steps_to_run": 13,
+   "denoise": 1,
+   "cfg": 6,
+   "seed": 123456789,
+   "sampler_mode": "standard",
+   "bongmath": true,
+   "model": [
+    "15",
+    0
+   ],
+   "positive": [
+    "11",
+    2
+   ],
+   "negative": [
+    "11",
+    3
+   ],
+   "latent_image": [
+    "9",
+    0
+   ],
+   "options": [
+    "16",
+    0
+   ]
+  },
+  "class_type": "ClownsharKSampler_Beta",
+  "_meta": {
+   "title": "Sampler 1 · Shark (MODEL_1, base)"
+  }
+ },
+ "18": {
+  "inputs": {
+   "eta": 0.5,
+   "sampler_name": "exponential/dpmpp_sde_2s",
+   "scheduler": "beta",
+   "steps": 3,
+   "steps_to_run": -1,
+   "denoise": 0.5000000000000003,
+   "cfg": 2,
+   "seed": 123456789,
+   "sampler_mode": "resample",
+   "bongmath": true,
+   "model": [
+    "11",
+    1
+   ],
+   "positive": [
+    "11",
+    2
+   ],
+   "negative": [
+    "8",
+    0
+   ],
+   "latent_image": [
+    "17",
+    0
+   ]
+  },
+  "class_type": "ClownsharKSampler_Beta",
+  "_meta": {
+   "title": "Sampler 2 · Shark (MODEL_2, refine)"
+  }
+ },
+ "20": {
+  "inputs": {
+   "samples": [
+    "18",
+    0
+   ],
+   "vae": [
+    "3",
+    2
+   ]
+  },
+  "class_type": "VAEDecode",
+  "_meta": {
+   "title": "VAE Decode"
+  }
+ },
+ "21": {
+  "inputs": {
+   "filename_prefix": "SayaCouple/demo",
+   "images": [
+    "20",
+    0
+   ]
+  },
+  "class_type": "SaveImage",
+  "_meta": {
+   "title": "Result"
+  }
+ }
+}

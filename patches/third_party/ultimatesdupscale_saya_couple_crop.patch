@@ -1,0 +1,399 @@
+Saya Couple — OPTIONAL third-party patch for ssitu/ComfyUI_UltimateSDUpscale (GPL-3.0), base commit bebd569.
+Passes per-tile crop metadata (transformer_options["saya_couple_crop"]) so the Saya couple masks are cut per USDU tile.
+NOT installed by the Saya installer. Only used by the Saya USDU pass nodes; without it they fall back to full-frame masks.
+
+diff --git a/crop_model_patch.py b/crop_model_patch.py
+index e8d213f..94870d9 100644
+--- a/crop_model_patch.py
++++ b/crop_model_patch.py
+@@ -1,5 +1,6 @@
+ from contextlib import contextmanager
+ import logging
++import os
+ import torch
+ 
+ from usdu_utils import resize_region
+@@ -7,6 +8,61 @@ from usdu_utils import resize_region
+ 
+ logger = logging.getLogger(__name__)
+ 
++# ---------------------------------------------------------------------------
++# Saya layer 1 -- COUPLE CROP REMAP (opt-in, default OFF)
++#
++# When SAYA_USDU_COUPLE_CROP is truthy, expose the real per-tile crop region to
++# a downstream regional-attention engine (SayaForgeCouple) so it can crop its
++# full-image routing masks to the tile BEFORE interpolating them, instead of
++# squashing the whole P1->P2 gradient into the tile.  This only writes metadata
++# onto the *per-tile clone*; it never mutates the shared MODEL and never leaks
++# to the next tile.  A consumer that does not understand the key ignores it.
++#
++# This does NOT protect identity/structure -- see layer 2 in modules/processing.py.
++# ---------------------------------------------------------------------------
++SAYA_COUPLE_CROP_ENV = "SAYA_USDU_COUPLE_CROP"
++
++
++def _saya_couple_crop_enabled() -> bool:
++    return os.environ.get(SAYA_COUPLE_CROP_ENV, "").strip().lower() in (
++        "1", "true", "yes", "on",
++    )
++
++
++def _attach_saya_couple_crop(patched_model, crop_regions, canvas_size) -> None:
++    """Attach transformer_options['saya_couple_crop'] to a per-tile model clone.
++
++    Single region only (batch_size == 1).  For a batched multi-region sample
++    call there is no verified one-dict-per-batch-item contract, so nothing is
++    attached and the consumer falls back to its own mismatch handling.
++    """
++    try:
++        region = crop_regions
++        if isinstance(region, list):
++            region = region[0] if len(region) == 1 else None
++        if not (isinstance(region, (tuple, list)) and len(region) == 4):
++            return
++        if not (isinstance(canvas_size, (tuple, list)) and len(canvas_size) == 2):
++            return
++        x1, y1, x2, y2 = (float(v) for v in region)
++        if not (x2 > x1 and y2 > y1):
++            return
++        transformer_options = patched_model.model_options.setdefault(
++            "transformer_options", {}
++        )
++        transformer_options["saya_couple_crop"] = {
++            "crop_region": [x1, y1, x2, y2],
++            "full_width": int(canvas_size[0]),
++            "full_height": int(canvas_size[1]),
++            "label": "USDU",
++        }
++        logger.debug(
++            "Saya couple crop attached: region=%s full=%s",
++            (x1, y1, x2, y2), tuple(canvas_size),
++        )
++    except Exception:  # never break the upscale over optional metadata
++        logger.debug("Saya couple crop: skipped (attach failed)", exc_info=True)
++
+ 
+ @contextmanager
+ def crop_model_cond(
+@@ -23,6 +79,10 @@ def crop_model_cond(
+     # Clone is probably not useful, since we have to manage patch state changes anyway due
+     # to ComfyUI commit fe053ba
+     patched_model = model.clone()
++
++    if _saya_couple_crop_enabled():
++        _attach_saya_couple_crop(patched_model, crop_regions, canvas_size)
++
+     patches = patched_model.model_options.get("transformer_options", {}).get(
+         "patches", {}
+     )
+diff --git a/modules/processing.py b/modules/processing.py
+index e58980e..76c7b7a 100644
+--- a/modules/processing.py
++++ b/modules/processing.py
+@@ -1,5 +1,6 @@
+ from PIL import Image, ImageFilter, ImageDraw
+ import logging
++import numpy as np
+ import torch
+ import math
+ from nodes import common_ksampler, VAEEncode, VAEDecode, VAEDecodeTiled
+@@ -19,6 +20,168 @@ logger = logging.getLogger(__name__)
+ if (not hasattr(Image, 'Resampling')):  # For older versions of Pillow
+     Image.Resampling = Image
+ 
++
++# ---------------------------------------------------------------------------
++# Saya layer 2 -- IDENTITY / STRUCTURE PRESERVATION  (V2, per-tile, default OFF)
++#
++# A low-denoise img2img tile pass repaints sub-tile structure -- iris / pupil /
++# eye contour, hair strands, fingers, small text, keyboard grids, thin lines,
++# accessory outlines.  A *displaced or redrawn* structure is broad-band: it
++# lives in the low, mid AND high spatial-frequency bands, so a plain low-pass
++# swap (V1) still keeps H(O) at 100% and therefore keeps part of USDU's
++# structural re-design.
++#
++# V2 is a MULTI-SCALE, EDGE-AWARE reconstruction.  An a-trous (non-decimated)
++# Gaussian stack gives L band-pass levels + a residual; each level is blended
++# with a SPATIAL weight that is high only where the SOURCE itself carries
++# strong structure at that scale.  Where the source is flat (skin, wall) the
++# weight is ~0 and USDU's genuinely new micro-texture passes through untouched.
++#
++#   G^X_0 = X ;  G^X_k = Gauss_{sigma_k}(G^X_{k-1}) ;  sigma_k = sigma_0 * 2^(k-1)
++#   Lap^X_k = G^X_{k-1} - G^X_k        (k = 1..L)      Res^X = G^X_L
++#
++#   ES_k  = Gauss_{sigma_k}( | Lap^{Yluma(S)}_k | )               (source band energy)
++#   EO_k  = Gauss_{sigma_k}( | Lap^{Yluma(O)}_k | )               (output band energy)
++#   den_k = max( Q95(ES_k), tau_hi )         (abs floor: a near-flat tile/level
++#                                             cannot self-normalise up to m~1)
++#   m_k   = clip( (ES_k - tau_lo) / (den_k - tau_lo + eps), 0, 1 ) ** gamma
++#   mhat_k= clip( beta * Gauss_{0.5 sigma_k}(m_k), 0, 1 )         (protection halo)
++#   a_k   = a_min + (a_max - a_min) * (k-1)/(L-1)                 (coarser -> protect more)
++#   w_k   = clip( s * a_k * mhat_k, 0, s )                        (reinstate source band)
++#   xs_k  = clip( (EO_k - ES_k - tau_lo) / (den_k - tau_lo + eps), 0, 1 )  (invented energy)
++#   sup_k = clip( s * mhat_k * xs_k, 0, s )         (extra kill of a *displaced* edge)
++#
++#   cS_k  = w_k                              cO_k = (1 - w_k) * (1 - sup_k)
++#   Lap^R_k = cS_k * Lap^S_k + cO_k * Lap^O_k
++#   Res^R   = (1 - s * a_res) * Res^O + s * a_res * Res^S     (a_res = 1)
++#   R       = clip( sum_k Lap^R_k + Res^R , 0, 255 )
++#
++#   * The stack telescopes: sum_k Lap^X_k + Res^X == X exactly, so cS=0,cO=1
++#     reconstructs O exactly (and s <= 0 early-returns O -> bitwise upstream).
++#   * H(O) is NOT kept blindly.  An output band keeps weight 1 only where
++#     mhat_k ~ 0 -- source had no structure at that scale (flat skin/wall:
++#     genuine new micro-texture passes untouched).  On a sharp source edge
++#     (iris rim, letter stroke, key border, finger contour) the source band is
++#     reinstated at its own scale; where the output *invented* band energy the
++#     source lacks (a displaced edge sitting next to the real one), sup_k
++#     removes it, pulling centroids / contours back to the source.
++#   * s = 1 with the full residual swap contains the V1 low-frequency guarantee
++#     (gross geometry, colour) as a subset.
++#
++# Purely geometric / gradient-based: no semantic model, no detector, no
++# hardcoded positions.  Works whether Forge Couple is present, absent or
++# mis-routed.  Single slider: structure_preservation = s in [0, 1].
++# ---------------------------------------------------------------------------
++_SP_LEVELS = 5
++_SP_A_MIN = 0.85
++_SP_A_MAX = 1.0
++_SP_GAMMA = 0.75
++_SP_BETA = 2.0
++_SP_Q = 95.0
++_SP_TAU_LO = 2.0        # smoothed |Lap(luma)| noise pedestal (8-bit units)
++_SP_TAU_HI = 6.0        # absolute "this is real structure" scale
++_SP_EPS = 1e-6
++
++
++def _sp_box1d(a: "np.ndarray", r: int, axis: int) -> "np.ndarray":
++    """O(N) box blur of radius r along `axis`, reflect-padded.
++
++    V2.1 robustness: the reflect pad needs r <= n-1 pixels on the axis, so a
++    requested radius wider than the axis is clamped to n-1 (a box spanning the
++    whole axis -- the coherent limit when sigma exceeds the tile dimension).
++    An axis of length 1 is already its own mean -> returned unchanged.  For
++    every dimension >= the normal tile minimum this clamp never triggers, so
++    results are byte-for-byte identical to V2 there.
++    """
++    if r < 1:
++        return a
++    a = np.moveaxis(a, axis, 0)
++    n = a.shape[0]
++    r = min(int(r), n - 1)
++    if r < 1:
++        return np.moveaxis(a, 0, axis)
++    pad = np.concatenate([a[1:r + 1][::-1], a, a[n - r - 1:n - 1][::-1]], axis=0)
++    csum = np.cumsum(pad, axis=0)
++    csum = np.concatenate([np.zeros_like(csum[:1]), csum], axis=0)
++    out = (csum[2 * r + 1:] - csum[:-(2 * r + 1)]) / float(2 * r + 1)
++    return np.moveaxis(out, 0, axis)
++
++
++def _sp_gauss(arr: "np.ndarray", sigma: float) -> "np.ndarray":
++    """Separable Gaussian approximation (3 iterated box blurs), any HxW[xC]
++    float array.  No PIL 'F'-mode dependency; O(N) in pixels regardless of
++    sigma.  Same operator is used for the stack and the reconstruction, so the
++    a-trous decomposition still telescopes exactly."""
++    a = arr.astype(np.float32, copy=True)
++    if sigma <= 0:
++        return a
++    r = max(1, int(round((-1.0 + (1.0 + 4.0 * sigma * sigma) ** 0.5) / 2.0)))
++    for _ in range(3):
++        a = _sp_box1d(a, r, 0)
++        a = _sp_box1d(a, r, 1)
++    return a
++
++
++def _sp_stack(arr: "np.ndarray", sigmas):
++    """a-trous Gaussian stack -> (list of L band-pass levels, residual)."""
++    levels = []
++    prev = arr
++    for sig in sigmas:
++        cur = _sp_gauss(prev, sig)
++        levels.append(prev - cur)
++        prev = cur
++    return levels, prev
++
++
++def structure_preserve_tile(source_pil: Image.Image, output_pil: Image.Image,
++                            strength: float) -> Image.Image:
++    s = float(strength)
++    if s <= 0.0:                       # bitwise upstream
++        return output_pil
++    s = min(s, 1.0)
++
++    out = output_pil.convert("RGB")
++    src = source_pil.convert("RGB")
++    if src.size != out.size:
++        src = src.resize(out.size, Image.Resampling.LANCZOS)
++
++    O = np.asarray(out, dtype=np.float32)
++    S = np.asarray(src, dtype=np.float32)
++    h, w = O.shape[:2]
++
++    L = _SP_LEVELS
++    sigma0 = max(1.0, min(w, h) / 256.0)
++    sigmas = [sigma0 * (2.0 ** k) for k in range(L)]
++
++    lap_O, res_O = _sp_stack(O, sigmas)
++    lap_S, res_S = _sp_stack(S, sigmas)
++
++    # per-band structure energy, from luma, for source AND output
++    def _luma(a):
++        return (0.299 * a[..., 0] + 0.587 * a[..., 1] + 0.114 * a[..., 2]).astype(np.float32)
++    lap_YS, _ = _sp_stack(_luma(S), sigmas)
++    lap_YO, _ = _sp_stack(_luma(O), sigmas)
++
++    recon = np.zeros_like(O)
++    for k in range(L):
++        es = _sp_gauss(np.abs(lap_YS[k]), sigmas[k])
++        eo = _sp_gauss(np.abs(lap_YO[k]), sigmas[k])
++        den = max(float(np.percentile(es, _SP_Q)), _SP_TAU_HI) - _SP_TAU_LO + _SP_EPS
++        m = np.clip((es - _SP_TAU_LO) / den, 0.0, 1.0) ** _SP_GAMMA
++        mhat = np.clip(_SP_BETA * _sp_gauss(m, 0.5 * sigmas[k]), 0.0, 1.0)
++        a_k = _SP_A_MIN + (_SP_A_MAX - _SP_A_MIN) * (k / (L - 1) if L > 1 else 0.0)
++        w_k = np.clip(s * a_k * mhat, 0.0, s)
++        xs = np.clip((eo - es - _SP_TAU_LO) / den, 0.0, 1.0)      # invented energy
++        sup = np.clip(s * mhat * xs, 0.0, s)
++        cS = w_k[..., None]
++        cO = ((1.0 - w_k) * (1.0 - sup))[..., None]
++        recon += cS * lap_S[k] + cO * lap_O[k]
++
++    recon += (1.0 - s) * res_O + s * res_S                        # a_res = 1
++
++    np.clip(recon, 0.0, 255.0, out=recon)
++    return Image.fromarray(recon.astype(np.uint8), mode="RGB")
++
+ # Taken from the USDU script
+ class USDUMode(Enum):
+     LINEAR = 0
+@@ -56,6 +219,7 @@ class StableDiffusionProcessing:
+         custom_sampler=None,
+         custom_sigmas=None,
+         batch_size=1,
++        structure_preservation=0.0,
+     ):
+         # Variables used by the USDU script
+         self.init_images = [init_img]
+@@ -92,6 +256,11 @@ class StableDiffusionProcessing:
+         self.uniform_tile_mode = uniform_tile_mode
+         self.tiled_decode = tiled_decode
+         self.batch_size = batch_size
++        # Saya layer 2: 0.0 == upstream behaviour (default)
++        try:
++            self.structure_preservation = max(0.0, min(1.0, float(structure_preservation)))
++        except (TypeError, ValueError):
++            self.structure_preservation = 0.0
+         self.vae_decoder = VAEDecode()
+         self.vae_encoder = VAEEncode()
+         self.vae_decoder_tiled = VAEDecodeTiled()
+@@ -256,9 +425,16 @@ def process_images(p: StableDiffusionProcessing) -> Processed:
+     # Convert the sample to a PIL image
+     tiles_sampled = [tensor_to_pil(decoded, i) for i in range(len(decoded))]
+ 
++    structure_preservation = getattr(p, "structure_preservation", 0.0)
++
+     for i, tile_sampled in enumerate(tiles_sampled):
+         init_image = shared.batch[i]
+ 
++        # Saya layer 2: lock large-scale structure to the source tile (pre resize-back,
++        # while sampled tile and source tile share the model working size).
++        if structure_preservation > 0.0:
++            tile_sampled = structure_preserve_tile(tiles[i], tile_sampled, structure_preservation)
++
+         # Resize back to the original size
+         if tile_sampled.size != initial_tile_size:
+             tile_sampled = tile_sampled.resize(initial_tile_size, Image.Resampling.LANCZOS)
+@@ -378,6 +554,7 @@ def process_batch_tiles(
+         (decoded,) = p.vae_decoder_tiled.decode(p.vae, samples, 512)
+ 
+     # Composite each decoded tile back onto its source image
++    structure_preservation = getattr(p, "structure_preservation", 0.0)
+     result_imgs = list(images)
+     for i, result_img in enumerate(result_imgs):
+         for j in range(len(tiles_coords)):
+@@ -387,6 +564,12 @@ def process_batch_tiles(
+             crop_region = batch_crop_regions[idx]
+             tile_mask = batch_masks[idx]
+ 
++            # Saya layer 2: lock large-scale structure to the source tile.
++            if structure_preservation > 0.0:
++                tile_sampled = structure_preserve_tile(
++                    batch_tiles[idx][0], tile_sampled, structure_preservation
++                )
++
+             if tile_sampled.size != initial_tile_size:
+                 tile_sampled = tile_sampled.resize(initial_tile_size, Image.Resampling.LANCZOS)
+ 
+diff --git a/usdu_nodes.py b/usdu_nodes.py
+index 0ccd9a9..0cebc79 100644
+--- a/usdu_nodes.py
++++ b/usdu_nodes.py
+@@ -74,7 +74,14 @@ def USDU_base_inputs():
+         ("batch_size", ("INT", {"default": 1, "min": 1, "max": 4096, "step": 1, "tooltip": "The number of tiles to process in a batch. Higher values can reduce processing time but use more VRAM. Yields different results than individual tiles. Only affects the main redraw step, not the seam fix step."})),
+     ]
+ 
+-    optional = []
++    optional = [
++        # Saya layer 2 -- identity / structure preservation. 0.0 == upstream behaviour.
++        ("structure_preservation", ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.01,
++            "tooltip": "Saya identity/structure lock. 0 = upstream behaviour (default). "
++                       ">0 keeps each tile's large-scale structure (eyes, iris, face, hands, "
++                       "outlines, small text) from the source while still applying USDU's fine "
++                       "detail. Purely geometric; independent of Forge Couple."})),
++    ]
+ 
+     return required, optional
+ 
+@@ -124,7 +131,7 @@ class UltimateSDUpscale:
+                 mode_type, tile_width, tile_height, mask_blur, tile_padding,
+                 seam_fix_mode, seam_fix_denoise, seam_fix_mask_blur,
+                 seam_fix_width, seam_fix_padding, force_uniform_tiles, tiled_decode, batch_size=1,
+-                custom_sampler=None, custom_sigmas=None):
++                custom_sampler=None, custom_sigmas=None, structure_preservation=0.0):
+         redraw_mode = MODES[mode_type]
+         seam_fix_mode = SEAM_FIX_MODES[seam_fix_mode]
+ 
+@@ -151,6 +158,7 @@ class UltimateSDUpscale:
+             seed, steps, cfg, sampler_name, scheduler, denoise, upscale_by, force_uniform_tiles, tiled_decode,
+             tile_width, tile_height, redraw_mode, seam_fix_mode,
+             custom_sampler, custom_sigmas, batch_size,
++            structure_preservation,
+         )
+         logger.debug("StableDiffusionProcessing created with batch_size=%s", sdprocessing.batch_size)
+ 
+@@ -192,7 +200,8 @@ class UltimateSDUpscaleNoUpscale(UltimateSDUpscale):
+                 steps, cfg, sampler_name, scheduler, denoise,
+                 mode_type, tile_width, tile_height, mask_blur, tile_padding,
+                 seam_fix_mode, seam_fix_denoise, seam_fix_mask_blur,
+-                seam_fix_width, seam_fix_padding, force_uniform_tiles, tiled_decode, batch_size=1):
++                seam_fix_width, seam_fix_padding, force_uniform_tiles, tiled_decode, batch_size=1,
++                structure_preservation=0.0):
+         upscale_by = 1.0
+ 
+         logger.debug("UltimateSDUpscaleNoUpscale.upscale() received batch_size=%s", batch_size)
+@@ -201,7 +210,8 @@ class UltimateSDUpscaleNoUpscale(UltimateSDUpscale):
+                                steps, cfg, sampler_name, scheduler, denoise, None,
+                                mode_type, tile_width, tile_height, mask_blur, tile_padding,
+                                seam_fix_mode, seam_fix_denoise, seam_fix_mask_blur,
+-                               seam_fix_width, seam_fix_padding, force_uniform_tiles, tiled_decode, batch_size)
++                               seam_fix_width, seam_fix_padding, force_uniform_tiles, tiled_decode, batch_size,
++                               structure_preservation=structure_preservation)
+     
+ class UltimateSDUpscaleCustomSample(UltimateSDUpscale):
+     @classmethod
+@@ -225,13 +235,13 @@ class UltimateSDUpscaleCustomSample(UltimateSDUpscale):
+                 seam_fix_mode, seam_fix_denoise, seam_fix_mask_blur,
+                 seam_fix_width, seam_fix_padding, force_uniform_tiles, tiled_decode, batch_size=1,
+                 upscale_model=None,
+-                custom_sampler=None, custom_sigmas=None):
++                custom_sampler=None, custom_sigmas=None, structure_preservation=0.0):
+         return super().upscale(image, model, positive, negative, vae, upscale_by, seed,
+                 steps, cfg, sampler_name, scheduler, denoise, upscale_model,
+                 mode_type, tile_width, tile_height, mask_blur, tile_padding,
+                 seam_fix_mode, seam_fix_denoise, seam_fix_mask_blur,
+                 seam_fix_width, seam_fix_padding, force_uniform_tiles, tiled_decode, batch_size,
+-                custom_sampler, custom_sigmas)
++                custom_sampler, custom_sigmas, structure_preservation)
+ 
+ # A dictionary that contains all nodes you want to export with their names
+ # NOTE: names should be globally unique

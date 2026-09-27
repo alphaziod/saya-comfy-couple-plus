@@ -1,10 +1,4 @@
-*.bak-*
-*.saya-*
-*.saya-backup-*
-*.save
-.tracking
 __pycache__/
 *.pyc
-_cache/
-.pytest_cache/
-*.log
+.saya_backups/
+.saya_install.json

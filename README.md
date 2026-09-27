@@ -1,271 +1,324 @@
-# Saya Comfy Couple Plus
+# Saya Couple
 
-**V1 · 1.0.0** — regional prompting and model routing for two-character ComfyUI workflows.
+> I wanted two characters and a background to stop fighting each other. This got slightly out of hand.
 
-## What this is
+Saya Couple is a ComfyUI custom node pack **plus a small patch to ComfyUI's attention code**. It lets one
+generation use three separate conditionings that actually work together:
 
-Normal prompting gives you **one** prompt for the whole image, so two characters
-in the same frame bleed into each other (wrong hair color on the wrong person,
-merged outfits, etc.). Saya Comfy Couple Plus splits the image into two regions
-and gives each region its own prompt, while a shared **Base Prompt** still
-describes the scene, framing and interaction both characters are part of.
+- **MAIN**: the world. Scene, background, mood, colours, overall composition.
+- **P1**: the first character's identity and attributes.
+- **P2**: the second character's identity and attributes.
 
-At generation time the plugin combines `Base + Person 1` in Person 1's region
-and `Base + Person 2` in Person 2's region, and applies that split either as an
-attention patch on the SDXL model (**Forge engine**) or as separate masked
-conditionings on HiDream (**Architecture E**) — see [How it works](#how-it-works).
+It is first and foremost **a backup of my own ComfyUI setup**, made public in case it helps someone with the
+same problem. Take what you need.
 
-The V1 example workflow shows this with an adult woman and an adult man sharing
-a book in an apartment, then optionally refining the result through HiDream,
-detailers and an upscale pass.
+![Demo: two characters, one scene](docs/images/demo_example.png)
 
-## Table of contents
+---
 
-- [Features](#features)
-- [How it works](#how-it-works)
-- [Installation](#installation)
-- [Example workflow](#example-workflow)
-- [The four prompts](#the-four-prompts)
-- [HiDream phase](#hidream-phase)
-- [Lazy loading, cache and memory](#lazy-loading-cache-and-memory)
-- [Validation and development](#validation-and-development)
-- [Credits and licensing](#credits-and-licensing)
+## ⚠️ Installation warning
 
-## Features
+**Saya Couple modifies ComfyUI's own files.** It is not a plain "drop it in `custom_nodes`" extension.
 
-- Two-character regional conditioning and SDXL Forge Couple attention.
-- HiDream support through **Architecture E**: native masked conditionings without a MODEL attention wrapper.
-- Deferred HiDream text encoding and a persistent conditioning cache.
-- HiDream diffusion LoRA support, including the ComfyUI-GGUF patcher.
-- Automatic, editable HiDream trigger injection into all three positive prompts.
-- Independent Naturalize conditioning and late cleanup routing.
-- Six automatic phase boundaries with review, checkpoint save/load and optional model offload.
-- Regional detailer routing and optional hires/upscale passes.
+- a ComfyUI update can overwrite or break the patch;
+- another extension can modify the same files;
+- a ComfyUI version that was not tested may work, or may not;
+- a bad install can break ComfyUI;
+- the optional AMD patch also changes how ComfyUI loads and unloads models.
+
+### BACK UP YOUR OWN COMFYUI INSTALLATION BEFORE INSTALLING.
+
+The installer checks compatibility first, keeps its own backup, verifies hashes and can restore, but your own
+copy is the one you can trust. **Use at your own risk.** Nothing dramatic: the changes are small text patches and
+they can be reverted.
+
+---
+
+## What is Saya Couple?
+
+| Part | What it is | Needed? |
+|---|---|---|
+| **Core patch** `comfy/ldm/modules/attention.py` | makes MAIN / P1 / P2 cooperate inside cross-attention | **required** for the couple mode |
+| **Custom node pack** `custom_nodes/Saya_Couple/` (53 nodes) | the couple nodes, plus many nodes my own workflow uses (phase checkpoints, HiDream helpers, upscale/detail passes, lazy loaders…) | install it all, ignore what you don't use |
+| **AMD VRAM safety patch** `comfy/model_management.py` | keeps ROCm from starving the Linux desktop of VRAM | optional, AMD only |
+| **Installer** `./saya` | install / verify / restore / check-compat | recommended |
+| **Demo workflow** (simple) | MAIN / P1 / P2 + the two Shark samplers, nothing else | recommended first run |
+| **Full workflow** | my complete 6-phase pipeline, cleaned for publication | for when you want everything |
+| **Tests & tools** | proofs, installer scenarios, test campaigns | if you're curious |
+
+## Why this exists
+
+I wanted one image with a rich scene and two distinct characters, each with their own prompt.
+
+With the usual approaches (regional prompting, attention couple, conditioning combine/concat), the three
+conditionings **compete**. If the characters win, they come out great but absorb MAIN's authority: the background
+gets simpler, requested objects go missing, colours and mood fade. If you push MAIN harder, the characters degrade
+or start merging into each other.
+
+I wanted to **control** how MAIN, P1 and P2 share the image instead of choosing which one loses.
 
 ## How it works
 
-Two node "families" cover the two model families you can drive with this pack.
-Both share the same **MASTER / COPY** pattern: the MASTER node exposes the
-layout controls (orientation, center, transition, ...) and outputs a
-`SAYA_COUPLE_CONFIG` bundle; every later pass reuses that exact layout through a
-COPY node instead of re-exposing (and risking drifting) the same widgets.
+For every cross-attention layer of the model that runs the couple (MODEL_1):
 
-```text
-                 ┌──────────────────────┐
- Base/P1/P2/Neg  │   MASTER (per phase   │  couple_config ──► reused by every
- conditioning ──►│   family: Forge or    │                    COPY node later
- + latent        │   HiDream)            │
-                 └──────────┬────────────┘
-                            │
-              regional conditioning (+ patched MODEL for Forge)
-                            │
-                            ▼
-                     KSampler.positive
+1. **MAIN** is computed exactly as ComfyUI normally does (native path).
+2. **P1** and **P2** are computed separately, with the same layer, on the conditional rows only.
+3. Inside each character's mask, the character's difference from MAIN (its **delta**) is added on top of MAIN.
+   The part of the delta that would cancel MAIN is removed ("locked" orthogonal to MAIN), so a character adds
+   information without erasing the scene.
+4. The negative/unconditional side stays pure MAIN.
+
+```
+OUT = MAIN + g × (D1_locked + D2_locked)
 ```
 
-| | SDXL — `SayaComfyCoupleForge` (+ Copy) | HiDream — `SayaComfyCoupleHiDream` (+ Copy) |
-| --- | --- | --- |
-| Technique | Patches a cloned MODEL's attention (`set_model_attn2_patch`), so regions are split at the UNet level | No MODEL socket at all — builds separate masked `CONDITIONING` entries; the stock ComfyUI sampler runs one forward per region and composites by mask |
-| Contact band | Yes — a soft MAIN-only blend right on the seam between the two regions, so a hug or held hands aren't torn in half | Optional (`include_main_contact`), same idea, no attention patch needed |
-| When you use it | Any SDXL/Illustrious checkpoint | Any HiDream checkpoint (GGUF or full weights) |
+The lesson from many failed attempts (weights, scheduling, mask variants, routing, alternative cores; see
+[docs/DEVELOPMENT_HISTORY.md](docs/DEVELOPMENT_HISTORY.md)): **before tuning how strong MAIN, P1 and P2 are, you
+first have to control *how* they interact inside attention.** That needed a core modification. Once the interaction
+was clean, the balance became a single knob, `g`.
 
-A regional conditioning that doesn't actually match the active model family is
-rejected loudly instead of silently degrading — e.g. wiring plain SDXL
-conditioning into a HiDream Couple node raises a clear "not a native HiDream
-conditioning" error rather than producing a broken, unmasked image.
+| g | what tends to happen |
+|---|---|
+| too low (≈ 0.5) | MAIN gets strong (richer, more colourful background), characters start losing attributes |
+| too high (≥ 0.83) | the characters take over the frame; MAIN loses objects and detail |
+| **≈ 0.78** | current compromise: MAIN, P1 and P2 all contribute |
+
+The goal is not "zero defects". It is that **MAIN, P1 and P2 can all contribute together.**
+
+The couple mode is **fail-closed**: other extensions that hook cross-attention (attn2 patches, attn2 replacements,
+attention overrides) raise a clear error in that mode instead of being silently mixed in.
+
+## Current recommended balance
+
+```python
+# comfy/ldm/modules/attention.py
+SAYA_LOCKED_DELTA_PERSON_GAIN = 0.78
+```
+
+- **1.0** is the **neutral reference**. It is proven bit-identical to the patch before the gain existed.
+- **0.78** is the **current recommended value**, chosen after pure-RNG campaigns and tests across ten different
+  environments. It is a good compromise *for my models and prompts*, not a universal constant. A nearby value may
+  suit your content better.
+
+To change it, edit that line and restart ComfyUI. There is deliberately no widget for it.
+
+## Compatibility
+
+Compatibility is decided from **what your ComfyUI's code actually provides**, not from its version number. An old
+version is never refused just for being old.
+
+| Status | Meaning |
+|---|---|
+| **OFFICIALLY TESTED** | every key core file is byte-identical to the version validated with real generations |
+| **POTENTIALLY SUPPORTED** | all structures/APIs Saya uses are present and the patch applies; not validated with real generations |
+| **UNSUPPORTED** | something required is missing, or the patch does not apply → the installer changes nothing |
+
+It is checked on three separate axes:
+
+- **A. Saya attention core**: does the patch apply, and are the runtime hooks it uses present (`cond_or_uncond`,
+  `activations_shape`, attention backends accepting `transformer_options`)?
+- **B. Custom node pack**: are all 128 ComfyUI imports/symbols the pack uses present (for example
+  `comfy.model_base.Anima` and `model_management.unload_model_and_clones`), and is **MultiMaskCouple** installed?
+- **C. AMD patch**: does it apply to your `model_management.py`?
+
+Tested setup (OFFICIALLY TESTED): ComfyUI `41db8f4f` (v0.34.0 + 77 commits, 2026-09-08), Linux, AMD Radeon RX 9060 XT
+16 GB (RDNA4), ROCm 7.13, PyTorch 2.13, Python 3.12, PyTorch attention.
+
+Static scan of past releases (`compatibility.json`, `tools/scan_history.py`):
+
+| ComfyUI | A. attention | B. pack | C. AMD patch |
+|---|---|---|---|
+| ≤ v0.3.59 | UNSUPPORTED (attention backends don't take `transformer_options`) | UNSUPPORTED | UNSUPPORTED |
+| v0.3.69 – v0.22.x | POTENTIALLY SUPPORTED | UNSUPPORTED (APIs added later) | POTENTIALLY SUPPORTED |
+| v0.23.0 – v0.37.4 | POTENTIALLY SUPPORTED | POTENTIALLY SUPPORTED | POTENTIALLY SUPPORTED |
+
+So in practice: **v0.23.0 or newer** is needed; only the tested commit is OFFICIALLY TESTED. Run
+`./saya check-compat` on your own install; it is the answer that counts.
+
+## Core files modified
+
+Verified against upstream: exactly **two** ComfyUI files are touched, nothing else in the core.
+
+### REQUIRED CORE MODIFICATION: `comfy/ldm/modules/attention.py`
+
+- Adds the Saya cross-attention path used only when a model carries `saya_dual_mode` (set by the Saya Multi Couple
+  node): MAIN native, P1/P2 on conditional rows, `main_locked_delta` fusion, `SAYA_LOCKED_DELTA_PERSON_GAIN = 0.78`,
+  fail-closed hook checks.
+- Without the flag the file behaves exactly like upstream (tested bit-identical).
+- About 120 added lines, one changed line (`if` → `elif`). Patch: `patches/saya_dual_attention.patch`.
+
+### OPTIONAL AMD SAFETY PATCH: `comfy/model_management.py`
+
+About 20 lines, active only on AMD GPUs under ROCm. Not needed for Saya Couple. See below.
+
+### CUSTOM NODE FILES
+
+`custom_nodes/Saya_Couple/`: a normal custom node folder. It needs the external **MultiMaskCouple** custom node.
+The per-file list with sha256, origin and license is in `MANIFEST.json`.
+
+## AMD VRAM safety patch (optional)
+
+On Linux with amdgpu, ROCm allocations cannot be evicted for other programs. When PyTorch fills the VRAM, the
+desktop compositor can fail to allocate and the **whole graphical session can freeze or die**. Switching between big
+models (SDXL → HiDream + LoRA) could also run out of memory.
+
+The patch (a no-op on NVIDIA, CPU and anything that is not ROCm):
+
+- caps ComfyUI's VRAM at startup to *free VRAM − 1 GiB* kept for the desktop, and makes loading decisions respect it;
+- unloads models **fully** instead of partially, so gigabytes of the old model don't stay next to the new one;
+- never grows an already partially loaded model back into the headroom reserved for activations and LoRA patching.
+
+| AMD VRAM | Installer suggestion |
+|---|---|
+| ≤ 16 GB | strongly recommended for heavy workflows like mine (asks, default yes, you can refuse) |
+| 16 – 24 GB | recommended with big models / heavy workflows (asks, default yes, you can refuse) |
+| ≥ 24 GB | information only: generally not needed, not applied (`./saya amd --yes` if you want it) |
+
+NVIDIA users are never offered it. You always keep the choice: `./saya amd --check | --yes | --revert`. Launch flags I use with
+it: `--disable-dynamic-vram --reserve-vram 0.75`.
 
 ## Installation
 
-Use the Python environment belonging to your ComfyUI installation:
+Requirements: ComfyUI **v0.23.0+** (see Compatibility), the custom node **MultiMaskCouple**, and **RES4LYF** for the
+demo workflow.
 
 ```bash
-cd /path/to/ComfyUI/custom_nodes
-git clone https://github.com/alphaziod/saya-comfy-couple-plus.git
+git clone <this repository> saya-couple
+cd saya-couple
+./saya check-compat --comfyui /path/to/ComfyUI      # changes nothing
+./saya install      --comfyui /path/to/ComfyUI      # Windows: saya.bat install --comfyui C:\path\to\ComfyUI
 ```
 
-Restart ComfyUI and refresh the browser. Keep only one installed copy of this
-plugin: an older folder named `comfy_saya_couple` registers the same public node IDs.
-ComfyUI supplies PyTorch and its normal runtime dependencies; `requirements.txt`
-lists NumPy and Pillow. Do not replace ComfyUI's CUDA/ROCm PyTorch build.
+What `install` does:
 
-The plugin's SDXL/HiDream conditioning nodes use ComfyUI itself. Additional nodes
-have these requirements:
+1. finds ComfyUI and its Python (`.venv`, `venv`, `python_embeded`, or `--python`);
+2. reads its version/commit and **checks compatibility** on the three axes;
+3. shows exactly which core files will change and asks for confirmation;
+4. backs up every file it will touch (`ComfyUI/.saya_backups/<date>/`, with sha256 and ComfyUI version);
+5. applies the required attention patch (no git needed; a patch that does not match exactly is refused);
+6. installs `custom_nodes/Saya_Couple`;
+7. offers the AMD patch only when it makes sense;
+8. checks hashes, runs quick smoke tests (core import, Saya path live, gain value, pack import) and prints a report.
 
-| Feature | External dependency |
-| --- | --- |
-| Crop detailers | ComfyUI-Impact-Pack |
-| Detector providers in the example | Impact Pack / Impact Subpack with UltralyticsDetectorProvider |
-| USDU bridge | ComfyUI_UltimateSDUpscale providing UltimateSDUpscaleCustomSample |
-| GGUF HiDream MODEL | ComfyUI-GGUF |
+If a required check fails, **nothing is modified**. Re-running `install` is safe (idempotent). `--dry-run` shows
+everything without writing; `--full` also runs the pack's test suite.
 
-Stock UltimateSDUpscale works with `structure_preservation = 0`. A nonzero value
-requires an Identity Safe V2.1 backend exposing that input; the bridge reports an
-explicit error if it is unavailable. That extension is not required for the public defaults.
+## Verify / Restore
 
-### Full example workflow dependencies
-
-The example retains the real multi-phase graph. To open all its nodes, install
-these packs as well (including nodes that start bypassed):
-
-- **rgthree-comfy**: group toggles, image comparers, switches and Power Puter.
-- **ComfyUI-KJNodes**: Set/Get routing, constants, size helpers and LazySwitchKJ.
-- **ComfyUI-Lora-Manager**: the five empty SDXL LoRA slots.
-- **ComfyUI_JPS-Nodes**: sampler/scheduler settings and arithmetic.
-- **ComfyUI-Crystools**: primitive float.
-- **ComfyUI-Detail-Daemon** and **RES4LYF**: optional sampling modifiers.
-- **WAS Node Suite**, **ComfyUI-WLSH-Nodes**, **ComfyUI-Image-Saver** and
-  **ComfyUI-DaSiWa-Nodes**: upscale and image/save utilities.
-- **efficiency-nodes-comfyui**: the final Naturalize sampler.
-- **ComfyUI-EasyColorCorrector**: optional color correction.
-
-Use a current ComfyUI/frontend supporting subgraphs, CustomCombo and QuadrupleCLIPLoader.
-The example was checked against the locally installed ComfyUI 0.34 / frontend 1.45 family.
-These example-only dependencies are not all required for a small custom Couple graph.
-No model weights are distributed or downloaded by this project.
-
-## Example workflow
-
-Download and open **[workflows/Ilust-Simple-V1.json](workflows/Ilust-Simple-V1.json)**.
-This replaces the previous example; it is the single public V1 template. It is a
-**phased** workflow: it runs in six numbered stages (checkpoint generation,
-optional HiDream refine, detailers, upscale, ...) instead of one flat graph, so
-you can inspect and redo any stage before committing to the next.
-
-Before queuing:
-
-1. In **Models**, select your SDXL base and refiner checkpoints and compatible
-   custom SDXL VAEs. Prefer the same checkpoint in both slots for a simple start.
-2. Replace every `SELECT_...` placeholder on any branch you enable. Placeholders
-   keep loader widgets present; they are not downloadable model names and will
-   fail validation until you make a real selection.
-3. Select an upscale model for the final output and enabled upscale passes.
-4. Edit **Base Prompt**, **Person 1 Prompt**, **Person 2 Prompt**, **Negative Prompt**.
-   Naturalize has its own four example prompts; update those too if you change identities.
-5. The five **LoRA 1–5** slots are empty. Add your own compatible SDXL LoRAs if wanted.
-6. Leave the optional passes off for a first check. After Phase 01, inspect the
-   review image and select Continue to run the remaining phases.
-
-All 13 numbered detailers, USDU passes, Detail Daemon, CFG Zero, epsilon scaling
-and color correction start bypassed. **Enable HiDream** starts false. Phase
-boundaries remain active so skipping a refinement still produces the checkpoint
-required by the next phase. Hires and final upscale routes remain available;
-bypass image-to-image refinement nodes to skip them, without bypassing LOAD/STOP nodes.
-
-The VAE selectors default to **Main Model VAE**. The graph retains its custom VAE
-inputs; because ordinary selectors may evaluate all connected inputs, choose
-valid compatible VAEs for those slots even when the main VAE is selected.
-For a detailer you enable, select a detector and SAM model, then use the matching
-**Detailer N** group toggle. Assign them to faces, eyes, hands or other useful
-regions. Every numbered slot starts inactive and has no personal detector selection.
-
-## The four prompts
-
-| Prompt | Responsibility |
-| --- | --- |
-| Base Prompt | Shared scene, interaction, framing, lighting and background |
-| Person 1 Prompt | First adult's appearance, clothing and pose; left region by default |
-| Person 2 Prompt | Second adult's appearance, clothing and pose; right region by default |
-| Negative Prompt | Shared exclusions |
-
-In SDXL, the Forge engine patches a cloned MODEL with the existing regional
-attention logic. Each region receives Base + its person prompt. Geometry and
-masks come from MASTER and are reused by COPY. Regional prompting guides
-identity separation; image quality still depends on the model and prompts.
-
-## HiDream phase
-
-Open **Phase 03**, select a HiDream GGUF diffusion model and its compatible VAE,
-then turn on **Enable HiDream**. The default off position uses a lazy image
-switch: it carries the previous image forward without executing HiDream MODEL
-loading or text encoding. Do not bypass the outer Phase 03 or its STOP node.
-
-The deferred self-loader expects these standard encoder filenames in ComfyUI's
-`text_encoders` search paths:
-
-```text
-clip_l_hidream.safetensors
-clip_g_hidream.safetensors
-t5xxl_fp8_e4m3fn.safetensors
-llama_3.1_8b_instruct_fp8_scaled.safetensors
-```
-
-Supply compatible files. The unused QuadrupleCLIPLoader retained in Models is not
-connected to the Phase-01 prompt encoders. Wiring a CLIP directly into HiDream
-COPY is supported for custom graphs, but loads that upstream CLIP before COPY's
-cache check; leave it disconnected to preserve the no-TE-load cache-hit path.
-
-Architecture E builds native per-region HiDream conditionings. MODEL and
-conditioning travel separately:
-
-```text
-HiDream MODEL → HiDream LoRA Loader → ModelSamplingSD3 → Phase 03 sampler MODEL
-Base/P1/P2 HiDream conditionings → Couple E COPY → Phase 03 sampler positive
-Negative HiDream conditioning → Couple E COPY → Phase 03 sampler negative
-```
-
-### HiDream LoRA and trigger prompt
-
-The settings panel exposes `enabled`, `lora_name`, `strength_model` and an editable
-multiline `trigger_text`. Public defaults are **false / none / 1.0 / empty**.
-The dedicated loader uses ComfyUI's model-only LoRA API and preserves the GGUF
-patcher subclass. It rejects non-HiDream models and files with no matching MODEL weights.
-
-For a LoRA whose documented trigger is `exampleStyle`, set that text in the panel:
-
-```text
-Base HiDream:     exampleStyle, <Base original>
-Person 1 HiDream: exampleStyle, <Person 1 original>
-Person 2 HiDream: exampleStyle, <Person 2 original>
-Negative HiDream: <Negative original>
-```
-
-The trigger is prepended before encoding and Couple regional assembly. Simple
-comma-separated duplicates are avoided. SDXL and Naturalize prompts are unchanged.
-Clear the text to remove automatic injection while keeping the LoRA. Disable the
-panel, select none or set strength to zero to disable both patching and injection.
-A trigger manually written in an original prompt is not removed by disabling the panel.
-
-### Lazy loading, cache and memory
-
-- Phase 01 encodes SDXL and Naturalize only; HiDream remains deferred.
-- Phase 03 cache hit: read conditionings; no self-loaded HiDream text encoder.
-- Cache miss: load the quad CLIP once, encode four prompts, save the CPU
-  conditionings and unload the self-loaded TE before diffusion sampling.
-- The key includes the **final injected texts**, TE file fingerprints and encode
-  recipe. Diffusion-only LoRA filename/strength do not invalidate text conditioning.
-- Public STOP nodes enable `unload_after_phase`: ComfyUI's existing model manager
-  offloads loaded weights after each accepted phase boundary. Patchers needed for
-  later phases remain reusable on CPU; the disk conditioning cache survives.
-- Phase 06 performs the existing final unload and clears the cross-phase payload.
-  Existing private workflows retain the previous boundary policy unless they opt in.
-
-This controls accelerator residency, not a promise to erase every cached CPU
-object. ComfyUI remains responsible for model caching and available memory.
-
-## Validation and development
-
-V1 includes CPU integration tests for native/GGUF LoRA patches, trigger injection,
-cache hit/miss behavior, lazy encoding and graph structure. No full generation or
-image-quality benchmark is required to run these checks:
+After a ComfyUI update, or when something looks off:
 
 ```bash
-cd /path/to/ComfyUI
-/path/to/comfy-python /path/to/saya-comfy-couple-plus/tests/validate_hidream_lora.py
-python /path/to/saya-comfy-couple-plus/tests/validate_public_workflow.py
+./saya verify --comfyui /path/to/ComfyUI
 ```
 
-For the first command, use ComfyUI's Python environment and install ComfyUI-GGUF.
-You can alternatively set `COMFYUI_PATH`. The public workflow test uses only the
-Python standard library. [ARCHITECTURE.md](ARCHITECTURE.md) is the maintainer-facing
-deep dive (module layout, both attention engines, the cache format, the phase state
-machine); [HIDREAM_LORA_REPORT.md](HIDREAM_LORA_REPORT.md) records the LoRA/cache design.
+Short, paste-able report: ComfyUI version/commit, compatibility status, attention patch `OK / MODIFIED / MISSING`,
+custom node `OK / INCOMPLETE`, AMD patch `ACTIVE / NOT INSTALLED / INCOMPATIBLE`, hashes, dependencies, known
+conflicts, quick tests. If you open an issue, please include it: *"Run `./saya verify` and paste the output."*
 
-Active development continues. Include your ComfyUI version, enabled node packs,
-model family and a minimal workflow when reporting an issue. Existing public
-node IDs and output ordering are preserved in V1.
+```bash
+./saya restore --comfyui /path/to/ComfyUI
+```
 
-## Credits and licensing
+puts back **exactly** the files saved before the first install (never a guessed upstream file) and removes the
+custom node. If a file changed after the install (update, manual edit), it tells you and asks before overwriting.
 
-The Forge Couple engine derives from Haoming02's sd-forge-couple. Its GPL-3.0
-license and notices are retained in [forge/LICENSE](forge/LICENSE) and the Forge
-source files. Third-party node packs and model weights have their own licenses.
+## Demo workflow (simple)
+
+`workflows/Saya_Couple_Demo.json`: **SELECT YOUR SDXL / ILLUSTRIOUS MODEL, THEN CLICK GENERATE.**
+
+Deliberately bare: two checkpoint loaders, MAIN / P1 / P2 / negative, the Saya split mask and Multi Couple, the two
+Shark samplers, decode, save. No phases, no detailers, no upscale. Load a checkpoint in both loaders once (the same
+model in both works), click Generate, and you see the couple mechanism doing its job. Random seed every run.
+
+The sampling core is **exactly the one of my validated setup** (RES4LYF ClownsharKSampler): MODEL_1 base pass
+16 steps / 13 run / cfg 6 with Epsilon Scaling → CFGZeroStar → APG → PAG and DetailBoost, then MODEL_2 refine pass
+3 steps / denoise 0.5 / cfg 2. The gain 0.78 lives in the patched core, not in the graph. The prompts are the ones
+used for the gain campaigns (two adult characters in a seated hug, a dense multicoloured gamer room); only the
+negative prompt was reworded to neutral quality terms for the public version.
+
+## Full workflow
+
+`workflows/Saya_Couple_Full.json`: the complete pipeline I actually use, in 6 phases (base sampling, hires / USDU,
+HiDream refine, pre-detail refine, detailers, final upscale & naturalize), with phase checkpoints and review gates.
+
+Cleaned for publication **without simplifying it**: same nodes, same wiring, same sampler and pass settings. Only
+these were neutralised: checkpoints, VAEs, LoRAs (stacks shipped empty), detector models (`SELECT_*`
+placeholders), prompts (same as the demo), and personal notes. The 13 detailer slots are simply named
+**Detailer 01 … Detailer 13**; choose a detector model for each slot you want and bypass the others with their
+toggles.
+
+It needs many other custom nodes (RES4LYF, Ultimate SD Upscale, Impact Pack + Subpack, GGUF, KJNodes, rgthree,
+LoRA Manager, Fearnworks, DaSiWa, JPS, EasyColorCorrector); the list with links and licenses is in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). In its public form it was checked to load with no missing node
+and to produce a phase-1 prompt identical to my validated one; the full 6-phase run was validated on my own
+install, with my models.
+
+## Testing methodology
+
+0.78 is not based on one pretty picture:
+
+- **Non-regression**: pack test suite (101 tests), bit-identical proofs (`tests/proof_gain.py`: g = 1.0 equals the
+  pre-gain code, only the character deltas are scaled, MAIN and unconditional rows untouched), installer scenarios
+  (`tests/installer_scenarios.py`: install, verify, idempotence, restore, drift, conflicts, NVIDIA/AMD simulations,
+  old version).
+- **Pure-RNG campaigns**: a new random seed per image, 10 images per gain value from 0.68 to 0.83, plus earlier
+  0.5 / 0.75 / 0.85 / 1.0 comparisons.
+- **Ten environments** at 0.78 (café, beach, winter market, library, festival, rooftop, and four harder fantasy /
+  steampunk / cyberpunk / forest scenes).
+- **Judged on harmony**: are MAIN, P1 and P2 all clearly expressed? Small local attribution mistakes were tolerated.
+- **Every validated state archived with sha256 manifests.**
+
+Tools to rerun it yourself: `tests/run_campaign.py` (RNG and themed campaigns), `tests/contact_sheet.py`.
+Full story: [docs/DEVELOPMENT_HISTORY.md](docs/DEVELOPMENT_HISTORY.md).
+
+## AI-assisted development
+
+**This project was heavily AI-assisted.** AI models helped read and analyse ComfyUI's code, implement, test,
+diagnose, audit, write the installer and this documentation.
+
+What stayed human: the goals, the expected behaviour, the visual evaluation of every campaign, and the decisions to
+keep or reject approaches. An alternative "dual-stream" core was dropped on visual results even though some numbers
+looked better. Changes were tested, compared with previous states, archived and audited before being kept, not
+generated and published as-is.
+
+## Personal project note
+
+I'm not a professional developer. This started because ComfyUI didn't do exactly what I wanted, and I ended up
+modifying its attention. This repository is my setup: nodes I actually use, tools most people will never need,
+experimental patches that became stable, and the scripts that tested them. Install everything and ignore what you
+don't need, or take one piece.
+
+## Reuse / Contributions
+
+If something here helps you, feel free to **reuse, adapt, fork or rewrite it**: only the attention patch, only the
+nodes, only the test scripts. I'm fine with that. The project exists to back up my work and maybe save someone a
+few weeks.
+
+### Licenses (please read, it's short)
+
+| What | License |
+|---|---|
+| Saya Couple's own code (pack, installer, tests, tools, docs) | **GPL-3.0-or-later**: `LICENSE` |
+| Core patches and patched reference files (they modify ComfyUI) | **GPL-3.0**, ComfyUI's license |
+| `src/ppm_vendor/**` and `src/nodes/saya_attention_couple.py` (from ComfyUI-ppm) | **AGPL-3.0-or-later**: they stay AGPL here, each file says so (`SPDX` header), text in `LICENSES/AGPL-3.0.txt` |
+| Dependencies you install yourself (MultiMaskCouple, RES4LYF, …) | their own licenses. **RES4LYF adds a restriction on commercial services** |
+
+The repository has one main license but contains components under other licenses; nothing here relicenses them.
+Details and attributions: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+Issues and PRs are welcome; this is a personal project maintained when I have time.
+
+## Known limitations
+
+- **Core patch**: ComfyUI updates can break it. Run `./saya verify` after every update.
+- **Validated on one setup only** (AMD RDNA4 16 GB, Linux, ROCm, PyTorch attention). NVIDIA, Windows and other
+  attention backends pass the static checks but were not validated with real generations. `saya.bat` is untested.
+- **SDXL / UNet only** for the couple path; other architectures and temporal blocks are refused on purpose.
+- **Fail-closed couple mode**: extensions that hook cross-attention cannot be combined with it.
+- **Attribute swaps happen**: with two masked characters the model sometimes gives an attribute (ears, eye colour)
+  to the wrong one. Later passes usually fix it; `g` does not remove it.
+- **Hard themes**: a third element (a creature, a specific prop) and very specific background details can be dropped.
+- **`g` is a code constant**, not a UI setting; changing it needs a restart.
+- **Optional nodes** rely on other packs: the USDU pass nodes on ComfyUI_UltimateSDUpscale (per-tile couple masks
+  need `patches/third_party/ultimatesdupscale_saya_couple_crop.patch`, not installed by the installer), the detailer
+  node on the Impact Pack. The detailer chain has 13 generic slots (Detailer 01-13); no detector model is shipped.

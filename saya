@@ -1,0 +1,6 @@
+#!/bin/sh
+# Saya Couple installer launcher (Linux / macOS). Usage: ./saya install | verify | restore | check-compat | amd
+HERE="$(cd "$(dirname "$0")" && pwd)"
+PY="${SAYA_PYTHON:-python3}"
+command -v "$PY" >/dev/null 2>&1 || PY=python
+exec "$PY" "$HERE/installer/saya.py" "$@"

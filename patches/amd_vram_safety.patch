@@ -1,0 +1,61 @@
+Saya Couple — optional AMD/ROCm VRAM safety patch for ComfyUI core (comfy/model_management.py).
+Base: ComfyUI upstream 41db8f4f. Only active on AMD GPUs under ROCm; no effect on NVIDIA/CPU.
+- hard VRAM cap = VRAM free at startup - 1 GiB for the desktop (set_per_process_memory_fraction)
+- get_free_memory clamped to the cap
+- full unload instead of partial unload
+- no re-promotion of an already partially loaded model
+Apply with apply_amd_vram_patch.py (git apply). Revert with --revert.
+
+diff --git a/comfy/model_management.py b/comfy/model_management.py
+index dd50f4c4..1ddf6036 100644
+--- a/comfy/model_management.py
++++ b/comfy/model_management.py
+@@ -819,7 +819,8 @@ class LoadedModel:
+         return False
+ 
+     def model_unload(self, memory_to_free=None, unpatch_weights=True):
+-        if memory_to_free is not None:
++        # AMD: a partial unload leaves GBs of weights resident next to the next model; unload fully.
++        if memory_to_free is not None and AMD_VRAM_CAP is None:
+             if memory_to_free < self.model.loaded_size():
+                 freed = self.model.partially_unload(self.model.offload_device, memory_to_free)
+                 if freed >= memory_to_free:
+@@ -870,6 +871,17 @@ if args.reserve_vram is not None:
+     EXTRA_RESERVED_VRAM = args.reserve_vram * 1024 * 1024 * 1024
+     logging.debug("Reserving {}MB vram for other applications.".format(EXTRA_RESERVED_VRAM / (1024 * 1024)))
+ 
++# amdgpu cannot evict ROCm allocations for other clients: once PyTorch fills VRAM, the
++# compositor's command submissions fail with ENOMEM and the desktop session dies.
++# Hard-cap the allocator to the VRAM that was free at startup, minus room for the desktop.
++AMD_DESKTOP_VRAM_HEADROOM = 1024 * 1024 * 1024
++AMD_VRAM_CAP = None
++if is_amd() and get_torch_device().type == "cuda":
++    _amd_free, _amd_total = torch.cuda.mem_get_info(get_torch_device())
++    AMD_VRAM_CAP = _amd_free + torch.cuda.memory_reserved(get_torch_device()) - AMD_DESKTOP_VRAM_HEADROOM
++    torch.cuda.set_per_process_memory_fraction(AMD_VRAM_CAP / _amd_total, get_torch_device())
++    logging.info("AMD hard VRAM cap: {:.0f} MB of {:.0f} MB".format(AMD_VRAM_CAP / (1024 * 1024), _amd_total / (1024 * 1024)))
++
+ def extra_reserved_memory():
+     return EXTRA_RESERVED_VRAM
+ 
+@@ -1014,6 +1026,11 @@ def load_models_gpu(models, memory_required=0, force_patch_weights=False, minimu
+             if lowvram_model_memory == 0:
+                 lowvram_model_memory = 0.1
+ 
++            # AMD: a later call with a smaller estimate must not grow an already resident model
++            # into the headroom an earlier call reserved for activations and LoRA patching.
++            if AMD_VRAM_CAP is not None and loaded_memory > 0:
++                lowvram_model_memory = 0.1
++
+         if vram_set_state == VRAMState.NO_VRAM:
+             lowvram_model_memory = 0.1
+ 
+@@ -1804,6 +1821,8 @@ def get_free_memory(dev=None, torch_free_too=False):
+             mem_active = stats['active_bytes.all.current']
+             mem_reserved = stats['reserved_bytes.all.current']
+             mem_free_cuda, _ = torch.cuda.mem_get_info(dev)
++            if AMD_VRAM_CAP is not None:
++                mem_free_cuda = min(mem_free_cuda, AMD_VRAM_CAP - mem_reserved)
+             mem_free_torch = mem_reserved - mem_active
+             mem_free_total = mem_free_cuda + mem_free_torch
+ 
