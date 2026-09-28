@@ -66,7 +66,30 @@ function makeController() {
         assert.equal(redo.length, 1, "one cleanup call");
         assert.equal(redo[0].body.phase, 1, "failure in Phase 1 cleans up Phase 1");
     }
-    console.log("PASS phase failure cleanup targets the failing phase");
+    // After a failure in Phase 3, the next manual queue can resume at Phase 3 (no Phase 1 reset).
+    for (const accept of [true, false]) {
+        const { app, context, posts, listeners, timers } = makeController();
+        context.window.confirm = () => accept;
+        await app.queuePrompt();
+        await context.queuePhase(3, 0);
+        await timers.shift()();
+        await listeners.execution_interrupted({ detail: {} });
+        await new Promise((resolve) => setImmediate(resolve));
+        posts.length = 0;
+        await app.queuePrompt();
+        const phase = vm.runInContext("activePhase", context);
+        const redo = posts.filter((p) => p.url.includes("/redo"));
+        if (accept) {
+            assert.equal(phase, 3, "resume queues Phase 3");
+            assert.equal(redo.length, 0, "resume never resets Phase 1");
+        } else {
+            assert.equal(phase, 1, "declining starts a new image at Phase 1");
+            assert.deepEqual(redo.map((p) => p.body.phase), [1], "declining resets Phase 1");
+        }
+        await app.queuePrompt();
+        assert.equal(vm.runInContext("activePhase", context), 1, "the resume offer is used once");
+    }
+    console.log("PASS phase failure cleanup targets the failing phase; resume after failure");
 })().catch((error) => {
     console.error(error);
     process.exitCode = 1;

@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.0.1 — unreleased
+
+### Full workflow
+
+- **Hires Fix 1 / 3 and Phase 6 back on the PPM couple.** Since 0.2.0 these full-frame passes used MultiMaskCouple;
+  they now use the same crop-aware PPM couple as USDU and the detailers again (`SayaCoupleReconstruct` output 0
+  instead of output 4). Only the origin of three links changes.
+
+### Phase review
+
+- **Resume after an interruption.** Interrupting (or an error in) Phase N used to make the next queue restart
+  Phase 1 with a new master seed, so the image you had validated was lost. The next queue now asks to resume at
+  Phase N from the validated Phase N-1 (Cancel = new image from Phase 1). A queue error in Phase N also no longer
+  resets Phase 1. Phases 2-6 always use the seed saved with the validated Phase 1, not the Master Seed widget.
+
+### Fixes
+
+- The "USDU couple crop unavailable" warning was a false alarm on a correctly patched ComfyUI_UltimateSDUpscale
+  (that pack removes its own modules from `sys.modules`); the per-tile crop itself always worked.
+
 ## 1.0.0 — 2026-09-28
 
 Bug fixes from a full audit of 0.3.0. Couple and Solo images are unchanged: 23 / 23 Phase 1 images are

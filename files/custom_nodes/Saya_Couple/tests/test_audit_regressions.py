@@ -90,15 +90,22 @@ def test_couple_refuses_stock_core():
 
 
 def _engine_in(directory, crop_source):
+    """A fake USDU engine loaded from `directory`, then dropped from sys.modules like the real pack does."""
+    import importlib.util
     import sys
-    import types
 
     (directory / "crop_model_patch.py").write_text(crop_source)
-    module = types.ModuleType("_audit_fake_usdu_nodes")
-    module.__file__ = str(directory / "usdu_nodes.py")
-    sys.modules[module.__name__] = module
-    engine = type("UltimateSDUpscaleCustomSample", (), {"__module__": module.__name__})
-    return engine
+    (directory / "usdu_nodes.py").write_text(
+        "class UltimateSDUpscaleCustomSample:\n"
+        "    def upscale(self, **kwargs):\n"
+        "        return ('image',)\n"
+    )
+    spec = importlib.util.spec_from_file_location("_audit_fake_usdu_nodes", directory / "usdu_nodes.py")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    del sys.modules[spec.name]
+    return module.UltimateSDUpscaleCustomSample
 
 
 def test_couple_usdu_warns_on_stock_engine():
@@ -117,7 +124,6 @@ def test_couple_usdu_warns_on_stock_engine():
     try:
         with tempfile.TemporaryDirectory() as tmp:
             stock = _engine_in(Path(tmp), "def crop_model_cond():\n    pass\n")
-            stock.upscale = lambda self, **kw: ("image",)
             c.ok(node._couple_crop_gate_missing(stock) is not None, "stock engine detected")
             c.eq(node._delegate_with_couple_crop_env(stock, {}, True), ("image",), "Couple on a stock engine still runs")
             c.ok(any("couple crop unavailable" in r.getMessage() for r in records), "Couple on a stock engine warns")

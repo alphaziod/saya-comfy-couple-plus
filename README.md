@@ -16,7 +16,7 @@ One switch turns the whole pipeline into **Solo mode** (MAIN + P1, one character
 | ![Couple: two characters, one scene](docs/images/demo_example.png) | ![Solo: one character, same scene](docs/images/solo_example.png) |
 | demo workflow, MAIN + P1 + P2 | full workflow, MAIN + P1 only |
 
-Current version: **1.0.0** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
+Current version: **1.0.1** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
 RDNA4 16 GB. It is first and foremost **a backup of my own ComfyUI setup**, made public in case it helps someone
 with the same problem. Take what you need.
 
@@ -78,7 +78,7 @@ every phase derives its behaviour from it, and nothing else can contradict it.
 | Pass | Couple mode (ON) | Solo mode (OFF) |
 |---|---|---|
 | Phase 1 · base sampling | Saya dual attention: MAIN + P1 in its region + P2 in its region | MAIN + P1, no region, models unpatched |
-| Hires Fix, Phase 6 (full frame) | MultiMaskCouple regional attention | plain MAIN + P1 |
+| Hires Fix, Phase 6 (full frame) | crop-aware couple attention (PPM), full frame | plain MAIN + P1 |
 | USDU tiles, detailers (crops) | crop-aware couple attention: each tile/crop gets its own slice of the masks | no couple patch, no crop |
 | Phase 3 · HiDream refine | two regions (P1, P2), text strictly separated | one global prompt (MAIN + P1), no regional patch |
 
@@ -190,10 +190,10 @@ To change it, edit that line and restart ComfyUI. There is deliberately no widge
 
 ### The other passes
 
-- **Full-frame passes** (Hires Fix 1 / 3, Phase 6) use MultiMaskCouple regional attention, rebuilt at the current
-  resolution from the couple *imprint* (the prompts and geometry saved with the Phase 1 image).
-- **Tiled / cropped passes** (USDU, detailers) use a crop-aware couple attention: each tile or crop receives its own
-  slice of the full-image masks, so P1 and P2 stay on the right side inside the tile.
+- **Full-frame passes** (Hires Fix 1 / 3, Phase 6) and **tiled / cropped passes** (USDU, detailers) use the same
+  crop-aware couple attention (PPM), rebuilt at the current resolution from the couple *imprint* (the prompts and
+  geometry saved with the Phase 1 image). Each tile or crop receives its own slice of the full-image masks, so P1
+  and P2 stay on the right side inside the tile.
 - **HiDream (Phase 3)** has no SDXL-style cross-attention to patch: image and text share one joint attention.
   RES4LYF's regional mask restricts every image token to the text of its own region (P1 or P2, each carrying
   MAIN), in all 48 blocks. Exactly two regions are used on purpose: with a third one, RES4LYF's text mask lets P1's

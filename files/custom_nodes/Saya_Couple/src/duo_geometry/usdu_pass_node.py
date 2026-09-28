@@ -107,14 +107,13 @@ def _couple_crop_gate_missing(node_class: Any) -> str | None:
     A stock build ignores the variable and every tile then squashes the
     full-frame P1/P2 masks into itself.
     """
-    import inspect
     from pathlib import Path
 
-    try:
-        engine_dir = Path(inspect.getfile(node_class)).resolve().parent
-    except (TypeError, OSError):
-        return f"cannot locate the source of {getattr(node_class, '__name__', node_class)!r}"
-    reader = engine_dir / "crop_model_patch.py"
+    # Not inspect.getfile: the USDU pack removes its modules from sys.modules after import.
+    upscale = getattr(node_class, "upscale", None)
+    if upscale is None:
+        return f"{getattr(node_class, '__name__', node_class)!r} has no upscale method"
+    reader = Path(upscale.__code__.co_filename).resolve().parent / "crop_model_patch.py"
     if not reader.is_file():
         return f"{reader} not found"
     if _SAYA_COUPLE_CROP_ENV not in reader.read_text(encoding="utf-8", errors="replace"):
