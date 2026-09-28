@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0 — unreleased
+## 1.0.0 — 2026-09-28
 
 Bug fixes from a full audit of 0.3.0. Couple and Solo images are unchanged: 23 / 23 Phase 1 images are
 pixel-identical before / after (alternating Couple / Solo, 10 repeated renders, 7 edge cases), and 50 renders in one
