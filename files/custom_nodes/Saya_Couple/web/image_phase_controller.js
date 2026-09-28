@@ -17,6 +17,7 @@ let nextTimer = null;
 let sequenceGeneration = 0;
 let resetPromise = Promise.resolve();
 let resetPending = false;
+let resumePhase = 0;
 const handledTransactions = new Set();
 
 function nodes() {
@@ -180,7 +181,10 @@ async function resetToBeginning(reason, failedPhase = 1) {
     } catch (error) {
         console.debug("[Saya Image Auto] unload after manual stop failed", error);
     }
-    console.info(`[Saya Image Auto] sequence rearmed from phase 1 (${reason}).`);
+    // After a failure in Phase N>1 the validated Phase N-1 is still on disk: the next manual
+    // queue can resume there instead of re-rendering Phase 1 with a new master seed.
+    resumePhase = failedPhase > 1 ? failedPhase : 0;
+    console.info(`[Saya Image Auto] sequence stopped (${reason}); next queue: phase ${resumePhase || 1}.`);
 }
 
 function armResetToBeginning(reason, failedPhase = 1) {
@@ -204,7 +208,7 @@ async function queuePhase(phase, delay = AUTO_DELAY_MS) {
         try {
             await app.queuePrompt(0, 1);
         } catch (error) {
-            void armResetToBeginning(`phase ${phase} error`);
+            void armResetToBeginning(`phase ${phase} error`, phase);
             window.alert(`Phase ${phase} failed:\n${error.message}`);
         } finally {
             internalQueue = false;
@@ -387,7 +391,17 @@ if (!app.__sayaImageAutoNoStartNode) {
     };
     const previousQueuePrompt = app.queuePrompt;
     app.queuePrompt = async function (...args) {
+        if (!internalQueue && resumePhase > 1 && window.confirm(
+            `Resume at Phase ${resumePhase} from the validated Phase ${resumePhase - 1}?\n\n`
+            + "Cancel = new image from Phase 1.")) {
+            activePhase = resumePhase;
+            resumePhase = 0;
+            sequenceRunning = true;
+            handledTransactions.clear();
+            return previousQueuePrompt.apply(this, args);
+        }
         if (!internalQueue) {
+            resumePhase = 0;
             await armResetToBeginning("new manual queue");
             activePhase = 1;
             sequenceRunning = true;

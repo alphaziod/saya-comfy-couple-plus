@@ -15147,7 +15147,8 @@
         "name": "model_patched",
         "type": "MODEL",
         "links": [
-         98381
+         98381,
+         98532
         ]
        },
        {
@@ -15182,9 +15183,7 @@
         "localized_name": "model_patched_multimask",
         "name": "model_patched_multimask",
         "type": "MODEL",
-        "links": [
-         98532
-        ]
+        "links": []
        }
       ],
       "title": "Couple · Reconstruct Conditioning",
@@ -16003,7 +16002,8 @@
         "name": "model_patched",
         "type": "MODEL",
         "links": [
-         98382
+         98382,
+         98533
         ]
        },
        {
@@ -16028,9 +16028,7 @@
         "localized_name": "model_patched_multimask",
         "name": "model_patched_multimask",
         "type": "MODEL",
-        "links": [
-         98533
-        ]
+        "links": []
        }
       ],
       "title": "Couple · Reconstruct Model 2 (Phase 2)",
@@ -17770,7 +17768,7 @@
      {
       "id": 98532,
       "origin_id": 11001,
-      "origin_slot": 4,
+      "origin_slot": 0,
       "target_id": -20,
       "target_slot": 7,
       "type": "MODEL"
@@ -17778,7 +17776,7 @@
      {
       "id": 98533,
       "origin_id": 100144,
-      "origin_slot": 4,
+      "origin_slot": 0,
       "target_id": -20,
       "target_slot": 8,
       "type": "MODEL"
@@ -38261,7 +38259,9 @@
         "localized_name": "model_patched",
         "name": "model_patched",
         "type": "MODEL",
-        "links": []
+        "links": [
+         98541
+        ]
        },
        {
         "localized_name": "positive",
@@ -38289,9 +38289,7 @@
         "localized_name": "model_patched_multimask",
         "name": "model_patched_multimask",
         "type": "MODEL",
-        "links": [
-         98541
-        ]
+        "links": []
        }
       ],
       "title": "Phase 6 · Couple Reconstruct · Final Size",
@@ -38554,7 +38552,7 @@
      {
       "id": 98541,
       "origin_id": 10309,
-      "origin_slot": 4,
+      "origin_slot": 0,
       "target_id": 100242,
       "target_slot": 1,
       "type": "MODEL"
