@@ -26,7 +26,7 @@ Mandatory sequence — each step can fail EXPLICITLY:
      Detailers). Weight is baked into the mask amplitude
      (``region_masks.derive_masks``); strength written on P1/P2's PPM
      channel (``cond[0][1]["strength"]``, ``write_strength``).
-   - ``model_patched_multimask`` — the SAME MultiMaskCouple core Sampler 1
+   - ``model_patched_multimask`` — the SAME MultiMaskCouple core Phase 1 Sampler 2
      uses (``saya_multi_couple.apply_multimask_couple`` ->
      ``custom_nodes.MultiMaskCouple.attention_couple``). Weight travels on
      the CONDITIONING's ``mask_strength`` (raw, unweighted masks from
@@ -138,17 +138,13 @@ def _default_apply_multimask_patch(
     base_weight: float, person_weight: float, main: Any,
 ) -> Any:
     """MultiMaskCouple patch (full-frame only — Hires Fix, Phase 6), reusing
-    the identical core Sampler 1 uses (``saya_multi_couple.apply_multimask_couple``).
-    Returns the patched MODEL only — ``positive``/``negative`` are decided by
-    the caller (``main``/``negative`` are unchanged by construction, see
-    ``apply_multimask_couple``).
+    the same core Phase 1 Sampler 2 uses (``saya_multi_couple.apply_multimask_couple``).
+    Returns the patched MODEL; positive/negative are decided by the caller.
     """
-    model_1_patched, _model_2_unused, _positive, _negative = apply_multimask_couple(
+    return apply_multimask_couple(
         model, clip, mask_1, mask_2, cond_1, neg_1, cond_2, neg_2,
-        strength_1, strength_2, base_weight, person_weight,
-        model_2=None, main=main,
+        strength_1, strength_2, base_weight, person_weight, main=main,
     )
-    return model_1_patched
 
 
 #: Test injection point (the runtime never touches this).
@@ -784,7 +780,7 @@ class SayaCoupleReconstruct:
         "-> structural guard -> TWO independent patches from the same "
         "conditioning: model_patched (PPM, crop/tile-aware -- USDU, "
         "Detailers) and model_patched_multimask (the SAME MultiMaskCouple "
-        "core Sampler 1 uses -- full-frame passes only: Hires Fix, Phase 6). "
+        "core Phase 1 Sampler 2 uses -- full-frame passes only: Hires Fix, Phase 6). "
         "Geometry re-derived at the current resolution. No LoRA is applied "
         "here (structural inheritance from the hub)."
     )
@@ -934,7 +930,7 @@ class SayaCoupleReconstruct:
         report.append(
             "patch model_patched_multimask: 1 MultiMaskCouple AttentionCouple call "
             "(custom_nodes.MultiMaskCouple.attention_couple — same algorithm as "
-            "Sampler 1; FULL-FRAME ONLY, no crop-awareness); "
+            "Phase 1 Sampler 2; FULL-FRAME ONLY, no crop-awareness); "
             f"base_weight={base_weight} person_weight={person_weight}; "
             f"sentinel {COUPLE_PATCH_SENTINEL!r} set"
         )

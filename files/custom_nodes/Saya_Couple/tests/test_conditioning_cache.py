@@ -58,7 +58,7 @@ def test_hidream_cache_first_and_lazy():
         call = lambda imp, clip="CLIP", ident="files-v1", trig="": node.reconstruct(imp, clip, latent, ident, trig)
         c.eq(node.check_lazy_status(base, None, latent, "files-v1", ""), ["clip"], "empty cache: the Quad CLIP is requested")
         out1 = call(base)
-        c.eq(len(env.encoded), 4, "1st run: 4 encodes (a, b, unmasked, negative)")
+        c.eq(len(env.encoded), 3, "1st run: 3 encodes (a, b, negative)")
         c.eq(env.released, 1, "encoder released ONCE after encoding")
         c.eq(node.check_lazy_status(base, None, latent, "files-v1", ""), [], "full cache: the Quad CLIP is NOT requested (loader never run)")
         env.encoded.clear(); env.released = 0
@@ -75,15 +75,15 @@ def test_hidream_cache_first_and_lazy():
         c.eq(env.encoded, ["main, p2 changed"], "P2 changed: only B is re-encoded")
         env.encoded.clear()
         call(imprint(v2, main="main changed"), clip="CLIP")
-        c.eq(sorted(env.encoded), sorted(["main changed, p1", "main changed, p2", "main changed"]), "MAIN changed: A, B and unmasked (MAIN is part of it), not the negative")
+        c.eq(sorted(env.encoded), sorted(["main changed, p1", "main changed, p2"]), "MAIN changed: A and B (MAIN is part of them), not the negative")
         # the trigger is part of the positive texts only
         env.encoded.clear()
         call(base, clip="CLIP", trig="TRG")
-        c.eq(len(env.encoded), 3, "trigger added: 3 positives re-encoded, the negative stays cached")
+        c.eq(len(env.encoded), 2, "trigger added: 2 positives re-encoded, the negative stays cached")
         # CLIP file identity (HiDream example 1: a different CLIP file)
         env.encoded.clear()
         call(base, clip="CLIP", ident="files-v2")
-        c.eq(len(env.encoded), 4, "different CLIP files: everything is re-encoded")
+        c.eq(len(env.encoded), 3, "different CLIP files: everything is re-encoded")
     return c.report()
 
 
@@ -108,7 +108,7 @@ def test_hidream_cache_robustness():
             c.failures.append("no error without CLIP nor cache")
         node.reconstruct(base, "CLIP", latent, "files", "")
         first = sorted(Path(env._dir.name, "hidream").glob("*.pt"))
-        c.eq(len(first), 4, "4 cache files written")
+        c.eq(len(first), 3, "3 cache files written")
         first[0].write_bytes(b"corrupted")
         env.encoded.clear()
         node.reconstruct(base, "CLIP", latent, "files", "")

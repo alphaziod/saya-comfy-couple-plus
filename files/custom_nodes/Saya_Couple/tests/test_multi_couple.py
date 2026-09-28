@@ -1,4 +1,4 @@
-"""SayaMultiCouple: real independence of the patches, outputs, zero-PPM guard.
+"""MultiMaskCouple core and SayaMultiCouple: patch independence, outputs, zero-PPM guard.
 
 Independence is tested functionally: the patch stored in model 1's clone is
 EXECUTED after a second model is coupled with irreconcilable conditionings.
@@ -99,26 +99,38 @@ def _run_patch(patched_model):
     return patch(q, None, None, extra)
 
 
-def _regions(node, pos_1_fill, pos_2_fill):
-    """Builds the same regions as SayaMultiCouple.apply (2 regions)."""
+def _regions(module, pos_1_fill, pos_2_fill):
+    """Builds the same two regions as apply_multimask_couple without MAIN."""
     from nodes import ConditioningCombine
 
     pos = ConditioningCombine().combine(
-        node._masked(_cond(pos_1_fill), _mask(1), 1.0),
-        node._masked(_cond(pos_2_fill), _mask(0), 1.0),
+        module._masked_cond(_cond(pos_1_fill), _mask(1), 1.0),
+        module._masked_cond(_cond(pos_2_fill), _mask(0), 1.0),
     )[0]
     neg = ConditioningCombine().combine(
-        node._masked(_cond(0.3), _mask(1), 1.0),
-        node._masked(_cond(-0.3), _mask(0), 1.0),
+        module._masked_cond(_cond(0.3), _mask(1), 1.0),
+        module._masked_cond(_cond(-0.3), _mask(0), 1.0),
     )[0]
     return pos, neg
 
 
-def _load_node():
+def _module():
     load_pack()
-    from saya_couple.src.nodes.saya_multi_couple import SayaMultiCouple
+    import saya_couple.src.nodes.saya_multi_couple as module
 
-    return SayaMultiCouple
+    return module
+
+
+def _load_node():
+    return _module().SayaMultiCouple
+
+
+def _couple(module, model, pos_1, pos_2, main=None, **kwargs):
+    """apply_multimask_couple with the Phase 1 weights, as Sampler 2 and the reconstruct call it."""
+    return module.apply_multimask_couple(
+        model, _FakeClip(), _mask(1), _mask(0), pos_1, _cond(0.3), pos_2, _cond(-0.3),
+        1.0, 1.0, 0.65, 0.35, main=main, **kwargs,
+    )
 
 
 def test_multi_couple_schema_and_outputs():
@@ -131,35 +143,25 @@ def test_multi_couple_schema_and_outputs():
         ["model_1", "clip", "mask_1", "mask_2", "pos_1", "neg_1", "pos_2", "neg_2", "strength_1", "strength_2"],
         "required input order",
     )
-    c.eq(list(schema["optional"]), ["model_2", "main", "solo", "dual_attention_enabled"], "model_2/main/solo/dual optional")
+    c.eq(list(schema["optional"]), ["model_2", "main", "solo"], "model_2/main/solo optional")
     c.eq(node.RETURN_TYPES, ("MODEL", "MODEL", "CONDITIONING", "CONDITIONING"), "return types")
     c.eq(node.RETURN_NAMES, ("MODEL_1_PATCHED", "MODEL_2_PATCHED", "CONDITIONING", "NEGATIVE"), "return names")
 
-    model_1 = _FakeModel()
-    neg_global = _cond(0.3)
-    m1p, m2p, coupled_pos, negative = node.apply(
-        model_1, _FakeClip(), _mask(1), _mask(0), _cond(1.0), neg_global, _cond(2.0), _cond(-0.3),
-        strength_1=1.0, strength_2=1.0, model_2=None,
-    )
-    c.ok(m2p is None, "model_2 absent -> MODEL_2_PATCHED None")
-    c.ok(m1p is not model_1, "original model not patched (clone)")
-    c.ok("transformer_options" not in model_1.model_options, "original model_options intact")
-    c.ok(len(_attn2_patches(m1p)) == 1, "attn2 patch installed on the clone")
-    c.ok(isinstance(coupled_pos, list) and len(coupled_pos) == 1, "coupled CONDITIONING present")
-    c.eq(tuple(coupled_pos[0][0].shape), (1, 3, 8), "coupled conditioning shape (empty encode)")
-    c.ok(negative is neg_global, "NEGATIVE = caller's global negative, unchanged")
+    model = _FakeModel()
+    patched = _couple(_module(), model, _cond(1.0), _cond(2.0))
+    c.ok(patched is not model, "original model not patched (clone)")
+    c.ok("transformer_options" not in model.model_options, "original model_options intact")
+    c.ok(len(_attn2_patches(patched)) == 1, "attn2 patch installed on the clone")
     return c.report()
 
 
 def test_multi_couple_patch_independence():
-    node = _load_node()()
-    clip = _FakeClip()
+    module = _module()
 
     c = Check("multi_couple_patch_independence")
-    # Two separate applies, irreconcilable positive conditionings (+1 vs -1).
-    model_a, model_b = _FakeModel(), _FakeModel()
-    ma, _, _, _ = node.apply(model_a, clip, _mask(1), _mask(0), _cond(1.0), _cond(0.3), _cond(2.0), _cond(-0.3), model_2=None)
-    mb, _, _, _ = node.apply(model_b, clip, _mask(1), _mask(0), _cond(-1.0), _cond(0.3), _cond(-2.0), _cond(-0.3), model_2=None)
+    # Two separate couplings, irreconcilable positive conditionings (+1 vs -1).
+    ma = _couple(module, _FakeModel(), _cond(1.0), _cond(2.0))
+    mb = _couple(module, _FakeModel(), _cond(-1.0), _cond(-2.0))
 
     patches_a = _attn2_patches(ma)
     patches_b = _attn2_patches(mb)
@@ -181,7 +183,6 @@ def test_multi_couple_patch_independence():
 
 def test_multi_couple_main_conditioning_merge():
     """MAIN must be present in both regional CONDITIONING lanes."""
-    node = _load_node()()
     c = Check("multi_couple_main_conditioning_merge")
 
     # Capture the conditioning immediately before AttentionCouple patches the
@@ -190,33 +191,14 @@ def test_multi_couple_main_conditioning_merge():
     def capture(model, clip, positive, negative):
         captured["positive"] = positive
         return model, positive, negative
-    node._couple = capture
 
-    node.apply(
-        _FakeModel(), _FakeClip(), _mask(1), _mask(0),
-        _cond(1.0), _cond(0.3), _cond(2.0), _cond(-0.3),
-        model_2=None, main=_cond(9.0),
-    )
+    _couple(_module(), _FakeModel(), _cond(1.0), _cond(2.0), main=_cond(9.0), couple_fn=capture)
     fills = [float(item[0].mean()) for item in captured["positive"]]
     c.eq(fills, [9.0, 1.0, 9.0, 2.0], "MAIN + P1 / MAIN + P2 before masks")
     weights = [round(item[1]["mask_strength"], 6) for item in captured["positive"]]
     from saya_couple.src.nodes.couple_imprint_v2 import DEFAULT_ATTENTION_PARAMS as P
     base, person = round(P["base_weight"], 6), round(P["person_weight"], 6)
     c.eq(weights, [base, person, base, person], "MAIN weighted as base, persons as person (like Phase 2+)")
-    return c.report()
-
-
-def test_multi_couple_positive_carries_main():
-    """The sampler positive is MAIN (for the SDXL pooled vector), not the empty placeholder."""
-    node = _load_node()()
-    c = Check("multi_couple_positive_carries_main")
-    main = _cond(9.0)
-    node._couple = lambda model, clip, positive, negative: (model, [[None, {}]], negative)
-    _, _, positive, _ = node.apply(
-        _FakeModel(), _FakeClip(), _mask(1), _mask(0),
-        _cond(1.0), _cond(0.3), _cond(2.0), _cond(-0.3), model_2=None, main=main,
-    )
-    c.ok(positive is main, "positive is MAIN")
     return c.report()
 
 
@@ -230,14 +212,14 @@ def test_multi_couple_shared_instance_negative_control():
     from custom_nodes.MultiMaskCouple.attention_couple import AttentionCouple
 
     c = Check("multi_couple_shared_instance_negative_control")
-    node = _load_node()()
+    module = _module()
     clip = _FakeClip()
     shared = AttentionCouple()
 
     model_a, model_b = _FakeModel(), _FakeModel()
-    pos_a, neg_a = _regions(node, 1.0, 2.0)
+    pos_a, neg_a = _regions(module, 1.0, 2.0)
     ma, _, _ = shared.attention_couple(model=model_a, clip=clip, positive=pos_a, negative=neg_a, mode="Attention")
-    pos_b, neg_b = _regions(node, -1.0, -2.0)
+    pos_b, neg_b = _regions(module, -1.0, -2.0)
     mb, _, _ = shared.attention_couple(model=model_b, clip=clip, positive=pos_b, negative=neg_b, mode="Attention")
 
     out_a = _run_patch(ma)
@@ -259,8 +241,7 @@ def test_multi_couple_zero_ppm_guard():
     )
     c.ok("SayaAttentionCouplePPM" not in src, "no reuse of the pack's old PPM code")
 
-    node = _load_node()()
-    import saya_couple.src.nodes.saya_multi_couple as module
+    module = _module()
 
     c.ok(Path(module.__file__) == NODE_PATH, "module resolved from the Saya pack")
     dep_mod = sys.modules.get(module.AttentionCouple.__module__)
@@ -285,6 +266,7 @@ def test_multi_couple_solo():
     fills = sorted(float(entry[0].mean()) for entry in positive)
     c.eq(fills, [1.0, 9.0], "positive = MAIN + pos_1 only (pos_2 absent)")
     c.ok(negative is neg_1, "negative = neg_1")
+
     return c.report()
 
 
@@ -295,5 +277,4 @@ TESTS = (
     test_multi_couple_shared_instance_negative_control,
     test_multi_couple_zero_ppm_guard,
     test_multi_couple_solo,
-    test_multi_couple_positive_carries_main,
 )

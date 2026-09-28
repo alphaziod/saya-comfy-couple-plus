@@ -570,16 +570,6 @@
       "name": "solo"
      },
      "link": null
-    },
-    {
-     "localized_name": "dual_attention_enabled",
-     "name": "dual_attention_enabled",
-     "shape": 7,
-     "type": "BOOLEAN",
-     "widget": {
-      "name": "dual_attention_enabled"
-     },
-     "link": null
     }
    ],
    "outputs": [
@@ -623,8 +613,7 @@
    "widgets_values": [
     1,
     1,
-    false,
-    true
+    false
    ],
    "title": "Saya Multi Couple · dual attention ON",
    "color": "#323",
@@ -1802,7 +1791,8 @@
     120,
     330
    ]
-  }
+  },
+  "saya_couple_version": "0.3.0"
  },
  "version": 0.4
 }

@@ -1,4 +1,4 @@
-"""SayaMultiCouple -> core saya_dual_mode wiring: strict OFF, exact ON payload, fail-closed."""
+"""SayaMultiCouple -> core saya_dual_mode wiring: Couple is always dual, Solo never, exact payload, fail-closed."""
 
 import ast
 import copy
@@ -70,27 +70,19 @@ def _leaves(obj):
         yield obj
 
 
-def test_dual_off_is_historic():
+def test_solo_never_reaches_dual():
     module, node = _node()
-    c = Check("dual_off_is_historic")
+    c = Check("solo_never_reaches_dual")
     called = []
     original = module.enable_dual_attention
     module.enable_dual_attention = lambda *a, **k: called.append(1)
     try:
-        args = _inputs()
-        default = node.apply(_OldFakeModel(), model_2=_OldFakeModel(), **args)
-        explicit = node.apply(_OldFakeModel(), model_2=_OldFakeModel(), dual_attention_enabled=False, **args)
+        model_1, model_2 = _RawModel(), _OldFakeModel()
+        m1, m2, _positive, _negative = node.apply(model_1, model_2=model_2, solo=True, **_inputs())
     finally:
         module.enable_dual_attention = original
-    c.eq(called, [], "OFF never reaches the dual engine")
-    for label, out in (("default", default), ("explicit False", explicit)):
-        m1, m2, positive, negative = out
-        c.ok(positive is args["main"], f"{label}: positive is MAIN")
-        c.ok(negative is args["neg_1"], f"{label}: NEGATIVE is neg_1")
-        c.eq(len(_attn2_patches(m1)), 1, f"{label}: historic attn2 replace on MODEL_1")
-        c.eq(len(_attn2_patches(m2)), 1, f"{label}: historic attn2 replace on MODEL_2")
-        c.ok("saya_dual_mode" not in m1.model_options["transformer_options"], f"{label}: no dual flag")
-    c.ok(torch.equal(_run_patch(default[0]), _run_patch(explicit[0])), "default and explicit OFF give the same MODEL_1 patch output")
+    c.eq(called, [], "Solo never reaches the dual engine")
+    c.ok(m1 is model_1 and m2 is model_2, "Solo returns both models unpatched")
     return c.report()
 
 
@@ -99,7 +91,7 @@ def test_dual_on_positive_flag_payload():
     c = Check("dual_on_positive_flag_payload")
     args = _inputs()
     model = _RawModel()
-    m1, m2, positive, negative = node.apply(model, dual_attention_enabled=True, **args)
+    m1, m2, positive, negative = node.apply(model, **args)
     c.ok(positive is args["main"], "positive for Sampler 1 is exactly MAIN")
     c.ok(negative is args["neg_1"], "NEGATIVE unchanged")
     c.ok(m2 is None, "no model_2 -> MODEL_2_PATCHED None")
@@ -124,9 +116,13 @@ def test_dual_on_builds_no_historic_region_for_model_1():
     module, node = _node()
     c = Check("dual_on_builds_no_historic_region_for_model_1")
     trace = []
-    node._masked = lambda *a, **k: trace.append("masked")
-    node._couple = lambda *a, **k: trace.append("couple")
-    node.apply(_RawModel(), dual_attention_enabled=True, **_inputs())
+    masked, couple = module._masked_cond, module._attention_couple_patch
+    module._masked_cond = lambda *a, **k: trace.append("masked")
+    module._attention_couple_patch = lambda *a, **k: trace.append("couple")
+    try:
+        node.apply(_RawModel(), **_inputs())
+    finally:
+        module._masked_cond, module._attention_couple_patch = masked, couple
     c.eq(trace, [], "no ConditioningSetMask region and no AttentionCouple for MODEL_1")
     return c.report()
 
@@ -135,11 +131,13 @@ def test_dual_on_model_2_is_historic():
     module, node = _node()
     c = Check("dual_on_model_2_is_historic")
     args = _inputs()
-    _, ref_node = _node()
-    _, m2_off, _, _ = ref_node.apply(_OldFakeModel(), model_2=_OldFakeModel(), **args)
-    m1, m2_on, positive, negative = node.apply(_RawModel(), model_2=_OldFakeModel(), dual_attention_enabled=True, **args)
-    c.eq(len(_attn2_patches(m2_on)), 1, "MODEL_2 has the historic attn2 replace")
-    c.ok(torch.equal(_run_patch(m2_on), _run_patch(m2_off)), "MODEL_2 patch output identical to the OFF path")
+    reference = module.apply_multimask_couple(
+        _OldFakeModel(), args["clip"], args["mask_1"], args["mask_2"], args["pos_1"], args["neg_1"],
+        args["pos_2"], args["neg_2"], 1.0, 1.0, 0.65, 0.35, main=args["main"],
+    )
+    m1, m2_on, positive, negative = node.apply(_RawModel(), model_2=_OldFakeModel(), **args)
+    c.eq(len(_attn2_patches(m2_on)), 1, "MODEL_2 has the MultiMaskCouple attn2 replace")
+    c.ok(torch.equal(_run_patch(m2_on), _run_patch(reference)), "MODEL_2 patch output = apply_multimask_couple")
     c.ok("saya_dual_mode" not in m2_on.model_options["transformer_options"], "MODEL_2 has no dual flag")
     c.ok(positive is args["main"] and negative is args["neg_1"], "other outputs unchanged")
     return c.report()
@@ -152,7 +150,7 @@ def test_dual_fail_closed_inputs():
     def run(label, **override):
         args = _inputs()
         args.update(override)
-        c.raises(RuntimeError, lambda: node.apply(_RawModel(), dual_attention_enabled=True, **args), label)
+        c.raises(RuntimeError, lambda: node.apply(_RawModel(), **args), label)
 
     run("main missing", main=None)
     run("pos_1 missing", pos_1=None)
@@ -163,11 +161,10 @@ def test_dual_fail_closed_inputs():
     run("pos_1 with two entries", pos_1=_cond(1.0) + _cond(2.0))
     run("pos_2 not 3-D", pos_2=[[torch.zeros(5, 8), {}]])
     args = _inputs(); args["pos_1"] = args["main"]
-    c.raises(RuntimeError, lambda: node.apply(_RawModel(), dual_attention_enabled=True, **args), "pos_1 is MAIN itself (not separate)")
+    c.raises(RuntimeError, lambda: node.apply(_RawModel(), **args), "pos_1 is MAIN itself (not separate)")
     args = _inputs(); args["pos_2"] = args["pos_1"]
-    c.raises(RuntimeError, lambda: node.apply(_RawModel(), dual_attention_enabled=True, **args), "pos_2 is pos_1 itself (not separate)")
-    c.raises(RuntimeError, lambda: node.apply(None, dual_attention_enabled=True, **_inputs()), "MODEL_1 missing")
-    c.raises(RuntimeError, lambda: node.apply(_RawModel(), dual_attention_enabled=True, solo=True, **_inputs()), "solo + dual")
+    c.raises(RuntimeError, lambda: node.apply(_RawModel(), **args), "pos_2 is pos_1 itself (not separate)")
+    c.raises(RuntimeError, lambda: node.apply(None, **_inputs()), "MODEL_1 missing")
     return c.report()
 
 
@@ -177,7 +174,7 @@ def test_dual_fail_closed_model():
 
     def refused(model, label, needle=None):
         try:
-            node.apply(model, dual_attention_enabled=True, **_inputs())
+            node.apply(model, **_inputs())
         except RuntimeError as error:
             c.ok(needle is None or needle in str(error), f"{label}: message {str(error)!r} lacks {needle!r}")
             return
@@ -232,7 +229,7 @@ def test_dual_fail_closed_model():
     m = _RawModel()
     m.wrappers = {"diffusion_model": {}, "apply_model": {"k": []}}
     m.model_options.update(sampler_post_cfg_function=[lambda a: a], sampler_pre_cfg_function=[lambda a: a], sampler_cfg_function=lambda a: a)
-    out = node.apply(m, dual_attention_enabled=True, **_inputs())
+    out = node.apply(m, **_inputs())
     c.ok(out[0].model_options["transformer_options"]["saya_dual_mode"] is True, "empty wrappers and sampler_*_cfg functions (APG/CFGZeroStar/Epsilon/PAG) allowed")
     return c.report()
 
@@ -244,13 +241,13 @@ def test_dual_no_legacy_fallback_in_wiring():
     c.eq([n for n in ast.walk(tree) if isinstance(n, ast.Try)], [], "no try/except in the dual wiring module")
     text = (NODES / "saya_dual_attention.py").read_text()
     c.ok("AttentionCouple" not in text and "ConditioningSetMask" not in text and "_couple" not in text, "dual wiring never references the historic couple")
-    apply_dual = next(n for n in ast.walk(ast.parse((NODES / "saya_multi_couple.py").read_text())) if isinstance(n, ast.FunctionDef) and n.name == "_apply_dual")
-    c.eq([n for n in ast.walk(apply_dual) if isinstance(n, ast.Try)], [], "no try/except in _apply_dual")
+    apply = next(n for n in ast.walk(ast.parse((NODES / "saya_multi_couple.py").read_text())) if isinstance(n, ast.FunctionDef) and n.name == "apply")
+    c.eq([n for n in ast.walk(apply) if isinstance(n, ast.Try)], [], "no try/except in SayaMultiCouple.apply")
     return c.report()
 
 
 TESTS = (
-    test_dual_off_is_historic,
+    test_solo_never_reaches_dual,
     test_dual_on_positive_flag_payload,
     test_dual_on_builds_no_historic_region_for_model_1,
     test_dual_on_model_2_is_historic,

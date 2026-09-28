@@ -79,21 +79,19 @@ def test_compose_truth_table():
     c = Check("hidream_compose_truth_table")
     base = {"main": "main", "person_1": "p1", "person_2": "p2", "negative": "bad"}
     r = hr.compose_prompts(base, "TRG")
-    c.eq(r, {"a": "TRG, main, p1", "b": "TRG, main, p2", "unmasked": "TRG, main", "negative": "bad"},
-         "trigger + P2")
+    c.eq(r, {"a": "TRG, main, p1", "b": "TRG, main, p2", "negative": "bad"}, "trigger + P2")
     c.ok("TRG" not in r["negative"], "no trigger in negative")
     r = hr.compose_prompts(base, "")
-    c.eq((r["a"], r["b"], r["unmasked"]), ("main, p1", "main, p2", "main"), "no trigger")
-    for text in (r["a"], r["b"], r["unmasked"]):
+    c.eq((r["a"], r["b"]), ("main, p1", "main, p2"), "no trigger")
+    for text in (r["a"], r["b"]):
         c.ok(not text.startswith(",") and not text.endswith(",") and ",," not in text, f"clean commas {text!r}")
     no_p2 = {k: v for k, v in base.items() if k != "person_2"}
     r = hr.compose_prompts(no_p2, "TRG")
-    c.eq(r["b"], "TRG, main", "P2 absent -> b = base")
-    c.eq(r["b"], r["unmasked"], "P2 absent: b == unmasked")
+    c.eq(r["b"], "TRG, main", "P2 absent -> b = trigger + MAIN")
     r = hr.compose_prompts({**no_p2, "main": ""}, "TRG")
-    c.eq((r["a"], r["unmasked"]), ("TRG, p1", "TRG"), "empty MAIN")
+    c.eq((r["a"], r["b"]), ("TRG, p1", "TRG"), "empty MAIN")
     r = hr.compose_prompts(base, "  \t ")
-    c.eq((r["a"], r["unmasked"]), ("main, p1", "main"), "whitespace trigger = empty")
+    c.eq((r["a"], r["b"]), ("main, p1", "main, p2"), "whitespace trigger = empty")
     c.eq(hr.compose_prompts(base, "  TRG ")["a"], "TRG, main, p1", "trigger stripped")
     return c.report()
 
@@ -102,15 +100,15 @@ def test_node_encoded_texts():
     torch, hr, v2 = _mods()
     c = Check("hidream_node_encoded_texts")
     imprint = _imprint(v2)
-    (ca, cb, cu, cn, _, _, regional), calls = _run(torch, hr, imprint, trigger="TRG")
+    (ca, cb, cs, cn, _, _, regional), calls = _run(torch, hr, imprint, trigger="TRG")
     c.eq(regional, True, "Couple mode keeps regional path enabled")
-    c.eq(calls, ["TRG, main, p1", "TRG, main, p2", "TRG, main", "bad, ugly"], "4 encode calls in order")
-    c.eq(calls[3], "bad, ugly", "negative byte-for-byte with trigger set")
-    c.eq([x[0][1]["text"] for x in (ca, cb, cu, cn)], calls, "outputs map to roles")
+    c.eq(calls, ["TRG, main, p1", "TRG, main, p2", "bad, ugly"], "3 encode calls in order (no unused global text)")
+    c.eq([x[0][1]["text"] for x in (ca, cb, cn)], calls, "outputs map to roles")
+    c.ok(cs is None, "Couple: conditioning_solo is None")
     _, calls_off = _run(torch, hr, imprint, trigger="")
-    c.eq(calls_off, ["main, p1", "main, p2", "main", "bad, ugly"], "trigger off texts")
-    diff = [i for i in range(4) if calls[i] != calls_off[i]]
-    c.eq(diff, [0, 1, 2], "trigger on/off differ only in the 3 positives")
+    c.eq(calls_off, ["main, p1", "main, p2", "bad, ugly"], "trigger off texts")
+    diff = [i for i in range(3) if calls[i] != calls_off[i]]
+    c.eq(diff, [0, 1], "trigger on/off differ only in the 2 positives")
     return c.report()
 
 
@@ -161,11 +159,10 @@ def test_p2_absent():
     c = Check("hidream_p2_absent")
     imprint = _imprint(v2, p2=None)
     c.ok("person_2" not in imprint["couple_imprint"]["prompts"], "fixture: P2 key absent")
-    (ca, cb, cu, cn, a, b, regional), calls = _run(torch, hr, imprint, trigger="TRG")
+    (ca, cb, cs, cn, a, b, regional), calls = _run(torch, hr, imprint, trigger="TRG")
     c.eq(regional, True, "P2 absent alone does not imply Solo")
-    c.eq(calls, ["TRG, main, p1", "TRG, main", "bad, ugly"], "b and unmasked share one encode")
-    c.eq(cb[0][1]["text"], cu[0][1]["text"], "b text == unmasked text")
-    c.ok(bool((b == 0).all()), "mask_b all zeros")
+    c.eq(calls, ["TRG, main, p1", "TRG, main", "bad, ugly"], "b = trigger + MAIN")
+    c.ok(bool((a + b == 1).all()), "mask_b = P1's complement (trigger + MAIN covers the rest)")
     c.eq((tuple(b.shape), b.dtype), (tuple(a.shape), a.dtype), "mask_b same shape/dtype as mask_a")
     c.ok(bool((a[..., :384] == 1).all()) and bool((a[..., 384:] == 0).all()), "mask_a = P1 region")
     c.ok("person_2" not in imprint["couple_imprint"]["prompts"], "imprint not mutated (P2 still absent)")
@@ -177,12 +174,16 @@ def test_solo_global():
     torch, hr, v2 = _mods()
     c = Check("hidream_solo_global")
     imprint = _imprint(v2)
-    (ca, cb, cu, cn, a, b, regional), calls = _run(torch, hr, imprint, trigger="TRG", solo=True)
+    (ca, cb, cs, cn, a, b, regional), calls = _run(torch, hr, imprint, trigger="TRG", solo=True)
     c.eq(calls, ["TRG, main, p1", "bad, ugly"], "Solo encodes only global MAIN+P1 and NEG")
-    c.eq([x[0][1]["text"] for x in (ca, cb, cu)], ["TRG, main, p1"] * 3, "all positive outputs are global MAIN+P1")
-    c.ok(bool((a == 0).all()) and bool((b == 0).all()), "Solo masks are empty")
+    c.eq(cs[0][1]["text"], "TRG, main, p1", "conditioning_solo = trigger + MAIN + P1")
+    c.eq((ca, cb, a, b), (None, None, None, None), "Solo produces no region conditioning and no mask")
     c.eq(regional, False, "Solo disables regional patch path")
     c.eq(cn[0][1]["text"], "bad, ugly", "negative unchanged")
+
+    # Solo rasterizes nothing: the latent grid does not shape a global refine.
+    out, _ = _run(torch, hr, imprint, solo=True, latent={"samples": torch.zeros(16, 9, 9)})
+    c.eq(out[6], False, "Solo never reads the latent grid")
     return c.report()
 
 def test_hard_errors():
@@ -227,7 +228,7 @@ def test_imprint_identities_not_compared():
     c = Check("hidream_identities_ignored")
     imprint = _imprint(v2, identifier="waiIllustriousSDXL_v170.safetensors")
     out, calls = _run(torch, hr, imprint)
-    c.eq(len(calls), 4, "runs with SDXL identities, no hub input")
+    c.eq(len(calls), 3, "runs with SDXL identities, no hub input")
     c.eq(tuple(out[4].shape), (1, 768, 768), "masks produced")
     return c.report()
 
@@ -242,7 +243,7 @@ def test_registry_and_signature():
     node = hr.SayaCoupleHiDreamReconstruct
     c.eq(node.RETURN_TYPES, ("CONDITIONING", "CONDITIONING", "CONDITIONING", "CONDITIONING", "MASK", "MASK", "BOOLEAN"),
          "RETURN_TYPES")
-    c.eq(node.RETURN_NAMES, ("conditioning_a", "conditioning_b", "conditioning_unmasked", "negative",
+    c.eq(node.RETURN_NAMES, ("conditioning_a", "conditioning_b", "conditioning_solo", "negative",
                              "mask_a", "mask_b", "regional_enabled"), "RETURN_NAMES")
     types = node.INPUT_TYPES()
     c.eq(list(types["required"]), ["imprint", "clip", "latent", "clip_identity"], "required")

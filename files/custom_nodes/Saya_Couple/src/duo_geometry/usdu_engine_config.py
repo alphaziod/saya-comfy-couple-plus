@@ -35,20 +35,17 @@ upstream docs):
   continuation exists. The historical True (both workflows rendered at
   W0xH0) is the documented default for pass 2 (an open, configurable Saya
   decision).
-* ``couple_crop``: defaults ON -- each tile must receive ITS slice of the
-  couple mask (math reference: ``masks_v2.mask_for_tile_work``; engine gate:
-  the ``saya_couple_crop`` metadata, ``crop_model_patch.py:14-26``, currently
-  without a consumer).
+* ``couple_crop`` = ``not solo`` (set by ``SayaCoupleUSDUPass``): each tile
+  receives its slice of the couple mask (engine gate: the ``saya_couple_crop``
+  metadata, ``crop_model_patch.py``; consumer:
+  ``ppm_vendor/attention_couple/common.py::crop_mask_to_tile``).
 """
 
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
-
-#: Imposed by the implementation (ultimate-upscale.py:39-40) -- not configurable.
-LIVE_GRID_BEHAVIOR = "CEIL"
 
 #: v1 target: seam fix is locked to "None" (seam_fix_denoise is inert in this port).
 SEAM_FIX_V1 = "None"
@@ -94,17 +91,6 @@ def live_grid(width: int, height: int, tile: int) -> tuple[int, int]:
     return rows, cols
 
 
-def tqdm_round_grid(width: int, height: int, tile: int) -> tuple[int, int]:
-    """The ``round`` (banker's) grid -- TQDM ONLY, never the grid that executes.
-
-    Provided only to document the divergence (16 displayed vs 20 real tiles
-    on 1792x2304/512). NEVER use this to drive an actual pass.
-    """
-    rows = round(height / tile)
-    cols = round(width / tile)
-    return rows, cols
-
-
 @dataclass(frozen=True)
 class SamplerFallback:
     """Fallback tuple (sampler, scheduler, steps, denoise) -- EXCLUSIVE with sigmas."""
@@ -121,8 +107,8 @@ class ConfigPass:
 
     ``sigmas`` and ``sampler_fallback`` are EXCLUSIVE: exactly one of the two.
     ``cfg`` stays LIVE even in sigmas mode. ``upscale_model`` is OPTIONAL
-    (None -> internal Lanczos). ``couple_crop`` defaults ON. ``seam_fix`` is
-    locked.
+    (None -> internal Lanczos). ``couple_crop`` is derived from the Couple/Solo
+    mode by the node. ``seam_fix`` is locked.
     """
 
     pass_id: str
@@ -132,7 +118,7 @@ class ConfigPass:
     padding: int = 32
     mask_blur: int = 8
     structure_preservation: float = 0.75
-    couple_crop: bool = True                     # defaults ON
+    couple_crop: bool = True                     # always set by the node: not solo
     restore_to_base: bool = True                 # open decision -- documented historical default
     seam_fix: str = SEAM_FIX_V1                  # locked in v1
     upscale_model: str | None = None             # None -> internal Lanczos
@@ -141,10 +127,6 @@ class ConfigPass:
     #: INERT fallback in sigmas mode: mandatory placeholders for the upstream
     #: widget signature. Out-of-semantics, documented as such.
     inert_widget_fallback: SamplerFallback | None = None
-    extras: dict[str, Any] = field(default_factory=dict)
-
-    def validated(self) -> "ConfigPass":
-        return validate_config_pass(self)
 
 
 def validate_config_pass(config: ConfigPass) -> ConfigPass:
@@ -189,37 +171,11 @@ def validate_config_pass(config: ConfigPass) -> ConfigPass:
             "inert_widget_fallback: upstream placeholders are only allowed in "
             "sigmas mode (otherwise they would be ambiguous with sampler_fallback)"
         )
-    if config.restore_to_base and config.pass_id == "usdu_1":
-        # NOTE (not an error here): restore_to_base=False on USDU1 is
-        # documented as STRUCTURAL for the pass-continuation design, but this
-        # validator does NOT enforce it (no error, no warning despite the
-        # branch name) -- the real guard is `assert_usdu_continuation` at the
-        # workflow-builder level. Enforcing it here would be a product
-        # decision Saya has not settled, so it is left as-is intentionally.
-        pass
     if config.structure_preservation < 0.0 or config.structure_preservation > 1.0:
         raise SayaUSDUConfigError(
             f"structure_preservation: expected 0..1, got {config.structure_preservation}"
         )
     return config
-
-
-def assert_usdu_continuation(usdu1_image_out: Any, usdu2_image_in: Any) -> None:
-    """Structural assert: USDU 2's image input IS USDU 1's output.
-
-    Checked at the WORKFLOW BUILDER level (wiring), not at node runtime.
-    ``usdu1_image_out`` / ``usdu2_image_in`` are wiring refs ``(node_id, slot)``.
-    """
-    if not isinstance(usdu1_image_out, tuple) or not isinstance(usdu2_image_in, tuple):
-        raise SayaUSDUConfigError(
-            "assert_usdu_continuation: expected (node_id, slot) refs"
-        )
-    if usdu1_image_out != usdu2_image_in:
-        raise SayaUSDUConfigError(
-            f"USDU2 does NOT continue USDU1: USDU1 output {usdu1_image_out!r} != "
-            f"USDU2 image input {usdu2_image_in!r} -- a real continuation is "
-            "required (fix the drift towards a downscale+roundtrip or a fake USDU2)"
-        )
 
 
 def to_engine_kwargs(
@@ -272,63 +228,15 @@ def to_engine_kwargs(
     }
 
 
-def pass_defaults_usdu1(cfg: float = 4.0) -> ConfigPass:
-    """Default config_pass[1] (historical values: cfg 4, beta 12 @ denoise 0.20).
-
-    These values are documented historical candidates, to be tuned at runtime.
-    """
-    return ConfigPass(
-        pass_id="usdu_1",
-        cfg=cfg,
-        upscale_by=2.0,
-        tile_size=512,
-        padding=32,
-        mask_blur=8,
-        structure_preservation=0.75,
-        couple_crop=True,
-        restore_to_base=False,   # USDU1 must continue into USDU2
-        seam_fix=SEAM_FIX_V1,
-        upscale_model=None,      # internal Lanczos by default
-        sampler_fallback=SamplerFallback("euler_cfg_pp", "beta", 12, 0.20),
-    )
-
-
-def pass_defaults_usdu2(cfg: float = 4.0) -> ConfigPass:
-    """Default config_pass[2] (constant-size continuation of pass 1).
-
-    Pass 2's historical parameters (cfg 1.4 / denoise 0.16, beta 12) are
-    HISTORICAL, never validated values -- tuning happens at runtime.
-    """
-    return ConfigPass(
-        pass_id="usdu_2",
-        cfg=cfg,
-        upscale_by=1.0,
-        tile_size=512,
-        padding=32,
-        mask_blur=8,
-        structure_preservation=0.75,
-        couple_crop=True,
-        restore_to_base=True,    # open decision -- documented historical default
-        seam_fix=SEAM_FIX_V1,
-        upscale_model=None,
-        sampler_fallback=SamplerFallback("euler_cfg_pp", "beta", 12, 0.20),
-    )
-
-
 __all__ = [
-    "LIVE_GRID_BEHAVIOR",
     "SEAM_FIX_V1",
     "ConfigPass",
     "SamplerFallback",
     "SayaUSDUConfigError",
-    "assert_usdu_continuation",
     "canvas_size",
     "live_grid",
-    "pass_defaults_usdu1",
-    "pass_defaults_usdu2",
     "round8",
     "tile_work_size",
     "to_engine_kwargs",
-    "tqdm_round_grid",
     "validate_config_pass",
 ]
