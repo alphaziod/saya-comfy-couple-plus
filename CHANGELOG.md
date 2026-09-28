@@ -1,5 +1,39 @@
 # Changelog
 
+## 1.0.0 — unreleased
+
+Bug fixes from a full audit of 0.3.0. Couple and Solo images are unchanged: 23 / 23 Phase 1 images are
+pixel-identical before / after (alternating Couple / Solo, 10 repeated renders, 7 edge cases), and 50 renders in one
+ComfyUI session showed no memory or speed drift.
+
+### Phase review
+
+- **CONTINUE validates the image you are looking at.** The review popup now sends the transaction it shows; if a
+  second Phase 1 render replaced the candidate in the meantime (double click, re-queue), validation is refused
+  instead of silently validating the other image.
+- **An error no longer deletes your validated Phase 1.** An error or an interruption in Phase 2-6 used to call the
+  Phase 1 reset, which deleted the validated Phase 1 checkpoint. It now only drops the failing phase's candidate.
+
+### Couple
+
+- **No more silent MAIN-only Couple.** On a ComfyUI without the Saya core patch, Couple rendered exactly the MAIN
+  image (P1 / P2 ignored) with no error. The pack now checks the patch: Couple raises a clear error, and a warning is
+  logged at startup. Solo is unaffected.
+- **Empty P2 in Couple stops in Phase 1.** It used to render Phase 1, then fail in Phase 2 after validation.
+  `SayaCoupleImprintPackV2` has a new optional `solo` input; the Full workflow connects it to the Couple / Solo
+  switch. Workflows without that link behave as before.
+- **USDU without the optional crop patch is no longer silent.** Couple USDU passes on a stock
+  ComfyUI_UltimateSDUpscale log a warning (every tile then gets the full-frame masks).
+
+### Workflows
+
+- Full: `solo` of the couple imprint connected to *MAIN · Couple / Solo*. Demo: unchanged (no imprint node).
+
+### Tests
+
+- 140 tests (was 135): the five bugs above, each checked to fail on 0.3.0 and pass on 1.0.0, plus
+  `tests/test_phase_failure_cleanup.cjs` for the review controller.
+
 ## 0.3.0 — 2026-09-28
 
 ### Full workflow

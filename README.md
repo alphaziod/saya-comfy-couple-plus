@@ -16,7 +16,7 @@ One switch turns the whole pipeline into **Solo mode** (MAIN + P1, one character
 | ![Couple: two characters, one scene](docs/images/demo_example.png) | ![Solo: one character, same scene](docs/images/solo_example.png) |
 | demo workflow, MAIN + P1 + P2 | full workflow, MAIN + P1 only |
 
-Current version: **0.3.0** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
+Current version: **1.0.0** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
 RDNA4 16 GB. It is first and foremost **a backup of my own ComfyUI setup**, made public in case it helps someone
 with the same problem. Take what you need.
 
@@ -83,7 +83,9 @@ every phase derives its behaviour from it, and nothing else can contradict it.
 | Phase 3 · HiDream refine | two regions (P1, P2), text strictly separated | one global prompt (MAIN + P1), no regional patch |
 
 Solo is not "Couple with the masks turned off": the couple nodes, patches and regional conditionings are not run at
-all. The demo workflow is Couple only.
+all, and P2 is never read. MAIN applies to the whole image, so in Solo, MAIN should describe one character: a MAIN
+written for two people (like the demo MAIN) still draws two. Couple needs a P2 prompt: an empty P2 in Couple mode
+stops Phase 1 with a clear message instead of failing in Phase 2. The demo workflow is Couple only.
 
 ## What's in the box
 
@@ -230,7 +232,8 @@ Verified against upstream: exactly **two** ComfyUI files are touched, nothing el
   carries `saya_dual_mode` (set by the Saya Multi Couple node): MAIN native, P1/P2 on conditional rows,
   `main_locked_delta` fusion, `SAYA_LOCKED_DELTA_PERSON_GAIN = 0.78`, fail-closed hook checks. Without the flag
   the file behaves exactly like upstream (tested bit-identical). About 120 added lines, one changed line
-  (`if` → `elif`). Patch: `patches/saya_dual_attention.patch`.
+  (`if` → `elif`). Patch: `patches/saya_dual_attention.patch`. Without it, Couple mode refuses to run (clear
+  error) and ComfyUI logs a warning at startup; Solo keeps working.
 - **Optional: `comfy/model_management.py`.** About 20 lines, active only on AMD GPUs under ROCm. See below.
 - **Custom node files**: `custom_nodes/Saya_Couple/` is a normal custom node folder. The per-file list with
   sha256, origin and license is in `MANIFEST.json`.
@@ -312,7 +315,7 @@ So in practice: **v0.23.0 or newer** is needed; only the tested commit is OFFICI
 
 0.78 is not based on one pretty picture:
 
-- **Non-regression**: pack test suite (135 tests), bit-identical proofs (`tests/proof_gain.py`: g = 1.0 equals the
+- **Non-regression**: pack test suite (140 tests), bit-identical proofs (`tests/proof_gain.py`: g = 1.0 equals the
   pre-gain code, only the character deltas are scaled, MAIN and unconditional rows untouched), installer scenarios
   (`tests/installer_scenarios.py`: install, verify, idempotence, restore, drift, conflicts, NVIDIA/AMD simulations,
   old version).
@@ -341,7 +344,8 @@ Full story: [docs/DEVELOPMENT_HISTORY.md](docs/DEVELOPMENT_HISTORY.md).
 - **Hard themes**: a third element (a creature, a specific prop) and very specific background details can be dropped.
 - **`g` is a code constant**, not a UI setting; changing it needs a restart.
 - **Optional nodes** rely on other packs: the USDU pass nodes on ComfyUI_UltimateSDUpscale (per-tile couple masks
-  need `patches/third_party/ultimatesdupscale_saya_couple_crop.patch`, not installed by the installer), the detailer
+  need `patches/third_party/ultimatesdupscale_saya_couple_crop.patch`, not installed by the installer; without it
+  each Couple USDU pass logs a warning and every tile gets the full-frame masks), the detailer
   node on the Impact Pack. No detector model is shipped. The USDU node sets `SAYA_USDU_COUPLE_CROP` itself for each
   pass: do not export it globally in your shell.
 - **Detailer crop position** only works with an **empty wildcard**: a wildcard can reorder or skip SEGS, so the
