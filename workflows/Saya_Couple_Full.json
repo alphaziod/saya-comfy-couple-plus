@@ -1,8 +1,8 @@
 {
  "id": "868afda2-e3eb-4a97-9431-e8d824175b2e",
  "revision": 32,
- "last_node_id": 100241,
- "last_link_id": 98531,
+ "last_node_id": 100242,
+ "last_link_id": 98546,
  "nodes": [
   {
    "id": 2678,
@@ -708,54 +708,6 @@
    },
    "widgets_values": [
     "ilust_vae_route_11"
-   ],
-   "color": "#303650",
-   "bgcolor": "#485176"
-  },
-  {
-   "id": 10297,
-   "type": "SetNode",
-   "pos": [
-    6188,
-    1022
-   ],
-   "size": [
-    294,
-    42
-   ],
-   "flags": {
-    "collapsed": true
-   },
-   "order": 47,
-   "mode": 0,
-   "inputs": [
-    {
-     "name": "VAE",
-     "type": "VAE",
-     "link": 97113
-    }
-   ],
-   "outputs": [
-    {
-     "name": "VAE",
-     "type": "VAE",
-     "links": []
-    }
-   ],
-   "title": "VAE Route · 12 Final Naturalize",
-   "properties": {
-    "Node name for S&R": "SetNode",
-    "aux_id": "kijai/ComfyUI-KJNodes",
-    "previousName": "ilust_vae_route_12",
-    "ue_properties": {
-     "widget_ue_connectable": {},
-     "version": "7.8",
-     "input_ue_unconnectable": {}
-    },
-    "saya_hidden_technical": true
-   },
-   "widgets_values": [
-    "ilust_vae_route_12"
    ],
    "color": "#303650",
    "bgcolor": "#485176"
@@ -3868,6 +3820,18 @@
       "name": "Hires Fix 3"
      },
      "link": null
+    },
+    {
+     "localized_name": "Model 1 Patched MMC",
+     "name": "Model 1 Patched MMC",
+     "type": "MODEL",
+     "link": 98534
+    },
+    {
+     "localized_name": "Model 2 Patched MMC",
+     "name": "Model 2 Patched MMC",
+     "type": "MODEL",
+     "link": 98535
     }
    ],
    "outputs": [
@@ -4523,7 +4487,7 @@
    },
    "widgets_values": [
     "2K · BALANCED · 2560x1440 equivalent",
-    "RealESRGAN_x4plus_anime_6B.safetensors"
+    "4x_foolhardy_Remacri.pth"
    ],
    "color": "#3b3150",
    "bgcolor": "#574774"
@@ -4915,6 +4879,22 @@
      "type": "MODEL",
      "links": [
       98406
+     ]
+    },
+    {
+     "localized_name": "Model 1 Patched MMC",
+     "name": "Model 1 Patched MMC",
+     "type": "MODEL",
+     "links": [
+      98534
+     ]
+    },
+    {
+     "localized_name": "Model 2 Patched MMC",
+     "name": "Model 2 Patched MMC",
+     "type": "MODEL",
+     "links": [
+      98535
      ]
     }
    ],
@@ -5574,9 +5554,9 @@
     "",
     "",
     "",
-    "[\"SELECT_YOUR_MODEL.safetensors\", \"RealESRGAN_x4plus_anime_6B.safetensors\"]",
-    "[\"SELECT_YOUR_VAE_1.safetensors\", \"SELECT_YOUR_VAE_3.safetensors\"]",
-    "{\"final_hires\": {\"engine\": \"ClownsharKSampler_Beta\", \"sampler\": \"multistep/dpmpp_2m\", \"scheduler\": \"beta\", \"steps\": 14, \"cfg\": 3.2, \"denoise\": 0.2, \"implementation\": \"reuse existing cd8bcc90-3d3d-483d-b387-c8e9c7cbd678\"}, \"naturalize\": {\"engine\": \"ClownsharKSampler_Beta\", \"sampler\": \"multistep/dpmpp_2m\", \"scheduler\": \"beta\", \"steps\": 12, \"cfg\": 2.0, \"denoise\": 0.2}}",
+    "[\"SELECT_YOUR_MODEL.safetensors\", \"4x_foolhardy_Remacri.pth\"]",
+    "[\"SELECT_YOUR_VAE_1.safetensors\"]",
+    "{\"naturalize_v2\": {\"engine\": \"ClownsharKSampler_Beta\", \"sampler\": \"multistep/dpmpp_2m\", \"scheduler\": \"beta\", \"steps\": 14, \"cfg\": 3.2, \"denoise\": 0.14, \"diffusions\": 1, \"conditioning\": \"Phase 6 Couple Reconstruct (real MAIN/P1/P2/NEG)\", \"finish\": {\"color_lock\": 0.8, \"highlight_tame\": 0.3, \"soften\": 0.1, \"grain\": 0.008, \"dither\": 0.5}}}",
     ""
    ],
    "color": "#4a2b2b",
@@ -5599,31 +5579,6 @@
    "order": 34,
    "mode": 0,
    "inputs": [
-    {
-     "localized_name": "Naturalize Base",
-     "name": "naturalize_base",
-     "type": "STRING",
-     "link": 98139
-    },
-    {
-     "localized_name": "Naturalize Person 1",
-     "name": "naturalize_person_1",
-     "type": "STRING",
-     "link": 98138
-    },
-    {
-     "localized_name": "Naturalize Person 2",
-     "name": "naturalize_person_2",
-     "shape": 7,
-     "type": "STRING",
-     "link": 98137
-    },
-    {
-     "localized_name": "Naturalize Negative",
-     "name": "naturalize_negative",
-     "type": "STRING",
-     "link": 98136
-    },
     {
      "localized_name": "Selected Model",
      "name": "selected_model",
@@ -6326,9 +6281,7 @@
      "localized_name": "12 Final Naturalize VAE",
      "name": "12 Final Naturalize VAE",
      "type": "VAE",
-     "links": [
-      97113
-     ]
+     "links": []
     }
    ],
    "properties": {
@@ -6629,63 +6582,6 @@
    ],
    "color": "#243447",
    "bgcolor": "#35526b"
-  },
-  {
-   "id": 100105,
-   "type": "0c6c3352-a2c1-42ea-a595-bde129087ef3",
-   "pos": [
-    6440,
-    1666
-   ],
-   "size": [
-    238,
-    98
-   ],
-   "flags": {},
-   "order": 22,
-   "mode": 0,
-   "inputs": [],
-   "outputs": [
-    {
-     "localized_name": "CHAÎNE",
-     "name": "STRING",
-     "type": "STRING",
-     "links": [
-      98136
-     ]
-    },
-    {
-     "localized_name": "CHAÎNE_1",
-     "name": "STRING_1",
-     "type": "STRING",
-     "links": [
-      98137
-     ]
-    },
-    {
-     "localized_name": "CHAÎNE_2",
-     "name": "STRING_2",
-     "type": "STRING",
-     "links": [
-      98138
-     ]
-    },
-    {
-     "localized_name": "CHAÎNE_3",
-     "name": "STRING_3",
-     "type": "STRING",
-     "links": [
-      98139
-     ]
-    }
-   ],
-   "properties": {
-    "cnr_id": "comfy-core",
-    "ver": "0.34.0",
-    "previewExposures": []
-   },
-   "color": "#2b3d3a",
-   "bgcolor": "#405b56"
   },
   {
    "id": 100181,
@@ -7739,14 +7635,6 @@
    "STRING"
   ],
   [
-   97113,
-   10272,
-   9,
-   10297,
-   0,
-   "VAE"
-  ],
-  [
    97114,
    100034,
    0,
@@ -8299,38 +8187,6 @@
    "IMAGE"
   ],
   [
-   98136,
-   100105,
-   0,
-   100061,
-   3,
-   "STRING"
-  ],
-  [
-   98137,
-   100105,
-   1,
-   100061,
-   2,
-   "STRING"
-  ],
-  [
-   98138,
-   100105,
-   2,
-   100061,
-   1,
-   "STRING"
-  ],
-  [
-   98139,
-   100105,
-   3,
-   100061,
-   0,
-   "STRING"
-  ],
-  [
    98141,
    810,
    2,
@@ -8351,7 +8207,7 @@
    100181,
    0,
    100061,
-   4,
+   0,
    "MODEL"
   ],
   [
@@ -8359,7 +8215,7 @@
    100181,
    1,
    100061,
-   5,
+   1,
    "CLIP"
   ],
   [
@@ -8367,7 +8223,7 @@
    100181,
    2,
    100061,
-   6,
+   2,
    "STRING"
   ],
   [
@@ -8375,7 +8231,7 @@
    100181,
    3,
    100061,
-   7,
+   3,
    "STRING"
   ],
   [
@@ -8567,7 +8423,7 @@
    100220,
    0,
    100061,
-   8,
+   4,
    "BOOLEAN"
   ],
   [
@@ -8616,6 +8472,22 @@
    1,
    100034,
    0,
+   "MODEL"
+  ],
+  [
+   98534,
+   100050,
+   7,
+   100217,
+   6,
+   "MODEL"
+  ],
+  [
+   98535,
+   100050,
+   8,
+   100217,
+   7,
    "MODEL"
   ]
  ],
@@ -14811,8 +14683,8 @@
     "version": 1,
     "state": {
      "lastGroupId": 3303,
-     "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastNodeId": 100242,
+     "lastLinkId": 98546,
      "lastRerouteId": 575
     },
     "revision": 8,
@@ -14993,6 +14865,32 @@
        98382
       ],
       "localized_name": "Model 2 Patched",
+      "pos": [
+       402,
+       5996
+      ]
+     },
+     {
+      "id": "75332fc1-045e-4c35-bed9-caaf681ab147",
+      "name": "Model 1 Patched MMC",
+      "type": "MODEL",
+      "linkIds": [
+       98532
+      ],
+      "localized_name": "Model 1 Patched MMC",
+      "pos": [
+       402,
+       5996
+      ]
+     },
+     {
+      "id": "24701423-9184-4851-a6ea-8042bb6547bc",
+      "name": "Model 2 Patched MMC",
+      "type": "MODEL",
+      "linkIds": [
+       98533
+      ],
+      "localized_name": "Model 2 Patched MMC",
       "pos": [
        402,
        5996
@@ -15363,6 +15261,14 @@
         "name": "verification_report",
         "type": "STRING",
         "links": []
+       },
+       {
+        "localized_name": "model_patched_multimask",
+        "name": "model_patched_multimask",
+        "type": "MODEL",
+        "links": [
+         98532
+        ]
        }
       ],
       "title": "Couple · Reconstruct Conditioning",
@@ -16208,6 +16114,14 @@
         "name": "verification_report",
         "type": "STRING",
         "links": []
+       },
+       {
+        "localized_name": "model_patched_multimask",
+        "name": "model_patched_multimask",
+        "type": "MODEL",
+        "links": [
+         98533
+        ]
        }
       ],
       "title": "Couple · Reconstruct Model 2 (Phase 2)",
@@ -17966,6 +17880,22 @@
       "target_id": 100142,
       "target_slot": 2,
       "type": "STRING"
+     },
+     {
+      "id": 98532,
+      "origin_id": 11001,
+      "origin_slot": 4,
+      "target_id": -20,
+      "target_slot": 7,
+      "type": "MODEL"
+     },
+     {
+      "id": 98533,
+      "origin_id": 100144,
+      "origin_slot": 4,
+      "target_id": -20,
+      "target_slot": 8,
+      "type": "MODEL"
      }
     ],
     "extra": {
@@ -37789,8 +37719,8 @@
     "version": 1,
     "state": {
      "lastGroupId": 3303,
-     "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastNodeId": 100242,
+     "lastLinkId": 98546,
      "lastRerouteId": 575
     },
     "revision": 1,
@@ -37816,64 +37746,11 @@
     },
     "inputs": [
      {
-      "id": "p6-naturalize-base",
-      "name": "naturalize_base",
-      "type": "STRING",
-      "linkIds": [
-       98488
-      ],
-      "localized_name": "Naturalize Base",
-      "pos": [
-       -1740.095703125,
-       234
-      ]
-     },
-     {
-      "id": "p6-naturalize-p1",
-      "name": "naturalize_person_1",
-      "type": "STRING",
-      "linkIds": [
-       98489
-      ],
-      "localized_name": "Naturalize Person 1",
-      "pos": [
-       -1740.095703125,
-       254
-      ]
-     },
-     {
-      "id": "p6-naturalize-p2",
-      "name": "naturalize_person_2",
-      "type": "STRING",
-      "linkIds": [
-       98491
-      ],
-      "localized_name": "Naturalize Person 2",
-      "pos": [
-       -1740.095703125,
-       274
-      ]
-     },
-     {
-      "id": "p6-naturalize-neg",
-      "name": "naturalize_negative",
-      "type": "STRING",
-      "linkIds": [
-       98490
-      ],
-      "localized_name": "Naturalize Negative",
-      "pos": [
-       -1740.095703125,
-       294
-      ]
-     },
-     {
       "id": "p6-selected-model",
       "name": "selected_model",
       "type": "MODEL",
       "linkIds": [
-       98271,
-       98274
+       98271
       ],
       "localized_name": "Selected Model",
       "pos": [
@@ -37886,8 +37763,7 @@
       "name": "selected_clip",
       "type": "CLIP",
       "linkIds": [
-       98272,
-       98275
+       98272
       ],
       "localized_name": "Selected CLIP",
       "pos": [
@@ -37900,9 +37776,7 @@
       "name": "selected_identities",
       "type": "STRING",
       "linkIds": [
-       98273,
-       98276,
-       98493
+       98273
       ],
       "localized_name": "Selected Identities",
       "pos": [
@@ -37926,9 +37800,7 @@
       "name": "solo",
       "type": "BOOLEAN",
       "linkIds": [
-       98417,
-       98418,
-       98494
+       98417
       ],
       "localized_name": "Solo (Couple Mode OFF)",
       "pos": [
@@ -37943,7 +37815,7 @@
       "name": "image",
       "type": "IMAGE",
       "linkIds": [
-       36
+       98546
       ],
       "localized_name": "image",
       "pos": [
@@ -38067,10 +37939,8 @@
         "name": "seed",
         "type": "INT",
         "links": [
-         18,
          33,
-         98495,
-         98496
+         98545
         ]
        },
        {
@@ -38276,8 +38146,7 @@
         "name": "imprint_json",
         "type": "STRING",
         "links": [
-         98260,
-         98492
+         98260
         ]
        }
       ],
@@ -38470,8 +38339,8 @@
         "name": "image",
         "type": "IMAGE",
         "links": [
-         12,
-         10
+         10,
+         98540
         ]
        }
       ],
@@ -38504,7 +38373,7 @@
         "name": "VAE",
         "type": "VAE",
         "links": [
-         23
+         98544
         ]
        }
       ],
@@ -38523,368 +38392,6 @@
       ],
       "color": "#303650",
       "bgcolor": "#485176"
-     },
-     {
-      "id": 10312,
-      "type": "GetNode",
-      "pos": [
-       -700,
-       448
-      ],
-      "size": [
-       266,
-       56
-      ],
-      "flags": {
-       "collapsed": true
-      },
-      "order": 5,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-       {
-        "name": "VAE",
-        "type": "VAE",
-        "links": [
-         25,
-         29
-        ]
-       }
-      ],
-      "title": "GET · 12 · Final Naturalize VAE",
-      "properties": {
-       "Node name for S&R": "GetNode",
-       "aux_id": "kijai/ComfyUI-KJNodes",
-       "ue_properties": {
-        "widget_ue_connectable": {},
-        "version": "7.8",
-        "input_ue_unconnectable": {}
-       }
-      },
-      "widgets_values": [
-       "ilust_vae_route_12"
-      ],
-      "color": "#303650",
-      "bgcolor": "#485176"
-     },
-     {
-      "id": 10313,
-      "type": "VAEEncode",
-      "pos": [
-       -266,
-       378
-      ],
-      "size": [
-       322,
-       112
-      ],
-      "flags": {},
-      "order": 11,
-      "mode": 0,
-      "inputs": [
-       {
-        "localized_name": "pixels",
-        "name": "pixels",
-        "type": "IMAGE",
-        "link": 24
-       },
-       {
-        "localized_name": "vae",
-        "name": "vae",
-        "type": "VAE",
-        "link": 25
-       }
-      ],
-      "outputs": [
-       {
-        "localized_name": "LATENT",
-        "name": "LATENT",
-        "type": "LATENT",
-        "links": [
-         26
-        ]
-       }
-      ],
-      "title": "Phase 6 · Naturalize · VAE Encode",
-      "properties": {
-       "cnr_id": "comfy-core",
-       "ver": "0.3.57",
-       "Node name for S&R": "VAEEncode",
-       "ue_properties": {
-        "widget_ue_connectable": {},
-        "version": "7.8",
-        "input_ue_unconnectable": {}
-       }
-      },
-      "color": "#323",
-      "bgcolor": "#535"
-     },
-     {
-      "id": 10318,
-      "type": "SayaCoupleImprintDerive",
-      "pos": [
-       -448,
-       70
-      ],
-      "size": [
-       420,
-       238
-      ],
-      "flags": {},
-      "order": 16,
-      "mode": 0,
-      "inputs": [
-       {
-        "localized_name": "imprint_json",
-        "name": "imprint_json",
-        "type": "STRING",
-        "link": 98492
-       },
-       {
-        "localized_name": "checkpoint_identities",
-        "name": "checkpoint_identities",
-        "type": "STRING",
-        "link": 98493
-       },
-       {
-        "localized_name": "main_prompt",
-        "name": "main_prompt",
-        "type": "STRING",
-        "link": 98488
-       },
-       {
-        "localized_name": "person_1_prompt",
-        "name": "person_1_prompt",
-        "type": "STRING",
-        "link": 98489
-       },
-       {
-        "localized_name": "negative_prompt",
-        "name": "negative_prompt",
-        "type": "STRING",
-        "link": 98490
-       },
-       {
-        "localized_name": "person_2_prompt",
-        "name": "person_2_prompt",
-        "shape": 7,
-        "type": "STRING",
-        "link": 98491
-       },
-       {
-        "localized_name": "solo",
-        "name": "solo",
-        "shape": 7,
-        "type": "BOOLEAN",
-        "link": 98494
-       }
-      ],
-      "outputs": [
-       {
-        "localized_name": "imprint",
-        "name": "imprint",
-        "type": "SAYA_IMPRINT",
-        "links": [
-         43
-        ]
-       },
-       {
-        "localized_name": "imprint_json",
-        "name": "imprint_json",
-        "type": "STRING",
-        "links": []
-       }
-      ],
-      "title": "Phase 6 · Naturalize · Inherit Couple Imprint",
-      "properties": {
-       "Node name for S&R": "SayaCoupleImprintDerive",
-       "cnr_id": "Saya_Couple",
-       "saya_inherits_canonical_config": true
-      },
-      "color": "#4a2f46",
-      "bgcolor": "#68435f"
-     },
-     {
-      "id": 10319,
-      "type": "SayaCoupleReconstruct",
-      "pos": [
-       -14,
-       42
-      ],
-      "size": [
-       420,
-       266
-      ],
-      "flags": {},
-      "order": 17,
-      "mode": 0,
-      "inputs": [
-       {
-        "localized_name": "model",
-        "name": "model",
-        "type": "MODEL",
-        "link": 98274
-       },
-       {
-        "localized_name": "clip",
-        "name": "clip",
-        "type": "CLIP",
-        "link": 98275
-       },
-       {
-        "localized_name": "checkpoint_identities",
-        "name": "checkpoint_identities",
-        "type": "STRING",
-        "link": 98276
-       },
-       {
-        "localized_name": "image",
-        "name": "image",
-        "type": "IMAGE",
-        "link": 47
-       },
-       {
-        "localized_name": "imprint",
-        "name": "imprint",
-        "shape": 7,
-        "type": "SAYA_IMPRINT",
-        "link": 43
-       },
-       {
-        "localized_name": "imprint_json",
-        "name": "imprint_json",
-        "shape": 7,
-        "type": "STRING",
-        "link": null
-       },
-       {
-        "localized_name": "solo",
-        "name": "solo",
-        "shape": 7,
-        "type": "BOOLEAN",
-        "widget": {
-         "name": "solo"
-        },
-        "link": 98418
-       }
-      ],
-      "outputs": [
-       {
-        "localized_name": "model_patched",
-        "name": "model_patched",
-        "type": "MODEL",
-        "links": [
-         48
-        ]
-       },
-       {
-        "localized_name": "positive",
-        "name": "positive",
-        "type": "CONDITIONING",
-        "links": [
-         49
-        ]
-       },
-       {
-        "localized_name": "negative",
-        "name": "negative",
-        "type": "CONDITIONING",
-        "links": [
-         50
-        ]
-       },
-       {
-        "localized_name": "verification_report",
-        "name": "verification_report",
-        "type": "STRING",
-        "links": []
-       }
-      ],
-      "title": "Phase 6 · Naturalize Couple Reconstruct",
-      "properties": {
-       "Node name for S&R": "SayaCoupleReconstruct",
-       "saya_phase": 6,
-       "saya_naturalize_reconstruct": true
-      },
-      "widgets_values": [
-       false
-      ],
-      "color": "#4a2f46",
-      "bgcolor": "#68435f"
-     },
-     {
-      "id": 10317,
-      "type": "SayaNaturalizePostProcess",
-      "pos": [
-       1218,
-       154
-      ],
-      "size": [
-       462,
-       154
-      ],
-      "flags": {},
-      "order": 15,
-      "mode": 0,
-      "inputs": [
-       {
-        "localized_name": "image",
-        "name": "image",
-        "type": "IMAGE",
-        "link": 30
-       },
-       {
-        "localized_name": "grain_strength",
-        "name": "grain_strength",
-        "type": "FLOAT",
-        "widget": {
-         "name": "grain_strength"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "dither_amount",
-        "name": "dither_amount",
-        "type": "FLOAT",
-        "widget": {
-         "name": "dither_amount"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "seed",
-        "name": "seed",
-        "type": "INT",
-        "widget": {
-         "name": "seed"
-        },
-        "link": 98496
-       }
-      ],
-      "outputs": [
-       {
-        "localized_name": "IMAGE",
-        "name": "IMAGE",
-        "type": "IMAGE",
-        "links": [
-         36
-        ]
-       }
-      ],
-      "title": "Phase 6 · Final Texture",
-      "properties": {
-       "Node name for S&R": "SayaNaturalizePostProcess",
-       "cnr_id": "Saya_Couple",
-       "saya_note": "grain_strength=0 and dither_amount=0 (defaults) return the input image unchanged: bypass by leaving both at zero."
-      },
-      "widgets_values": [
-       0.003,
-       0.5,
-       0,
-       "fixed"
-      ],
-      "color": "#233",
-      "bgcolor": "#355"
      },
      {
       "id": 10309,
@@ -38955,16 +38462,14 @@
         "localized_name": "model_patched",
         "name": "model_patched",
         "type": "MODEL",
-        "links": [
-         16
-        ]
+        "links": []
        },
        {
         "localized_name": "positive",
         "name": "positive",
         "type": "CONDITIONING",
         "links": [
-         17
+         98542
         ]
        },
        {
@@ -38972,7 +38477,7 @@
         "name": "negative",
         "type": "CONDITIONING",
         "links": [
-         22
+         98543
         ]
        },
        {
@@ -38980,6 +38485,14 @@
         "name": "verification_report",
         "type": "STRING",
         "links": []
+       },
+       {
+        "localized_name": "model_patched_multimask",
+        "name": "model_patched_multimask",
+        "type": "MODEL",
+        "links": [
+         98541
+        ]
        }
       ],
       "title": "Phase 6 · Couple Reconstruct · Final Size",
@@ -38993,8 +38506,8 @@
       "bgcolor": "#68435f"
      },
      {
-      "id": 10311,
-      "type": "cd8bcc90-3d3d-483d-b387-c8e9c7cbd678",
+      "id": 100242,
+      "type": "saya-phase6-naturalize-v2",
       "pos": [
        -854,
        364
@@ -39004,41 +38517,41 @@
        168
       ],
       "flags": {},
-      "order": 10,
+      "order": 0,
       "mode": 0,
       "inputs": [
        {
         "localized_name": "image",
         "name": "image",
         "type": "IMAGE",
-        "link": 12
+        "link": 98540
        },
        {
         "localized_name": "model",
         "name": "model",
         "shape": 7,
         "type": "MODEL",
-        "link": 16
+        "link": 98541
        },
        {
         "localized_name": "positive",
         "name": "positive",
         "shape": 7,
         "type": "CONDITIONING",
-        "link": 17
+        "link": 98542
        },
        {
         "localized_name": "negative",
         "name": "negative",
         "shape": 7,
         "type": "CONDITIONING",
-        "link": 22
+        "link": 98543
        },
        {
         "localized_name": "vae",
         "name": "vae",
         "type": "VAE",
-        "link": 23
+        "link": 98544
        },
        {
         "localized_name": "seed",
@@ -39047,7 +38560,7 @@
         "widget": {
          "name": "seed"
         },
-        "link": 18
+        "link": 98545
        }
       ],
       "outputs": [
@@ -39056,798 +38569,17 @@
         "name": "IMAGE",
         "type": "IMAGE",
         "links": [
-         24,
-         47
+         98546
         ]
        }
       ],
-      "title": "Phase 6 · Final Hires Refine",
+      "title": "Phase 6 · Naturalize V2",
       "properties": {
-       "cnr_id": "comfy-core",
-       "ver": "0.22.0",
-       "Node name for S&R": "cd8bcc90-3d3d-483d-b387-c8e9c7cbd678",
-       "ue_properties": {
-        "widget_ue_connectable": {
-         "seed": true
-        },
-        "version": "7.8",
-        "input_ue_unconnectable": {}
-       },
-       "saya_patch_step": "step2_post_hidream_hires_x13",
-       "saya_note": "Inserted after HIDREAM and before VIEW DETAILERS. Uses ComfyCouple support model/positive/negative and DARK VAE. Receives the factor-based post-model image from STEP 2.",
-       "saya_auto_slot_trio": "model + conditioning + VAE now follow the selected support1 SDXL/ANIMA slot",
-       "saya_hires_router": "model/conditioning/VAE routed from SayaHiresTrioRouterClean",
-       "saya_hidream_outside_router": "HiDream kept outside Hires Trio Router; support1 direct trio used.",
-       "saya_couple_sdxl_rewire": "Rewired to the clean 10-output SayaComfyCouple node.",
-       "proxyWidgetErrorQuarantine": [
-        {
-         "originalEntry": [
-          "2168",
-          "noise_seed"
-         ],
-         "reason": "missingSourceNode",
-         "attemptedAtVersion": 1
-        }
-       ],
-       "previewExposures": []
+       "Node name for S&R": "saya-phase6-naturalize-v2"
       },
       "widgets_values": [
        0
-      ],
-      "color": "#4a3b5f",
-      "bgcolor": "#6a5883"
-     },
-     {
-      "id": 10314,
-      "type": "ClownsharKSampler_Beta",
-      "pos": [
-       420,
-       42
-      ],
-      "size": [
-       336,
-       420
-      ],
-      "flags": {},
-      "order": 12,
-      "mode": 0,
-      "inputs": [
-       {
-        "localized_name": "model",
-        "name": "model",
-        "shape": 7,
-        "type": "MODEL",
-        "link": 48
-       },
-       {
-        "localized_name": "positive",
-        "name": "positive",
-        "shape": 7,
-        "type": "CONDITIONING",
-        "link": 49
-       },
-       {
-        "localized_name": "negative",
-        "name": "negative",
-        "shape": 7,
-        "type": "CONDITIONING",
-        "link": 50
-       },
-       {
-        "localized_name": "latent_image",
-        "name": "latent_image",
-        "shape": 7,
-        "type": "LATENT",
-        "link": 26
-       },
-       {
-        "localized_name": "sigmas",
-        "name": "sigmas",
-        "shape": 7,
-        "type": "SIGMAS",
-        "link": null
-       },
-       {
-        "localized_name": "guides",
-        "name": "guides",
-        "shape": 7,
-        "type": "GUIDES",
-        "link": null
-       },
-       {
-        "localized_name": "options",
-        "name": "options",
-        "shape": 7,
-        "type": "OPTIONS",
-        "link": null
-       },
-       {
-        "localized_name": "eta",
-        "name": "eta",
-        "type": "FLOAT",
-        "widget": {
-         "name": "eta"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "sampler_name",
-        "name": "sampler_name",
-        "type": "COMBO",
-        "widget": {
-         "name": "sampler_name"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "scheduler",
-        "name": "scheduler",
-        "type": "COMBO",
-        "widget": {
-         "name": "scheduler"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "steps",
-        "name": "steps",
-        "type": "INT",
-        "widget": {
-         "name": "steps"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "steps_to_run",
-        "name": "steps_to_run",
-        "type": "INT",
-        "widget": {
-         "name": "steps_to_run"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "denoise",
-        "name": "denoise",
-        "type": "FLOAT",
-        "widget": {
-         "name": "denoise"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "cfg",
-        "name": "cfg",
-        "type": "FLOAT",
-        "widget": {
-         "name": "cfg"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "seed",
-        "name": "seed",
-        "type": "INT",
-        "widget": {
-         "name": "seed"
-        },
-        "link": 98495
-       },
-       {
-        "localized_name": "sampler_mode",
-        "name": "sampler_mode",
-        "type": "COMBO",
-        "widget": {
-         "name": "sampler_mode"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "bongmath",
-        "name": "bongmath",
-        "type": "BOOLEAN",
-        "widget": {
-         "name": "bongmath"
-        },
-        "link": null
-       }
-      ],
-      "outputs": [
-       {
-        "localized_name": "output",
-        "name": "output",
-        "type": "LATENT",
-        "slot_index": 0,
-        "links": [
-         27
-        ]
-       },
-       {
-        "localized_name": "denoised",
-        "name": "denoised",
-        "type": "LATENT",
-        "links": []
-       },
-       {
-        "localized_name": "options",
-        "name": "options",
-        "type": "OPTIONS",
-        "links": []
-       }
-      ],
-      "title": "Phase 6 · Naturalize · RES4LYF",
-      "properties": {
-       "cnr_id": "RES4LYF",
-       "ver": "119679d8d8d26e6db52757e705488abb6399d7d4",
-       "Node name for S&R": "ClownsharKSampler_Beta"
-      },
-      "widgets_values": [
-       0.5,
-       "multistep/dpmpp_2m",
-       "beta",
-       12,
-       -1,
-       0.14,
-       2,
-       0,
-       "fixed",
-       "resample",
-       true
-      ],
-      "color": "#243447",
-      "bgcolor": "#35526b"
-     },
-     {
-      "id": 10315,
-      "type": "VAEDecode",
-      "pos": [
-       896,
-       0
-      ],
-      "size": [
-       322,
-       112
-      ],
-      "flags": {},
-      "order": 13,
-      "mode": 0,
-      "inputs": [
-       {
-        "localized_name": "échantillons",
-        "name": "samples",
-        "type": "LATENT",
-        "link": 27
-       },
-       {
-        "localized_name": "vae",
-        "name": "vae",
-        "type": "VAE",
-        "link": 29
-       }
-      ],
-      "outputs": [
-       {
-        "localized_name": "IMAGE",
-        "name": "IMAGE",
-        "type": "IMAGE",
-        "links": [
-         28
-        ]
-       }
-      ],
-      "title": "Phase 6 · Naturalize · VAE Decode",
-      "properties": {
-       "cnr_id": "comfy-core",
-       "ver": "0.3.57",
-       "Node name for S&R": "VAEDecode",
-       "ue_properties": {
-        "widget_ue_connectable": {},
-        "version": "7.8",
-        "input_ue_unconnectable": {}
-       }
-      },
-      "color": "#323",
-      "bgcolor": "#535"
-     },
-     {
-      "id": 10316,
-      "type": "EasyColorCorrection",
-      "pos": [
-       784,
-       154
-      ],
-      "size": [
-       420,
-       952
-      ],
-      "flags": {},
-      "order": 14,
-      "mode": 0,
-      "inputs": [
-       {
-        "localized_name": "image",
-        "name": "image",
-        "type": "IMAGE",
-        "link": 28
-       },
-       {
-        "localized_name": "reference_image",
-        "name": "reference_image",
-        "shape": 7,
-        "type": "IMAGE",
-        "link": null
-       },
-       {
-        "localized_name": "mask",
-        "name": "mask",
-        "shape": 7,
-        "type": "MASK",
-        "link": null
-       },
-       {
-        "localized_name": "mode",
-        "name": "mode",
-        "type": "COMBO",
-        "widget": {
-         "name": "mode"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "reference_strength",
-        "name": "reference_strength",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "reference_strength"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "extract_palette",
-        "name": "extract_palette",
-        "shape": 7,
-        "type": "BOOLEAN",
-        "widget": {
-         "name": "extract_palette"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "lock_input_image",
-        "name": "lock_input_image",
-        "shape": 7,
-        "type": "BOOLEAN",
-        "widget": {
-         "name": "lock_input_image"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "ai_analysis",
-        "name": "ai_analysis",
-        "shape": 7,
-        "type": "BOOLEAN",
-        "widget": {
-         "name": "ai_analysis"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "adjust_for_skin_tone",
-        "name": "adjust_for_skin_tone",
-        "shape": 7,
-        "type": "BOOLEAN",
-        "widget": {
-         "name": "adjust_for_skin_tone"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "white_balance_strength",
-        "name": "white_balance_strength",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "white_balance_strength"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "enhancement_strength",
-        "name": "enhancement_strength",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "enhancement_strength"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "pop_factor",
-        "name": "pop_factor",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "pop_factor"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "effect_strength",
-        "name": "effect_strength",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "effect_strength"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "warmth",
-        "name": "warmth",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "warmth"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "vibrancy",
-        "name": "vibrancy",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "vibrancy"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "contrast",
-        "name": "contrast",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "contrast"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "brightness",
-        "name": "brightness",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "brightness"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "tint",
-        "name": "tint",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "tint"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "preset",
-        "name": "preset",
-        "shape": 7,
-        "type": "COMBO",
-        "widget": {
-         "name": "preset"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "variation",
-        "name": "variation",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "variation"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "lift",
-        "name": "lift",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "lift"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "gamma",
-        "name": "gamma",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "gamma"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "gain",
-        "name": "gain",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "gain"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "noise",
-        "name": "noise",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "noise"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "skin_tone_adjustment",
-        "name": "skin_tone_adjustment",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "skin_tone_adjustment"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "sky_adjustment",
-        "name": "sky_adjustment",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "sky_adjustment"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "foliage_adjustment",
-        "name": "foliage_adjustment",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "foliage_adjustment"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "selective_hue_shift",
-        "name": "selective_hue_shift",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "selective_hue_shift"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "selective_saturation",
-        "name": "selective_saturation",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "selective_saturation"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "selective_strength",
-        "name": "selective_strength",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "selective_strength"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "colorize_strength",
-        "name": "colorize_strength",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "colorize_strength"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "skin_warmth",
-        "name": "skin_warmth",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "skin_warmth"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "sky_saturation",
-        "name": "sky_saturation",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "sky_saturation"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "vegetation_green",
-        "name": "vegetation_green",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "vegetation_green"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "sepia_tone",
-        "name": "sepia_tone",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "sepia_tone"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "colorize_mode",
-        "name": "colorize_mode",
-        "shape": 7,
-        "type": "COMBO",
-        "widget": {
-         "name": "colorize_mode"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "force_colorize",
-        "name": "force_colorize",
-        "shape": 7,
-        "type": "BOOLEAN",
-        "widget": {
-         "name": "force_colorize"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "use_gpu",
-        "name": "use_gpu",
-        "shape": 7,
-        "type": "BOOLEAN",
-        "widget": {
-         "name": "use_gpu"
-        },
-        "link": null
-       }
-      ],
-      "outputs": [
-       {
-        "localized_name": "image",
-        "name": "image",
-        "type": "IMAGE",
-        "links": [
-         30
-        ]
-       },
-       {
-        "localized_name": "palette_data",
-        "name": "palette_data",
-        "type": "STRING",
-        "links": []
-       },
-       {
-        "localized_name": "histogram",
-        "name": "histogram",
-        "type": "IMAGE",
-        "links": []
-       },
-       {
-        "localized_name": "palette_image",
-        "name": "palette_image",
-        "type": "IMAGE",
-        "links": []
-       }
-      ],
-      "title": "Phase 6 · Final Color Correction",
-      "properties": {
-       "cnr_id": "comfyui-easycolorcorrector",
-       "ver": "1.2.5",
-       "Node name for S&R": "EasyColorCorrection",
-       "ue_properties": {
-        "widget_ue_connectable": {
-         "mode": true,
-         "reference_strength": true,
-         "extract_palette": true,
-         "lock_input_image": true,
-         "ai_analysis": true,
-         "adjust_for_skin_tone": true,
-         "white_balance_strength": true,
-         "enhancement_strength": true,
-         "pop_factor": true,
-         "effect_strength": true,
-         "warmth": true,
-         "vibrancy": true,
-         "contrast": true,
-         "brightness": true,
-         "tint": true,
-         "preset": true,
-         "variation": true,
-         "lift": true,
-         "gamma": true,
-         "gain": true,
-         "noise": true,
-         "skin_tone_adjustment": true,
-         "sky_adjustment": true,
-         "foliage_adjustment": true,
-         "selective_hue_shift": true,
-         "selective_saturation": true,
-         "selective_strength": true,
-         "colorize_strength": true,
-         "skin_warmth": true,
-         "sky_saturation": true,
-         "vegetation_green": true,
-         "sepia_tone": true,
-         "colorize_mode": true,
-         "force_colorize": true,
-         "use_gpu": true
-        },
-        "version": "7.8",
-        "input_ue_unconnectable": {}
-       }
-      },
-      "widgets_values": [
-       "Manual",
-       0.3,
-       false,
-       true,
-       true,
-       true,
-       0,
-       0.2,
-       0.4,
-       0.15,
-       0.005,
-       0.04,
-       0.02,
-       0,
-       0,
-       "Anime Moody",
-       0,
-       0,
-       0,
-       0,
-       0,
-       0,
-       0,
-       0,
-       0,
-       0.05,
-       0.18,
-       0.8,
-       0.3,
-       0.6,
-       0.5,
-       0,
-       "deep_learning",
-       false,
-       true
-      ],
-      "color": "#222",
-      "bgcolor": "#000"
+      ]
      }
     ],
     "groups": [],
@@ -39917,110 +38649,6 @@
       "type": "IMAGE"
      },
      {
-      "id": 12,
-      "origin_id": 10304,
-      "origin_slot": 0,
-      "target_id": 10311,
-      "target_slot": 0,
-      "type": "IMAGE"
-     },
-     {
-      "id": 16,
-      "origin_id": 10309,
-      "origin_slot": 0,
-      "target_id": 10311,
-      "target_slot": 1,
-      "type": "MODEL"
-     },
-     {
-      "id": 17,
-      "origin_id": 10309,
-      "origin_slot": 1,
-      "target_id": 10311,
-      "target_slot": 2,
-      "type": "CONDITIONING"
-     },
-     {
-      "id": 18,
-      "origin_id": 10300,
-      "origin_slot": 3,
-      "target_id": 10311,
-      "target_slot": 5,
-      "type": "INT"
-     },
-     {
-      "id": 22,
-      "origin_id": 10309,
-      "origin_slot": 2,
-      "target_id": 10311,
-      "target_slot": 3,
-      "type": "CONDITIONING"
-     },
-     {
-      "id": 23,
-      "origin_id": 10310,
-      "origin_slot": 0,
-      "target_id": 10311,
-      "target_slot": 4,
-      "type": "VAE"
-     },
-     {
-      "id": 24,
-      "origin_id": 10311,
-      "origin_slot": 0,
-      "target_id": 10313,
-      "target_slot": 0,
-      "type": "IMAGE"
-     },
-     {
-      "id": 25,
-      "origin_id": 10312,
-      "origin_slot": 0,
-      "target_id": 10313,
-      "target_slot": 1,
-      "type": "VAE"
-     },
-     {
-      "id": 26,
-      "origin_id": 10313,
-      "origin_slot": 0,
-      "target_id": 10314,
-      "target_slot": 3,
-      "type": "LATENT"
-     },
-     {
-      "id": 27,
-      "origin_id": 10314,
-      "origin_slot": 0,
-      "target_id": 10315,
-      "target_slot": 0,
-      "type": "LATENT"
-     },
-     {
-      "id": 28,
-      "origin_id": 10315,
-      "origin_slot": 0,
-      "target_id": 10316,
-      "target_slot": 0,
-      "type": "IMAGE"
-     },
-     {
-      "id": 29,
-      "origin_id": 10312,
-      "origin_slot": 0,
-      "target_id": 10315,
-      "target_slot": 1,
-      "type": "VAE"
-     },
-     {
-      "id": 30,
-      "origin_id": 10316,
-      "origin_slot": 0,
-      "target_id": 10317,
-      "target_slot": 0,
-      "type": "IMAGE"
-     },
-     {
       "id": 31,
       "origin_id": 10300,
       "origin_slot": 1,
@@ -40061,54 +38689,6 @@
       "type": "STRING"
      },
      {
-      "id": 36,
-      "origin_id": 10317,
-      "origin_slot": 0,
-      "target_id": -20,
-      "target_slot": 0,
-      "type": "IMAGE"
-     },
-     {
-      "id": 43,
-      "origin_id": 10318,
-      "origin_slot": 0,
-      "target_id": 10319,
-      "target_slot": 4,
-      "type": "SAYA_IMPRINT"
-     },
-     {
-      "id": 47,
-      "origin_id": 10311,
-      "origin_slot": 0,
-      "target_id": 10319,
-      "target_slot": 3,
-      "type": "IMAGE"
-     },
-     {
-      "id": 48,
-      "origin_id": 10319,
-      "origin_slot": 0,
-      "target_id": 10314,
-      "target_slot": 0,
-      "type": "MODEL"
-     },
-     {
-      "id": 49,
-      "origin_id": 10319,
-      "origin_slot": 1,
-      "target_id": 10314,
-      "target_slot": 1,
-      "type": "CONDITIONING"
-     },
-     {
-      "id": 50,
-      "origin_id": 10319,
-      "origin_slot": 2,
-      "target_id": 10314,
-      "target_slot": 2,
-      "type": "CONDITIONING"
-     },
-     {
       "id": 98260,
       "origin_id": 10305,
       "origin_slot": 1,
@@ -40135,7 +38715,7 @@
      {
       "id": 98271,
       "origin_id": -10,
-      "origin_slot": 4,
+      "origin_slot": 0,
       "target_id": 10309,
       "target_slot": 0,
       "type": "MODEL"
@@ -40143,7 +38723,7 @@
      {
       "id": 98272,
       "origin_id": -10,
-      "origin_slot": 5,
+      "origin_slot": 1,
       "target_id": 10309,
       "target_slot": 1,
       "type": "CLIP"
@@ -40151,447 +38731,74 @@
      {
       "id": 98273,
       "origin_id": -10,
-      "origin_slot": 6,
+      "origin_slot": 2,
       "target_id": 100167,
       "target_slot": 1,
       "type": "STRING"
      },
      {
-      "id": 98274,
-      "origin_id": -10,
-      "origin_slot": 4,
-      "target_id": 10319,
-      "target_slot": 0,
-      "type": "MODEL"
-     },
-     {
-      "id": 98275,
-      "origin_id": -10,
-      "origin_slot": 5,
-      "target_id": 10319,
-      "target_slot": 1,
-      "type": "CLIP"
-     },
-     {
-      "id": 98276,
-      "origin_id": -10,
-      "origin_slot": 6,
-      "target_id": 10319,
-      "target_slot": 2,
-      "type": "STRING"
-     },
-     {
       "id": 98417,
       "origin_id": -10,
-      "origin_slot": 8,
+      "origin_slot": 4,
       "target_id": 10309,
       "target_slot": 6,
       "type": "BOOLEAN"
      },
      {
-      "id": 98418,
-      "origin_id": -10,
-      "origin_slot": 8,
-      "target_id": 10319,
-      "target_slot": 6,
-      "type": "BOOLEAN"
-     },
-     {
-      "id": 98488,
-      "origin_id": -10,
+      "id": 98540,
+      "origin_id": 10304,
       "origin_slot": 0,
-      "target_id": 10318,
-      "target_slot": 2,
-      "type": "STRING"
+      "target_id": 100242,
+      "target_slot": 0,
+      "type": "IMAGE"
      },
      {
-      "id": 98489,
-      "origin_id": -10,
+      "id": 98541,
+      "origin_id": 10309,
+      "origin_slot": 4,
+      "target_id": 100242,
+      "target_slot": 1,
+      "type": "MODEL"
+     },
+     {
+      "id": 98542,
+      "origin_id": 10309,
       "origin_slot": 1,
-      "target_id": 10318,
-      "target_slot": 3,
-      "type": "STRING"
+      "target_id": 100242,
+      "target_slot": 2,
+      "type": "CONDITIONING"
      },
      {
-      "id": 98490,
-      "origin_id": -10,
-      "origin_slot": 3,
-      "target_id": 10318,
-      "target_slot": 4,
-      "type": "STRING"
-     },
-     {
-      "id": 98491,
-      "origin_id": -10,
+      "id": 98543,
+      "origin_id": 10309,
       "origin_slot": 2,
-      "target_id": 10318,
+      "target_id": 100242,
+      "target_slot": 3,
+      "type": "CONDITIONING"
+     },
+     {
+      "id": 98544,
+      "origin_id": 10310,
+      "origin_slot": 0,
+      "target_id": 100242,
+      "target_slot": 4,
+      "type": "VAE"
+     },
+     {
+      "id": 98545,
+      "origin_id": 10300,
+      "origin_slot": 3,
+      "target_id": 100242,
       "target_slot": 5,
-      "type": "STRING"
-     },
-     {
-      "id": 98492,
-      "origin_id": 10305,
-      "origin_slot": 1,
-      "target_id": 10318,
-      "target_slot": 0,
-      "type": "STRING"
-     },
-     {
-      "id": 98493,
-      "origin_id": -10,
-      "origin_slot": 6,
-      "target_id": 10318,
-      "target_slot": 1,
-      "type": "STRING"
-     },
-     {
-      "id": 98494,
-      "origin_id": -10,
-      "origin_slot": 8,
-      "target_id": 10318,
-      "target_slot": 6,
-      "type": "BOOLEAN"
-     },
-     {
-      "id": 98495,
-      "origin_id": 10300,
-      "origin_slot": 3,
-      "target_id": 10314,
-      "target_slot": 14,
       "type": "INT"
      },
      {
-      "id": 98496,
-      "origin_id": 10300,
-      "origin_slot": 3,
-      "target_id": 10317,
-      "target_slot": 3,
-      "type": "INT"
-     }
-    ],
-    "extra": {}
-   },
-   {
-    "id": "0c6c3352-a2c1-42ea-a595-bde129087ef3",
-    "version": 1,
-    "state": {
-     "lastGroupId": 3303,
-     "lastNodeId": 100241,
-     "lastLinkId": 98531,
-     "lastRerouteId": 575
-    },
-    "revision": 27,
-    "config": {},
-    "name": "Phase 6 · Naturalize Prompts",
-    "inputNode": {
-     "id": -10,
-     "bounding": [
-      6994,
-      2838,
-      128,
-      48
-     ]
-    },
-    "outputNode": {
-     "id": -20,
-     "bounding": [
-      7746,
-      2798,
-      128,
-      128
-     ]
-    },
-    "inputs": [],
-    "outputs": [
-     {
-      "id": "58f4251a-4d37-4909-a792-4168330d1e7a",
-      "name": "STRING",
-      "type": "STRING",
-      "linkIds": [
-       98135
-      ],
-      "localized_name": "CHAÎNE",
-      "pos": [
-       7770,
-       2822
-      ]
-     },
-     {
-      "id": "15a0a82c-0195-4d27-8154-a771335116e3",
-      "name": "STRING_1",
-      "type": "STRING",
-      "linkIds": [
-       98134
-      ],
-      "localized_name": "CHAÎNE_1",
-      "pos": [
-       7770,
-       2842
-      ]
-     },
-     {
-      "id": "0d0cdc7f-4704-4383-a998-ec66f55f5f55",
-      "name": "STRING_2",
-      "type": "STRING",
-      "linkIds": [
-       98133
-      ],
-      "localized_name": "CHAÎNE_2",
-      "pos": [
-       7770,
-       2862
-      ]
-     },
-     {
-      "id": "a6d8f8b3-e981-45d2-8495-659dfd670644",
-      "name": "STRING_3",
-      "type": "STRING",
-      "linkIds": [
-       98132
-      ],
-      "localized_name": "CHAÎNE_3",
-      "pos": [
-       7770,
-       2882
-      ]
-     }
-    ],
-    "widgets": [],
-    "nodes": [
-     {
-      "id": 100104,
-      "type": "PrimitiveStringMultiline",
-      "pos": [
-       7182,
-       3234
-      ],
-      "size": [
-       504,
-       266
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [
-       {
-        "localized_name": "valeur",
-        "name": "value",
-        "type": "STRING",
-        "widget": {
-         "name": "value"
-        },
-        "link": null
-       }
-      ],
-      "outputs": [
-       {
-        "localized_name": "CHAÎNE",
-        "name": "STRING",
-        "type": "STRING",
-        "links": [
-         98135
-        ]
-       }
-      ],
-      "title": "Phase 6 · Naturalize Negative",
-      "properties": {
-       "cnr_id": "comfy-core",
-       "ver": "0.26.0",
-       "Node name for S&R": "PrimitiveStringMultiline",
-       "saya_original_mode": 0,
-       "saya_phase": 6,
-       "saya_naturalize_prompt": true
-      },
-      "widgets_values": [
-       "identity change, face change, anatomy change, body shape change, proportion change, pose change, expression change, hairstyle change, clothing change, object replacement, added objects, removed objects, composition change, framing change, camera change, background change, lighting change, strong color shift, saturation shift, style change, excessive detail, oversharpening, halos, ringing, plastic skin, waxy skin, heavy grain, strong noise, texture artifacts, duplicate details, hallucinated details"
-      ],
-      "color": "#3b3150",
-      "bgcolor": "#574774"
-     },
-     {
-      "id": 100103,
-      "type": "PrimitiveStringMultiline",
-      "pos": [
-       7182,
-       2912
-      ],
-      "size": [
-       504,
-       266
-      ],
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "inputs": [
-       {
-        "localized_name": "valeur",
-        "name": "value",
-        "type": "STRING",
-        "widget": {
-         "name": "value"
-        },
-        "link": null
-       }
-      ],
-      "outputs": [
-       {
-        "localized_name": "CHAÎNE",
-        "name": "STRING",
-        "type": "STRING",
-        "links": [
-         98134
-        ]
-       }
-      ],
-      "title": "Phase 6 · Naturalize Person 2",
-      "properties": {
-       "cnr_id": "comfy-core",
-       "ver": "0.26.0",
-       "Node name for S&R": "PrimitiveStringMultiline",
-       "saya_original_mode": 0,
-       "saya_phase": 6,
-       "saya_naturalize_prompt": true
-      },
-      "widgets_values": [
-       "subtle local character naturalization, refine existing facial and body linework, cleaner contour transitions, refine existing hair, skin and clothing edges, soft texture cleanup, gentle micro-detail recovery, subtle natural surface variation, preserve identity, preserve anatomy, preserve proportions, preserve pose, preserve expression, preserve hairstyle, preserve clothing, preserve character design, minimal visual change"
-      ],
-      "color": "#3b3150",
-      "bgcolor": "#574774"
-     },
-     {
-      "id": 100102,
-      "type": "PrimitiveStringMultiline",
-      "pos": [
-       7182,
-       2576
-      ],
-      "size": [
-       504,
-       266
-      ],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "inputs": [
-       {
-        "localized_name": "valeur",
-        "name": "value",
-        "type": "STRING",
-        "widget": {
-         "name": "value"
-        },
-        "link": null
-       }
-      ],
-      "outputs": [
-       {
-        "localized_name": "CHAÎNE",
-        "name": "STRING",
-        "type": "STRING",
-        "links": [
-         98133
-        ]
-       }
-      ],
-      "title": "Phase 6 · Naturalize Person 1",
-      "properties": {
-       "cnr_id": "comfy-core",
-       "ver": "0.26.0",
-       "Node name for S&R": "PrimitiveStringMultiline",
-       "saya_original_mode": 0,
-       "saya_phase": 6,
-       "saya_naturalize_prompt": true
-      },
-      "widgets_values": [
-       "subtle local character naturalization, refine existing facial and body linework, cleaner contour transitions, refine existing hair, skin and clothing edges, soft texture cleanup, gentle micro-detail recovery, subtle natural surface variation, preserve identity, preserve anatomy, preserve proportions, preserve pose, preserve expression, preserve hairstyle, preserve clothing, preserve character design, minimal visual change"
-      ],
-      "color": "#3b3150",
-      "bgcolor": "#574774"
-     },
-     {
-      "id": 100101,
-      "type": "PrimitiveStringMultiline",
-      "pos": [
-       7182,
-       2254
-      ],
-      "size": [
-       504,
-       266
-      ],
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [
-       {
-        "localized_name": "valeur",
-        "name": "value",
-        "type": "STRING",
-        "widget": {
-         "name": "value"
-        },
-        "link": null
-       }
-      ],
-      "outputs": [
-       {
-        "localized_name": "CHAÎNE",
-        "name": "STRING",
-        "type": "STRING",
-        "links": [
-         98132
-        ]
-       }
-      ],
-      "title": "Phase 6 · Naturalize Base",
-      "properties": {
-       "cnr_id": "comfy-core",
-       "ver": "0.26.0",
-       "Node name for S&R": "PrimitiveStringMultiline",
-       "saya_original_mode": 0,
-       "saya_phase": 6,
-       "saya_naturalize_prompt": true
-      },
-      "widgets_values": [
-       "subtle naturalization, gentle line refinement, cleaner contour transitions around existing characters and objects, refined object edges, soft material definition, fine texture cleanup, subtle local contrast, gentle micro-detail recovery, light organic grain, faint film grain, smooth tonal transitions, preserve original composition, preserve original geometry, preserve original proportions, preserve original colors, preserve original lighting, preserve all existing objects and background, preserve existing design, minimal visual change"
-      ],
-      "color": "#3b3150",
-      "bgcolor": "#574774"
-     }
-    ],
-    "groups": [],
-    "links": [
-     {
-      "id": 98135,
-      "origin_id": 100104,
+      "id": 98546,
+      "origin_id": 100242,
       "origin_slot": 0,
       "target_id": -20,
       "target_slot": 0,
-      "type": "STRING"
-     },
-     {
-      "id": 98134,
-      "origin_id": 100103,
-      "origin_slot": 0,
-      "target_id": -20,
-      "target_slot": 1,
-      "type": "STRING"
-     },
-     {
-      "id": 98133,
-      "origin_id": 100102,
-      "origin_slot": 0,
-      "target_id": -20,
-      "target_slot": 2,
-      "type": "STRING"
-     },
-     {
-      "id": 98132,
-      "origin_id": 100101,
-      "origin_slot": 0,
-      "target_id": -20,
-      "target_slot": 3,
-      "type": "STRING"
+      "type": "IMAGE"
      }
     ],
     "extra": {}
@@ -43033,8 +41240,8 @@
     "version": 1,
     "state": {
      "lastGroupId": 3303,
-     "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastNodeId": 100242,
+     "lastLinkId": 98546,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -43065,9 +41272,7 @@
       "type": "MODEL",
       "linkIds": [
        98390,
-       98394,
-       98398,
-       98402
+       98394
       ],
       "localized_name": "Model 1 Patched",
       "pos": [
@@ -43081,9 +41286,7 @@
       "type": "MODEL",
       "linkIds": [
        98391,
-       98395,
-       98399,
-       98403
+       98395
       ],
       "localized_name": "Model 2 Patched",
       "pos": [
@@ -43141,6 +41344,34 @@
       "pos": [
        -327,
        160
+      ]
+     },
+     {
+      "id": "e31e6945-f248-4ea1-b4c1-93edc2df64ee",
+      "name": "Model 1 Patched MMC",
+      "type": "MODEL",
+      "linkIds": [
+       98536,
+       98538
+      ],
+      "localized_name": "Model 1 Patched MMC",
+      "pos": [
+       -300,
+       60
+      ]
+     },
+     {
+      "id": "c090e361-0588-41bc-b14a-2fe5108be663",
+      "name": "Model 2 Patched MMC",
+      "type": "MODEL",
+      "linkIds": [
+       98537,
+       98539
+      ],
+      "localized_name": "Model 2 Patched MMC",
+      "pos": [
+       -300,
+       60
       ]
      }
     ],
@@ -43509,13 +41740,13 @@
         "localized_name": "model_1",
         "name": "model_1",
         "type": "*",
-        "link": 98398
+        "link": 98536
        },
        {
         "localized_name": "model_2",
         "name": "model_2",
         "type": "*",
-        "link": 98399
+        "link": 98537
        }
       ],
       "outputs": [
@@ -43621,13 +41852,13 @@
         "localized_name": "model_1",
         "name": "model_1",
         "type": "*",
-        "link": 98402
+        "link": 98538
        },
        {
         "localized_name": "model_2",
         "name": "model_2",
         "type": "*",
-        "link": 98403
+        "link": 98539
        }
       ],
       "outputs": [
@@ -43724,22 +41955,6 @@
       "type": "STRING"
      },
      {
-      "id": 98398,
-      "origin_id": -10,
-      "origin_slot": 0,
-      "target_id": 100214,
-      "target_slot": 1,
-      "type": "MODEL"
-     },
-     {
-      "id": 98399,
-      "origin_id": -10,
-      "origin_slot": 1,
-      "target_id": 100214,
-      "target_slot": 2,
-      "type": "MODEL"
-     },
-     {
       "id": 98400,
       "origin_id": 100214,
       "origin_slot": 0,
@@ -43754,22 +41969,6 @@
       "target_id": 100216,
       "target_slot": 0,
       "type": "STRING"
-     },
-     {
-      "id": 98402,
-      "origin_id": -10,
-      "origin_slot": 0,
-      "target_id": 100216,
-      "target_slot": 1,
-      "type": "MODEL"
-     },
-     {
-      "id": 98403,
-      "origin_id": -10,
-      "origin_slot": 1,
-      "target_id": 100216,
-      "target_slot": 2,
-      "type": "MODEL"
      },
      {
       "id": 98404,
@@ -43810,6 +42009,38 @@
       "target_id": 100215,
       "target_slot": 0,
       "type": "COMBO"
+     },
+     {
+      "id": 98536,
+      "origin_id": -10,
+      "origin_slot": 6,
+      "target_id": 100214,
+      "target_slot": 1,
+      "type": "MODEL"
+     },
+     {
+      "id": 98537,
+      "origin_id": -10,
+      "origin_slot": 7,
+      "target_id": 100214,
+      "target_slot": 2,
+      "type": "MODEL"
+     },
+     {
+      "id": 98538,
+      "origin_id": -10,
+      "origin_slot": 6,
+      "target_id": 100216,
+      "target_slot": 1,
+      "type": "MODEL"
+     },
+     {
+      "id": 98539,
+      "origin_id": -10,
+      "origin_slot": 7,
+      "target_id": 100216,
+      "target_slot": 2,
+      "type": "MODEL"
      }
     ],
     "extra": {}
@@ -44946,6 +43177,1110 @@
       "target_id": 100218,
       "target_slot": 0,
       "type": "COMBO"
+     }
+    ],
+    "extra": {}
+   },
+   {
+    "id": "saya-phase6-naturalize-v2",
+    "version": 1,
+    "state": {
+     "lastGroupId": 3303,
+     "lastNodeId": 100242,
+     "lastLinkId": 98546,
+     "lastRerouteId": 575
+    },
+    "revision": 0,
+    "config": {},
+    "name": "Phase 6 · Naturalize V2",
+    "inputNode": {
+     "id": -10,
+     "bounding": [
+      56,
+      406,
+      128,
+      168
+     ]
+    },
+    "outputNode": {
+     "id": -20,
+     "bounding": [
+      2780,
+      196,
+      128,
+      68
+     ]
+    },
+    "inputs": [
+     {
+      "id": "3295f0a0-5158-4912-8310-662757ed9eee",
+      "name": "image",
+      "type": "IMAGE",
+      "linkIds": [
+       1,
+       21
+      ],
+      "localized_name": "image",
+      "pos": [
+       160,
+       430
+      ]
+     },
+     {
+      "id": "a2374d1b-6589-4ee5-97f3-197872af0182",
+      "name": "model",
+      "type": "MODEL",
+      "linkIds": [
+       2
+      ],
+      "localized_name": "model",
+      "pos": [
+       160,
+       450
+      ]
+     },
+     {
+      "id": "97b7da0d-09d3-4db1-bd05-8e690dc19308",
+      "name": "positive",
+      "type": "CONDITIONING",
+      "linkIds": [
+       3
+      ],
+      "localized_name": "positive",
+      "pos": [
+       160,
+       470
+      ]
+     },
+     {
+      "id": "f1d1381b-8767-4168-b060-a47fdeb387a8",
+      "name": "negative",
+      "type": "CONDITIONING",
+      "linkIds": [
+       4
+      ],
+      "localized_name": "negative",
+      "pos": [
+       160,
+       490
+      ]
+     },
+     {
+      "id": "ca2798b4-e541-4e96-a456-67138e5be2c9",
+      "name": "vae",
+      "type": "VAE",
+      "linkIds": [
+       5,
+       6
+      ],
+      "localized_name": "vae",
+      "pos": [
+       160,
+       510
+      ]
+     },
+     {
+      "id": "5fe61f7c-beae-47e0-8018-a32493ab590c",
+      "name": "seed",
+      "type": "INT",
+      "linkIds": [
+       7,
+       22,
+       27
+      ],
+      "localized_name": "seed",
+      "pos": [
+       160,
+       530
+      ]
+     }
+    ],
+    "outputs": [
+     {
+      "id": "c02fe0ec-5978-4738-a246-5de723899743",
+      "name": "IMAGE",
+      "type": "IMAGE",
+      "linkIds": [
+       28
+      ],
+      "localized_name": "IMAGE",
+      "pos": [
+       1578,
+       220
+      ]
+     }
+    ],
+    "widgets": [],
+    "nodes": [
+     {
+      "id": 100081,
+      "type": "ImpactFloat",
+      "pos": [
+       210,
+       476
+      ],
+      "size": [
+       252,
+       112
+      ],
+      "flags": {
+       "collapsed": false
+      },
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "value",
+        "name": "value",
+        "type": "FLOAT",
+        "widget": {
+         "name": "value"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "FLOTTANT",
+        "name": "FLOAT",
+        "type": "FLOAT",
+        "links": [
+         10
+        ]
+       }
+      ],
+      "title": "Naturalize V2 · CFG",
+      "properties": {
+       "cnr_id": "ComfyUI-Impact-Pack",
+       "ver": "unknown",
+       "Node name for S&R": "ImpactFloat",
+       "aux_id": "ltdrdata/ComfyUI-Impact-Pack",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       3.2
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+     },
+     {
+      "id": 100083,
+      "type": "FloatConstant",
+      "pos": [
+       560,
+       350
+      ],
+      "size": [
+       252,
+       112
+      ],
+      "flags": {
+       "collapsed": false
+      },
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "value",
+        "name": "value",
+        "type": "FLOAT",
+        "widget": {
+         "name": "value"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "label": "denoise",
+        "localized_name": "value",
+        "name": "value",
+        "type": "FLOAT",
+        "links": [
+         13
+        ]
+       }
+      ],
+      "title": "Naturalize V2 · Denoise (detail budget)",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.3.57",
+       "Node name for S&R": "FloatConstant",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       0.14
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+     },
+     {
+      "id": 2170,
+      "type": "ClownsharKSampler_Beta",
+      "pos": [
+       840,
+       210
+      ],
+      "size": [
+       364,
+       420
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "model",
+        "name": "model",
+        "shape": 7,
+        "type": "MODEL",
+        "link": 2
+       },
+       {
+        "localized_name": "positive",
+        "name": "positive",
+        "shape": 7,
+        "type": "CONDITIONING",
+        "link": 3
+       },
+       {
+        "localized_name": "negative",
+        "name": "negative",
+        "shape": 7,
+        "type": "CONDITIONING",
+        "link": 4
+       },
+       {
+        "localized_name": "latent_image",
+        "name": "latent_image",
+        "shape": 7,
+        "type": "LATENT",
+        "link": 18
+       },
+       {
+        "localized_name": "sigmas",
+        "name": "sigmas",
+        "shape": 7,
+        "type": "SIGMAS",
+        "link": null
+       },
+       {
+        "localized_name": "guides",
+        "name": "guides",
+        "shape": 7,
+        "type": "GUIDES",
+        "link": null
+       },
+       {
+        "localized_name": "options",
+        "name": "options",
+        "shape": 7,
+        "type": "OPTIONS",
+        "link": null
+       },
+       {
+        "localized_name": "eta",
+        "name": "eta",
+        "type": "FLOAT",
+        "widget": {
+         "name": "eta"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "sampler_name",
+        "name": "sampler_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "sampler_name"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "scheduler",
+        "name": "scheduler",
+        "type": "COMBO",
+        "widget": {
+         "name": "scheduler"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "steps",
+        "name": "steps",
+        "type": "INT",
+        "widget": {
+         "name": "steps"
+        },
+        "link": 12
+       },
+       {
+        "localized_name": "steps_to_run",
+        "name": "steps_to_run",
+        "type": "INT",
+        "widget": {
+         "name": "steps_to_run"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "denoise",
+        "name": "denoise",
+        "type": "FLOAT",
+        "widget": {
+         "name": "denoise"
+        },
+        "link": 13
+       },
+       {
+        "localized_name": "cfg",
+        "name": "cfg",
+        "type": "FLOAT",
+        "widget": {
+         "name": "cfg"
+        },
+        "link": 10
+       },
+       {
+        "localized_name": "seed",
+        "name": "seed",
+        "type": "INT",
+        "widget": {
+         "name": "seed"
+        },
+        "link": 7
+       },
+       {
+        "localized_name": "sampler_mode",
+        "name": "sampler_mode",
+        "type": "COMBO",
+        "widget": {
+         "name": "sampler_mode"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "bongmath",
+        "name": "bongmath",
+        "type": "BOOLEAN",
+        "widget": {
+         "name": "bongmath"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "output",
+        "name": "output",
+        "type": "LATENT",
+        "slot_index": 0,
+        "links": [
+         19
+        ]
+       },
+       {
+        "localized_name": "denoised",
+        "name": "denoised",
+        "type": "LATENT",
+        "links": []
+       },
+       {
+        "localized_name": "options",
+        "name": "options",
+        "type": "OPTIONS",
+        "links": []
+       }
+      ],
+      "title": "Naturalize V2 · Sampler (single diffusion)",
+      "properties": {
+       "cnr_id": "RES4LYF",
+       "ver": "119679d8d8d26e6db52757e705488abb6399d7d4",
+       "Node name for S&R": "ClownsharKSampler_Beta"
+      },
+      "widgets_values": [
+       0.5,
+       "multistep/dpmpp_2m",
+       "beta",
+       14,
+       -1,
+       0.2,
+       3.2,
+       0,
+       "fixed",
+       "standard",
+       true
+      ],
+      "color": "#3b3150",
+      "bgcolor": "#574774"
+     },
+     {
+      "id": 100080,
+      "type": "VAEDecode",
+      "pos": [
+       1218,
+       210
+      ],
+      "size": [
+       322,
+       112
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "échantillons",
+        "name": "samples",
+        "type": "LATENT",
+        "link": 19
+       },
+       {
+        "localized_name": "vae",
+        "name": "vae",
+        "type": "VAE",
+        "link": 6
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "IMAGE",
+        "name": "IMAGE",
+        "type": "IMAGE",
+        "links": [
+         20
+        ]
+       }
+      ],
+      "title": "Naturalize V2 · VAE Decode",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.3.57",
+       "Node name for S&R": "VAEDecode",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "color": "#323",
+      "bgcolor": "#535"
+     },
+     {
+      "id": 100082,
+      "type": "INTConstant",
+      "pos": [
+       476,
+       504
+      ],
+      "size": [
+       252,
+       112
+      ],
+      "flags": {
+       "collapsed": false
+      },
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "value",
+        "name": "value",
+        "type": "INT",
+        "widget": {
+         "name": "value"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "value",
+        "name": "value",
+        "type": "INT",
+        "links": [
+         12
+        ]
+       }
+      ],
+      "title": "Naturalize V2 · Steps",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "unknown",
+       "Node name for S&R": "INTConstant",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       14
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+     },
+     {
+      "id": 100079,
+      "type": "VAEEncode",
+      "pos": [
+       210,
+       308
+      ],
+      "size": [
+       322,
+       112
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "pixels",
+        "name": "pixels",
+        "type": "IMAGE",
+        "link": 1
+       },
+       {
+        "localized_name": "vae",
+        "name": "vae",
+        "type": "VAE",
+        "link": 5
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "LATENT",
+        "name": "LATENT",
+        "type": "LATENT",
+        "links": [
+         18
+        ]
+       }
+      ],
+      "title": "Naturalize V2 · VAE Encode",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.3.57",
+       "Node name for S&R": "VAEEncode",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "color": "#323",
+      "bgcolor": "#535"
+     },
+     {
+      "id": 30001,
+      "type": "SayaNaturalizePostProcess",
+      "pos": [
+       1560,
+       210
+      ],
+      "size": [
+       360,
+       200
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "image",
+        "name": "image",
+        "type": "IMAGE",
+        "link": 20
+       },
+       {
+        "localized_name": "grain_strength",
+        "name": "grain_strength",
+        "type": "FLOAT",
+        "widget": {
+         "name": "grain_strength"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "dither_amount",
+        "name": "dither_amount",
+        "type": "FLOAT",
+        "widget": {
+         "name": "dither_amount"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "seed",
+        "name": "seed",
+        "type": "INT",
+        "widget": {
+         "name": "seed"
+        },
+        "link": 22
+       },
+       {
+        "localized_name": "reference",
+        "name": "reference",
+        "shape": 7,
+        "type": "IMAGE",
+        "link": 21
+       },
+       {
+        "localized_name": "color_lock",
+        "name": "color_lock",
+        "shape": 7,
+        "type": "FLOAT",
+        "widget": {
+         "name": "color_lock"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "highlight_tame",
+        "name": "highlight_tame",
+        "shape": 7,
+        "type": "FLOAT",
+        "widget": {
+         "name": "highlight_tame"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "IMAGE",
+        "name": "IMAGE",
+        "type": "IMAGE",
+        "links": [
+         23,
+         24
+        ]
+       }
+      ],
+      "title": "Naturalize V2 · Color Lock + Highlight Tame",
+      "properties": {
+       "Node name for S&R": "SayaNaturalizePostProcess",
+       "cnr_id": "Saya_Couple"
+      },
+      "widgets_values": [
+       0.0,
+       0.0,
+       0,
+       "fixed",
+       0.8,
+       0.3
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+     },
+     {
+      "id": 30002,
+      "type": "ImageBlur",
+      "pos": [
+       1960,
+       210
+      ],
+      "size": [
+       300,
+       110
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "image",
+        "name": "image",
+        "type": "IMAGE",
+        "link": 23
+       },
+       {
+        "localized_name": "blur_radius",
+        "name": "blur_radius",
+        "type": "INT",
+        "widget": {
+         "name": "blur_radius"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "sigma",
+        "name": "sigma",
+        "type": "FLOAT",
+        "widget": {
+         "name": "sigma"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "IMAGE",
+        "name": "IMAGE",
+        "type": "IMAGE",
+        "links": [
+         25
+        ]
+       }
+      ],
+      "title": "Naturalize V2 · Soften (blur copy)",
+      "properties": {
+       "Node name for S&R": "ImageBlur",
+       "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+       1,
+       1.0
+      ]
+     },
+     {
+      "id": 30003,
+      "type": "ImageBlend",
+      "pos": [
+       1960,
+       360
+      ],
+      "size": [
+       300,
+       130
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "image1",
+        "name": "image1",
+        "type": "IMAGE",
+        "link": 24
+       },
+       {
+        "localized_name": "image2",
+        "name": "image2",
+        "type": "IMAGE",
+        "link": 25
+       },
+       {
+        "localized_name": "blend_factor",
+        "name": "blend_factor",
+        "type": "FLOAT",
+        "widget": {
+         "name": "blend_factor"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "blend_mode",
+        "name": "blend_mode",
+        "type": "COMBO",
+        "widget": {
+         "name": "blend_mode"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "IMAGE",
+        "name": "IMAGE",
+        "type": "IMAGE",
+        "links": [
+         26
+        ]
+       }
+      ],
+      "title": "Naturalize V2 · Soften (0.10)",
+      "properties": {
+       "Node name for S&R": "ImageBlend",
+       "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+       0.1,
+       "normal"
+      ]
+     },
+     {
+      "id": 30004,
+      "type": "SayaNaturalizePostProcess",
+      "pos": [
+       2340,
+       210
+      ],
+      "size": [
+       360,
+       200
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "image",
+        "name": "image",
+        "type": "IMAGE",
+        "link": 26
+       },
+       {
+        "localized_name": "grain_strength",
+        "name": "grain_strength",
+        "type": "FLOAT",
+        "widget": {
+         "name": "grain_strength"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "dither_amount",
+        "name": "dither_amount",
+        "type": "FLOAT",
+        "widget": {
+         "name": "dither_amount"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "seed",
+        "name": "seed",
+        "type": "INT",
+        "widget": {
+         "name": "seed"
+        },
+        "link": 27
+       },
+       {
+        "localized_name": "reference",
+        "name": "reference",
+        "shape": 7,
+        "type": "IMAGE",
+        "link": null
+       },
+       {
+        "localized_name": "color_lock",
+        "name": "color_lock",
+        "shape": 7,
+        "type": "FLOAT",
+        "widget": {
+         "name": "color_lock"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "highlight_tame",
+        "name": "highlight_tame",
+        "shape": 7,
+        "type": "FLOAT",
+        "widget": {
+         "name": "highlight_tame"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "IMAGE",
+        "name": "IMAGE",
+        "type": "IMAGE",
+        "links": [
+         28
+        ]
+       }
+      ],
+      "title": "Naturalize V2 · Grain + Dither",
+      "properties": {
+       "Node name for S&R": "SayaNaturalizePostProcess",
+       "cnr_id": "Saya_Couple"
+      },
+      "widgets_values": [
+       0.008,
+       0.5,
+       0,
+       "fixed",
+       0.0,
+       0.0
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+     }
+    ],
+    "groups": [],
+    "links": [
+     {
+      "id": 1,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 100079,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 2,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 2170,
+      "target_slot": 0,
+      "type": "MODEL"
+     },
+     {
+      "id": 3,
+      "origin_id": -10,
+      "origin_slot": 2,
+      "target_id": 2170,
+      "target_slot": 1,
+      "type": "CONDITIONING"
+     },
+     {
+      "id": 4,
+      "origin_id": -10,
+      "origin_slot": 3,
+      "target_id": 2170,
+      "target_slot": 2,
+      "type": "CONDITIONING"
+     },
+     {
+      "id": 5,
+      "origin_id": -10,
+      "origin_slot": 4,
+      "target_id": 100079,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 6,
+      "origin_id": -10,
+      "origin_slot": 4,
+      "target_id": 100080,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 7,
+      "origin_id": -10,
+      "origin_slot": 5,
+      "target_id": 2170,
+      "target_slot": 14,
+      "type": "INT"
+     },
+     {
+      "id": 10,
+      "origin_id": 100081,
+      "origin_slot": 0,
+      "target_id": 2170,
+      "target_slot": 13,
+      "type": "FLOAT"
+     },
+     {
+      "id": 12,
+      "origin_id": 100082,
+      "origin_slot": 0,
+      "target_id": 2170,
+      "target_slot": 10,
+      "type": "INT"
+     },
+     {
+      "id": 13,
+      "origin_id": 100083,
+      "origin_slot": 0,
+      "target_id": 2170,
+      "target_slot": 12,
+      "type": "FLOAT"
+     },
+     {
+      "id": 18,
+      "origin_id": 100079,
+      "origin_slot": 0,
+      "target_id": 2170,
+      "target_slot": 3,
+      "type": "LATENT"
+     },
+     {
+      "id": 19,
+      "origin_id": 2170,
+      "origin_slot": 0,
+      "target_id": 100080,
+      "target_slot": 0,
+      "type": "LATENT"
+     },
+     {
+      "id": 20,
+      "origin_id": 100080,
+      "origin_slot": 0,
+      "target_id": 30001,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 21,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 30001,
+      "target_slot": 4,
+      "type": "IMAGE"
+     },
+     {
+      "id": 22,
+      "origin_id": -10,
+      "origin_slot": 5,
+      "target_id": 30001,
+      "target_slot": 3,
+      "type": "INT"
+     },
+     {
+      "id": 23,
+      "origin_id": 30001,
+      "origin_slot": 0,
+      "target_id": 30002,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 24,
+      "origin_id": 30001,
+      "origin_slot": 0,
+      "target_id": 30003,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 25,
+      "origin_id": 30002,
+      "origin_slot": 0,
+      "target_id": 30003,
+      "target_slot": 1,
+      "type": "IMAGE"
+     },
+     {
+      "id": 26,
+      "origin_id": 30003,
+      "origin_slot": 0,
+      "target_id": 30004,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 27,
+      "origin_id": -10,
+      "origin_slot": 5,
+      "target_id": 30004,
+      "target_slot": 3,
+      "type": "INT"
+     },
+     {
+      "id": 28,
+      "origin_id": 30004,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 0,
+      "type": "IMAGE"
      }
     ],
     "extra": {}

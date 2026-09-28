@@ -227,6 +227,52 @@ def to_batch(mask_hw: torch.Tensor, batch: int) -> torch.Tensor:
     return mask_hw.unsqueeze(0).expand(batch, *mask_hw.shape).contiguous()
 
 
+def attention_weights(
+    imprint: dict[str, Any],
+    *,
+    base_weight: float | None = None,
+    person_weight: float | None = None,
+) -> tuple[float, float]:
+    """(base, person) weights -- from the imprint's ``reconstruction_recipe.attention_params``
+    (archaeological 0.7/0.3 fallback if the block is somehow absent) unless explicitly overridden.
+    Shared by ``derive_masks`` (PPM amplitude) and ``derive_raw_region_masks`` (MultiMaskCouple
+    ``mask_strength``) -- one single reading of the imprint's weights for both consumers.
+    """
+    params = imprint.get("reconstruction_recipe", {}).get("attention_params", {}) if isinstance(imprint, dict) else {}
+    base = float(base_weight if base_weight is not None else params.get("base_weight", 0.7))
+    person = float(person_weight if person_weight is not None else params.get("person_weight", 0.3))
+    return base, person
+
+
+def _rasterize_regions(
+    imprint: dict[str, Any],
+    height: int,
+    width: int,
+    *,
+    device: torch.device | None,
+    dtype: torch.dtype,
+) -> tuple[torch.Tensor, torch.Tensor | None]:
+    """Geometry imprint -> (mask_1, mask_2|None) UNWEIGHTED (H,W) rects, feather applied.
+
+    Shared rasterization step for both ``derive_masks`` (PPM amplitude, weight baked
+    into the mask) and ``derive_raw_region_masks`` (MultiMaskCouple, weight carried on
+    the CONDITIONING instead -- see ``saya_multi_couple.py``).
+    """
+    couple = imprint.get("couple_imprint") if isinstance(imprint, dict) else None
+    if not isinstance(couple, dict) or "geometry" not in couple:
+        raise SayaMaskError("expected a v2 imprint (couple_imprint.geometry block)")
+    geometry = couple["geometry"]
+    feather = float(geometry.get("feather", 0.0))
+    unit = geometry.get("feather_unit")
+    floor = float(geometry.get("mask_floor", 0.0))
+    region_1, region_2 = regions_from_geometry(geometry)
+    mask_1 = region_mask_rect(region_1, height, width, feather, unit, floor, device=device, dtype=dtype)
+    mask_2 = None
+    if region_2 is not None:
+        mask_2 = region_mask_rect(region_2, height, width, feather, unit, floor, device=device, dtype=dtype)
+    return mask_1, mask_2
+
+
 def derive_masks(
     imprint: dict[str, Any],
     height: int,
@@ -241,29 +287,18 @@ def derive_masks(
     """Geometry imprint -> masks (B,H,W) at the CURRENT pass' resolution.
 
     ``base`` = full frame (MAIN weight), ``person_1``/``person_2`` = person
-    weight within their region. The weights come from the imprint
-    (``reconstruction_recipe.attention_params`` -- archaeological 0.7/0.3
-    values, normalized downstream by the PPM) unless explicitly overridden.
+    weight within their region -- weight is BAKED INTO the mask amplitude here
+    (the PPM/``SayaAttentionCouplePPM`` contract). For the MultiMaskCouple
+    reconstruction path (``couple_reconstruct.py``), use
+    ``derive_raw_region_masks`` instead -- weight travels on the CONDITIONING
+    there, never on the mask.
     """
     _check_grid(height, width)
-    couple = imprint.get("couple_imprint") if isinstance(imprint, dict) else None
-    if not isinstance(couple, dict) or "geometry" not in couple:
-        raise SayaMaskError("expected a v2 imprint (couple_imprint.geometry block)")
-    geometry = couple["geometry"]
-    params = imprint.get("reconstruction_recipe", {}).get("attention_params", {})
-    base = float(base_weight if base_weight is not None else params.get("base_weight", 0.7))
-    person = float(person_weight if person_weight is not None else params.get("person_weight", 0.3))
-    feather = float(geometry.get("feather", 0.0))
-    unit = geometry.get("feather_unit")
-    floor = float(geometry.get("mask_floor", 0.0))
-
-    region_1, region_2 = regions_from_geometry(geometry)
-    mask_1 = region_mask_rect(region_1, height, width, feather, unit, floor,
-                              device=device, dtype=dtype) * person
-    mask_2 = None
-    if region_2 is not None:
-        mask_2 = region_mask_rect(region_2, height, width, feather, unit, floor,
-                                  device=device, dtype=dtype) * person
+    base, person = attention_weights(imprint, base_weight=base_weight, person_weight=person_weight)
+    mask_1, mask_2 = _rasterize_regions(imprint, height, width, device=device, dtype=dtype)
+    mask_1 = mask_1 * person
+    if mask_2 is not None:
+        mask_2 = mask_2 * person
     base_mask = torch.full((height, width), base, dtype=dtype, device=device or torch.device("cpu"))
     return SayaRegionMasks(
         base=to_batch(base_mask, batch),
@@ -271,6 +306,32 @@ def derive_masks(
         person_2=to_batch(mask_2, batch) if mask_2 is not None else None,
         height=height,
         width=width,
+    )
+
+
+def derive_raw_region_masks(
+    imprint: dict[str, Any],
+    height: int,
+    width: int,
+    batch: int = 1,
+    *,
+    device: torch.device | None = None,
+    dtype: torch.dtype = torch.float32,
+) -> tuple[torch.Tensor, torch.Tensor | None]:
+    """Geometry imprint -> UNWEIGHTED (B,H,W) region masks (mask_1, mask_2|None).
+
+    The MultiMaskCouple contract (``saya_multi_couple.py::apply_multimask_couple``):
+    the mask carries only the region's geometry (amplitude ~1 inside, feathered
+    edge), never the base/person weight -- that weight is applied as the
+    ``ConditioningSetMask`` strength on MAIN/person conditioning instead, exactly
+    like Phase 1's ``SayaMultiCouple.apply()``. ``person_2`` is None when the
+    imprint has no P2 (never fabricated).
+    """
+    _check_grid(height, width)
+    mask_1, mask_2 = _rasterize_regions(imprint, height, width, device=device, dtype=dtype)
+    return (
+        to_batch(mask_1, batch),
+        to_batch(mask_2, batch) if mask_2 is not None else None,
     )
 
 

@@ -16,6 +16,79 @@ from .couple_imprint_v2 import DEFAULT_ATTENTION_PARAMS
 from .saya_dual_attention import enable_dual_attention
 
 
+def _masked_cond(cond, mask, strength):
+    return ConditioningSetMask().append(cond, mask, "default", float(strength))[0]
+
+
+def _attention_couple_patch(model, clip, positive, negative):
+    # Fresh instance on every call: the prompts captured by the patch
+    # stay private to this model, regardless of execution order.
+    return AttentionCouple().attention_couple(
+        model=model,
+        clip=clip,
+        positive=positive,
+        negative=negative,
+        mode="Attention",
+    )
+
+
+def apply_multimask_couple(
+    model_1,
+    clip,
+    mask_1,
+    mask_2,
+    pos_1,
+    neg_1,
+    pos_2,
+    neg_2,
+    strength_1,
+    strength_2,
+    base_weight,
+    person_weight,
+    model_2=None,
+    main=None,
+    couple_fn=_attention_couple_patch,
+):
+    """The MultiMaskCouple regional-attention core -- Sampler 1's algorithm,
+    reusable by any reconstruction path (``couple_reconstruct.py``).
+
+    Same construction as ``SayaMultiCouple.apply()``'s normal (non-solo,
+    non-dual) branch: MAIN masked at ``base_weight`` + each person masked at
+    ``person_weight * strength`` per region, coupled with
+    ``custom_nodes.MultiMaskCouple.attention_couple.AttentionCouple`` (or the
+    injected ``couple_fn`` -- test seam, same (model, clip, positive,
+    negative) -> (model, positive, negative) contract). Returns
+    (model_1_patched, model_2_patched|None, positive, negative).
+    """
+    pos_regions = []
+    for pos, mask, strength in ((pos_1, mask_1, strength_1), (pos_2, mask_2, strength_2)):
+        if main is not None:
+            pos_regions += _masked_cond(main, mask, base_weight)
+            strength = person_weight * strength
+        pos_regions += _masked_cond(pos, mask, strength)
+    neg_regions = ConditioningCombine().combine(
+        _masked_cond(neg_1, mask_1, strength_1),
+        _masked_cond(neg_2, mask_2, strength_2),
+    )[0]
+
+    # AttentionCouple() reads the per-region prompts into the model's own
+    # attn2 patch and hands back an empty-prompt placeholder. Cross-attention
+    # is fully replaced by the patch, so the sampler's positive only supplies
+    # the SDXL pooled vector: give it MAIN's, not the empty prompt's.
+    model_1_patched, coupled_positive, _ = couple_fn(model_1, clip, pos_regions, neg_regions)
+    if main is not None:
+        coupled_positive = main
+
+    model_2_patched = None
+    if model_2 is not None:
+        model_2_patched, _, _ = couple_fn(model_2, clip, pos_regions, neg_regions)
+
+    # NEGATIVE = the caller's global negative, unchanged (matches the
+    # current graph wiring, where pass 1's negative comes straight from
+    # the NEG encode node).
+    return model_1_patched, model_2_patched, coupled_positive, neg_1
+
+
 class SayaMultiCouple:
     """Couple two models on the same regions, each with an independent patch."""
 
@@ -135,32 +208,9 @@ class SayaMultiCouple:
         # The two regions cover the whole frame, so MAIN (scene, background) only
         # reaches the image through them. Weight it like the Phase 2+ reconstruct
         # (base vs person) instead of an even split with each person prompt.
-        base_weight = DEFAULT_ATTENTION_PARAMS["base_weight"]
-        person_weight = DEFAULT_ATTENTION_PARAMS["person_weight"]
-        pos_regions = []
-        for pos, mask, strength in ((pos_1, mask_1, strength_1), (pos_2, mask_2, strength_2)):
-            if main is not None:
-                pos_regions += self._masked(main, mask, base_weight)
-                strength = person_weight * strength
-            pos_regions += self._masked(pos, mask, strength)
-        neg_regions = ConditioningCombine().combine(
-            self._masked(neg_1, mask_1, strength_1),
-            self._masked(neg_2, mask_2, strength_2),
-        )[0]
-
-        # AttentionCouple() reads the per-region prompts into the model's own
-        # attn2 patch and hands back an empty-prompt placeholder. Cross-attention
-        # is fully replaced by the patch, so the sampler's positive only supplies
-        # the SDXL pooled vector: give it MAIN's, not the empty prompt's.
-        model_1_patched, coupled_positive, _ = self._couple(model_1, clip, pos_regions, neg_regions)
-        if main is not None:
-            coupled_positive = main
-
-        model_2_patched = None
-        if model_2 is not None:
-            model_2_patched, _, _ = self._couple(model_2, clip, pos_regions, neg_regions)
-
-        # NEGATIVE = the caller's global negative, unchanged (matches the
-        # current graph wiring, where pass 1's negative comes straight from
-        # the NEG encode node).
-        return (model_1_patched, model_2_patched, coupled_positive, neg_1)
+        return apply_multimask_couple(
+            model_1, clip, mask_1, mask_2, pos_1, neg_1, pos_2, neg_2,
+            strength_1, strength_2,
+            DEFAULT_ATTENTION_PARAMS["base_weight"], DEFAULT_ATTENTION_PARAMS["person_weight"],
+            model_2=model_2, main=main, couple_fn=self._couple,
+        )

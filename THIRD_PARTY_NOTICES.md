@@ -53,10 +53,9 @@ You install these yourself; **their own licenses apply to them**, not this repos
 | [ComfyUI_FearnworksNodes](https://github.com/fearnworks/ComfyUI_FearnworksNodes) | full workflow (HiDream regional) | Apache-2.0 |
 | [ComfyUI-DaSiWa-Nodes](https://github.com/darksidewalker/ComfyUI-DaSiWa-Nodes) | full workflow (savers with metadata) | Apache-2.0 |
 | [ComfyUI_JPS-Nodes](https://github.com/JPS-GER/ComfyUI_JPS-Nodes) | full workflow (sampler/scheduler settings) | see its repository |
-| [ComfyUI-EasyColorCorrector](https://github.com/regiellis/ComfyUI-EasyColorCorrector) | full workflow (final colour correction) | MIT |
 
 No checkpoint, VAE, LoRA or detector model is distributed. Both workflows use `SELECT_*` placeholders; well-known
-public component names (HiDream text encoders / GGUF, SAM, RealESRGAN) are kept as they are.
+public component names (HiDream text encoders / GGUF, SAM, RealESRGAN, Remacri) are kept as they are.
 
 ## Points documented as uncertain (not legal advice)
 

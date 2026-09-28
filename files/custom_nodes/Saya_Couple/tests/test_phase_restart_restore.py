@@ -173,7 +173,7 @@ def test_review_checkpoint_and_phase2_accept_v2(tmp_path):
     original_apply = reconstruct_module._apply_couple_patch
     reconstruct_module._apply_couple_patch = _fake_apply
     try:
-        _model, _positive, _negative, report = SayaCoupleReconstruct().reconstruct(
+        _model, _positive, _negative, report, _model_mmc = SayaCoupleReconstruct().reconstruct(
             model=_FakeModel(),
             clip=_FakeClip(),
             checkpoint_identities=identities,
@@ -346,7 +346,7 @@ if __name__ == "__main__":
 
     with tempfile.TemporaryDirectory(prefix="saya_restart_restore_") as directory:
         failures = []
-        for name, problems in run(Path(directory)):
+        for name, problems, _skip in run(Path(directory)):
             print(("PASS" if not problems else "FAIL"), name)
             failures.extend(problems)
         raise SystemExit(bool(failures))
