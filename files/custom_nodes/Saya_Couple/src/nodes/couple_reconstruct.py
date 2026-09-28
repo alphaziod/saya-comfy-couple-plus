@@ -19,21 +19,31 @@ Mandatory sequence — each step can fail EXPLICITLY:
    its OWN encoder call fed by its OWN imprint field (STRUCTURAL guard:
    provenance log + object non-aliasing; CONTENT inequality is only a
    WARNING — two identical prompts can be intentional).
-4. Write ``strength`` (key ``cond[0][1]`` — the PPM channel read by
-   ``unet_couple.py:31-32``) onto P1/P2 from ``imprint strengths``.
-   **NEVER ``mask_strength``** (the Phase 1 MultiCouple channel).
-   Copy-on-write: the input metadata dicts are NEVER mutated
-   (anti-aliasing). MAIN: no regional strength. NEG: none.
-5. Patch Attention Couple exactly ONCE: anti-double-hook guard (sentinel
+4. Two independent patches are built from the SAME re-encoded conditioning,
+   on two SEPARATE clones of the input model (never chained):
+   - ``model_patched`` — the PPM vendor (``SayaAttentionCouplePPM``), which
+     understands ``saya_couple_crop`` at runtime (crop/tile-aware — USDU,
+     Detailers). Weight is baked into the mask amplitude
+     (``region_masks.derive_masks``); strength written on P1/P2's PPM
+     channel (``cond[0][1]["strength"]``, ``write_strength``).
+   - ``model_patched_multimask`` — the SAME MultiMaskCouple core Sampler 1
+     uses (``saya_multi_couple.apply_multimask_couple`` ->
+     ``custom_nodes.MultiMaskCouple.attention_couple``). Weight travels on
+     the CONDITIONING's ``mask_strength`` (raw, unweighted masks from
+     ``region_masks.derive_raw_region_masks``). MultiMaskCouple has no
+     runtime crop-awareness mechanism, so this output is for FULL-FRAME
+     consumers only (Hires Fix, Phase 6) — never for tiled/cropped passes.
+   Anti-double-hook guard (sentinel
    ``model_options['transformer_options']['saya_couple_patch']`` + a
-   conservative scan of the ``attn2``/``attn2-output`` family for unmarked
-   couple patches) BEFORE the single call to ``SayaAttentionCouplePPM``.
-6. Geometry re-derived at the CURRENT resolution (input image) — never from
+   conservative scan of both patch families) runs once, on the shared
+   input model, before either patch is applied.
+5. Geometry re-derived at the CURRENT resolution (input image) — never from
    the imprint's ``reference_width/height``.
 
-Returns: (model_patched MODEL, positive CONDITIONING = global MAIN,
-negative CONDITIONING, verification_report STRING). The P1/P2 conds stay
-INTERNAL (captured by the patch — PPM semantics).
+Returns: (model_patched MODEL [PPM, crop-aware], model_patched_multimask
+MODEL [MultiMaskCouple, full-frame only], positive CONDITIONING = global
+MAIN, negative CONDITIONING, verification_report STRING). The P1/P2 conds
+stay INTERNAL to each patch (captured by the patch, not returned).
 """
 
 from __future__ import annotations
@@ -55,8 +65,9 @@ from .couple_imprint_v2 import (
     parse_imprint_json,
     validate_imprint_v2,
 )
-from .region_masks import SayaMaskError, derive_masks
+from .region_masks import SayaMaskError, attention_weights, derive_masks, derive_raw_region_masks
 from .saya_attention_couple import SayaAttentionCouplePPM
+from .saya_multi_couple import apply_multimask_couple
 
 #: Family of the SDXL conditionings disk cache.
 FAMILY = "sdxl"
@@ -64,22 +75,18 @@ FAMILY = "sdxl"
 #: PNG key carrying the imprint.
 IMPRINT_METADATA_KEY = "saya_couple_imprint"
 
-#: Anti-double-hook sentinel: written on the patched clone, checked on the input.
+#: Anti-double-hook sentinel: written on each patched clone, checked on the input.
 COUPLE_PATCH_SENTINEL = "saya_couple_patch"
 
-#: model_options families set by the PPM patch (both of them).
-#: REAL keys written by ModelPatcher.set_model_attn2_patch /
-#: set_model_attn2_output_patch (comfy/model_patcher.py) — NOT "attn2"/
-#: "attn2-output" (runtime-verified: these keys never exist in
-#: model_options["transformer_options"]["patches"], the delta-check used to
-#: fail systematically).
-_PATCH_FAMILIES = ("attn2_patch", "attn2_output_patch")
+#: model_options families set by the PPM patch (both of them). REAL keys
+#: written by ModelPatcher.set_model_attn2_patch / set_model_attn2_output_patch.
+_PPM_PATCH_FAMILIES = ("attn2_patch", "attn2_output_patch")
 
-#: Modules whose attn2/attn2-output patches count as "couple" (a conservative
-#: fallback scan for unmarked patches: internal ppm vendor + external
-#: MultiMaskCouple). A legitimate non-couple attn2 patch (DetailDaemon etc.)
-#: is NEVER rejected by this scan.
-_COUPLE_MODULE_MARKERS = ("attention_couple",)
+#: Modules whose attn2/attn2-output (PPM) or patches_replace["attn2"]
+#: (MultiMaskCouple) entries count as "couple" — a conservative fallback
+#: scan for unmarked patches from either engine. A legitimate non-couple
+#: patch (DetailDaemon etc.) is NEVER rejected by this scan.
+_COUPLE_MODULE_MARKERS = ("attention_couple", "multimaskcouple")
 
 
 class SayaCoupleReconstructError(ValueError):
@@ -107,12 +114,12 @@ _encode_text: Callable[[Any, str], Any] = _default_encode_text
 
 
 # ---------------------------------------------------------------------------
-# Injectable patch (tests without ComfyUI; runtime = SayaAttentionCouplePPM pack)
+# Injectable patches (tests without ComfyUI; runtime = the two engines below)
 # ---------------------------------------------------------------------------
 
 def _default_apply_couple_patch(model: Any, base_cond: Any, base_mask: Any,
                                 cond_1: Any, mask_1: Any, cond_2: Any, mask_2: Any) -> Any:
-    """Apply the vendor patch exactly once (single call)."""
+    """PPM vendor patch (crop/tile-aware — USDU, Detailers). Exactly once."""
     # cond_3/mask_3 never used: P2 absent is a HARD ERROR upstream.
     patched, = SayaAttentionCouplePPM().couple(
         model, base_cond, base_mask, cond_1, mask_1, cond_2, mask_2
@@ -124,14 +131,54 @@ def _default_apply_couple_patch(model: Any, base_cond: Any, base_mask: Any,
 _apply_couple_patch: Callable[..., Any] = _default_apply_couple_patch
 
 
+def _default_apply_multimask_patch(
+    model: Any, clip: Any, mask_1: Any, mask_2: Any,
+    cond_1: Any, neg_1: Any, cond_2: Any, neg_2: Any,
+    strength_1: float, strength_2: float,
+    base_weight: float, person_weight: float, main: Any,
+) -> Any:
+    """MultiMaskCouple patch (full-frame only — Hires Fix, Phase 6), reusing
+    the identical core Sampler 1 uses (``saya_multi_couple.apply_multimask_couple``).
+    Returns the patched MODEL only — ``positive``/``negative`` are decided by
+    the caller (``main``/``negative`` are unchanged by construction, see
+    ``apply_multimask_couple``).
+    """
+    model_1_patched, _model_2_unused, _positive, _negative = apply_multimask_couple(
+        model, clip, mask_1, mask_2, cond_1, neg_1, cond_2, neg_2,
+        strength_1, strength_2, base_weight, person_weight,
+        model_2=None, main=main,
+    )
+    return model_1_patched
+
+
+#: Test injection point (the runtime never touches this).
+_apply_multimask_patch: Callable[..., Any] = _default_apply_multimask_patch
+
+
 # ---------------------------------------------------------------------------
 # Anti-double-hook guard: sentinel THEN conservative scan
+#
+# Checked ONCE against the shared input model, before EITHER patch is built
+# (both ``model_patched`` and ``model_patched_multimask`` derive from the
+# same unpatched source via independent ``.clone()`` calls inside each
+# engine — never chained). PPM patches the additive
+# ``attn2_patch``/``attn2_output_patch`` families; MultiMaskCouple patches
+# ``patches_replace["attn2"]`` (a REPLACE family) and unconditionally RESETS
+# it on every call (vendor ``attention_couple.py``), so a double-hook there
+# would silently DISCARD a prior couple patch rather than stack — the guard
+# below catches this BEFORE the reset, as a hard error instead of a silent
+# loss.
 # ---------------------------------------------------------------------------
 
 def _patch_families(model_options: Any) -> dict[str, list[Any]]:
     transformer = (model_options or {}).get("transformer_options", {}) or {}
     patches = transformer.get("patches", {}) or {}
-    return {family: list(patches.get(family, []) or []) for family in _PATCH_FAMILIES}
+    return {family: list(patches.get(family, []) or []) for family in _PPM_PATCH_FAMILIES}
+
+
+def _patches_replace_attn2(model_options: Any) -> dict[str, Any]:
+    transformer = (model_options or {}).get("transformer_options", {}) or {}
+    return dict((transformer.get("patches_replace", {}) or {}).get("attn2", {}) or {})
 
 
 def _looks_like_couple_patch(patch: Any) -> bool:
@@ -145,9 +192,9 @@ def detect_existing_couple_hook(model_options: Any) -> None:
     """HARD ERROR if a couple hook already exists on the incoming model.
 
     1) Sentinel (marker set by THIS node on a previous patch — reliable);
-    2) conservative fallback: a callable of the attn2/attn2-output family
-       whose module is a known couple module. A legitimate non-couple attn2
-       patch passes through (the family is never rejected wholesale).
+    2) conservative fallback: a callable of the PPM attn2/attn2-output family,
+       or of ``patches_replace["attn2"]`` (MultiMaskCouple), whose module is a
+       known couple module. A legitimate non-couple patch passes through.
     """
     transformer = (model_options or {}).get("transformer_options", {}) or {}
     if COUPLE_PATCH_SENTINEL in transformer:
@@ -165,32 +212,22 @@ def detect_existing_couple_hook(model_options: Any) -> None:
                     f"{getattr(patch, '__module__', '?')!r}) — only one couple patch "
                     "per model per execution"
                 )
+    for key, patch in _patches_replace_attn2(model_options).items():
+        if _looks_like_couple_patch(patch):
+            raise SayaCoupleReconstructError(
+                f"double hook: an unmarked couple patch is already present in "
+                f"patches_replace['attn2'][{key!r}] (module="
+                f"{getattr(patch, '__module__', '?')!r}) — only one couple patch "
+                "per model per execution"
+            )
 
 
-def mark_couple_patch(patched_model: Any) -> None:
+def mark_couple_patch(patched_model: Any, *, family: str) -> None:
     """Set the sentinel on the patched clone (after a successful patch)."""
     transformer = patched_model.model_options.setdefault("transformer_options", {})
     transformer[COUPLE_PATCH_SENTINEL] = {
-        "families": list(_PATCH_FAMILIES),
+        "family": family,
         "note": "set by SayaCoupleReconstruct — only one couple patch per execution",
-    }
-
-
-def count_attn2_families(model_options: Any) -> dict[str, int]:
-    """TOTAL count of callables per family (attn2 / attn2-output)."""
-    return {family: len(patches) for family, patches in _patch_families(model_options).items()}
-
-
-def count_couple_hooks(model_options: Any) -> dict[str, int]:
-    """Count of couple-only callables per family — the audit expects 1/1.
-
-    Distinct from ``count_attn2_families``: a legitimate non-couple patch
-    (DetailDaemon...) shared by a family must not fail the couple patch
-    audit (the pre-check explicitly accepts it).
-    """
-    return {
-        family: sum(1 for patch in patches if _looks_like_couple_patch(patch))
-        for family, patches in _patch_families(model_options).items()
     }
 
 
@@ -486,13 +523,15 @@ class SayaLazyBooleanSelect:
 
 
 # ---------------------------------------------------------------------------
-# Strengths — copy-on-write, PPM channel only
+# Strengths — copy-on-write, PPM channel only (model_patched_multimask carries
+# its strength on the ConditioningSetMask mask_strength instead, applied
+# inline by apply_multimask_couple — never through this function).
 # ---------------------------------------------------------------------------
 
 def write_strength(cond: Any, strength: float) -> Any:
     """Return a COPY of the conditioning with ``strength`` set on ``cond[0][1]``.
 
-    * PPM channel ONLY — NEVER writes ``mask_strength`` (Phase 1);
+    * PPM channel ONLY — NEVER writes ``mask_strength`` (Phase 1 / MultiMaskCouple);
     * copy-on-write: the tensor is shared (never mutated), the metadata dict
       is copied — no contamination of other branches;
     * multi-entry conditioning: REFUSED (the PPM vendor only reads
@@ -732,14 +771,21 @@ class SayaCoupleReconstruct:
             },
         }
 
-    RETURN_TYPES = ("MODEL", "CONDITIONING", "CONDITIONING", "STRING")
-    RETURN_NAMES = ("model_patched", "positive", "negative", "verification_report")
+    # model_patched_multimask is APPENDED last (not inserted after
+    # model_patched): existing saved workflows resolve outputs by slot
+    # index, so model_patched(0)/positive(1)/negative(2)/verification_report(3)
+    # MUST keep their original indices — only slot 4 is new.
+    RETURN_TYPES = ("MODEL", "CONDITIONING", "CONDITIONING", "STRING", "MODEL")
+    RETURN_NAMES = ("model_patched", "positive", "negative", "verification_report", "model_patched_multimask")
     FUNCTION = "reconstruct"
     CATEGORY = "saya/couple"
     DESCRIPTION = (
         "identities (explicit hub, exact equality) -> re-encode MAIN/P1/P2/NEG "
-        "-> strength on the PPM channel for P1/P2 -> structural guard -> 1 "
-        "AttentionCouplePPM patch -> geometry re-derived. No LoRA is applied "
+        "-> structural guard -> TWO independent patches from the same "
+        "conditioning: model_patched (PPM, crop/tile-aware -- USDU, "
+        "Detailers) and model_patched_multimask (the SAME MultiMaskCouple "
+        "core Sampler 1 uses -- full-frame passes only: Hires Fix, Phase 6). "
+        "Geometry re-derived at the current resolution. No LoRA is applied "
         "here (structural inheritance from the hub)."
     )
 
@@ -766,7 +812,7 @@ class SayaCoupleReconstruct:
         imprint: dict[str, Any] | None = None,
         imprint_json: str | None = None,
         solo: bool = False,
-    ) -> tuple[Any, Any, Any, str]:
+    ) -> tuple[Any, Any, Any, str, Any]:
         report: list[str] = [f"SayaCoupleReconstruct — schema v{SCHEMA_VERSION}"]
 
         # -- strict imprint read -----------------------------------------------
@@ -802,7 +848,7 @@ class SayaCoupleReconstruct:
             roles.append(("person_2", prompts["person_2"]))
         else:
             raise SayaCoupleReconstructError(
-                "person_2: ABSENT from the imprint — the v1 PPM patch requires "
+                "person_2: ABSENT from the imprint — the v1 couple patch requires "
                 "two regions; the P2-absent case is unsupported, explicitly refused"
             )
         roles.append(("negative", prompts["negative"]))
@@ -830,58 +876,66 @@ class SayaCoupleReconstruct:
         report.append("re-encode: " + "; ".join(ledger.lines()))
         report.extend(content_warnings(conds, texts))
 
-        # -- strengths: PPM channel cond[0][1] on P1/P2 -------------------------
+        # -- strengths: written for BOTH engines (P1/P2 only; MAIN/NEG none) ----
         strengths = couple["strengths"]
-        conds["person_1"] = write_strength(conds["person_1"], strengths["strength_1"])
-        conds["person_2"] = write_strength(conds["person_2"], strengths["strength_2"])
-        report.append(
-            "strengths: PPM channel cond[0][1] — "
-            f"P1={strengths['strength_1']} P2={strengths['strength_2']} "
-            "(mask_strength NEVER written; MAIN/NEG have no regional strength)"
-        )
-
-        # -- a single patch, anti-double-hook guard before ----------------------
         base_cond = conds["main"]
         negative = conds["negative"]
+        ppm_person_1 = write_strength(conds["person_1"], strengths["strength_1"])
+        ppm_person_2 = write_strength(conds["person_2"], strengths["strength_2"])
+        report.append(
+            "strengths: PPM channel cond[0][1] (model_patched) + MultiMaskCouple "
+            f"mask_strength (model_patched_multimask) — P1={strengths['strength_1']} "
+            f"P2={strengths['strength_2']} (MAIN/NEG have no regional strength)"
+        )
+
+        # -- two independent patches, anti-double-hook guard before either -----
         model_options = getattr(model, "model_options", None)
         if not isinstance(model_options, dict):
             raise SayaCoupleReconstructError(
                 "model: expected a MODEL (ModelPatcher with model_options)"
             )
         detect_existing_couple_hook(model_options)
-        totals_before = count_attn2_families(model_options)
         batch, height, width = self._image_grid(image)
+        base_weight, person_weight = attention_weights(data)
+
+        # -- PPM (crop/tile-aware): weight baked into the mask amplitude -------
         try:
-            masks = derive_masks(data, height, width, batch=batch)
+            ppm_masks = derive_masks(data, height, width, batch=batch,
+                                     base_weight=base_weight, person_weight=person_weight)
         except SayaMaskError as error:
             raise SayaCoupleReconstructError(f"geometry: {error}") from error
-        if masks.person_2 is None:  # pragma: no cover — P2 absent refused upstream
+        if ppm_masks.person_2 is None:  # pragma: no cover — P2 absent refused upstream
             raise SayaCoupleReconstructError("mask_2 absent — internal incoherence")
-        patched = _apply_couple_patch(
-            model, base_cond, masks.base,
-            conds["person_1"], masks.person_1,
-            conds["person_2"], masks.person_2,
+        patched_ppm = _apply_couple_patch(
+            model, base_cond, ppm_masks.base,
+            ppm_person_1, ppm_masks.person_1,
+            ppm_person_2, ppm_masks.person_2,
         )
-        mark_couple_patch(patched)
-        totals_after = count_attn2_families(patched.model_options)
-        couples_after = count_couple_hooks(patched.model_options)
-        # The vendor patch adds EXACTLY one callable per family: total delta
-        # 1/1 AND a single couple callable per family — a pre-existing
-        # non-couple patch (accepted by the pre-check) does not count.
-        delta_ok = all(
-            totals_after.get(family, 0) == totals_before.get(family, 0) + 1
-            for family in _PATCH_FAMILIES
-        )
-        if not delta_ok or couples_after.get("attn2_patch", 0) != 1 \
-                or couples_after.get("attn2_output_patch", 0) != 1:
-            raise SayaCoupleReconstructError(
-                f"post-patch: expected a delta of +1 per family and 1 couple hook "
-                f"per family — before {totals_before}, after {totals_after}, couple "
-                f"{couples_after}"
-            )
+        mark_couple_patch(patched_ppm, family="attn2_patch/attn2_output_patch (PPM)")
         report.append(
-            f"patch couple: 1 SayaAttentionCouplePPM call; families "
-            f"{totals_before}->{totals_after} (couple: {couples_after}); "
+            f"patch model_patched: 1 SayaAttentionCouplePPM call (crop-aware, "
+            f"reads saya_couple_crop at runtime); sentinel {COUPLE_PATCH_SENTINEL!r} set"
+        )
+
+        # -- MultiMaskCouple (full-frame only): weight on mask_strength --------
+        try:
+            raw_mask_1, raw_mask_2 = derive_raw_region_masks(data, height, width, batch=batch)
+        except SayaMaskError as error:
+            raise SayaCoupleReconstructError(f"geometry: {error}") from error
+        if raw_mask_2 is None:  # pragma: no cover — P2 absent refused upstream
+            raise SayaCoupleReconstructError("mask_2 absent — internal incoherence")
+        patched_multimask = _apply_multimask_patch(
+            model, clip, raw_mask_1, raw_mask_2,
+            conds["person_1"], negative, conds["person_2"], negative,
+            strengths["strength_1"], strengths["strength_2"],
+            base_weight, person_weight, base_cond,
+        )
+        mark_couple_patch(patched_multimask, family="patches_replace.attn2 (MultiMaskCouple)")
+        report.append(
+            "patch model_patched_multimask: 1 MultiMaskCouple AttentionCouple call "
+            "(custom_nodes.MultiMaskCouple.attention_couple — same algorithm as "
+            "Sampler 1; FULL-FRAME ONLY, no crop-awareness); "
+            f"base_weight={base_weight} person_weight={person_weight}; "
             f"sentinel {COUPLE_PATCH_SENTINEL!r} set"
         )
         report.append(
@@ -889,12 +943,12 @@ class SayaCoupleReconstruct:
             f"orientation {couple['geometry']['derived']['orientation']}, "
             f"masks ({batch},{height},{width})"
         )
-        return patched, base_cond, negative, "\n".join(report)
+        return patched_ppm, base_cond, negative, "\n".join(report), patched_multimask
 
     def _reconstruct_solo(
         self, model: Any, clip: Any, hub: list[dict[str, str]],
         data: dict[str, Any], report: list[str],
-    ) -> tuple[Any, Any, Any, str]:
+    ) -> tuple[Any, Any, Any, str, Any]:
         """SOLO path (Couple Mode OFF): MAIN + PERSON 1 only, person_2 ignored entirely.
 
         No mask derivation, no attention-couple patch — the model is returned
@@ -932,7 +986,7 @@ class SayaCoupleReconstruct:
             f"({solo_text!r}); person_2 not read"
         )
         report.append("SOLO patch: no attention-couple patch — model returned unpatched")
-        return model, conds["solo_main_person1"], conds["negative"], "\n".join(report)
+        return model, conds["solo_main_person1"], conds["negative"], "\n".join(report), model
 
 
 class SayaLazyModelSelect:

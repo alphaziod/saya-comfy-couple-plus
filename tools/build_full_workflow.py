@@ -22,7 +22,7 @@ ALIASES = {"Eyes": "Eyes · One by One", "Hair": "Head & Hair", "Breast": "Breas
 # Public, well-known component files keep their names; every other model file becomes a SELECT_* placeholder.
 PUBLIC_MODELS = {"RealESRGAN_x4plus_anime_6B.safetensors", "clip_l_hidream.safetensors", "clip_g_hidream.safetensors",
                  "t5xxl_fp8_e4m3fn.safetensors", "llama_3.1_8b_instruct_fp8_scaled.safetensors", "hidream-i1-full-Q5_K_M.gguf",
-                 "sam_vit_b_01ec64.pth", "4x-UltraSharpV2_Lite.safetensors"}
+                 "sam_vit_b_01ec64.pth", "4x-UltraSharpV2_Lite.safetensors", "4x_foolhardy_Remacri.pth"}
 FILE_RX = re.compile(r"[^\"\[\],]*?([^\"\[\],/]+\.(?:safetensors|gguf|ckpt|pth|pt))(?![A-Za-z0-9])")
 MODEL_MAP = {}  # filled from the loaders of the source workflow (main/refiner checkpoints, VAEs)
 DETECTOR = "segm/SELECT_DETECTOR_MODEL.pt"

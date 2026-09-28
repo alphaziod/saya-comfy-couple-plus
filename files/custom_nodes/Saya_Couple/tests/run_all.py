@@ -15,6 +15,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 import test_couple_crop_f8
+import test_detailer_crop
+import test_naturalize_postprocess
 import test_geometry
 import test_upscale_mode
 import test_multi_couple
@@ -23,6 +25,7 @@ import test_dual_wiring
 import test_nodes_compute
 import test_phase_nodes
 import test_phase_services
+import test_phase_restart_restore
 import test_imprint_resolve
 import test_conditioning_cache
 import test_hidream_reconstruct
@@ -76,9 +79,19 @@ def main() -> int:
     print("== couple crop F8 ==")
     absorb(fn() for fn in test_couple_crop_f8.TESTS)
 
+    print("== detailer crop ==")
+    absorb(fn() for fn in test_detailer_crop.TESTS)
+
+    print("== naturalize post-process ==")
+    absorb(fn() for fn in test_naturalize_postprocess.TESTS)
+
     print("== phase services ==")
     with tempfile.TemporaryDirectory(prefix="saya_phase_test_") as tmp:
         absorb(test_phase_services.run(Path(tmp)))
+
+    print("== phase restart restore ==")
+    with tempfile.TemporaryDirectory(prefix="saya_restart_restore_") as tmp:
+        absorb(test_phase_restart_restore.run(Path(tmp)))
 
     print("== imprint resolve ==")
     absorb(fn() for fn in test_imprint_resolve.TESTS)

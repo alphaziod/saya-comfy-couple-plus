@@ -241,6 +241,16 @@ negative prompt was reworded to neutral quality terms for the public version.
 `workflows/Saya_Couple_Full.json`: the complete pipeline I actually use, in 6 phases (base sampling, hires / USDU,
 HiDream refine, pre-detail refine, detailers, final upscale & naturalize), with phase checkpoints and review gates.
 
+Since 0.2.0 ([CHANGELOG.md](CHANGELOG.md)):
+
+- **Full-frame passes** (Hires Fix 1 / 3, Phase 6) use the same MultiMaskCouple attention as Sampler 2, rebuilt at
+  the current resolution; tiled / cropped passes (USDU, detailers) keep the crop-aware PPM couple.
+- **Phase 6 · Naturalize V2** calms an already finished image instead of redrawing it: Remacri upscale → the real
+  MAIN / P1 / P2 / negative couple conditioning → **one** light diffusion (denoise 0.14, one VAE) → deterministic
+  finishing (colour lock 0.8, highlight taming 0.3, soften 0.10, grain 0.008). No generic "naturalize" prompt, no
+  second diffusion, no automatic colour correction. Download `4x_foolhardy_Remacri.pth` into
+  `models/upscale_models` (or pick another upscaler in *MAIN · Final Upscale Preset & Model*).
+
 Cleaned for publication **without simplifying it**: same nodes, same wiring, same sampler and pass settings. Only
 these were neutralised: checkpoints, VAEs, LoRAs (stacks shipped empty), detector models (`SELECT_*`
 placeholders), prompts (same as the demo), and personal notes. The 13 detailer slots are simply named
@@ -248,7 +258,7 @@ placeholders), prompts (same as the demo), and personal notes. The 13 detailer s
 toggles.
 
 It needs many other custom nodes (RES4LYF, Ultimate SD Upscale, Impact Pack + Subpack, GGUF, KJNodes, rgthree,
-LoRA Manager, Fearnworks, DaSiWa, JPS, EasyColorCorrector); the list with links and licenses is in
+LoRA Manager, Fearnworks, DaSiWa, JPS); the list with links and licenses is in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). In its public form it was checked to load with no missing node
 and to produce a phase-1 prompt identical to my validated one; the full 6-phase run was validated on my own
 install, with my models.
@@ -257,7 +267,7 @@ install, with my models.
 
 0.78 is not based on one pretty picture:
 
-- **Non-regression**: pack test suite (101 tests), bit-identical proofs (`tests/proof_gain.py`: g = 1.0 equals the
+- **Non-regression**: pack test suite (126 tests), bit-identical proofs (`tests/proof_gain.py`: g = 1.0 equals the
   pre-gain code, only the character deltas are scaled, MAIN and unconditional rows untouched), installer scenarios
   (`tests/installer_scenarios.py`: install, verify, idempotence, restore, drift, conflicts, NVIDIA/AMD simulations,
   old version).
@@ -322,3 +332,8 @@ Issues and PRs are welcome; this is a personal project maintained when I have ti
 - **Optional nodes** rely on other packs: the USDU pass nodes on ComfyUI_UltimateSDUpscale (per-tile couple masks
   need `patches/third_party/ultimatesdupscale_saya_couple_crop.patch`, not installed by the installer), the detailer
   node on the Impact Pack. The detailer chain has 13 generic slots (Detailer 01-13); no detector model is shipped.
+- **Detailer crop position**: each detailer tells the couple attention where its crop sits in the image, so P1 / P2
+  stay on the right side inside the crop. This only works with an **empty wildcard**: a wildcard can reorder or skip
+  SEGS, so the position is then not attached (one warning per detailer call) rather than risk a wrong one.
+- **Tiny eye details**: a light pink dot can appear in white pupils after the HiDream pass; Phase 6 no longer
+  amplifies it, but it does not remove it either.
