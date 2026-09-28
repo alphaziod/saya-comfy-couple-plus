@@ -2,7 +2,7 @@
  "id": "868afda2-e3eb-4a97-9431-e8d824175b2e",
  "revision": 32,
  "last_node_id": 100242,
- "last_link_id": 98548,
+ "last_link_id": 98549,
  "nodes": [
   {
    "id": 2678,
@@ -13231,7 +13231,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100241,
-     "lastLinkId": 98548,
+     "lastLinkId": 98549,
      "lastRerouteId": 575
     },
     "revision": 16,
@@ -13497,7 +13497,8 @@
       "linkIds": [
        98422,
        98423,
-       98495
+       98495,
+       98549
       ],
       "localized_name": "Solo (Couple Mode OFF)",
       "pos": [
@@ -14038,6 +14039,11 @@
          "name": "swap"
         },
         "link": 98078
+       },
+       {
+        "name": "solo",
+        "type": "BOOLEAN",
+        "link": 98549
        }
       ],
       "outputs": [
@@ -14578,6 +14584,14 @@
       "target_id": 100043,
       "target_slot": 6,
       "type": "CONDITIONING"
+     },
+     {
+      "id": 98549,
+      "origin_id": -10,
+      "origin_slot": 18,
+      "target_id": 100044,
+      "target_slot": 15,
+      "type": "BOOLEAN"
      }
     ],
     "extra": {}

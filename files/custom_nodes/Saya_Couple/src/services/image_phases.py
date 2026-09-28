@@ -475,20 +475,41 @@ def promote_lock():
             fcntl.flock(lock_file, fcntl.LOCK_UN)
 
 
-def promote_candidate(phase: int, detailer: str, checkpoint_root: str) -> dict[str, Any]:
-    """Promote a complete candidate pair to validated files with rollback (see promote_lock)."""
+def promote_candidate(
+    phase: int,
+    detailer: str,
+    checkpoint_root: str,
+    expected_transaction: str | None = None,
+) -> dict[str, Any]:
+    """Promote a complete candidate pair to validated files with rollback (see promote_lock).
+
+    ``expected_transaction`` is the transaction the reviewer actually saw. When
+    given, a candidate replaced since then (a second render of the same phase)
+    is refused instead of being validated in its place.
+    """
     paths = checkpoint_paths(phase, checkpoint_root)
     with promote_lock():
-        return _promote_candidate_locked(phase, detailer, paths)
+        return _promote_candidate_locked(phase, detailer, paths, expected_transaction)
 
 
-def _promote_candidate_locked(phase: int, detailer: str, paths: CheckpointPaths) -> dict[str, Any]:
+def _promote_candidate_locked(
+    phase: int,
+    detailer: str,
+    paths: CheckpointPaths,
+    expected_transaction: str | None = None,
+) -> dict[str, Any]:
     """The actual promotion body; only ever runs for one caller at a time (see promote_lock)."""
     candidate = read_manifest(paths.candidate_manifest)
     if not paths.candidate_image.is_file():
         raise FileNotFoundError(f"Candidate image not found: {paths.candidate_image}")
     if int(candidate.get("phase", -1)) != phase:
         raise ValueError("The candidate does not match the requested phase.")
+    found_transaction = str(candidate.get("transaction_uuid") or "")
+    if expected_transaction and found_transaction != expected_transaction:
+        raise ValueError(
+            f"The candidate on disk ({found_transaction or 'no transaction'}) is not the reviewed "
+            f"one ({expected_transaction}): a newer render replaced it."
+        )
     requested_detailer = normalize_detailer(detailer)
     candidate_detailer = normalize_detailer(candidate.get("detailer", "none"))
     if phase == 5 and requested_detailer != "none" and candidate_detailer != requested_detailer:

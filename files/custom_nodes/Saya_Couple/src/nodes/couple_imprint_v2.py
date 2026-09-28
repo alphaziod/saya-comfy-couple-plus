@@ -639,6 +639,7 @@ class SayaCoupleImprintPackV2:
             "optional": {
                 "person_2_prompt": ("STRING", {"default": "", "multiline": True, "forceInput": True}),
                 "swap": ("BOOLEAN", {"default": False, "label_on": "true", "label_off": "false"}),
+                "solo": ("BOOLEAN", {"forceInput": True, "tooltip": "Couple Mode OFF. When connected, Couple with an empty PERSON_2 is refused here instead of in Phase 2."}),
             },
         }
 
@@ -668,6 +669,7 @@ class SayaCoupleImprintPackV2:
         workflow_version: str,
         person_2_prompt: str | None = None,
         swap: bool = False,
+        solo: bool | None = None,
     ) -> tuple[dict[str, Any], str]:
         from ..services.imprint_integrity import pack_discriminant
 
@@ -685,6 +687,13 @@ class SayaCoupleImprintPackV2:
             raise SayaCoupleImprintError(f"blur: expected a finite float >= 0, got {blur!r}")
         if float(blur) < 0.0:
             raise SayaCoupleImprintError(f"blur: must be >= 0, got {blur!r}")
+        # The imprint records an empty PERSON_2 as absent, and the Couple
+        # reconstruct of Phase 2 refuses that: fail before Phase 1 is validated.
+        if solo is False and not (person_2_prompt and person_2_prompt.strip()):
+            raise SayaCoupleImprintError(
+                "Couple mode needs a PERSON_2 prompt (Phase 2 cannot rebuild a couple without it); "
+                "fill PERSON_2 or switch Couple Mode OFF"
+            )
         if reference_width < 1 or reference_height < 1:
             raise SayaCoupleImprintError(
                 f"reference size: expected positive dimensions, got {reference_width}x{reference_height}"
