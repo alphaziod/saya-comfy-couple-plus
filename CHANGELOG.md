@@ -1,5 +1,45 @@
 # Changelog
 
+## 0.3.0 — 2026-09-28
+
+### Full workflow
+
+- **HiDream Couple keeps P1 and P2 apart.** Phase 3 now uses `ClownRegionalConditioning_AB` (P1 / P2) instead of
+  `ClownRegionalConditioning3` (P1 / P2 / an always-empty MAIN region). RES4LYF builds HiDream's text-to-text mask as a
+  parity checkerboard: with two regions parity equals region, with three it does not, and P1's text tokens attended
+  P2's (and back) in all 48 blocks. Checked against RES4LYF's own mask builder; also 23 % fewer attention tokens.
+- **Solo mode works end to end.** Switching *MAIN · Couple / Solo* to OFF used to stop Phase 1 with
+  `dual_attention_enabled cannot be combined with solo`. Solo is now the authority everywhere: no couple patch, no
+  regional conditioning, no crop in any phase; HiDream refines with one global MAIN + P1 prompt.
+- **USDU couple crop follows the mode.** The *Use Couple Crop* switch is gone: Couple → per-tile couple crop,
+  Solo → none. The crop gate is now forced for each pass, so a `SAYA_USDU_COUPLE_CROP` exported globally in the shell
+  can no longer override it (before, "crop OFF" never actually turned it off).
+- Cleanup: unused Phase 6 input and GetNode, stale notes and migration markers removed from the published workflows.
+- Customised a 0.2.0 workflow? `python3 tools/migrate_workflow_v030.py old.json new.json` applies all of the above
+  (it asserts the expected shape and writes nothing otherwise).
+
+### Nodes
+
+- `SayaCoupleHiDreamReconstruct`: output 2 renamed `conditioning_solo` (same slot). Couple: P1 / P2 conditionings and
+  masks, no unused global encode (3 encodes instead of 4). Solo: one global conditioning, region outputs `None`, no
+  geometry read. P1 / P2 masks must partition the frame (clear error otherwise); P2 absent → region B is MAIN on P1's
+  complement.
+- `SayaCoupleUSDUPass`: `couple_crop` widget removed, new required `solo` input. Old workflows: the frontend migrates
+  the saved widget values on load (`web/saya_usdu_couple_crop_migration.js`) so `restore_to_base` keeps its value;
+  connect the new `solo` input to the Couple / Solo switch. Old API prompts carrying `couple_crop` still run (ignored).
+- `SayaMultiCouple`: `dual_attention_enabled` removed. Couple always runs the Saya dual attention on MODEL_1 (every
+  shipped workflow already had it on), MODEL_2 the MultiMaskCouple patch; Solo never patches. Old workflows keep
+  working: the stale widget value is ignored.
+- Removed dead code with no caller left (tile-window helpers, unused USDU config helpers, duplicate couple helpers).
+
+### Tests
+
+- 135 tests (was 126): regional attention checked on RES4LYF's real mask builder, USDU crop through ComfyUI's input
+  handling (including a globally exported gate), workflow link / routing / anti-double-hook checks, guards against the
+  removed paths, and the migration shim. `tests/run_all.py` now reports a crashing test as a failure instead of
+  stopping the run.
+- The cleanup is pixel-identical on every phase of full Couple and Solo runs (same seeds, before / after).
+
 ## 0.2.0 — 2026-09-28
 
 ### Full workflow

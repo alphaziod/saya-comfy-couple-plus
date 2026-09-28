@@ -29,6 +29,9 @@ import test_phase_restart_restore
 import test_imprint_resolve
 import test_conditioning_cache
 import test_hidream_reconstruct
+import test_hidream_attention
+import test_usdu_solo_crop
+import test_removed_paths
 import test_hidream_safe_scale
 import test_hires_fix_resize
 import test_warmup_gate
@@ -36,6 +39,16 @@ import test_hires_fix_target
 import test_registry
 import test_split_mask
 import test_workflow_compat
+import test_workflow_v030
+
+
+def guarded(tests):
+    """Run each test; an exception is reported as a failure of that test, never ends the run."""
+    for fn in tests:
+        try:
+            yield fn()
+        except Exception:
+            yield fn.__name__, [f"crashed:\n{traceback.format_exc(limit=4)}"], None
 
 
 def main() -> int:
@@ -60,30 +73,31 @@ def main() -> int:
                 print(f"  PASS {name}")
 
     print("== registry ==")
-    absorb(fn() for fn in test_registry.TESTS)
+    absorb(guarded(test_registry.TESTS))
 
     print("== geometry ==")
-    absorb(fn() for fn in test_geometry.TESTS)
+    absorb(guarded(test_geometry.TESTS))
 
     print("== phase nodes ==")
-    absorb(fn() for fn in test_phase_nodes.TESTS)
+    absorb(guarded(test_phase_nodes.TESTS))
 
     print("== compute nodes ==")
-    absorb(fn() for fn in test_nodes_compute.TESTS)
-    absorb(fn() for fn in test_split_mask.TESTS)
-    absorb(fn() for fn in test_upscale_mode.TESTS)
-    absorb(fn() for fn in test_multi_couple.TESTS)
-    absorb(fn() for fn in test_core_saya_dual.TESTS)
-    absorb(fn() for fn in test_dual_wiring.TESTS)
+    absorb(guarded(test_nodes_compute.TESTS))
+    absorb(guarded(test_split_mask.TESTS))
+    absorb(guarded(test_upscale_mode.TESTS))
+    absorb(guarded(test_multi_couple.TESTS))
+    absorb(guarded(test_core_saya_dual.TESTS))
+    absorb(guarded(test_dual_wiring.TESTS))
 
     print("== couple crop F8 ==")
-    absorb(fn() for fn in test_couple_crop_f8.TESTS)
+    absorb(guarded(test_couple_crop_f8.TESTS))
+    absorb(guarded(test_usdu_solo_crop.TESTS))
 
     print("== detailer crop ==")
-    absorb(fn() for fn in test_detailer_crop.TESTS)
+    absorb(guarded(test_detailer_crop.TESTS))
 
     print("== naturalize post-process ==")
-    absorb(fn() for fn in test_naturalize_postprocess.TESTS)
+    absorb(guarded(test_naturalize_postprocess.TESTS))
 
     print("== phase services ==")
     with tempfile.TemporaryDirectory(prefix="saya_phase_test_") as tmp:
@@ -94,28 +108,31 @@ def main() -> int:
         absorb(test_phase_restart_restore.run(Path(tmp)))
 
     print("== imprint resolve ==")
-    absorb(fn() for fn in test_imprint_resolve.TESTS)
+    absorb(guarded(test_imprint_resolve.TESTS))
 
     print("== hidream reconstruct ==")
-    absorb(fn() for fn in test_hidream_reconstruct.TESTS)
+    absorb(guarded(test_hidream_reconstruct.TESTS))
+    absorb(guarded(test_hidream_attention.TESTS))
 
     print("== conditioning cache ==")
-    absorb(fn() for fn in test_conditioning_cache.TESTS)
+    absorb(guarded(test_conditioning_cache.TESTS))
 
     print("== hidream safe scale ==")
-    absorb(fn() for fn in test_hidream_safe_scale.TESTS)
+    absorb(guarded(test_hidream_safe_scale.TESTS))
 
     print("== hires fix target ==")
-    absorb(fn() for fn in test_hires_fix_target.TESTS)
+    absorb(guarded(test_hires_fix_target.TESTS))
 
     print("== hires fix resize ==")
-    absorb(fn() for fn in test_hires_fix_resize.TESTS)
-    absorb(fn() for fn in test_warmup_gate.TESTS)
+    absorb(guarded(test_hires_fix_resize.TESTS))
+    absorb(guarded(test_warmup_gate.TESTS))
 
     print("== phase load purge ==")
 
     print("== workflow compat ==")
-    absorb(fn() for fn in test_workflow_compat.TESTS)
+    absorb(guarded(test_workflow_compat.TESTS))
+    absorb(guarded(test_workflow_v030.TESTS))
+    absorb(guarded(test_removed_paths.TESTS))
 
     print()
     if failures:

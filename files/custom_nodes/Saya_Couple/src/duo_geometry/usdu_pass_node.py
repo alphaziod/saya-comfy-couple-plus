@@ -13,9 +13,11 @@ the pack's proven pattern (``duo_geometry/nodes.py:233-312``):
 
 Contracts carried by the config:
 
-* ``couple_crop`` defaults ON -- each tile is meant to receive ITS own slice
-  of the couple mask. The ``mask_base``/``mask_p1``/``mask_p2`` inputs below
-  are only a WIRING GUARD for this option: this node checks that they are
+* couple crop = ``not solo``: the global Couple/Solo mode is the only
+  authority (no widget). Couple -> each tile receives ITS own slice of the
+  couple mask; Solo -> no crop (the model carries no couple patch). The
+  ``mask_base``/``mask_p1``/``mask_p2`` inputs below
+  are only a WIRING GUARD for the crop: this node checks that they are
   connected, but never reads their tensor values itself. The actual crop is
   performed by the engine reading the couple mask already baked into the
   cloned MODEL's patch (``transformer_options['saya_couple_crop']``, written
@@ -97,19 +99,21 @@ _SAYA_COUPLE_CROP_ENV = "SAYA_USDU_COUPLE_CROP"
 
 
 def _delegate_with_couple_crop_env(node_class: Any, call: dict[str, Any], couple_crop: bool) -> Any:
-    """Enable the engine's couple-crop gate ONLY for this delegated call.
+    """Set the engine's couple-crop gate to ``couple_crop`` for this delegated call only.
 
-    couple_crop=False: no effect (env untouched). couple_crop=True: the
-    saya_couple_crop metadata is written by the local build during THIS call
-    and read by its consumer (attn2_output_patch); the env is restored
-    (never left ON) even if the call raises.
+    couple_crop=True: the saya_couple_crop metadata is written by the local
+    build during THIS call and read by its consumer (attn2_output_patch).
+    couple_crop=False: the gate is forced closed, even when the variable is
+    exported globally by the user's shell. The previous value is restored
+    even if the call raises.
     """
-    if not couple_crop:
-        return node_class().upscale(**call)
     import os
 
     previous = os.environ.get(_SAYA_COUPLE_CROP_ENV)
-    os.environ[_SAYA_COUPLE_CROP_ENV] = "1"
+    if couple_crop:
+        os.environ[_SAYA_COUPLE_CROP_ENV] = "1"
+    else:
+        os.environ.pop(_SAYA_COUPLE_CROP_ENV, None)
     try:
         return node_class().upscale(**call)
     finally:
@@ -124,8 +128,7 @@ class SayaCoupleUSDUPass:
 
     Two instances of THIS node = USDU 1 + USDU 2 (no ``if pass == 2`` branch
     in the engine). Instance 2's image input must be instance 1's image
-    output (structural assert at the workflow-builder level --
-    ``usdu_engine_config.assert_usdu_continuation``).
+    output (wired in the workflow).
     """
 
     @classmethod
@@ -165,20 +168,17 @@ class SayaCoupleUSDUPass:
                 "scheduler": (schedulers, {"default": "beta", "tooltip": fallback_tooltip}),
                 "denoise": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0, "step": 0.01, "tooltip": fallback_tooltip}),
                 "structure_preservation": ("FLOAT", {"default": 0.75, "min": 0.0, "max": 1.0, "step": 0.01}),
-                "couple_crop": ("BOOLEAN", {
-                    "default": True,
-                    "tooltip": "ON: each tile gets ITS slice of the couple mask, cropped "
-                               "from the couple mask already baked into the model patch "
-                               "(the saya_couple_crop metadata gates that read). This "
-                               "widget only requires mask_base/mask_p1/mask_p2 to be "
-                               "wired in as a guard -- it does not read their values.",
-                }),
                 "restore_to_base": ("BOOLEAN", {
                     "default": True,
                     "tooltip": "Open decision: True = output resized back to the input "
                                "size (bicubic, historical behaviour); False = keep the "
                                "full-resolution chain. USDU1 must be False (so the "
                                "USDU1->USDU2 continuation exists).",
+                }),
+                "solo": ("BOOLEAN", {
+                    "forceInput": True,
+                    "tooltip": "Global Couple/Solo mode (Solo output of the Couple Mode "
+                               "toggle). Couple -> per-tile couple crop; Solo -> no crop.",
                 }),
             },
             "optional": {
@@ -208,7 +208,7 @@ class SayaCoupleUSDUPass:
     CATEGORY = "saya/couple"
     DESCRIPTION = (
         "Config-explicit tiled USDU pass. LIVE grid = CEIL is imposed; "
-        "per-tile work size = round8(tile+padding); couple_crop ON; "
+        "per-tile work size = round8(tile+padding); couple crop = not solo; "
         "continuation USDU1->USDU2 through direct wiring (asserted at the builder)."
     )
 
@@ -231,8 +231,8 @@ class SayaCoupleUSDUPass:
         scheduler: str = "beta",
         denoise: float = 0.2,
         structure_preservation: float = 0.75,
-        couple_crop: bool = True,
         restore_to_base: bool = True,
+        solo: bool = False,
         upscale_model: Any = None,
         custom_sampler: Any = None,
         custom_sigmas: Any = None,
@@ -251,7 +251,7 @@ class SayaCoupleUSDUPass:
             padding=int(padding),
             mask_blur=int(mask_blur),
             structure_preservation=float(structure_preservation),
-            couple_crop=bool(couple_crop),
+            couple_crop=not bool(solo),
             restore_to_base=bool(restore_to_base),
             seam_fix="None",
             upscale_model=None,  # runtime object, not data -- see the engine note below
@@ -265,17 +265,15 @@ class SayaCoupleUSDUPass:
         )
         config = validate_config_pass(config)
 
-        # -- couple_crop is a wiring guard: it requires the three masks to be
-        # connected, but this node never reads their tensor values. The actual
-        # crop is done by the engine against the couple mask already carried
-        # by the cloned MODEL's patch (see the module docstring).
+        # -- Couple mode: the three masks are a wiring guard only; this node
+        # never reads their tensor values. The actual crop is done by the
+        # engine against the couple mask already carried by the cloned
+        # MODEL's patch (see the module docstring).
         if config.couple_crop and (mask_base is None or mask_p1 is None or mask_p2 is None):
             raise SayaUSDUConfigError(
-                "couple_crop=ON needs mask_base/mask_p1/mask_p2 connected "
-                "(SayaCoupleRegionMasks) as a wiring guard, even though this "
-                "node does not read their values -- the crop itself uses the "
-                "couple mask already baked into the model patch. "
-                "couple_crop=False is a documented degraded mode, never silent."
+                "Couple mode needs mask_base/mask_p1/mask_p2 connected "
+                "(SayaCoupleRegionMasks) as a wiring guard for the per-tile "
+                "couple crop, even though this node does not read their values."
             )
 
         # -- continuation / resolution ---------------------------------------------

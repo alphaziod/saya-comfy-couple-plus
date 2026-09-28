@@ -2,7 +2,7 @@
  "id": "868afda2-e3eb-4a97-9431-e8d824175b2e",
  "revision": 32,
  "last_node_id": 100242,
- "last_link_id": 98546,
+ "last_link_id": 98548,
  "nodes": [
   {
    "id": 2678,
@@ -41,8 +41,7 @@
     "previousName": "saya_base_main_model",
     "saya_phase": 1,
     "saya_original_mode": 0,
-    "saya_shared_base": true,
-    "saya_hidden_technical": true
+    "saya_shared_base": true
    },
    "widgets_values": [
     "saya_base_main_model"
@@ -93,8 +92,7 @@
     "previousName": "saya_base_clip",
     "saya_phase": 1,
     "saya_original_mode": 0,
-    "saya_shared_base": true,
-    "saya_hidden_technical": true
+    "saya_shared_base": true
    },
    "widgets_values": [
     "saya_base_clip"
@@ -415,8 +413,7 @@
      "widget_ue_connectable": {},
      "version": "7.8",
      "input_ue_unconnectable": {}
-    },
-    "saya_hidden_technical": true
+    }
    },
    "widgets_values": [
     "ilust_vae_route_09"
@@ -463,8 +460,7 @@
      "widget_ue_connectable": {},
      "version": "7.8",
      "input_ue_unconnectable": {}
-    },
-    "saya_hidden_technical": true
+    }
    },
    "widgets_values": [
     "ilust_vae_route_08"
@@ -511,8 +507,7 @@
      "widget_ue_connectable": {},
      "version": "7.8",
      "input_ue_unconnectable": {}
-    },
-    "saya_hidden_technical": true
+    }
    },
    "widgets_values": [
     "ilust_vae_route_03"
@@ -559,8 +554,7 @@
      "widget_ue_connectable": {},
      "version": "7.8",
      "input_ue_unconnectable": {}
-    },
-    "saya_hidden_technical": true
+    }
    },
    "widgets_values": [
     "ilust_vae_route_07"
@@ -607,8 +601,7 @@
      "widget_ue_connectable": {},
      "version": "7.8",
      "input_ue_unconnectable": {}
-    },
-    "saya_hidden_technical": true
+    }
    },
    "widgets_values": [
     "ilust_vae_route_04"
@@ -655,8 +648,7 @@
      "widget_ue_connectable": {},
      "version": "7.8",
      "input_ue_unconnectable": {}
-    },
-    "saya_hidden_technical": true
+    }
    },
    "widgets_values": [
     "ilust_vae_route_10_detailers"
@@ -703,8 +695,7 @@
      "widget_ue_connectable": {},
      "version": "7.8",
      "input_ue_unconnectable": {}
-    },
-    "saya_hidden_technical": true
+    }
    },
    "widgets_values": [
     "ilust_vae_route_11"
@@ -751,8 +742,7 @@
      "widget_ue_connectable": {},
      "version": "7.8",
      "input_ue_unconnectable": {}
-    },
-    "saya_hidden_technical": true
+    }
    },
    "widgets_values": [
     "ilust_vae_route_06"
@@ -799,8 +789,7 @@
      "widget_ue_connectable": {},
      "version": "7.8",
      "input_ue_unconnectable": {}
-    },
-    "saya_hidden_technical": true
+    }
    },
    "widgets_values": [
     "ilust_vae_route_05"
@@ -1142,8 +1131,7 @@
     "Node name for S&R": "SayaImagePhaseCheckpointStop",
     "cnr_id": "Saya_Couple",
     "saya_phase": 4,
-    "saya_original_mode": 0,
-    "saya_auto_phase_boundary": true
+    "saya_original_mode": 0
    },
    "widgets_values": [
     0,
@@ -1396,8 +1384,7 @@
     "Node name for S&R": "SayaImagePhaseCheckpointStop",
     "cnr_id": "Saya_Couple",
     "saya_phase": 2,
-    "saya_original_mode": 0,
-    "saya_auto_phase_boundary": true
+    "saya_original_mode": 0
    },
    "widgets_values": [
     0,
@@ -1635,8 +1622,7 @@
     "Node name for S&R": "SayaImagePhaseCheckpointStop",
     "cnr_id": "Saya_Couple",
     "saya_phase": 5,
-    "saya_original_mode": 0,
-    "saya_auto_phase_boundary": true
+    "saya_original_mode": 0
    },
    "widgets_values": [
     "[]",
@@ -3478,7 +3464,6 @@
     "aux_id": "kijai/ComfyUI-KJNodes",
     "previousName": "saya_base_model_2",
     "saya_shared_base": true,
-    "saya_hidden_technical": true,
     "saya_phase": 1
    },
    "widgets_values": [
@@ -3523,7 +3508,6 @@
     "aux_id": "kijai/ComfyUI-KJNodes",
     "previousName": "saya_base_clip_2",
     "saya_shared_base": true,
-    "saya_hidden_technical": true,
     "saya_phase": 1
    },
    "widgets_values": [
@@ -3567,7 +3551,6 @@
     "Node name for S&R": "SetNode",
     "aux_id": "kijai/ComfyUI-KJNodes",
     "previousName": "saya_base_model_1_identifier",
-    "saya_hidden_technical": true,
     "saya_shared_base": true
    },
    "widgets_values": [
@@ -3611,7 +3594,6 @@
     "Node name for S&R": "SetNode",
     "aux_id": "kijai/ComfyUI-KJNodes",
     "previousName": "saya_base_model_2_identifier",
-    "saya_hidden_technical": true,
     "saya_shared_base": true
    },
    "widgets_values": [
@@ -3740,8 +3722,7 @@
     "Node name for S&R": "SayaImagePhaseCheckpointStop",
     "cnr_id": "Saya_Couple",
     "saya_phase": 3,
-    "saya_original_mode": 0,
-    "saya_auto_phase_boundary": true
+    "saya_original_mode": 0
    },
    "widgets_values": [
     0,
@@ -3966,7 +3947,6 @@
     "Node name for S&R": "saya-auto-phase-4",
     "saya_phase": 4,
     "saya_original_mode": 0,
-    "saya_auto_phase_runner": true,
     "previewExposures": []
    },
    "widgets_values": [
@@ -4088,8 +4068,7 @@
     "Node name for S&R": "SayaImageGenerationReview",
     "cnr_id": "Saya_Couple",
     "saya_phase": 1,
-    "saya_original_mode": 0,
-    "saya_checkpoint_root": "image/checkpoints"
+    "saya_original_mode": 0
    },
    "widgets_values": [
     0,
@@ -4408,7 +4387,6 @@
     "saya_original_mode": 0,
     "saya_shared_base": true,
     "Node name for S&R": "a4cf22f8-558e-405a-9000-af81afd8a02b",
-    "saya_visible_vae_routes": "The ten VAE route dropdowns are exposed here. Consumer subgraphs use fixed GetNode keys; the selected VAE is changed from these visible route dropdowns.",
     "previewExposures": []
    },
    "widgets_values": [
@@ -4482,8 +4460,7 @@
    "title": "MAIN · Final Upscale Preset & Model",
    "properties": {
     "Node name for S&R": "SayaUpscalePresetModelLoader",
-    "cnr_id": "Saya_Couple",
-    "saya_visible_main_control": true
+    "cnr_id": "Saya_Couple"
    },
    "widgets_values": [
     "2K · BALANCED · 2560x1440 equivalent",
@@ -4759,7 +4736,6 @@
     "Node name for S&R": "saya-auto-phase-3",
     "saya_phase": 3,
     "saya_original_mode": 0,
-    "saya_auto_phase_runner": true,
     "previewExposures": [
      {
       "name": "$$canvas-image-preview",
@@ -4905,9 +4881,7 @@
     "Node name for S&R": "saya-auto-phase-2",
     "saya_phase": 2,
     "saya_original_mode": 0,
-    "saya_auto_phase_runner": true,
-    "previewExposures": [],
-    "saya_phase2_subgraph_refresh": "23a92ba3-1ca2-4326-aeb9-d51aa4c48c54"
+    "previewExposures": []
    },
    "widgets_values": [
     false
@@ -5211,7 +5185,6 @@
     "Node name for S&R": "saya-auto-phase-5",
     "saya_phase": 5,
     "saya_original_mode": 0,
-    "saya_auto_phase_runner": true,
     "previewExposures": []
    },
    "widgets_values": [
@@ -5253,8 +5226,7 @@
     "cnr_id": "rgthree-comfy",
     "ver": "1.0.2606200020",
     "randomMax": 1125899906842624,
-    "randomMin": 0,
-    "saya_master_seed": true
+    "randomMin": 0
    },
    "widgets_values": [
     -1,
@@ -5546,8 +5518,7 @@
     "Node name for S&R": "SayaImagePhaseCheckpointStop",
     "cnr_id": "Saya_Couple",
     "saya_phase": 6,
-    "saya_original_mode": 0,
-    "saya_auto_phase_boundary": true
+    "saya_original_mode": 0
    },
    "widgets_values": [
     0,
@@ -5596,12 +5567,6 @@
      "name": "selected_identities",
      "type": "STRING",
      "link": 98297
-    },
-    {
-     "localized_name": "Selected Identifier",
-     "name": "selected_identifier",
-     "type": "STRING",
-     "link": 98298
     },
     {
      "localized_name": "Solo (Couple Mode OFF)",
@@ -5670,9 +5635,7 @@
     "Node name for S&R": "saya-auto-phase-6",
     "saya_phase": 6,
     "saya_original_mode": 0,
-    "saya_auto_phase_runner": true,
-    "previewExposures": [],
-    "saya_phase6_naturalize_prompts": "Visible finishing-only Base/P1/P2/NEG prompts. No scene/person redesign text."
+    "previewExposures": []
    },
    "widgets_values": [
     ""
@@ -6288,7 +6251,6 @@
     "cnr_id": "comfy-core",
     "ver": "0.3.57",
     "Node name for S&R": "saya-vae-switch-hub-main-supports-only",
-    "saya_vae_switch_hub": "Mutually exclusive VAE selection per target. One field per VAE consumer. Allowed values: main, support1, support2, support3. Detailer VAE links are intentionally untouched.",
     "ue_properties": {
      "widget_ue_connectable": {
       "01 Sampler 1 Decode VAE": true,
@@ -6307,12 +6269,6 @@
      "version": "7.8",
      "input_ue_unconnectable": {}
     },
-    "saya_vae_switch_hub_v2": "Removed view_decode_pass1/pass2 selector outputs. Those preview/debug decodes are direct support1_vae now. Detailer VAE links still untouched.",
-    "saya_dropdown_fixed": "VAE selectors restored as CustomCombo dropdowns.",
-    "saya_clear_vae_names": "VAE route labels are stage-based and options are readable: Main VAE / Support 1 VAE / Support 2 VAE / Support 3 VAE.",
-    "saya_vae_semantics_v2": "Main Model VAE is the VAE from Main CKPT. Other choices are Custom VAE 1/2/3.",
-    "saya_pass_order_v3": "VAE route selectors are ordered by workflow pass, not by node/socket order.",
-    "saya_detailer_vae_note": "10 Detailers VAE is visible in this panel and defaults to Main Model VAE (Illustrious).",
     "previewExposures": []
    },
    "widgets_values": [
@@ -6637,9 +6593,7 @@
      "localized_name": "Selected Identifier",
      "name": "Selected Identifier",
      "type": "STRING",
-     "links": [
-      98298
-     ]
+     "links": []
     }
    ],
    "title": "Hub Phase 6 · Model Routing",
@@ -8227,14 +8181,6 @@
    "STRING"
   ],
   [
-   98298,
-   100181,
-   3,
-   100061,
-   3,
-   "STRING"
-  ],
-  [
    98366,
    2674,
    19,
@@ -8423,7 +8369,7 @@
    100220,
    0,
    100061,
-   4,
+   3,
    "BOOLEAN"
   ],
   [
@@ -8561,7 +8507,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 2,
@@ -9130,8 +9076,7 @@
        "cnr_id": "comfy-core",
        "ver": "0.34.0",
        "Node name for S&R": "QuadrupleCLIPLoader",
-       "saya_branch": "HIDREAM_ORIGINAL_PROMPTS_ONLY",
-       "saya_note": "Text encoders only. Feeds the SECOND CLIP input of the four external SayaDualCLIPTextEncode nodes. Heavy HiDream MODEL stays in Phase 03.",
+       "saya_note": "HiDream Quad CLIP (text encoders only). Loaded only on a HiDream conditioning cache miss; the HiDream MODEL stays in Phase 3.",
        "saya_phase": 1
       },
       "widgets_values": [
@@ -9180,8 +9125,7 @@
       "title": "Identifier · Model 1 (live)",
       "properties": {
        "Node name for S&R": "SayaValueToString",
-       "cnr_id": "Saya_Couple",
-       "saya_hidden_technical": true
+       "cnr_id": "Saya_Couple"
       },
       "color": "#2b3038",
       "bgcolor": "#3d4652"
@@ -9223,8 +9167,7 @@
       "title": "Identifier · Model 2 (live)",
       "properties": {
        "Node name for S&R": "SayaValueToString",
-       "cnr_id": "Saya_Couple",
-       "saya_hidden_technical": true
+       "cnr_id": "Saya_Couple"
       },
       "color": "#2b3038",
       "bgcolor": "#3d4652"
@@ -9385,7 +9328,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -9810,8 +9753,7 @@
       "properties": {
        "cnr_id": "comfy-core",
        "ver": "0.27.0",
-       "Node name for S&R": "CustomCombo",
-       "saya_fix": "Dropdown selector restored after power-user renaming."
+       "Node name for S&R": "CustomCombo"
       },
       "widgets_values": [
        "Custom VAE 1",
@@ -9889,13 +9831,11 @@
        "cnr_id": "rgthree-comfy",
        "ver": "1.0.2605082257",
        "Node name for S&R": "Power Puter (rgthree)",
-       "saya_vae_switch": "One selector string chooses exactly one VAE: main, support1, support2, or support3.",
        "ue_properties": {
         "widget_ue_connectable": {},
         "version": "7.8",
         "input_ue_unconnectable": {}
-       },
-       "saya_no_ast_call_patch": "No isinstance/strip/lower/replace calls. CustomCombo a routes VAE."
+       }
       },
       "widgets_values": [
        {
@@ -9955,8 +9895,7 @@
       "properties": {
        "cnr_id": "comfy-core",
        "ver": "0.27.0",
-       "Node name for S&R": "CustomCombo",
-       "saya_fix": "Dropdown selector restored after power-user renaming."
+       "Node name for S&R": "CustomCombo"
       },
       "widgets_values": [
        "Custom VAE 1",
@@ -10034,13 +9973,11 @@
        "cnr_id": "rgthree-comfy",
        "ver": "1.0.2605082257",
        "Node name for S&R": "Power Puter (rgthree)",
-       "saya_vae_switch": "One selector string chooses exactly one VAE: main, support1, support2, or support3.",
        "ue_properties": {
         "widget_ue_connectable": {},
         "version": "7.8",
         "input_ue_unconnectable": {}
-       },
-       "saya_no_ast_call_patch": "No isinstance/strip/lower/replace calls. CustomCombo a routes VAE."
+       }
       },
       "widgets_values": [
        {
@@ -10100,8 +10037,7 @@
       "properties": {
        "cnr_id": "comfy-core",
        "ver": "0.27.0",
-       "Node name for S&R": "CustomCombo",
-       "saya_fix": "Dropdown selector restored after power-user renaming."
+       "Node name for S&R": "CustomCombo"
       },
       "widgets_values": [
        "Custom VAE 1",
@@ -10179,13 +10115,11 @@
        "cnr_id": "rgthree-comfy",
        "ver": "1.0.2605082257",
        "Node name for S&R": "Power Puter (rgthree)",
-       "saya_vae_switch": "One selector string chooses exactly one VAE: main, support1, support2, or support3.",
        "ue_properties": {
         "widget_ue_connectable": {},
         "version": "7.8",
         "input_ue_unconnectable": {}
-       },
-       "saya_no_ast_call_patch": "No isinstance/strip/lower/replace calls. CustomCombo a routes VAE."
+       }
       },
       "widgets_values": [
        {
@@ -10245,8 +10179,7 @@
       "properties": {
        "cnr_id": "comfy-core",
        "ver": "0.27.0",
-       "Node name for S&R": "CustomCombo",
-       "saya_fix": "Dropdown selector restored after power-user renaming."
+       "Node name for S&R": "CustomCombo"
       },
       "widgets_values": [
        "Custom VAE 1",
@@ -10324,13 +10257,11 @@
        "cnr_id": "rgthree-comfy",
        "ver": "1.0.2605082257",
        "Node name for S&R": "Power Puter (rgthree)",
-       "saya_vae_switch": "One selector string chooses exactly one VAE: main, support1, support2, or support3.",
        "ue_properties": {
         "widget_ue_connectable": {},
         "version": "7.8",
         "input_ue_unconnectable": {}
-       },
-       "saya_no_ast_call_patch": "No isinstance/strip/lower/replace calls. CustomCombo a routes VAE."
+       }
       },
       "widgets_values": [
        {
@@ -10390,8 +10321,7 @@
       "properties": {
        "cnr_id": "comfy-core",
        "ver": "0.27.0",
-       "Node name for S&R": "CustomCombo",
-       "saya_fix": "Dropdown selector restored after power-user renaming."
+       "Node name for S&R": "CustomCombo"
       },
       "widgets_values": [
        "Custom VAE 1",
@@ -10469,13 +10399,11 @@
        "cnr_id": "rgthree-comfy",
        "ver": "1.0.2605082257",
        "Node name for S&R": "Power Puter (rgthree)",
-       "saya_vae_switch": "One selector string chooses exactly one VAE: main, support1, support2, or support3.",
        "ue_properties": {
         "widget_ue_connectable": {},
         "version": "7.8",
         "input_ue_unconnectable": {}
-       },
-       "saya_no_ast_call_patch": "No isinstance/strip/lower/replace calls. CustomCombo a routes VAE."
+       }
       },
       "widgets_values": [
        {
@@ -10535,8 +10463,7 @@
       "properties": {
        "cnr_id": "comfy-core",
        "ver": "0.27.0",
-       "Node name for S&R": "CustomCombo",
-       "saya_fix": "Dropdown selector restored after power-user renaming."
+       "Node name for S&R": "CustomCombo"
       },
       "widgets_values": [
        "Custom VAE 1",
@@ -10614,13 +10541,11 @@
        "cnr_id": "rgthree-comfy",
        "ver": "1.0.2605082257",
        "Node name for S&R": "Power Puter (rgthree)",
-       "saya_vae_switch": "One selector string chooses exactly one VAE: main, support1, support2, or support3.",
        "ue_properties": {
         "widget_ue_connectable": {},
         "version": "7.8",
         "input_ue_unconnectable": {}
-       },
-       "saya_no_ast_call_patch": "No isinstance/strip/lower/replace calls. CustomCombo a routes VAE."
+       }
       },
       "widgets_values": [
        {
@@ -10680,8 +10605,7 @@
       "properties": {
        "cnr_id": "comfy-core",
        "ver": "0.27.0",
-       "Node name for S&R": "CustomCombo",
-       "saya_fix": "Dropdown selector restored after power-user renaming."
+       "Node name for S&R": "CustomCombo"
       },
       "widgets_values": [
        "Custom VAE 1",
@@ -10759,13 +10683,11 @@
        "cnr_id": "rgthree-comfy",
        "ver": "1.0.2605082257",
        "Node name for S&R": "Power Puter (rgthree)",
-       "saya_vae_switch": "One selector string chooses exactly one VAE: main, support1, support2, or support3.",
        "ue_properties": {
         "widget_ue_connectable": {},
         "version": "7.8",
         "input_ue_unconnectable": {}
-       },
-       "saya_no_ast_call_patch": "No isinstance/strip/lower/replace calls. CustomCombo a routes VAE."
+       }
       },
       "widgets_values": [
        {
@@ -10825,8 +10747,7 @@
       "properties": {
        "cnr_id": "comfy-core",
        "ver": "0.27.0",
-       "Node name for S&R": "CustomCombo",
-       "saya_fix": "Dropdown selector restored after power-user renaming."
+       "Node name for S&R": "CustomCombo"
       },
       "widgets_values": [
        "Custom VAE 1",
@@ -10904,13 +10825,11 @@
        "cnr_id": "rgthree-comfy",
        "ver": "1.0.2605082257",
        "Node name for S&R": "Power Puter (rgthree)",
-       "saya_vae_switch": "One selector string chooses exactly one VAE: main, support1, support2, or support3.",
        "ue_properties": {
         "widget_ue_connectable": {},
         "version": "7.8",
         "input_ue_unconnectable": {}
-       },
-       "saya_no_ast_call_patch": "No isinstance/strip/lower/replace calls. CustomCombo a routes VAE."
+       }
       },
       "widgets_values": [
        {
@@ -10970,8 +10889,7 @@
       "properties": {
        "cnr_id": "comfy-core",
        "ver": "0.27.0",
-       "Node name for S&R": "CustomCombo",
-       "saya_detailers_vae": "Visible selector for the detailer VAE route."
+       "Node name for S&R": "CustomCombo"
       },
       "widgets_values": [
        "Main Model VAE",
@@ -11048,8 +10966,7 @@
       "properties": {
        "cnr_id": "rgthree-comfy",
        "ver": "1.0.2606200020",
-       "Node name for S&R": "Power Puter (rgthree)",
-       "saya_vae_switch": "Default route is Main Model VAE (Illustrious)."
+       "Node name for S&R": "Power Puter (rgthree)"
       },
       "widgets_values": [
        {
@@ -11772,7 +11689,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 18,
@@ -12740,7 +12657,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 15,
@@ -13314,7 +13231,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 16,
@@ -13735,8 +13652,7 @@
       "title": "Solo · Skip Person 2 Encode",
       "properties": {
        "Node name for S&R": "SayaLazyBooleanSelect",
-       "cnr_id": "Saya_Couple",
-       "saya_hidden_technical": true
+       "cnr_id": "Saya_Couple"
       },
       "color": "#303650",
       "bgcolor": "#485176"
@@ -13772,8 +13688,7 @@
       "properties": {
        "Node name for S&R": "GetNode",
        "aux_id": "kijai/ComfyUI-KJNodes",
-       "previousName": "saya_base_model_1_identifier",
-       "saya_hidden_technical": true
+       "previousName": "saya_base_model_1_identifier"
       },
       "widgets_values": [
        "saya_base_model_1_identifier"
@@ -14267,16 +14182,6 @@
          "name": "solo"
         },
         "link": 98422
-       },
-       {
-        "localized_name": "dual_attention_enabled",
-        "name": "dual_attention_enabled",
-        "shape": 7,
-        "type": "BOOLEAN",
-        "widget": {
-         "name": "dual_attention_enabled"
-        },
-        "link": null
        }
       ],
       "outputs": [
@@ -14322,8 +14227,7 @@
       "widgets_values": [
        1,
        1,
-       false,
-       true
+       false
       ],
       "color": "#4a2f46",
       "bgcolor": "#68435f"
@@ -14684,7 +14588,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100242,
-     "lastLinkId": 98546,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 8,
@@ -14769,7 +14673,9 @@
       "type": "BOOLEAN",
       "linkIds": [
        98413,
-       98414
+       98414,
+       98547,
+       98548
       ],
       "localized_name": "Solo (Couple Mode OFF)",
       "pos": [
@@ -15004,7 +14910,6 @@
        "Node name for S&R": "GetNode",
        "aux_id": "kijai/ComfyUI-KJNodes",
        "previousName": "ilust_vae_route_08",
-       "saya_hidden_technical": true,
        "ue_properties": {
         "widget_ue_connectable": {},
         "version": "7.8",
@@ -15048,7 +14953,6 @@
        "Node name for S&R": "GetNode",
        "aux_id": "kijai/ComfyUI-KJNodes",
        "previousName": "ilust_vae_route_04",
-       "saya_hidden_technical": true,
        "ue_properties": {
         "widget_ue_connectable": {},
         "version": "7.8",
@@ -15092,7 +14996,6 @@
        "Node name for S&R": "GetNode",
        "aux_id": "kijai/ComfyUI-KJNodes",
        "previousName": "ilust_vae_route_05",
-       "saya_hidden_technical": true,
        "ue_properties": {
         "widget_ue_connectable": {},
         "version": "7.8",
@@ -15155,8 +15058,7 @@
       ],
       "title": "Couple · Load Imprint",
       "properties": {
-       "Node name for S&R": "SayaCoupleImprintLoad",
-       "saya_precode": "proposed — see PATCHES.md"
+       "Node name for S&R": "SayaCoupleImprintLoad"
       },
       "color": "#4a2f46",
       "bgcolor": "#68435f"
@@ -15273,8 +15175,7 @@
       ],
       "title": "Couple · Reconstruct Conditioning",
       "properties": {
-       "Node name for S&R": "SayaCoupleReconstruct",
-       "saya_precode": "proposed — see PATCHES.md"
+       "Node name for S&R": "SayaCoupleReconstruct"
       },
       "widgets_values": [
        false
@@ -15341,8 +15242,7 @@
       ],
       "title": "Couple · Rebuild Region Masks",
       "properties": {
-       "Node name for S&R": "SayaCoupleRegionMasks",
-       "saya_precode": "proposed — see PATCHES.md"
+       "Node name for S&R": "SayaCoupleRegionMasks"
       },
       "color": "#4a2f46",
       "bgcolor": "#68435f"
@@ -15378,7 +15278,6 @@
        "Node name for S&R": "GetNode",
        "aux_id": "kijai/ComfyUI-KJNodes",
        "previousName": "ilust_vae_route_07",
-       "saya_hidden_technical": true,
        "ue_properties": {
         "widget_ue_connectable": {},
         "version": "7.8",
@@ -15521,8 +15420,7 @@
       "title": "Couple · Checkpoint Identities · Model 2",
       "properties": {
        "Node name for S&R": "SayaCoupleCheckpointIdentities",
-       "cnr_id": "Saya_Couple",
-       "saya_hidden_technical": true
+       "cnr_id": "Saya_Couple"
       },
       "color": "#4a2f46",
       "bgcolor": "#68435f"
@@ -15559,8 +15457,7 @@
       "properties": {
        "Node name for S&R": "GetNode",
        "aux_id": "kijai/ComfyUI-KJNodes",
-       "previousName": "saya_base_model_2_identifier",
-       "saya_hidden_technical": true
+       "previousName": "saya_base_model_2_identifier"
       },
       "widgets_values": [
        "saya_base_model_2_identifier"
@@ -15637,8 +15534,7 @@
       "properties": {
        "Node name for S&R": "GetNode",
        "aux_id": "kijai/ComfyUI-KJNodes",
-       "previousName": "saya_base_model_1_identifier",
-       "saya_hidden_technical": true
+       "previousName": "saya_base_model_1_identifier"
       },
       "widgets_values": [
        "saya_base_model_1_identifier"
@@ -15787,8 +15683,7 @@
       "title": "Couple · Checkpoint Identities · Model 1",
       "properties": {
        "Node name for S&R": "SayaCoupleCheckpointIdentities",
-       "cnr_id": "Saya_Couple",
-       "saya_hidden_technical": true
+       "cnr_id": "Saya_Couple"
       },
       "color": "#4a2f46",
       "bgcolor": "#68435f"
@@ -16466,13 +16361,6 @@
         "version": "7.8",
         "input_ue_unconnectable": {}
        },
-       "saya_vae_route_fix": "Uses Hub main_vae so SDXL 4ch and ANIMA/FLOW 16ch latents decode with matching VAE.",
-       "saya_step_patch": "20260622_step_continue_2146_safe_vae_4ch_fix",
-       "saya_fix_note": "Node 2146 uses SDXL/4-channel dual model, so its VAE is routed to Get_SAFE VAE instead of Hub main_vae 16-channel to avoid 4 vs 16 channel crash.",
-       "saya_chain_fix": "Continued patch from 2146_SAFE_VAE_FIXED. 2146 must use SDXL support_model_sdxl_1 with SAFE VAE; dual_sampling_model is ANIMA/16ch and only belongs to latent pass 1/2.",
-       "saya_chain_fix_2": "Kept 2146 fully SDXL: support/main SDXL model + SAFE SDXL VAE + SDXL conditionings rebuilt from main/concept CLIP. ANIMA VAE stays only on ANIMA latent decode/resume path.",
-       "saya_auto_slot_trio": "model + conditioning + VAE now follow the selected support1 SDXL/ANIMA slot",
-       "saya_hires_router": "model/conditioning/VAE routed from SayaHiresTrioRouterClean",
        "proxyWidgetErrorQuarantine": [
         {
          "originalEntry": [
@@ -16483,8 +16371,7 @@
          "attemptedAtVersion": 1
         }
        ],
-       "previewExposures": [],
-       "saya_hires_subgraph_refresh": "2bef75b8-30e6-443b-889f-247c46e3e810"
+       "previewExposures": []
       },
       "widgets_values": [
        0
@@ -16695,15 +16582,6 @@
         "link": null
        },
        {
-        "localized_name": "couple_crop",
-        "name": "couple_crop",
-        "type": "BOOLEAN",
-        "widget": {
-         "name": "couple_crop"
-        },
-        "link": null
-       },
-       {
         "localized_name": "restore_to_base",
         "name": "restore_to_base",
         "type": "BOOLEAN",
@@ -16711,6 +16589,12 @@
          "name": "restore_to_base"
         },
         "link": null
+       },
+       {
+        "localized_name": "solo",
+        "name": "solo",
+        "type": "BOOLEAN",
+        "link": 98547
        }
       ],
       "outputs": [
@@ -16739,8 +16623,7 @@
       ],
       "title": "USDU 1 · Tiled Refinement",
       "properties": {
-       "Node name for S&R": "SayaCoupleUSDUPass",
-       "saya_precode": "proposed — see PATCHES.md"
+       "Node name for S&R": "SayaCoupleUSDUPass"
       },
       "widgets_values": [
        0,
@@ -16756,7 +16639,6 @@
        "beta",
        0.12,
        0.75,
-       true,
        false
       ],
       "color": "#24403d",
@@ -16921,10 +16803,6 @@
         "version": "7.8",
         "input_ue_unconnectable": {}
        },
-       "saya_chain_patch": "USDU1/USDU2 forced to SDXL trio: support1 SDXL model + SDXL conditioning + SAFE VAE.",
-       "saya_usdu_trio_fix": "USDU path kept coherent: MODEL from Couple support_model_sdxl_1, positive/negative from Couple SDXL conditioning, VAE from SAFE VAE.",
-       "saya_auto_slot_trio": "model + conditioning + VAE now follow the selected support1 SDXL/ANIMA slot",
-       "saya_hires_router": "model/conditioning/VAE routed from SayaHiresTrioRouterClean",
        "proxyWidgetErrorQuarantine": [
         {
          "originalEntry": [
@@ -16935,8 +16813,7 @@
          "attemptedAtVersion": 1
         }
        ],
-       "previewExposures": [],
-       "saya_hires_subgraph_refresh": "61c67f06-1c84-4d5a-b96b-1bc4f929be8e"
+       "previewExposures": []
       },
       "widgets_values": [
        0
@@ -17147,15 +17024,6 @@
         "link": null
        },
        {
-        "localized_name": "couple_crop",
-        "name": "couple_crop",
-        "type": "BOOLEAN",
-        "widget": {
-         "name": "couple_crop"
-        },
-        "link": null
-       },
-       {
         "localized_name": "restore_to_base",
         "name": "restore_to_base",
         "type": "BOOLEAN",
@@ -17163,6 +17031,12 @@
          "name": "restore_to_base"
         },
         "link": null
+       },
+       {
+        "localized_name": "solo",
+        "name": "solo",
+        "type": "BOOLEAN",
+        "link": 98548
        }
       ],
       "outputs": [
@@ -17190,8 +17064,7 @@
       ],
       "title": "USDU 2 · Tiled Refinement",
       "properties": {
-       "Node name for S&R": "SayaCoupleUSDUPass",
-       "saya_precode": "proposed — see PATCHES.md"
+       "Node name for S&R": "SayaCoupleUSDUPass"
       },
       "widgets_values": [
        0,
@@ -17207,7 +17080,6 @@
        "beta",
        0.05,
        0.75,
-       true,
        true
       ],
       "color": "#294133",
@@ -17896,6 +17768,22 @@
       "target_id": -20,
       "target_slot": 8,
       "type": "MODEL"
+     },
+     {
+      "id": 98547,
+      "origin_id": -10,
+      "origin_slot": 4,
+      "target_id": 11004,
+      "target_slot": 25,
+      "type": "BOOLEAN"
+     },
+     {
+      "id": 98548,
+      "origin_id": -10,
+      "origin_slot": 4,
+      "target_id": 11005,
+      "target_slot": 25,
+      "type": "BOOLEAN"
      }
     ],
     "extra": {
@@ -17914,7 +17802,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 1,
@@ -18575,8 +18463,7 @@
       "title": "Hires Fix 1 · Upscale",
       "properties": {
        "Node name for S&R": "SayaUpscaleMode",
-       "cnr_id": "Saya_Couple",
-       "saya_hires_lane": "Hires 1"
+       "cnr_id": "Saya_Couple"
       },
       "widgets_values": [
        "UPSCALE MODEL",
@@ -18714,7 +18601,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -18981,7 +18868,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 1,
@@ -19587,8 +19474,7 @@
       "title": "Hires Fix 3 · Upscale",
       "properties": {
        "Node name for S&R": "SayaUpscaleMode",
-       "cnr_id": "Saya_Couple",
-       "saya_hires_lane": "Hires 3"
+       "cnr_id": "Saya_Couple"
       },
       "widgets_values": [
        "CLASSIC",
@@ -19781,7 +19667,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 4,
@@ -20111,7 +19997,6 @@
        "cnr_id": "comfy-core",
        "ver": "0.3.57",
        "Node name for S&R": "ImageScaleBy",
-       "saya_note": "Step 1 starts at 0.80 factor before HiDream.",
        "ue_properties": {
         "widget_ue_connectable": {
          "upscale_method": true,
@@ -20625,7 +20510,7 @@
      },
      {
       "id": 100086,
-      "type": "ClownRegionalConditioning3",
+      "type": "ClownRegionalConditioning_AB",
       "pos": [
        2072,
        7658
@@ -20651,13 +20536,6 @@
         "shape": 7,
         "type": "CONDITIONING",
         "link": 98112
-       },
-       {
-        "localized_name": "conditioning_unmasked",
-        "name": "conditioning_unmasked",
-        "shape": 7,
-        "type": "CONDITIONING",
-        "link": 98113
        },
        {
         "localized_name": "mask_A",
@@ -20779,11 +20657,11 @@
         ]
        }
       ],
-      "title": "Phase 3 · Regional Conditioning · A / B / Base",
+      "title": "Phase 3 · Regional Conditioning · P1 / P2",
       "properties": {
        "cnr_id": "comfyui_fearnworksnodes",
        "ver": "0.1.2",
-       "Node name for S&R": "ClownRegionalConditioning3"
+       "Node name for S&R": "ClownRegionalConditioning_AB"
       },
       "widgets_values": [
        1,
@@ -20895,8 +20773,7 @@
       "title": "Solo · Bypass Regional Conditioning",
       "properties": {
        "Node name for S&R": "SayaLazyBooleanSelect",
-       "cnr_id": "Saya_Couple",
-       "saya_hidden_technical": true
+       "cnr_id": "Saya_Couple"
       },
       "color": "#4a2f46",
       "bgcolor": "#68435f"
@@ -20948,8 +20825,7 @@
         "widget_ue_connectable": {},
         "version": "7.8",
         "input_ue_unconnectable": {}
-       },
-       "saya_validation_fix_v2": "Repaired: samples now come from HIDREAM KSampler output."
+       }
       },
       "color": "#323",
       "bgcolor": "#535"
@@ -21062,8 +20938,7 @@
         "widget_ue_connectable": {},
         "version": "7.8",
         "input_ue_unconnectable": {}
-       },
-       "saya_validation_fix_v2": "Repaired: pixels now come from STEP 1 downscale before HIDREAM."
+       }
       },
       "color": "#323",
       "bgcolor": "#535"
@@ -21240,11 +21115,10 @@
         ]
        },
        {
-        "localized_name": "conditioning_unmasked",
-        "name": "conditioning_unmasked",
+        "localized_name": "conditioning_solo",
+        "name": "conditioning_solo",
         "type": "CONDITIONING",
         "links": [
-         98113,
          98484
         ]
        },
@@ -21281,7 +21155,7 @@
         ]
        }
       ],
-      "title": "Phase 3 · Couple Reconstruct · A / B / Base",
+      "title": "Phase 3 · HiDream Reconstruct · P1 / P2 / Solo",
       "properties": {
        "Node name for S&R": "SayaCoupleHiDreamReconstruct"
       },
@@ -21857,19 +21731,11 @@
       "type": "CONDITIONING"
      },
      {
-      "id": 98113,
-      "origin_id": 100085,
-      "origin_slot": 2,
-      "target_id": 100086,
-      "target_slot": 2,
-      "type": "CONDITIONING"
-     },
-     {
       "id": 98114,
       "origin_id": 100085,
       "origin_slot": 4,
       "target_id": 100086,
-      "target_slot": 3,
+      "target_slot": 2,
       "type": "MASK"
      },
      {
@@ -21877,7 +21743,7 @@
       "origin_id": 100085,
       "origin_slot": 5,
       "target_id": 100086,
-      "target_slot": 4,
+      "target_slot": 3,
       "type": "MASK"
      },
      {
@@ -22017,7 +21883,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 3,
@@ -22156,7 +22022,6 @@
        "Node name for S&R": "GetNode",
        "aux_id": "kijai/ComfyUI-KJNodes",
        "previousName": "ilust_vae_route_09",
-       "saya_hidden_technical": true,
        "ue_properties": {
         "widget_ue_connectable": {},
         "version": "7.8",
@@ -22378,8 +22243,7 @@
       "title": "Couple · Checkpoint Identities · Model 1",
       "properties": {
        "Node name for S&R": "SayaCoupleCheckpointIdentities",
-       "cnr_id": "Saya_Couple",
-       "saya_hidden_technical": true
+       "cnr_id": "Saya_Couple"
       },
       "color": "#4a2f46",
       "bgcolor": "#68435f"
@@ -22538,8 +22402,7 @@
       "properties": {
        "Node name for S&R": "GetNode",
        "aux_id": "kijai/ComfyUI-KJNodes",
-       "previousName": "saya_base_model_1_identifier",
-       "saya_hidden_technical": true
+       "previousName": "saya_base_model_1_identifier"
       },
       "widgets_values": [
        "saya_base_model_1_identifier"
@@ -22577,8 +22440,7 @@
       "properties": {
        "Node name for S&R": "GetNode",
        "aux_id": "kijai/ComfyUI-KJNodes",
-       "previousName": "saya_base_model_2_identifier",
-       "saya_hidden_technical": true
+       "previousName": "saya_base_model_2_identifier"
       },
       "widgets_values": [
        "saya_base_model_2_identifier"
@@ -22633,8 +22495,7 @@
         },
         "version": "7.8",
         "input_ue_unconnectable": {}
-       },
-       "saya_patch_step": "step2_post_hidream_hires_x13"
+       }
       },
       "widgets_values": [
        "RealESRGAN_x4plus_anime_6B.safetensors"
@@ -22883,12 +22744,6 @@
         "version": "7.8",
         "input_ue_unconnectable": {}
        },
-       "saya_patch_step": "step2_post_hidream_hires_x13",
-       "saya_note": "Inserted after HIDREAM and before VIEW DETAILERS. Uses ComfyCouple support model/positive/negative and DARK VAE. Receives the factor-based post-model image from STEP 2.",
-       "saya_auto_slot_trio": "model + conditioning + VAE now follow the selected support1 SDXL/ANIMA slot",
-       "saya_hires_router": "model/conditioning/VAE routed from SayaHiresTrioRouterClean",
-       "saya_hidream_outside_router": "HiDream kept outside Hires Trio Router; support1 direct trio used.",
-       "saya_couple_sdxl_rewire": "Rewired to the clean 10-output SayaComfyCouple node.",
        "proxyWidgetErrorQuarantine": [
         {
          "originalEntry": [
@@ -23135,7 +22990,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 1,
@@ -23844,7 +23699,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 2,
@@ -35672,7 +35527,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 3,
@@ -36258,8 +36113,7 @@
        "Node name for S&R": "SayaImagePhaseCheckpointLoad",
        "cnr_id": "Saya_Couple",
        "saya_phase": 5,
-       "saya_original_mode": 0,
-       "saya_auto_phase_runner": true
+       "saya_original_mode": 0
       },
       "color": "#233b35",
       "bgcolor": "#36584f"
@@ -36295,7 +36149,6 @@
        "Node name for S&R": "GetNode",
        "aux_id": "kijai/ComfyUI-KJNodes",
        "previousName": "ilust_vae_route_10_detailers",
-       "saya_hidden_technical": true,
        "ue_properties": {
         "widget_ue_connectable": {},
         "version": "7.8",
@@ -36433,8 +36286,7 @@
       "title": "Couple · Checkpoint Identities · Model 1",
       "properties": {
        "Node name for S&R": "SayaCoupleCheckpointIdentities",
-       "cnr_id": "Saya_Couple",
-       "saya_hidden_technical": true
+       "cnr_id": "Saya_Couple"
       },
       "color": "#4a2f46",
       "bgcolor": "#68435f"
@@ -36563,8 +36415,7 @@
       "title": "Couple · Checkpoint Identities · Model 2",
       "properties": {
        "Node name for S&R": "SayaCoupleCheckpointIdentities",
-       "cnr_id": "Saya_Couple",
-       "saya_hidden_technical": true
+       "cnr_id": "Saya_Couple"
       },
       "color": "#4a2f46",
       "bgcolor": "#68435f"
@@ -36601,8 +36452,7 @@
       "properties": {
        "Node name for S&R": "GetNode",
        "aux_id": "kijai/ComfyUI-KJNodes",
-       "previousName": "saya_base_model_2_identifier",
-       "saya_hidden_technical": true
+       "previousName": "saya_base_model_2_identifier"
       },
       "widgets_values": [
        "saya_base_model_2_identifier"
@@ -36642,8 +36492,7 @@
       "properties": {
        "Node name for S&R": "GetNode",
        "aux_id": "kijai/ComfyUI-KJNodes",
-       "previousName": "saya_base_model_1_identifier",
-       "saya_hidden_technical": true
+       "previousName": "saya_base_model_1_identifier"
       },
       "widgets_values": [
        "saya_base_model_1_identifier"
@@ -37206,23 +37055,11 @@
        "ver": "0.22.0",
        "proxyWidgets": [],
        "Node name for S&R": "05a69a26-72ba-450b-8e6f-c65079c34f77",
-       "saya_route_note": "Detailers now receive ROUTE BEFORE DETAILERS output.",
        "ue_properties": {
         "widget_ue_connectable": {},
         "version": "7.8",
         "input_ue_unconnectable": {}
        },
-       "saya_vae_cleanup": "External SAFE/DARK VAE loader/get/set removed; VAE now comes from SayaHiresTrioRouterClean last_vae.",
-       "saya_detailer_routing_fix": "True dynamic route patch: route_json reset to {}; panel routes output is wired into the subgraph; Power Puter route pickers inside the subgraph select model + paired/override VAE per zone.",
-       "saya_validation_fix_v2": "Kept true dynamic detailer routing from panel routes; no frozen support1 snapshot.",
-       "saya_detailer_routing_v4": "Panel default None routes no longer crash Power Puter; default/None = support1 + vae_1, explicit zone overrides still route model/vae.",
-       "saya_model_route_manual_selectors": "Per-zone manual model route fields added. Write support1, support2, support3, or main. These fields override routes object for model choice and paired auto-VAE fallback.",
-       "saya_full_route_patch": "support_model_2/support_model_3 and support2_vae/support3_vae are now connected to existing detailer inputs. No new VAE selectors were added to the detailer.",
-       "saya_detailer_one_support_vae": "Removed vae_2/vae_3 from the detailer node. Detailers now use one support VAE input plus main_vae. support2/support3 model routes are still usable, but they share the single support VAE.",
-       "saya_dropdown_fixed": "Model route selectors restored as CustomCombo dropdowns.",
-       "saya_vae_semantics_v2": "Detailer uses Main Model VAE for main route and Custom VAE 1 as its single support VAE.",
-       "saya_couple_sdxl_rewire": "Rewired to the clean 10-output SayaComfyCouple node.",
-       "saya_detailer_input_linkids_fix": "Repaired boundary linkIds for CLIP, Positive, Negative, Main Model and VAE.",
        "previewExposures": []
       },
       "color": "#4a3b5f",
@@ -37720,7 +37557,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100242,
-     "lastLinkId": 98546,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 1,
@@ -37782,17 +37619,6 @@
       "pos": [
        -1740.095703125,
        354
-      ]
-     },
-     {
-      "id": "p6-selected-identifier",
-      "name": "selected_identifier",
-      "type": "STRING",
-      "linkIds": [],
-      "localized_name": "Selected Identifier",
-      "pos": [
-       -1740.095703125,
-       374
       ]
      },
      {
@@ -38073,46 +37899,6 @@
       "bgcolor": "#485176"
      },
      {
-      "id": 10306,
-      "type": "GetNode",
-      "pos": [
-       -1176,
-       266
-      ],
-      "size": [
-       266,
-       56
-      ],
-      "flags": {
-       "collapsed": true
-      },
-      "order": 3,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-       {
-        "name": "MODEL",
-        "type": "MODEL",
-        "links": []
-       }
-      ],
-      "title": "GET · Base Main Model",
-      "properties": {
-       "Node name for S&R": "GetNode",
-       "aux_id": "kijai/ComfyUI-KJNodes",
-       "ue_properties": {
-        "widget_ue_connectable": {},
-        "version": "7.8",
-        "input_ue_unconnectable": {}
-       }
-      },
-      "widgets_values": [
-       "saya_base_main_model"
-      ],
-      "color": "#303650",
-      "bgcolor": "#485176"
-     },
-     {
       "id": 10305,
       "type": "SayaCoupleImprintResolve",
       "pos": [
@@ -38284,7 +38070,6 @@
       "properties": {
        "Node name for S&R": "SayaUpscaleTargetCalculator",
        "cnr_id": "Saya_Couple",
-       "saya_divisor": 16,
        "saya_policy": "main preset pixel budget, preserve ratio"
       },
       "widgets_values": [
@@ -38739,7 +38524,7 @@
      {
       "id": 98417,
       "origin_id": -10,
-      "origin_slot": 4,
+      "origin_slot": 3,
       "target_id": 10309,
       "target_slot": 6,
       "type": "BOOLEAN"
@@ -38809,7 +38594,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -41241,7 +41026,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100242,
-     "lastLinkId": 98546,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -42051,7 +41836,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -42344,8 +42129,7 @@
       "title": "Checkpoint Identities · Model 1",
       "properties": {
        "Node name for S&R": "SayaCoupleCheckpointIdentities",
-       "cnr_id": "Saya_Couple",
-       "saya_hidden_technical": true
+       "cnr_id": "Saya_Couple"
       },
       "color": "#243447",
       "bgcolor": "#35526b"
@@ -42400,8 +42184,7 @@
       "title": "Checkpoint Identities · Model 2",
       "properties": {
        "Node name for S&R": "SayaCoupleCheckpointIdentities",
-       "cnr_id": "Saya_Couple",
-       "saya_hidden_technical": true
+       "cnr_id": "Saya_Couple"
       },
       "color": "#243447",
       "bgcolor": "#35526b"
@@ -42439,8 +42222,7 @@
       "properties": {
        "Node name for S&R": "GetNode",
        "aux_id": "kijai/ComfyUI-KJNodes",
-       "previousName": "saya_base_model_1_identifier",
-       "saya_hidden_technical": true
+       "previousName": "saya_base_model_1_identifier"
       },
       "widgets_values": [
        "saya_base_model_1_identifier"
@@ -42481,8 +42263,7 @@
       "properties": {
        "Node name for S&R": "GetNode",
        "aux_id": "kijai/ComfyUI-KJNodes",
-       "previousName": "saya_base_model_2_identifier",
-       "saya_hidden_technical": true
+       "previousName": "saya_base_model_2_identifier"
       },
       "widgets_values": [
        "saya_base_model_2_identifier"
@@ -42957,7 +42738,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100241,
-     "lastLinkId": 98531,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -43187,7 +42968,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100242,
-     "lastLinkId": 98546,
+     "lastLinkId": 98548,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -44289,7 +44070,8 @@
  },
  "config": {},
  "extra": {
-  "frontendVersion": "1.45.19"
+  "frontendVersion": "1.45.19",
+  "saya_couple_version": "0.3.0"
  },
  "version": 0.4
 }

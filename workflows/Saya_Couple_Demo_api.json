@@ -101,7 +101,6 @@
    "strength_1": 1,
    "strength_2": 1,
    "solo": false,
-   "dual_attention_enabled": true,
    "model_1": [
     "3",
     0

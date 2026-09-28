@@ -27,21 +27,14 @@ Frozen conventions:
     through replicate padding -- adapted from ``saya_split_mask.py:34-47``.
   At feather 0.0 both produce the same hard rectangle.
 
-Per-tile couple crop: ``mask_for_tile`` / ``mask_for_tile_work`` slice the
-REAL region of the full-image mask for each tile (the full P1->P2 gradient is
-NEVER resampled inside a tile). The engine consumer (``saya_couple_crop``
-metadata, ``crop_model_patch.py:14-26``) must use exactly this path: slice
-first, resize NEAREST second.
-
-Engine LIVE grid: LIVE_GRID_BEHAVIOR = CEIL, imposed by the engine -- see
-``usdu_engine_config.live_grid``; ``tile_windows`` follows the same
-convention.
+Per-tile couple crop is done at runtime by the PPM vendor
+(``ppm_vendor/attention_couple/common.py::crop_mask_to_tile``): slice the real
+tile region of the full-image mask first, resize NEAREST second.
 """
 
 from __future__ import annotations
 
 import math
-from enum import Enum
 from typing import Any
 
 import torch
@@ -56,23 +49,6 @@ from .couple_imprint_v2 import (
 
 class SayaMaskError(ValueError):
     """Raised for an unusable grid, geometry or mask control."""
-
-
-class Orientation(Enum):
-    """Orientation stated in terms of the resulting REGIONS. Never vertical/horizontal."""
-
-    LEFT_RIGHT = "LEFT_RIGHT"
-    TOP_BOTTOM = "TOP_BOTTOM"
-
-    @classmethod
-    def from_geometry(cls, geometry: dict[str, Any]) -> "Orientation":
-        value = geometry.get("derived", {}).get("orientation")
-        try:
-            return cls(str(value))
-        except ValueError:
-            raise SayaMaskError(
-                f"invalid orientation {value!r} -- LEFT_RIGHT/TOP_BOTTOM only"
-            ) from None
 
 
 _LEGACY_HINT = (
@@ -354,128 +330,6 @@ class SayaRegionMasks:
         self.person_2 = person_2
         self.height = height
         self.width = width
-
-    def as_ppm_inputs(self) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor | None]:
-        """(base, p1, p2|None) as (B,H,W) -- the PPM patch's interface."""
-        return self.base, self.person_1, self.person_2
-
-
-# ---------------------------------------------------------------------------
-# Tile windows (LIVE grid = CEIL) and per-tile mask
-# ---------------------------------------------------------------------------
-
-def tile_windows(width: int, height: int, tile: int) -> list["TileWindow"]:
-    """All tile windows on the LIVE CEIL grid (rows x cols).
-
-    Fixed convention: (rows, cols) = (ceil(H/tile), ceil(W/tile)) -- the test
-    case 1792x2304/512 gives rows=5, cols=4, 20 tiles total (the tqdm
-    round-based grid would only display 16; it is NOT the grid that actually
-    executes).
-    """
-    _check_grid(height, width)
-    if isinstance(tile, bool) or not isinstance(tile, int) or tile < 1:
-        raise SayaMaskError(f"tile must be a positive int, got {tile!r}")
-    windows: list[TileWindow] = []
-    rows = math.ceil(height / tile)
-    cols = math.ceil(width / tile)
-    for row in range(rows):
-        for col in range(cols):
-            windows.append(TileWindow(
-                x0=col * tile,
-                y0=row * tile,
-                x1=min((col + 1) * tile, width),
-                y1=min((row + 1) * tile, height),
-                row=row,
-                col=col,
-            ))
-    return windows
-
-
-class TileWindow:
-    """Pixel window [x0,x1) x [y0,y1) of a tile on the current canvas."""
-
-    def __init__(self, x0: int, y0: int, x1: int, y1: int, row: int = 0, col: int = 0) -> None:
-        for name, value in (("x0", x0), ("y0", y0), ("x1", x1), ("y1", y1)):
-            if isinstance(value, bool) or not isinstance(value, int):
-                raise SayaMaskError(f"tile {name} must be int, got {value!r}")
-        if x1 <= x0 or y1 <= y0 or x0 < 0 or y0 < 0:
-            raise SayaMaskError(f"invalid tile window x[{x0}:{x1}] y[{y0}:{y1}]")
-        self.x0, self.y0, self.x1, self.y1 = x0, y0, x1, y1
-        self.row, self.col = row, col
-
-    @property
-    def width(self) -> int:
-        return self.x1 - self.x0
-
-    @property
-    def height(self) -> int:
-        return self.y1 - self.y0
-
-
-def mask_for_tile(mask_hw: torch.Tensor, window: TileWindow) -> torch.Tensor:
-    """The REAL slice of the full-image mask for one canvas window."""
-    if mask_hw.ndim != 2:
-        raise SayaMaskError(f"expected (H,W) mask, got {tuple(mask_hw.shape)}")
-    if window.x1 > mask_hw.shape[1] or window.y1 > mask_hw.shape[0]:
-        raise SayaMaskError(
-            f"tile x[{window.x0}:{window.x1}] y[{window.y0}:{window.y1}] does not fit "
-            f"mask {tuple(mask_hw.shape)} -- the window belongs to another resolution"
-        )
-    return mask_hw[window.y0:window.y1, window.x0:window.x1].contiguous()
-
-
-def padded_tile_window(window: TileWindow, padding: int, canvas_w: int, canvas_h: int) -> TileWindow:
-    """The engine's CROP window: core tile + padding band, clamped to the canvas.
-
-    Mirrors ``get_crop_region`` (``usdu_utils.py:50-63``): padding is added on
-    EACH side of the white rectangle, then clamped -- so the window the tile
-    actually processes is LARGER than the core tile. Note: the engine then
-    applies ``expand_crop`` (uniform ratio) -- the exact FINAL window is the
-    one that layer 1 carries in ``saya_couple_crop.crop_region``; this
-    approximation is only for tests/auditing, never for guessing the crop.
-    """
-    x0 = max(window.x0 - padding, 0)
-    y0 = max(window.y0 - padding, 0)
-    x1 = min(window.x1 + padding, canvas_w)
-    y1 = min(window.y1 + padding, canvas_h)
-    return TileWindow(x0=x0, y0=y0, x1=x1, y1=y1, row=window.row, col=window.col)
-
-
-def mask_for_tile_work(mask_hw: torch.Tensor, window: TileWindow, work_h: int, work_w: int) -> torch.Tensor:
-    """The mask as seen by the tile at its WORK size (round8(tile+padding)).
-
-    Contractual order: slice the REAL window FIRST, resize NEAREST SECOND --
-    never the other way around (resampling the full frame first would crush
-    the whole P1->P2 gradient into the tile, a known past defect).
-
-    ``window`` MUST be the engine's CROP window -- core tile + padding band
-    (see ``padded_tile_window``; in production: the ``crop_region`` value of
-    the ``saya_couple_crop`` metadata written by layer 1,
-    ``crop_model_patch.py:50-58``). Resizing the bare core-tile slice to the
-    padded size would stretch the geometry (the padding band is spatial
-    context, not content) -- never pass the bare core tile.
-    """
-    _check_grid(work_h, work_w)
-    tile_mask = mask_for_tile(mask_hw, window)
-    return functional.interpolate(
-        tile_mask.unsqueeze(0).unsqueeze(0), size=(work_h, work_w), mode="nearest"
-    ).squeeze(0).squeeze(0)
-
-
-def downsample_nearest(mask: torch.Tensor, size: tuple[int, int]) -> torch.Tensor:
-    """Downsample NEAREST to the attention grid (staircase contour is expected).
-
-    Accepts (H,W), (B,H,W) or (1,1,H,W); returns the same dimensionality.
-    """
-    squeeze2d = mask.ndim == 2
-    squeeze3d = mask.ndim == 3
-    work = mask.unsqueeze(0).unsqueeze(0) if squeeze2d else (mask.unsqueeze(0) if squeeze3d else mask)
-    down = functional.interpolate(work, size=size, mode="nearest")
-    if squeeze2d:
-        return down.squeeze(0).squeeze(0)
-    if squeeze3d:
-        return down.squeeze(0)
-    return down
 
 
 # ---------------------------------------------------------------------------
