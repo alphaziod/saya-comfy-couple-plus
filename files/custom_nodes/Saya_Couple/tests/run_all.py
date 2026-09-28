@@ -40,6 +40,7 @@ import test_registry
 import test_split_mask
 import test_workflow_compat
 import test_workflow_v030
+import test_audit_regressions
 
 
 def guarded(tests):
@@ -133,6 +134,9 @@ def main() -> int:
     absorb(guarded(test_workflow_compat.TESTS))
     absorb(guarded(test_workflow_v030.TESTS))
     absorb(guarded(test_removed_paths.TESTS))
+
+    print("== audit regressions ==")
+    absorb(guarded(test_audit_regressions.TESTS))
 
     print()
     if failures:

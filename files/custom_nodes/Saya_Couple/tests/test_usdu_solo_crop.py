@@ -79,12 +79,18 @@ def _with_global_env(value, fn):
 def test_couple_forces_crop():
     module = _node()
     c = Check("usdu_couple_forces_crop")
-    for global_env in (None, "1", "0"):
-        for legacy in (None, False, True):
-            (crop, leaked), after = _with_global_env(global_env, lambda: _run(module, legacy, solo=False))
-            c.eq(crop, True, f"Couple: crop ON (global env={global_env}, legacy couple_crop={legacy})")
-            c.eq(leaked, False, "legacy couple_crop never reaches the node")
-            c.eq(after, global_env, "global env restored after the call")
+    # The fake engine has no crop_model_patch.py next to it; the gate check has its own test.
+    real_gate_check = module._couple_crop_gate_missing
+    module._couple_crop_gate_missing = lambda node_class: None
+    try:
+        for global_env in (None, "1", "0"):
+            for legacy in (None, False, True):
+                (crop, leaked), after = _with_global_env(global_env, lambda: _run(module, legacy, solo=False))
+                c.eq(crop, True, f"Couple: crop ON (global env={global_env}, legacy couple_crop={legacy})")
+                c.eq(leaked, False, "legacy couple_crop never reaches the node")
+                c.eq(after, global_env, "global env restored after the call")
+    finally:
+        module._couple_crop_gate_missing = real_gate_check
     return c.report()
 
 

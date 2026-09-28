@@ -41,6 +41,7 @@ Contracts carried by the config:
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from .usdu_engine_config import (
@@ -98,6 +99,29 @@ def _resolve_upscale_node() -> Any:
 _SAYA_COUPLE_CROP_ENV = "SAYA_USDU_COUPLE_CROP"
 
 
+def _couple_crop_gate_missing(node_class: Any) -> str | None:
+    """Why the installed engine cannot honour the couple-crop gate, or None when it can.
+
+    The gate lives in an optional patch of ComfyUI_UltimateSDUpscale
+    (patches/third_party/ultimatesdupscale_saya_couple_crop.patch in the release).
+    A stock build ignores the variable and every tile then squashes the
+    full-frame P1/P2 masks into itself.
+    """
+    import inspect
+    from pathlib import Path
+
+    try:
+        engine_dir = Path(inspect.getfile(node_class)).resolve().parent
+    except (TypeError, OSError):
+        return f"cannot locate the source of {getattr(node_class, '__name__', node_class)!r}"
+    reader = engine_dir / "crop_model_patch.py"
+    if not reader.is_file():
+        return f"{reader} not found"
+    if _SAYA_COUPLE_CROP_ENV not in reader.read_text(encoding="utf-8", errors="replace"):
+        return f"{reader} does not read {_SAYA_COUPLE_CROP_ENV}"
+    return None
+
+
 def _delegate_with_couple_crop_env(node_class: Any, call: dict[str, Any], couple_crop: bool) -> Any:
     """Set the engine's couple-crop gate to ``couple_crop`` for this delegated call only.
 
@@ -109,6 +133,14 @@ def _delegate_with_couple_crop_env(node_class: Any, call: dict[str, Any], couple
     """
     import os
 
+    if couple_crop:
+        missing = _couple_crop_gate_missing(node_class)
+        if missing:
+            logging.warning(
+                "[Saya Couple] USDU couple crop unavailable (%s): P1/P2 masks are applied full-frame to every tile. "
+                "Apply the optional patches/third_party/ultimatesdupscale_saya_couple_crop.patch from the Saya Couple release.",
+                missing,
+            )
     previous = os.environ.get(_SAYA_COUPLE_CROP_ENV)
     if couple_crop:
         os.environ[_SAYA_COUPLE_CROP_ENV] = "1"

@@ -31,7 +31,8 @@ def register_image_phase_routes() -> None:
             phase = parse_phase(payload.get("phase"))
             detailer = normalize_detailer(payload.get("detailer", "none"))
             root = str(payload.get("checkpoint_root", "image/checkpoints"))
-            manifest = promote_candidate(phase, detailer, root)
+            transaction = str(payload.get("transaction_uuid") or "") or None
+            manifest = promote_candidate(phase, detailer, root, transaction)
             return web.json_response({"ok": True, "manifest": manifest})
         except (ValueError, OSError) as error:
             LOGGER.exception("Image phase validation failed")

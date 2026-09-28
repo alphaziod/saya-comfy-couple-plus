@@ -153,7 +153,7 @@ function checkpointRoot() {
     return String(rootWidget?.value ?? "image/checkpoints");
 }
 
-async function resetToBeginning(reason) {
+async function resetToBeginning(reason, failedPhase = 1) {
     sequenceGeneration += 1;
     clearNextTimer();
     sequenceRunning = false;
@@ -162,13 +162,17 @@ async function resetToBeginning(reason) {
     handledTransactions.clear();
     closePopup();
 
+    // A failure after Phase 1 only drops that phase's unvalidated candidate:
+    // the /redo route invalidates Phase 1 entirely, which would delete the
+    // image the user already approved.
+    const cleanupPhase = failedPhase > 1 ? failedPhase : 1;
     try {
         await post("/saya/image-phases/redo", {
-            phase: 1,
+            phase: cleanupPhase,
             checkpoint_root: checkpointRoot(),
         });
     } catch (error) {
-        console.debug("[Saya Image Auto] unable to clean up the phase 1 candidate", error);
+        console.debug(`[Saya Image Auto] unable to clean up the phase ${cleanupPhase} candidate`, error);
     }
 
     try {
@@ -179,12 +183,12 @@ async function resetToBeginning(reason) {
     console.info(`[Saya Image Auto] sequence rearmed from phase 1 (${reason}).`);
 }
 
-function armResetToBeginning(reason) {
+function armResetToBeginning(reason, failedPhase = 1) {
     if (resetPending) return resetPromise;
     resetPending = true;
     resetPromise = resetPromise
         .catch(() => undefined)
-        .then(() => resetToBeginning(reason))
+        .then(() => resetToBeginning(reason, failedPhase))
         .finally(() => { resetPending = false; });
     return resetPromise;
 }
@@ -276,6 +280,7 @@ function showReviewPopup(node, message) {
         try {
             await post("/saya/image-phases/validate", {
                 phase: 1, detailer: "none", checkpoint_root: review.checkpoint_root,
+                transaction_uuid: review.transaction_uuid,
             });
             closePopup();
             await freeMemory();
@@ -368,7 +373,7 @@ app.registerExtension({
         const resetAfterFailure = (event) => {
             if (!sequenceRunning && !nextTimer && !popup) return;
             const message = String(event?.detail?.exception_message ?? "manual stop");
-            void armResetToBeginning(message);
+            void armResetToBeginning(message, activePhase);
         };
         api.addEventListener("execution_error", resetAfterFailure);
         api.addEventListener("execution_interrupted", resetAfterFailure);

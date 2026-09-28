@@ -7,6 +7,8 @@ Every violation raises RuntimeError, there is no path back to the historic coupl
 
 from __future__ import annotations
 
+import inspect
+
 import torch
 
 import comfy.ldm.modules.attention as attention
@@ -64,8 +66,34 @@ def _check_model(model):
         raise RuntimeError(f"dual attention: MODEL_1 already carries an attn2 patch ({', '.join(present)}), the historic couple must not be applied")
 
 
+CORE_PATCH_HINT = "install the Saya core patch with the Saya Couple installer (./saya install)"
+
+
+def core_patch_missing():
+    """Why the running ComfyUI core cannot honour saya_dual_mode, or None when it can.
+
+    Without the core patch the saya_dual keys are never read and Couple renders
+    MAIN only, silently; this is the handshake that turns that into an error.
+    """
+    for name in ("saya_dual_attn2", "saya_regional_fusion", "saya_dual_check_hooks"):
+        if not callable(getattr(attention, name, None)):
+            return f"comfy.ldm.modules.attention.{name} is missing"
+    # The module source, not the live forward: other packs wrap
+    # BasicTransformerBlock.forward at import (e.g. ComfyUI-Easy-Use).
+    source = inspect.getsource(attention)
+    if 'transformer_options.get("saya_dual_mode"' not in source:
+        return "BasicTransformerBlock never reads saya_dual_mode"
+    return None
+
+
 def enable_dual_attention(model, main, pos_1, pos_2, mask_1, mask_2):
     """Clone MODEL_1 with saya_dual_mode and the saya_dual payload."""
+    missing = core_patch_missing()
+    if missing:
+        raise RuntimeError(
+            f"dual attention: this ComfyUI core has no Saya dual attention ({missing}); "
+            f"Couple would silently render MAIN only. Fix: {CORE_PATCH_HINT}."
+        )
     contexts = {"main": _context(main, "main"), "p1": _context(pos_1, "pos_1"), "p2": _context(pos_2, "pos_2")}
     if len({id(t) for t in contexts.values()}) != 3 or len({t.data_ptr() for t in contexts.values()}) != 3:
         raise RuntimeError("dual attention: main, pos_1 and pos_2 must be three separate conditionings")
