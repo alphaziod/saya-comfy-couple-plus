@@ -2,7 +2,7 @@
  "id": "868afda2-e3eb-4a97-9431-e8d824175b2e",
  "revision": 32,
  "last_node_id": 100242,
- "last_link_id": 98549,
+ "last_link_id": 98554,
  "nodes": [
   {
    "id": 2678,
@@ -37569,7 +37569,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100242,
-     "lastLinkId": 98548,
+     "lastLinkId": 98554,
      "lastRerouteId": 575
     },
     "revision": 1,
@@ -37752,7 +37752,9 @@
         "name": "image",
         "type": "IMAGE",
         "links": [
-         1
+         1,
+         10,
+         98540
         ]
        },
        {
@@ -37778,7 +37780,8 @@
         "type": "INT",
         "links": [
          33,
-         98545
+         98545,
+         98554
         ]
        },
        {
@@ -38045,9 +38048,7 @@
         "localized_name": "image",
         "name": "image",
         "type": "IMAGE",
-        "links": [
-         4
-        ]
+        "links": []
        },
        {
         "localized_name": "target_width",
@@ -38136,8 +38137,8 @@
         "name": "image",
         "type": "IMAGE",
         "links": [
-         10,
-         98540
+         98550,
+         98551
         ]
        }
       ],
@@ -38366,7 +38367,7 @@
         "name": "IMAGE",
         "type": "IMAGE",
         "links": [
-         98546
+         4
         ]
        }
       ],
@@ -38377,6 +38378,234 @@
       "widgets_values": [
        0
       ]
+     },
+     {
+      "id": 30002,
+      "type": "ImageBlur",
+      "pos": [
+       -476,
+       168
+      ],
+      "size": [
+       300,
+       110
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "image",
+        "name": "image",
+        "type": "IMAGE",
+        "link": 98550
+       },
+       {
+        "localized_name": "blur_radius",
+        "name": "blur_radius",
+        "type": "INT",
+        "widget": {
+         "name": "blur_radius"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "sigma",
+        "name": "sigma",
+        "type": "FLOAT",
+        "widget": {
+         "name": "sigma"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "IMAGE",
+        "name": "IMAGE",
+        "type": "IMAGE",
+        "links": [
+         98552
+        ]
+       }
+      ],
+      "title": "Naturalize V2 · Soften (blur copy)",
+      "properties": {
+       "Node name for S&R": "ImageBlur",
+       "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+       1,
+       1.0
+      ]
+     },
+     {
+      "id": 30003,
+      "type": "ImageBlend",
+      "pos": [
+       -96,
+       168
+      ],
+      "size": [
+       300,
+       130
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "image1",
+        "name": "image1",
+        "type": "IMAGE",
+        "link": 98551
+       },
+       {
+        "localized_name": "image2",
+        "name": "image2",
+        "type": "IMAGE",
+        "link": 98552
+       },
+       {
+        "localized_name": "blend_factor",
+        "name": "blend_factor",
+        "type": "FLOAT",
+        "widget": {
+         "name": "blend_factor"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "blend_mode",
+        "name": "blend_mode",
+        "type": "COMBO",
+        "widget": {
+         "name": "blend_mode"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "IMAGE",
+        "name": "IMAGE",
+        "type": "IMAGE",
+        "links": [
+         98553
+        ]
+       }
+      ],
+      "title": "Naturalize V2 · Soften (0.10)",
+      "properties": {
+       "Node name for S&R": "ImageBlend",
+       "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+       0.1,
+       "normal"
+      ]
+     },
+     {
+      "id": 30004,
+      "type": "SayaNaturalizePostProcess",
+      "pos": [
+       284,
+       168
+      ],
+      "size": [
+       360,
+       200
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "image",
+        "name": "image",
+        "type": "IMAGE",
+        "link": 98553
+       },
+       {
+        "localized_name": "grain_strength",
+        "name": "grain_strength",
+        "type": "FLOAT",
+        "widget": {
+         "name": "grain_strength"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "dither_amount",
+        "name": "dither_amount",
+        "type": "FLOAT",
+        "widget": {
+         "name": "dither_amount"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "seed",
+        "name": "seed",
+        "type": "INT",
+        "widget": {
+         "name": "seed"
+        },
+        "link": 98554
+       },
+       {
+        "localized_name": "reference",
+        "name": "reference",
+        "shape": 7,
+        "type": "IMAGE",
+        "link": null
+       },
+       {
+        "localized_name": "color_lock",
+        "name": "color_lock",
+        "shape": 7,
+        "type": "FLOAT",
+        "widget": {
+         "name": "color_lock"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "highlight_tame",
+        "name": "highlight_tame",
+        "shape": 7,
+        "type": "FLOAT",
+        "widget": {
+         "name": "highlight_tame"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "IMAGE",
+        "name": "IMAGE",
+        "type": "IMAGE",
+        "links": [
+         98546
+        ]
+       }
+      ],
+      "title": "Naturalize V2 · Grain + Dither",
+      "properties": {
+       "Node name for S&R": "SayaNaturalizePostProcess",
+       "cnr_id": "Saya_Couple"
+      },
+      "widgets_values": [
+       0.008,
+       0.5,
+       0,
+       "fixed",
+       0.0,
+       0.0
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
      }
     ],
     "groups": [],
@@ -38407,7 +38636,7 @@
      },
      {
       "id": 4,
-      "origin_id": 10303,
+      "origin_id": 100242,
       "origin_slot": 0,
       "target_id": 10304,
       "target_slot": 0,
@@ -38439,7 +38668,7 @@
      },
      {
       "id": 10,
-      "origin_id": 10304,
+      "origin_id": 10300,
       "origin_slot": 0,
       "target_id": 10309,
       "target_slot": 3,
@@ -38543,7 +38772,7 @@
      },
      {
       "id": 98540,
-      "origin_id": 10304,
+      "origin_id": 10300,
       "origin_slot": 0,
       "target_id": 100242,
       "target_slot": 0,
@@ -38591,11 +38820,51 @@
      },
      {
       "id": 98546,
-      "origin_id": 100242,
+      "origin_id": 30004,
       "origin_slot": 0,
       "target_id": -20,
       "target_slot": 0,
       "type": "IMAGE"
+     },
+     {
+      "id": 98550,
+      "origin_id": 10304,
+      "origin_slot": 0,
+      "target_id": 30002,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 98551,
+      "origin_id": 10304,
+      "origin_slot": 0,
+      "target_id": 30003,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 98552,
+      "origin_id": 30002,
+      "origin_slot": 0,
+      "target_id": 30003,
+      "target_slot": 1,
+      "type": "IMAGE"
+     },
+     {
+      "id": 98553,
+      "origin_id": 30003,
+      "origin_slot": 0,
+      "target_id": 30004,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 98554,
+      "origin_id": 10300,
+      "origin_slot": 3,
+      "target_id": 30004,
+      "target_slot": 3,
+      "type": "INT"
      }
     ],
     "extra": {}
@@ -42980,7 +43249,7 @@
     "state": {
      "lastGroupId": 3303,
      "lastNodeId": 100242,
-     "lastLinkId": 98548,
+     "lastLinkId": 98554,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -43078,8 +43347,7 @@
       "type": "INT",
       "linkIds": [
        7,
-       22,
-       27
+       22
       ],
       "localized_name": "seed",
       "pos": [
@@ -43655,8 +43923,7 @@
         "name": "IMAGE",
         "type": "IMAGE",
         "links": [
-         23,
-         24
+         28
         ]
        }
       ],
@@ -43672,234 +43939,6 @@
        "fixed",
        0.8,
        0.3
-      ],
-      "color": "#233",
-      "bgcolor": "#355"
-     },
-     {
-      "id": 30002,
-      "type": "ImageBlur",
-      "pos": [
-       1960,
-       210
-      ],
-      "size": [
-       300,
-       110
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [
-       {
-        "localized_name": "image",
-        "name": "image",
-        "type": "IMAGE",
-        "link": 23
-       },
-       {
-        "localized_name": "blur_radius",
-        "name": "blur_radius",
-        "type": "INT",
-        "widget": {
-         "name": "blur_radius"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "sigma",
-        "name": "sigma",
-        "type": "FLOAT",
-        "widget": {
-         "name": "sigma"
-        },
-        "link": null
-       }
-      ],
-      "outputs": [
-       {
-        "localized_name": "IMAGE",
-        "name": "IMAGE",
-        "type": "IMAGE",
-        "links": [
-         25
-        ]
-       }
-      ],
-      "title": "Naturalize V2 · Soften (blur copy)",
-      "properties": {
-       "Node name for S&R": "ImageBlur",
-       "cnr_id": "comfy-core"
-      },
-      "widgets_values": [
-       1,
-       1.0
-      ]
-     },
-     {
-      "id": 30003,
-      "type": "ImageBlend",
-      "pos": [
-       1960,
-       360
-      ],
-      "size": [
-       300,
-       130
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [
-       {
-        "localized_name": "image1",
-        "name": "image1",
-        "type": "IMAGE",
-        "link": 24
-       },
-       {
-        "localized_name": "image2",
-        "name": "image2",
-        "type": "IMAGE",
-        "link": 25
-       },
-       {
-        "localized_name": "blend_factor",
-        "name": "blend_factor",
-        "type": "FLOAT",
-        "widget": {
-         "name": "blend_factor"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "blend_mode",
-        "name": "blend_mode",
-        "type": "COMBO",
-        "widget": {
-         "name": "blend_mode"
-        },
-        "link": null
-       }
-      ],
-      "outputs": [
-       {
-        "localized_name": "IMAGE",
-        "name": "IMAGE",
-        "type": "IMAGE",
-        "links": [
-         26
-        ]
-       }
-      ],
-      "title": "Naturalize V2 · Soften (0.10)",
-      "properties": {
-       "Node name for S&R": "ImageBlend",
-       "cnr_id": "comfy-core"
-      },
-      "widgets_values": [
-       0.1,
-       "normal"
-      ]
-     },
-     {
-      "id": 30004,
-      "type": "SayaNaturalizePostProcess",
-      "pos": [
-       2340,
-       210
-      ],
-      "size": [
-       360,
-       200
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [
-       {
-        "localized_name": "image",
-        "name": "image",
-        "type": "IMAGE",
-        "link": 26
-       },
-       {
-        "localized_name": "grain_strength",
-        "name": "grain_strength",
-        "type": "FLOAT",
-        "widget": {
-         "name": "grain_strength"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "dither_amount",
-        "name": "dither_amount",
-        "type": "FLOAT",
-        "widget": {
-         "name": "dither_amount"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "seed",
-        "name": "seed",
-        "type": "INT",
-        "widget": {
-         "name": "seed"
-        },
-        "link": 27
-       },
-       {
-        "localized_name": "reference",
-        "name": "reference",
-        "shape": 7,
-        "type": "IMAGE",
-        "link": null
-       },
-       {
-        "localized_name": "color_lock",
-        "name": "color_lock",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "color_lock"
-        },
-        "link": null
-       },
-       {
-        "localized_name": "highlight_tame",
-        "name": "highlight_tame",
-        "shape": 7,
-        "type": "FLOAT",
-        "widget": {
-         "name": "highlight_tame"
-        },
-        "link": null
-       }
-      ],
-      "outputs": [
-       {
-        "localized_name": "IMAGE",
-        "name": "IMAGE",
-        "type": "IMAGE",
-        "links": [
-         28
-        ]
-       }
-      ],
-      "title": "Naturalize V2 · Grain + Dither",
-      "properties": {
-       "Node name for S&R": "SayaNaturalizePostProcess",
-       "cnr_id": "Saya_Couple"
-      },
-      "widgets_values": [
-       0.008,
-       0.5,
-       0,
-       "fixed",
-       0.0,
-       0.0
       ],
       "color": "#233",
       "bgcolor": "#355"
@@ -44028,48 +44067,8 @@
       "type": "INT"
      },
      {
-      "id": 23,
-      "origin_id": 30001,
-      "origin_slot": 0,
-      "target_id": 30002,
-      "target_slot": 0,
-      "type": "IMAGE"
-     },
-     {
-      "id": 24,
-      "origin_id": 30001,
-      "origin_slot": 0,
-      "target_id": 30003,
-      "target_slot": 0,
-      "type": "IMAGE"
-     },
-     {
-      "id": 25,
-      "origin_id": 30002,
-      "origin_slot": 0,
-      "target_id": 30003,
-      "target_slot": 1,
-      "type": "IMAGE"
-     },
-     {
-      "id": 26,
-      "origin_id": 30003,
-      "origin_slot": 0,
-      "target_id": 30004,
-      "target_slot": 0,
-      "type": "IMAGE"
-     },
-     {
-      "id": 27,
-      "origin_id": -10,
-      "origin_slot": 5,
-      "target_id": 30004,
-      "target_slot": 3,
-      "type": "INT"
-     },
-     {
       "id": 28,
-      "origin_id": 30004,
+      "origin_id": 30001,
       "origin_slot": 0,
       "target_id": -20,
       "target_slot": 0,

@@ -7,6 +7,8 @@ raw_negative, read when the patch runs) are never shared between models.
 
 from __future__ import annotations
 
+import functools
+
 from nodes import ConditioningCombine, ConditioningSetMask
 
 from custom_nodes.MultiMaskCouple.attention_couple import AttentionCouple
@@ -19,16 +21,32 @@ def _masked_cond(cond, mask, strength):
     return ConditioningSetMask().append(cond, mask, "default", float(strength))[0]
 
 
+def _on_real_grid(patch):
+    """MultiMaskCouple sizes its masks from ``original_shape`` (the latent) by guessing the
+    downsampling factor; SDXL rounds each downsample up, so at sizes that are not a multiple
+    of 32 the guess fails and its fallback lays the mask out transposed (1584x2320: grid 73x50
+    read as 50x73). Hand it the block's real activation grid instead: the guess is then exact
+    at factor 1, and unchanged wherever it was already right."""
+    @functools.wraps(patch)
+    def on_real_grid(q, k, v, extra_options):
+        return patch(q, k, v, {**extra_options, "original_shape": extra_options["activations_shape"]})
+    return on_real_grid
+
+
 def _attention_couple_patch(model, clip, positive, negative):
     # Fresh instance on every call: the prompts captured by the patch
     # stay private to this model, regardless of execution order.
-    return AttentionCouple().attention_couple(
+    patched, positive, negative = AttentionCouple().attention_couple(
         model=model,
         clip=clip,
         positive=positive,
         negative=negative,
         mode="Attention",
     )
+    replace = patched.model_options["transformer_options"]["patches_replace"]["attn2"]
+    for key, patch in replace.items():
+        replace[key] = _on_real_grid(patch)
+    return patched, positive, negative
 
 
 def apply_multimask_couple(

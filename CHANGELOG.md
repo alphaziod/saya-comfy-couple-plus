@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.0.2 — unreleased
+
+### Full workflow
+
+- **Phase 6 diffuses at the SDXL-native size.** Naturalize V2 used to run its single diffusion on the ~2K final image
+  (1584 × 2320 ≈ 3.7 MP, one block): SDXL then placed prompt details (extra nipples, a navel) in empty parts of each
+  person's half. Phase 6 now refines at the Phase 5 size, then upscales with the model to the same final size, then
+  applies soften / grain / dither at that size (the soften and grain nodes moved out of the Naturalize V2 subgraph,
+  unchanged). About 2× faster.
+
+### Couple
+
+- **MultiMaskCouple masks on the real grid.** The MultiMaskCouple patch guesses its attention grid from the latent
+  size; SDXL rounds every downsample up, so at image sizes that are not a multiple of 32 the guess failed (41.6 % of
+  grids between 512 and 2560 px) and the P1 / P2 mask was laid out transposed (1584 × 2320: grid 73 × 50 read as
+  50 × 73). Saya now hands it the block's real activation grid. Pixel-identical at multiples of 32 (832 × 1216,
+  1664 × 2432).
+
+### Tests
+
+- 144 tests (was 140): the grid at every size from 512 to 2560 px, P1 / P2 placement at 1584 × 2320 with the real
+  MultiMaskCouple patch (50 % → 100 % of tokens in the right region), and bit-identity at multiples of 32.
+
 ## 1.0.1 — 2026-09-28
 
 ### Full workflow

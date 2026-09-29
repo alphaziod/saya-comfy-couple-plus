@@ -95,7 +95,8 @@ def _run_patch(patched_model):
     """Runs the first attn2 patch installed (simple batch cond)."""
     patch = next(iter(_attn2_patches(patched_model).values()))
     q = torch.zeros(1, 4, 8)
-    extra = {"cond_or_uncond": [0], "original_shape": [1, 4, 16, 16], "n_heads": 1}
+    # activations_shape: set by ComfyUI's SpatialTransformer for every block (4 tokens = a 2x2 grid).
+    extra = {"cond_or_uncond": [0], "original_shape": [1, 4, 16, 16], "activations_shape": [1, 320, 2, 2], "n_heads": 1}
     return patch(q, None, None, extra)
 
 
