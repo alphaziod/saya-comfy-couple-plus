@@ -41,6 +41,7 @@ import test_split_mask
 import test_workflow_compat
 import test_workflow_v030
 import test_audit_regressions
+import test_multimask_grid
 
 
 def guarded(tests):
@@ -137,6 +138,7 @@ def main() -> int:
 
     print("== audit regressions ==")
     absorb(guarded(test_audit_regressions.TESTS))
+    absorb(guarded(test_multimask_grid.TESTS))
 
     print()
     if failures:

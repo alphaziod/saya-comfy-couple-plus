@@ -16,7 +16,7 @@ One switch turns the whole pipeline into **Solo mode** (MAIN + P1, one character
 | ![Couple: two characters, one scene](docs/images/demo_example.png) | ![Solo: one character, same scene](docs/images/solo_example.png) |
 | demo workflow, MAIN + P1 + P2 | full workflow, MAIN + P1 only |
 
-Current version: **1.0.1** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
+Current version: **1.0.2** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
 RDNA4 16 GB. It is first and foremost **a backup of my own ComfyUI setup**, made public in case it helps someone
 with the same problem. Take what you need.
 
@@ -125,7 +125,7 @@ dense multicoloured gamer room.
 | 3 · HiDream | HiDream I1 refine: two text regions (P1 / P2) in Couple, one global prompt in Solo |
 | 4 · Pre-detail | light hires refine before the detailers |
 | 5 · Detailers | 13 detailer slots (Detailer 01 … 13), crop-aware couple attention |
-| 6 · Final | Remacri upscale, then **Naturalize V2**: one light diffusion with the real MAIN / P1 / P2 conditioning, colour lock, highlight taming, soften, grain |
+| 6 · Final | **Naturalize V2**: one light diffusion at the Phase 5 size with the real MAIN / P1 / P2 conditioning and colour lock / highlight taming, then the Remacri upscale to the final size, then soften and grain |
 
 Cleaned for publication **without simplifying it**: same nodes, same wiring, same sampler and pass settings. Only
 these were neutralised: checkpoints, VAEs, LoRAs (stacks shipped empty), detector models (`SELECT_*`
@@ -315,7 +315,7 @@ So in practice: **v0.23.0 or newer** is needed; only the tested commit is OFFICI
 
 0.78 is not based on one pretty picture:
 
-- **Non-regression**: pack test suite (140 tests), bit-identical proofs (`tests/proof_gain.py`: g = 1.0 equals the
+- **Non-regression**: pack test suite (144 tests), bit-identical proofs (`tests/proof_gain.py`: g = 1.0 equals the
   pre-gain code, only the character deltas are scaled, MAIN and unconditional rows untouched), installer scenarios
   (`tests/installer_scenarios.py`: install, verify, idempotence, restore, drift, conflicts, NVIDIA/AMD simulations,
   old version).
