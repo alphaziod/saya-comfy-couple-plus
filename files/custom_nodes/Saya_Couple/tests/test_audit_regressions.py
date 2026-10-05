@@ -60,32 +60,25 @@ def test_validate_without_transaction_unchanged():
 
 
 def test_couple_refuses_stock_core():
-    """A4-01/A4-02: on a core without the Saya patch, Couple must fail loudly, not render MAIN only."""
+    """A4-01/A4-02 (2026-09-28): on a core without the Saya patch, Couple used to render MAIN only, silently. Since M1
+    (2026-10-05) the core IS stock and Couple is injected by ModelPatcher object patches: it must be wired, and the
+    stock block must still produce the dual output through the Saya copy (never MAIN only, never silently)."""
     c = Check("audit_couple_refuses_stock_core")
     load_pack()
+    import subprocess
+    from harness import COMFY_ROOT
     from saya_couple.src.nodes import saya_dual_attention as dual
+    from test_dual_wiring import _RawModel
 
-    c.eq(dual.core_patch_missing(), None, "patched core is accepted")
-    # Another pack wrapping forward at import (ComfyUI-Easy-Use does) must not look like a stock core.
-    block = dual.attention.BasicTransformerBlock
-    original_forward = block.forward
-    block.forward = lambda self, *a, **k: original_forward(self, *a, **k)
-    try:
-        c.eq(dual.core_patch_missing(), None, "patched core with a wrapped forward is accepted")
-    finally:
-        block.forward = original_forward
-    live = dual.attention
-    from test_core_saya_dual import _head_module
-
-    dual.attention = _head_module()
-    try:
-        c.ok(dual.core_patch_missing() is not None, "stock core is detected")
-        mask = torch.ones(8, 8)
-        conds = [[[torch.rand(1, 4, 8), {}]] for _ in range(3)]
-        c.raises(RuntimeError, lambda: dual.enable_dual_attention(object(), *conds, mask, mask),
-                 "enable_dual_attention raises before touching the model")
-    finally:
-        dual.attention = live
+    diff = subprocess.run(["git", "diff", "--name-only", "--", "comfy/ldm/modules/attention.py"], cwd=COMFY_ROOT, capture_output=True, text=True).stdout.split()
+    c.eq(diff, [], "comfy/ldm/modules/attention.py is stock (no Saya core patch)")
+    c.ok("saya_dual_attn2" not in dir(dual.attention), "the core carries no Saya engine")
+    mask = torch.ones(8, 8)
+    conds = [[[torch.rand(1, 4, 8), {}]] for _ in range(3)]
+    patched = dual.enable_dual_attention(_RawModel(), *conds, mask, mask)
+    copies = [v for k, v in patched.object_patches.items() if k.startswith("diffusion_model.")]
+    c.ok(copies and all(getattr(v, "saya_source", None) for v in copies), "Couple wired on the stock core: one Saya copy per block")
+    c.ok("saya_dual_mode" not in patched.model_options["transformer_options"], "no core flag anywhere")
     return c.report()
 
 

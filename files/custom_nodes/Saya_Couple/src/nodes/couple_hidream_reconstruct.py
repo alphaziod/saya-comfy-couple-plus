@@ -38,8 +38,8 @@ from typing import Any, Callable
 import torch
 
 from . import conditioning_cache as cache
-from .couple_imprint_v2 import SayaCoupleImprintError, validate_imprint_v2
-from .region_masks import SayaMaskError, region_mask_rect, regions_from_geometry
+from .couple_imprint_v2 import SayaCoupleImprintError, scene_text, validate_imprint_v2
+from .region_masks import SayaMaskError, apply_ownership_map, region_mask_rect, regions_from_geometry
 
 #: HiDream VAE factor: pixel = latent * 8.
 LATENT_SCALE = 8
@@ -72,7 +72,7 @@ def compose_prompts(prompts: dict[str, str], trigger: str) -> dict[str, str]:
     An empty ``trigger`` means the LoRA is inactive (nothing is prefixed).
     """
     trigger = trigger.strip()
-    main = prompts["main"]
+    main = scene_text(prompts)
     return {
         "a": _join_prompt(trigger, main, prompts["person_1"]),
         "b": _join_prompt(trigger, main, prompts.get("person_2") or ""),
@@ -81,11 +81,12 @@ def compose_prompts(prompts: dict[str, str], trigger: str) -> dict[str, str]:
 
 
 def pure_geometry_masks(
-    geometry: dict[str, Any], height: int, width: int
+    geometry: dict[str, Any], height: int, width: int, ownership_map: dict[str, Any] | None = None
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Binary (1,H,W) P1 / P2 masks that exactly partition the frame.
 
-    P2 absent: B is P1's complement (it carries trigger + MAIN).
+    P2 absent: B is P1's complement (it carries trigger + MAIN). ``ownership_map`` (Sampler 1
+    dynamic ownership) overrides the split on the cells it owns; the partition is kept.
     """
     region_1, region_2 = regions_from_geometry(geometry)
     unit = geometry["feather_unit"]
@@ -94,6 +95,7 @@ def pure_geometry_masks(
         mask_b = 1.0 - mask_a
     else:
         mask_b = region_mask_rect(region_2, height, width, 0.0, unit, 0.0)
+        mask_a, mask_b = apply_ownership_map(ownership_map, mask_a, mask_b)
     if not bool((mask_a + mask_b == 1.0).all()):
         # A pixel outside both regions would attend no token at all in the
         # two-region HiDream mask; an overlap would see both persons.
@@ -159,7 +161,7 @@ class SayaCoupleHiDreamReconstruct:
         prompts = couple["prompts"]
         if solo:
             # Solo never reads person_2: one global MAIN + PERSON 1 text.
-            solo_positive = _join_prompt(hidream_trigger or "", prompts["main"], prompts["person_1"])
+            solo_positive = _join_prompt(hidream_trigger or "", scene_text(prompts), prompts["person_1"])
             if not solo_positive:
                 raise SayaCoupleHiDreamReconstructError("MAIN and PERSON_1 are both empty: no Solo text")
             return couple, {"solo": solo_positive, "negative": prompts["negative"]}
@@ -196,7 +198,7 @@ class SayaCoupleHiDreamReconstruct:
                 )
             height, width = int(samples.shape[-2]) * LATENT_SCALE, int(samples.shape[-1]) * LATENT_SCALE
             try:
-                mask_a, mask_b = pure_geometry_masks(couple["geometry"], height, width)
+                mask_a, mask_b = pure_geometry_masks(couple["geometry"], height, width, couple.get("ownership_map"))
             except SayaMaskError as error:
                 raise SayaCoupleHiDreamReconstructError(f"geometry: {error}") from error
 

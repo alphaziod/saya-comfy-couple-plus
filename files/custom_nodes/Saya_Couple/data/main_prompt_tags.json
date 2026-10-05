@@ -1,0 +1,168 @@
+{
+  "_note": "Groupes de tags du nœud SayaMainPrompt (menus déroulants). Un groupe = un menu, 'none' = rien. Ajouter des options est sûr ; renommer ou retirer une option casse les workflows qui l'ont sélectionnée. Ordre des blocs du guide MAIN : lumière (5), météo/ciel (6), particules (7), palette (8), profondeur/détail (9), note de classement (convention Illustrious, non testée). Champ 'fr' : libellé français de chaque tag pour le nœud SayaMainPromptFR (le tag envoyé reste l'anglais).",
+  "groups": [
+    {
+      "name": "lighting",
+      "label": "lumière",
+      "options": [
+        "warm lamplight",
+        "soft morning light",
+        "sunset light",
+        "moonlight",
+        "candlelight",
+        "neon lights",
+        "dramatic lighting",
+        "backlighting",
+        "rim lighting",
+        "volumetric lighting"
+      ],
+      "fr": {
+        "warm lamplight": "lumière de lampe chaude",
+        "soft morning light": "douce lumière du matin",
+        "sunset light": "lumière de coucher de soleil",
+        "moonlight": "clair de lune",
+        "candlelight": "lueur de bougies",
+        "neon lights": "néons",
+        "dramatic lighting": "éclairage dramatique",
+        "backlighting": "contre-jour",
+        "rim lighting": "lumière de contour",
+        "volumetric lighting": "lumière volumétrique"
+      },
+      "label_fr": "lumière"
+    },
+    {
+      "name": "time",
+      "label": "moment",
+      "options": [
+        "day",
+        "morning",
+        "evening",
+        "night",
+        "dawn",
+        "dusk",
+        "golden hour"
+      ],
+      "fr": {
+        "day": "jour",
+        "morning": "matin",
+        "evening": "soir",
+        "night": "nuit",
+        "dawn": "aube",
+        "dusk": "crépuscule",
+        "golden hour": "heure dorée"
+      },
+      "label_fr": "moment"
+    },
+    {
+      "name": "weather",
+      "label": "météo / ciel",
+      "options": [
+        "clear sky",
+        "overcast",
+        "rain",
+        "heavy rain",
+        "fog",
+        "snow",
+        "storm clouds",
+        "starry sky"
+      ],
+      "fr": {
+        "clear sky": "ciel dégagé",
+        "overcast": "ciel couvert",
+        "rain": "pluie",
+        "heavy rain": "pluie battante",
+        "fog": "brouillard",
+        "snow": "neige",
+        "storm clouds": "nuages d'orage",
+        "starry sky": "ciel étoilé"
+      },
+      "label_fr": "météo / ciel"
+    },
+    {
+      "name": "atmosphere",
+      "label": "particules / atmosphère",
+      "options": [
+        "dust particles",
+        "light rays",
+        "sparkles",
+        "mist",
+        "floating petals",
+        "embers",
+        "bokeh",
+        "lens flare"
+      ],
+      "fr": {
+        "dust particles": "particules de poussière",
+        "light rays": "rayons de lumière",
+        "sparkles": "étincelles",
+        "mist": "brume",
+        "floating petals": "pétales flottants",
+        "embers": "braises",
+        "bokeh": "bokeh",
+        "lens flare": "reflet d'objectif"
+      },
+      "label_fr": "particules / atmosphère"
+    },
+    {
+      "name": "palette",
+      "label": "palette",
+      "options": [
+        "warm colors",
+        "cool colors",
+        "pastel colors",
+        "vibrant colors",
+        "muted colors",
+        "monochrome",
+        "high contrast",
+        "pink cyan violet ambience"
+      ],
+      "fr": {
+        "warm colors": "couleurs chaudes",
+        "cool colors": "couleurs froides",
+        "pastel colors": "couleurs pastel",
+        "vibrant colors": "couleurs vives",
+        "muted colors": "couleurs sourdes",
+        "monochrome": "monochrome",
+        "high contrast": "fort contraste",
+        "pink cyan violet ambience": "ambiance rose cyan violet"
+      },
+      "label_fr": "palette"
+    },
+    {
+      "name": "detail",
+      "label": "profondeur / détail",
+      "options": [
+        "depth of field",
+        "rich detailed background",
+        "intricate details",
+        "sharp focus",
+        "cinematic composition",
+        "film grain"
+      ],
+      "fr": {
+        "depth of field": "profondeur de champ",
+        "rich detailed background": "fond riche et détaillé",
+        "intricate details": "détails fins",
+        "sharp focus": "mise au point nette",
+        "cinematic composition": "composition cinématographique",
+        "film grain": "grain de film"
+      },
+      "label_fr": "profondeur / détail"
+    },
+    {
+      "name": "rating",
+      "label": "classement (Illustrious, non testé)",
+      "options": [
+        "general",
+        "sensitive",
+        "explicit"
+      ],
+      "fr": {
+        "general": "tout public (general)",
+        "sensitive": "sensible (sensitive)",
+        "explicit": "explicite (explicit)"
+      },
+      "label_fr": "classement (Illustrious, non testé)"
+    }
+  ]
+}

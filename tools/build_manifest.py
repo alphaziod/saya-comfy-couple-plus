@@ -10,7 +10,7 @@ import os
 PKG = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SKIP_DIRS = {"__pycache__", ".git"}
 SKIP_FILES = {"MANIFEST.json"}
-UPSTREAM = "ComfyUI 41db8f4f (v0.34.0+77)"
+UPSTREAM = "ComfyUI 41db8f4f (v0.34.0+77) - 2.0: stock core, no modification"
 
 GPL = "GPL-3.0-or-later"
 GPL_COMFY = "GPL-3.0 (ComfyUI)"
@@ -30,23 +30,25 @@ def classify(rel: str) -> dict:
                      description="vendored Attention Couple / NegPip implementation")
         elif inner == "src/nodes/saya_attention_couple.py":
             e.update(origin="adapted from pamparamm/ComfyUI-ppm 'Attention Couple (PPM)' node", license=AGPL, description="Saya Attention Couple PPM node")
-        elif inner.startswith("core_patch/"):
-            e.update(origin="derived from ComfyUI (patch)", license=GPL_COMFY, description="copy of the core patch, used by the pack tests")
+        elif inner.startswith("tools/core_patches/amd_vram_safety"):
+            e.update(origin="derived from ComfyUI (patch)", license=GPL_COMFY, description="copy of the optional AMD patch + its apply script (pack tools)")
+        elif inner.startswith("tools/core_patches/ultimate_sd_upscale"):
+            e.update(origin="derived from ssitu/ComfyUI_UltimateSDUpscale (patch)", license="GPL-3.0", description="copy of the optional USDU per-tile patch (pack tools)")
+        elif inner.startswith("tools/core_patches/res4lyf"):
+            e.update(origin="derived from ClownsharkBatwing/RES4LYF (patch)", license="AGPL-3.0 + RES4LYF non-commercial clause", description="copy of the optional RES4LYF HiDream patch (pack tools)")
+        elif inner.startswith("data/"):
+            e["description"] = "data: background stock / prompt tag menus (plain JSON, editable)"
         elif inner.startswith("tests/"):
             e["description"] = "pack test suite (installed with the node)"
-    elif rel == "files/comfy/ldm/modules/attention.py":
-        e.update(destination="comfy/ldm/modules/attention.py", component="saya_core", required=True, origin="ComfyUI + Saya patch", license=GPL_COMFY,
-                 description="REFERENCE: patched attention.py for the tested upstream. The installer applies the patch; it never copies this file.",
-                 upstream_expected=UPSTREAM)
-    elif rel == "files/comfy/model_management.py":
-        e.update(destination="comfy/model_management.py", component="amd_optional", origin="ComfyUI + Saya AMD patch", license=GPL_COMFY,
-                 description="REFERENCE: patched model_management.py for the tested upstream (optional AMD patch).", upstream_expected=UPSTREAM)
-    elif rel == "patches/saya_dual_attention.patch":
-        e.update(destination="comfy/ldm/modules/attention.py", component="saya_core", required=True, origin="derived from ComfyUI", license=GPL_COMFY,
-                 description="REQUIRED core patch: MAIN/P1/P2 forced attn2 path, main_locked_delta, PERSON gain 0.78", upstream_expected=UPSTREAM)
+    elif rel.startswith("patches/legacy/"):
+        e.update(destination=None, component="legacy", required=False, origin="derived from ComfyUI", license=GPL_COMFY,
+                 description="1.x core patch, kept ONLY so that `saya install` can remove it when upgrading from 1.x; never applied by 2.0", upstream_expected=UPSTREAM)
     elif rel == "patches/amd_vram_safety.patch":
         e.update(destination="comfy/model_management.py", component="amd_optional", origin="derived from ComfyUI", license=GPL_COMFY,
-                 description="OPTIONAL AMD/ROCm VRAM safety patch", upstream_expected=UPSTREAM)
+                 description="OPTIONAL AMD/ROCm VRAM safety patch (VRAM cap, full unloads; fraction clamped since 2.0)", upstream_expected=UPSTREAM)
+    elif rel.startswith("patches/third_party/res4lyf"):
+        e.update(component="third_party_optional", origin="derived from ClownsharkBatwing/RES4LYF", license="AGPL-3.0 + RES4LYF non-commercial clause",
+                 description="OPTIONAL, not installed: HiDream masked attention split by head groups (~5 GB saved on 16 GB GPUs)", upstream_expected="RES4LYF 119679d")
     elif rel.startswith("patches/third_party/"):
         e.update(component="third_party_optional", origin="derived from ssitu/ComfyUI_UltimateSDUpscale", license="GPL-3.0",
                  description="OPTIONAL, not installed: per-tile Saya couple masks in Ultimate SD Upscale", upstream_expected="ComfyUI_UltimateSDUpscale bebd569")

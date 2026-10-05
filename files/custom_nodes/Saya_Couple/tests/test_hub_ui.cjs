@@ -23,24 +23,26 @@ function makeNode({ title, type = "subgraph", widgets = [], inputs = [], outputs
 }
 
 {
-    const widgets = Array.from({ length: 13 }, (_, i) => `Detailer ${String(i + 1).padStart(2, "0")}`)
-        .map((name) => modelWidget(`${name} Model`));
+    const widgets = [
+        "Body", "Head & Hair", "Face", "Full Eyes", "Eyes · One by One", "Breasts",
+        "Hands", "Feet", "Buttocks", "Anus", "Vulva", "Penis", "NSFW",
+    ].map((name) => modelWidget(`${name} Model`));
     const node = makeNode({
         title: "Hub Detailers · Model 1/2",
         type: "saya-model-hub-detailers",
         widgets,
         inputs: [{ name: "Model 1 Patched" }, { name: "Model 2 Patched" }],
-        outputs: [{ name: "Detailer 01 Model" }, { name: "Detailer 13 Model" }],
+        outputs: [{ name: "Body Model" }, { name: "NSFW Model" }],
     });
     const beforePos = [...node.pos];
     extension.loadedGraphNode(node);
     assert.deepEqual(node.pos, beforePos, "hub UI must never move nodes");
     assert.equal(node.title, "Hub Detailers · Model Routing");
     assert.ok(node.size[0] >= 350 && node.size[1] >= 470, "detailer hub gets readable minimum size");
-    assert.equal(node.widgets[0].label, "Detailer 01");
-    assert.equal(node.widgets[12].label, "Detailer 13");
-    assert.equal(node.outputs[0].label, "Detailer 01 · MODEL");
-    assert.equal(node.outputs[1].label, "Detailer 13 · MODEL");
+    assert.equal(node.widgets[0].label, "Body");
+    assert.equal(node.widgets[12].label, "NSFW");
+    assert.equal(node.outputs[0].label, "Body · MODEL");
+    assert.equal(node.outputs[1].label, "NSFW · MODEL");
     assert.equal(node.inputs[0].label, "Model 1 · Patched");
 }
 

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 
 import torch
 import torch.nn.functional as functional
@@ -35,18 +34,10 @@ class SayaSplitMask:
 
     @staticmethod
     def _gaussian_blur(mask: torch.Tensor, sigma: float) -> torch.Tensor:
-        sigma = float(sigma)
-        if sigma <= 0.0:
-            return mask
-
-        radius = max(1, int(math.ceil(3.0 * sigma)))
-        coordinates = torch.arange(-radius, radius + 1, dtype=torch.float32, device=mask.device)
-        kernel_1d = torch.exp(-(coordinates * coordinates) / (2.0 * sigma * sigma))
-        kernel_1d /= kernel_1d.sum()
-        kernel_2d = torch.outer(kernel_1d, kernel_1d)[None, None, :, :]
-
-        padded = functional.pad(mask.unsqueeze(1), (radius, radius, radius, radius), mode="replicate")
-        return functional.conv2d(padded, kernel_2d).squeeze(1).clamp_(0.0, 1.0)
+        # One implementation for the whole pack (P-E, 2026-10-05): the same kernel / padding / clamp as before,
+        # bit-identical (tests/test_fable_audit.py::blur_is_shared), now in region_masks.
+        from .region_masks import gaussian_pixel_sigma_blur
+        return gaussian_pixel_sigma_blur(mask, sigma)
 
     def make_masks(self, direction, split, blur, latent, swap=False):
         direction = str(direction).lower()

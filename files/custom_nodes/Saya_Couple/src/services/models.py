@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 from urllib.parse import unquote
+
+LOGGER = logging.getLogger(__name__)
 
 
 def list_registered_model_files(kind: str) -> Any:
@@ -77,17 +80,23 @@ def resolve_registered_model_path(kind: str, name: str) -> Any:
                     path = folder_paths.get_full_path(kind, registered_text)
                     if path:
                         return path
-    except Exception:
+    except Exception as error:  # folder_paths unavailable or broken: "not found" is the honest answer, but say why
+        LOGGER.warning("[Saya] model lookup failed for %s %r (%s: %s)", kind, name, type(error).__name__, error)
         return None
     return None
 
 
 def load_vae_or_fallback(name: str, fallback: Any = None) -> Any:
-    """Load a standalone VAE or return the supplied fallback when unavailable."""
+    """Load a standalone VAE or return the supplied fallback when unavailable.
+
+    The fallback is a silent substitution of a user choice, so it is never silent any more (audit Fable FO-04):
+    a VAE that is registered but unreadable (corrupt file, wrong format) is reported with the real error.
+    """
     if not name or str(name) == "none":
         return fallback
     path = resolve_registered_model_path("vae", name)
     if not path:
+        LOGGER.warning("[Saya] VAE %r not found among the registered VAEs: using the fallback VAE", name)
         return fallback
     try:
         import comfy.sd
@@ -95,5 +104,6 @@ def load_vae_or_fallback(name: str, fallback: Any = None) -> Any:
 
         sd = comfy.utils.load_torch_file(path)
         return comfy.sd.VAE(sd=sd)
-    except Exception:
+    except Exception as error:
+        LOGGER.warning("[Saya] VAE %r unreadable at %s (%s: %s): using the fallback VAE", name, path, type(error).__name__, error)
         return fallback

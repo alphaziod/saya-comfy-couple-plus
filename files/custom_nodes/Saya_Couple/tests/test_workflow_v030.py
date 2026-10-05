@@ -15,6 +15,8 @@ SKIP = "SAYA_TEST_EXTERNAL_WORKFLOWS not set — opt-in integration check, not p
 PHASE_2 = "23a92ba3-1ca2-4326-aeb9-d51aa4c48c54"
 PHASE_3 = "saya-auto-phase-3"
 COUPLE_TOGGLE = "saya-couple-mode-toggle"
+USDU_PASS = "saya-usdu-couple-pass"
+USDU_POSITION = "saya-usdu-position"
 # Nodes that install a regional attention patch on a MODEL.
 REGIONAL_PATCHERS = {"ReHiDreamPatcher", "ReHiDreamPatcherAdvanced", "SayaCoupleReconstruct", "SayaMultiCouple",
                      "SayaAttentionCouplePPM", "ClownRegionalConditioning3", "ClownRegionalConditioning_ABC"}
@@ -166,7 +168,9 @@ def test_usdu_solo_wiring():
         c.skip(SKIP)
         return c.report()
     for path, workflow in workflows:
-        graph = next(s for s in workflow["definitions"]["subgraphs"] if s["id"] == PHASE_2)
+        subgraphs = {s["id"]: s for s in workflow["definitions"]["subgraphs"]}
+        # Since the USDU position switch the pair lives in its own subgraph (placed in Phase 2 by default).
+        graph = subgraphs.get(USDU_PASS) or subgraphs[PHASE_2]
         usdu = [n for n in graph["nodes"] if n["type"] == "SayaCoupleUSDUPass"]
         c.eq(len(usdu), 2, f"{path.name}: USDU 1 + USDU 2")
         for node in usdu:
@@ -204,4 +208,63 @@ def test_no_removed_paths_in_workflow():
     return c.report()
 
 
-TESTS = (test_links_integrity, test_phase_3_routing, test_usdu_solo_wiring, test_no_removed_paths_in_workflow)
+def test_usdu_position_switch():
+    """The Hires Fix 1 -> USDU 1 + 2 -> Hires Fix 3 block runs where MAIN · USDU Position says: one block per
+    candidate phase, each gated by its own boolean of the selector, and Phase 2 (the historical place) is the default."""
+    c = Check("workflow_usdu_position_switch")
+    workflows = _migrated()
+    if workflows is None:
+        c.skip(SKIP)
+        return c.report()
+    for path, workflow in workflows:
+        subgraphs = {s["id"]: s for s in workflow["definitions"]["subgraphs"]}
+        if USDU_PASS not in subgraphs:
+            continue
+        selector = next(n for n in workflow["nodes"] if n["type"] == USDU_POSITION)
+        c.eq(selector["widgets_values"], ["Phase 2"], f"{path.name}: default position is Phase 2")
+        pas = subgraphs[USDU_PASS]
+        switch = next(n for n in pas["nodes"] if n["type"] == "ComfySwitchNode")
+        names = {i["name"]: k for k, i in enumerate(switch["inputs"])}
+        into = {_link(l)["target_slot"]: _link(l) for l in pas["links"] if _link(l)["target_id"] == switch["id"]}
+        c.eq(pas["inputs"][into[names["on_false"]]["origin_slot"]]["name"], "image",
+             f"{path.name}: switched off, the pass returns its input image")
+        c.eq(pas["inputs"][into[names["switch"]]["origin_slot"]]["name"], "enable", f"{path.name}: switch = enable")
+        c.ok(into[names["on_true"]]["origin_id"] != -10 and next(n for n in pas["nodes"] if n["id"] == into[names["on_true"]]["origin_id"]).get("title", "").startswith("Hires Fix 3"),
+             f"{path.name}: switched on, the block returns Hires Fix 3 (Hires 1 -> USDU -> Hires 3 move together)")
+        root_links = {_link(l)["id"]: _link(l) for l in workflow["links"]}
+        outputs = {}
+        for sid, sub in subgraphs.items():
+            passes = [n for n in sub["nodes"] if n["type"] == USDU_PASS]
+            if not passes:
+                continue
+            c.eq(len(passes), 1, f"{path.name}: {sub['name']} has one USDU pass")
+            enable = next(i for i in passes[0]["inputs"] if i["name"] == "enable")
+            origin = next(_link(l) for l in sub["links"] if _link(l)["id"] == enable["link"])
+            c.eq(sub["inputs"][origin["origin_slot"]]["name"], "usdu_here", f"{path.name}: {sub['name']} enable = usdu_here")
+            # Every placement picks Model 1 / Model 2 per pass from the one MAIN · USDU Model Routing: the block's
+            # choice inputs are the phase's choice inputs, linked at the root from that hub.
+            instance = next(n for n in workflow["nodes"] if n["type"] == sid)
+            for choice in ("USDU 1 Choice", "USDU 2 Choice", "Hires Fix 1 Choice", "Hires Fix 3 Choice"):
+                slot = next(i for i in passes[0]["inputs"] if i["name"] == choice)
+                src = next(_link(l) for l in sub["links"] if _link(l)["id"] == slot["link"])
+                c.eq(src["origin_id"] == -10 and sub["inputs"][src["origin_slot"]]["name"], choice,
+                     f"{path.name}: {sub['name']} {choice} is a phase input")
+                root_in = next(i for i in instance["inputs"] if i["name"] == choice)
+                hub = next(n for n in workflow["nodes"] if n["id"] == root_links[root_in["link"]]["origin_id"])
+                c.eq(hub.get("title"), "Hub USDU · Model Routing", f"{path.name}: {sub['name']} {choice} from the hub")
+            if "Phase 6" in sub["name"]:
+                # End: the block works at the Phase 5 size, then the final resize makes the 2K image.
+                out = next(_link(l) for l in sub["links"] if _link(l)["origin_id"] == passes[0]["id"])
+                resize = next(n for n in sub["nodes"] if n["id"] == out["target_id"])
+                c.eq(resize.get("title"), "Phase 6 · Final Resize", f"{path.name}: End block feeds the final resize")
+            instance = next(n for n in workflow["nodes"] if n["type"] == sid)
+            here = next(i for i in instance["inputs"] if i["name"] == "usdu_here")
+            source = root_links[here["link"]]
+            c.eq(source["origin_id"], selector["id"], f"{path.name}: {sub['name']} usdu_here comes from the selector")
+            outputs[sub["name"]] = source["origin_slot"]
+        c.eq(sorted(outputs.values()), [0, 1, 2, 3], f"{path.name}: each selector output drives exactly one phase {outputs}")
+    return c.report()
+
+
+TESTS = (test_links_integrity, test_phase_3_routing, test_usdu_solo_wiring, test_no_removed_paths_in_workflow,
+         test_usdu_position_switch)

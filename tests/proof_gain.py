@@ -15,6 +15,7 @@ import sys
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--comfyui", required=True)
+ap.add_argument("--pack", help="Saya_Couple pack folder (default: the installed one, else this repository's copy)")
 a = ap.parse_args()
 sys.dont_write_bytecode = True
 sys.path.insert(0, os.path.abspath(a.comfyui))
@@ -23,7 +24,19 @@ os.chdir(a.comfyui)
 import torch  # noqa: E402
 from torch import nn  # noqa: E402
 import comfy.ops  # noqa: E402
-import comfy.ldm.modules.attention as A  # noqa: E402
+import comfy.ldm.modules.attention as C  # noqa: E402  (stock core: the blocks)
+# the pack's test harness: the installed pack, or this repository's copy (--pack to force one)
+_pack = a.pack or next((d for d in (os.path.join(a.comfyui, "custom_nodes", "Saya_Couple"),
+                                    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "files", "custom_nodes", "Saya_Couple"))
+                        if os.path.isdir(os.path.join(d, "tests"))), None)
+if _pack is None:
+    sys.exit("Saya_Couple pack not found (install it, or pass --pack)")
+os.environ.setdefault("SAYA_COMFYUI_ROOT", os.path.abspath(a.comfyui))
+sys.path.insert(0, os.path.join(_pack, "tests"))
+import harness  # noqa: E402
+harness.load_pack()
+from saya_couple.src.engine import dual_attention as A  # noqa: E402  (2.0: the engine lives in the pack)
+from saya_couple.src.nodes import saya_dual_attention as D  # noqa: E402
 
 ok = True
 
@@ -68,7 +81,7 @@ try:
         check(float(cos.abs().max()) < 1e-4, f"4. g={gain}: delta orthogonal to MAIN (|cos| max {float(cos.abs().max()):.1e})")
 
     torch.manual_seed(0)
-    block = A.BasicTransformerBlock(64, 4, 16, context_dim=32, operations=comfy.ops.disable_weight_init)
+    block = D.saya_block(C.BasicTransformerBlock(64, 4, 16, context_dim=32, operations=comfy.ops.disable_weight_init))  # stock block + Saya copy (object patch)
     for prm in block.parameters():
         nn.init.normal_(prm, std=.3)
     x, ctx = torch.randn(2, 48, 64, generator=g), torch.randn(2, 7, 32, generator=g)
@@ -78,7 +91,7 @@ try:
 
     def opts(mode):
         gg = torch.Generator().manual_seed(7)
-        return {"cond_or_uncond": [1, 0], "activations_shape": [2, 64, 8, 6], "saya_dual_mode": True,
+        return {"cond_or_uncond": [1, 0], "activations_shape": [2, 64, 8, 6],
                 "saya_dual": {"p1": torch.randn(1, 9, 32, generator=gg), "p2": torch.randn(1, 5, 32, generator=gg),
                               "mask_1": torch.cat([torch.ones(8, 3), torch.zeros(8, 3)], 1), "mask_2": torch.cat([torch.zeros(8, 3), torch.ones(8, 3)], 1),
                               "fusion_mode": mode, "params": {}}}
@@ -88,7 +101,7 @@ try:
     check(all(torch.equal(u, v) for u, v in zip(seen[0], seen[1])), "3. MAIN, P1, P2 and masks reaching the fusion are identical for g=1.0 and g=0.5")
     A.SAYA_FUSION_MODES["main_locked_delta"] = real
     base = {"cond_or_uncond": [1, 0], "activations_shape": [2, 64, 8, 6]}
-    check(torch.equal(block(x, ctx, dict(base)), block(x, ctx, opts("main_only"))), "5. flag absent == Saya main_only path (MAIN is the native cross-attention)")
+    check(torch.equal(block(x, ctx, dict(base)), block(x, ctx, opts("main_only"))), "5. payload absent == Saya main_only path (MAIN is the native cross-attention)")
 finally:
     A.SAYA_LOCKED_DELTA_PERSON_GAIN = file_gain
 print("ALL PASS" if ok else "SOME CHECKS FAILED")

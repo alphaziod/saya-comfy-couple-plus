@@ -143,8 +143,10 @@ def build_prompts(
     person_1: str,
     negative: str,
     person_2: str | None = None,
+    action: str | None = None,
 ) -> dict[str, str]:
-    """DATA-ONLY prompts. P2 empty/absent -> key ABSENT; negative "" stays ""."""
+    """DATA-ONLY prompts. P2 empty/absent -> key ABSENT; negative "" stays "".
+    ACTION (pose / act kept apart from MAIN) empty/absent -> key ABSENT (imprints written before it have none)."""
     prompts: dict[str, str] = {
         "main": _require_text(main, "prompts.main"),
         "person_1": _require_text(person_1, "prompts.person_1"),
@@ -154,7 +156,16 @@ def build_prompts(
     # fallback to MAIN). Asymmetric with negative on purpose.
     if person_2 is not None and _require_text(person_2, "prompts.person_2").strip():
         prompts["person_2"] = person_2
+    if action is not None and _require_text(action, "prompts.action").strip():
+        prompts["action"] = action
     return prompts
+
+
+def scene_text(prompts: dict[str, str]) -> str:
+    """The persons' scene text in a reconstructed phase: MAIN, followed by ACTION when the imprint has one
+    (Phase 1 encodes them apart; the phases rebuilt from the imprint keep both, so the pose is never lost)."""
+    action = prompts.get("action", "")
+    return f"{prompts['main']},\n{action}" if action.strip() else prompts["main"]
 
 
 # ---------------------------------------------------------------------------
@@ -470,6 +481,39 @@ def build_provenance(
 
 
 # ---------------------------------------------------------------------------
+# Optional block — couple_imprint.ownership_map (Phase 1 dynamic ownership)
+# ---------------------------------------------------------------------------
+
+#: One character per cell of the Sampler 1 ownership grid (row-major, top-left origin).
+OWNERSHIP_P1, OWNERSHIP_P2, OWNERSHIP_BACKGROUND, OWNERSHIP_STATIC = "1", "2", "b", "s"
+OWNERSHIP_CELLS = OWNERSHIP_P1 + OWNERSHIP_P2 + OWNERSHIP_BACKGROUND + OWNERSHIP_STATIC
+OWNERSHIP_SOURCE = "s1_dynamic"
+_OWNERSHIP_MAX_SIDE = 512
+
+
+def build_ownership_map(*, grid: Any, rows: Any, source: str = OWNERSHIP_SOURCE) -> dict[str, Any]:
+    """Validate the Sampler 1 ownership map: who owns each cell, read by every later pass.
+
+    ``1``/``2`` = P1/P2 (binary, hard edges), ``b`` = background and ``s`` = undecided: both keep
+    the static split of ``geometry`` (the map never invents an owner the engine did not confirm).
+    """
+    if source != OWNERSHIP_SOURCE:
+        raise SayaCoupleImprintError(f"ownership_map.source: {source!r} invalid, expected {OWNERSHIP_SOURCE!r}")
+    if (not isinstance(grid, list) or len(grid) != 2
+            or any(isinstance(v, bool) or not isinstance(v, int) or not 1 <= v <= _OWNERSHIP_MAX_SIDE for v in grid)):
+        raise SayaCoupleImprintError(f"ownership_map.grid: [height, width] in 1..{_OWNERSHIP_MAX_SIDE} expected, got {grid!r}")
+    height, width = grid
+    if not isinstance(rows, list) or len(rows) != height:
+        raise SayaCoupleImprintError(f"ownership_map.rows: {height} rows expected")
+    for index, row in enumerate(rows):
+        if not isinstance(row, str) or len(row) != width or set(row) - set(OWNERSHIP_CELLS):
+            raise SayaCoupleImprintError(
+                f"ownership_map.rows[{index}]: {width} characters among {OWNERSHIP_CELLS!r} expected"
+            )
+    return {"grid": [height, width], "rows": list(rows), "source": source}
+
+
+# ---------------------------------------------------------------------------
 # Full imprint + canon + parse
 # ---------------------------------------------------------------------------
 
@@ -542,6 +586,13 @@ def _revalidate_blocks(data: dict[str, Any], context: str) -> None:
             "silent correction)"
         )
     build_strengths(**couple["strengths"])
+    if "ownership_map" in couple:
+        if "person_2" not in couple["prompts"]:
+            raise SayaCoupleImprintError(f"{context}.couple_imprint.ownership_map: a Solo imprint has no P1/P2 map")
+        ownership = couple["ownership_map"]
+        if not isinstance(ownership, dict):
+            raise SayaCoupleImprintError(f"{context}.couple_imprint.ownership_map: object expected")
+        build_ownership_map(**ownership)
     recipe = data["reconstruction_recipe"]
     build_reconstruction_recipe(
         checkpoint_identity=recipe.get("checkpoint_identity"),
@@ -640,6 +691,8 @@ class SayaCoupleImprintPackV2:
                 "person_2_prompt": ("STRING", {"default": "", "multiline": True, "forceInput": True}),
                 "swap": ("BOOLEAN", {"default": False, "label_on": "true", "label_off": "false"}),
                 "solo": ("BOOLEAN", {"forceInput": True, "tooltip": "Couple Mode OFF. When connected, Couple with an empty PERSON_2 is refused here instead of in Phase 2."}),
+                "action_prompt": ("STRING", {"default": "", "multiline": True, "forceInput": True,
+                                             "tooltip": "ACTION text (pose / act) of Phase 1, kept so the later phases rebuild MAIN + ACTION."}),
             },
         }
 
@@ -670,6 +723,7 @@ class SayaCoupleImprintPackV2:
         person_2_prompt: str | None = None,
         swap: bool = False,
         solo: bool | None = None,
+        action_prompt: str | None = None,
     ) -> tuple[dict[str, Any], str]:
         from ..services.imprint_integrity import pack_discriminant
 
@@ -709,6 +763,7 @@ class SayaCoupleImprintPackV2:
                 person_1=person_1_prompt,
                 person_2=person_2_prompt,
                 negative=negative_prompt,
+                action=action_prompt,
             ),
             geometry=build_two_region_geometry(
                 orientation=orientation,

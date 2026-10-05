@@ -1,7 +1,7 @@
-"""Core saya_dual_mode (comfy/ldm/modules/attention.py).
+"""Saya Couple engine (src/engine/dual_attention.py) injected on a STOCK core block by object patch (M1).
 
-OFF is bit-identical to HEAD; the forced attn2 path keeps MAIN native; P1/P2 get
-their own attention on cond elements only; the core owns the fusion table; every
+Without payload the Saya copy of a block is bit-identical to HEAD's block; the forced attn2 path keeps MAIN
+native; P1/P2 get their own attention on cond elements only; the engine owns the fusion table; every
 foreign attn2 hook and every inconsistency raises RuntimeError, never a fallback."""
 
 import subprocess
@@ -10,24 +10,13 @@ import types
 import torch
 from torch import nn
 
-from harness import COMFY_ROOT, PACK_ROOT, Check, load_pack
+from harness import COMFY_ROOT, Check, load_pack
 
 DIM, HEADS, DHEAD, CTX, TOK, HW = 16, 2, 8, 12, 5, (4, 4)
 
 
-def _upstream_attention_source():
-    """Upstream attention.py rebuilt by reversing the shipped Saya patch on the installed file (no git needed)."""
-    import _patchlib
-    patch = _patchlib.parse((PACK_ROOT / "core_patch" / "saya_dual_attention.patch").read_text())[0]
-    current = (COMFY_ROOT / patch.path).read_text()
-    upstream = _patchlib.apply_to_text(current, patch, reverse=True)
-    if upstream is None:
-        raise RuntimeError("installed attention.py does not contain the exact Saya patch (run `saya verify`)")
-    return upstream
-
-
 def _head_module():
-    src = _upstream_attention_source()
+    src = subprocess.run(["git", "show", "HEAD:comfy/ldm/modules/attention.py"], cwd=COMFY_ROOT, capture_output=True, text=True, check=True).stdout
     module = types.ModuleType("comfy.ldm.modules._attention_head")
     module.__package__ = "comfy.ldm.modules"
     exec(compile(src, "attention_HEAD.py", "exec"), module.__dict__)
@@ -35,18 +24,21 @@ def _head_module():
 
 
 def _blocks():
+    """(engine module, Saya copy of a stock block, HEAD block with the same weights)."""
     load_pack()
-    import comfy.ldm.modules.attention as new
+    import comfy.ldm.modules.attention as attention
     import comfy.ops
+    from saya_couple.src.engine import dual_attention as new
+    from saya_couple.src.nodes import saya_dual_attention as dual
 
     head = _head_module()
     torch.manual_seed(0)
-    b_new = new.BasicTransformerBlock(DIM, HEADS, DHEAD, context_dim=CTX, operations=comfy.ops.disable_weight_init)
-    for p in b_new.parameters():
+    b_stock = attention.BasicTransformerBlock(DIM, HEADS, DHEAD, context_dim=CTX, operations=comfy.ops.disable_weight_init)
+    for p in b_stock.parameters():
         nn.init.normal_(p, std=0.3)
     b_head = head.BasicTransformerBlock(DIM, HEADS, DHEAD, context_dim=CTX, operations=comfy.ops.disable_weight_init)
-    b_head.load_state_dict(b_new.state_dict())
-    return new, b_new, b_head
+    b_head.load_state_dict(b_stock.state_dict())
+    return new, dual.saya_block(b_stock), b_head
 
 
 def _inputs(flags, seed=1):
@@ -75,7 +67,6 @@ def _payload(p1=None, p2=None, mask_1=None, mask_2=None, mode="main_only", param
 
 def _opts(flags, payload=None, **extra):
     o = _base(flags)
-    o["saya_dual_mode"] = True
     o["saya_dual"] = _payload() if payload is None else payload
     o.update(extra)
     return o
@@ -116,9 +107,8 @@ def test_core_dual_off_bit_identical_to_head():
         x, ctx = _inputs(flags)
         base = _base(flags)
         ref = b_head(x, ctx, dict(base))
-        c.ok(torch.equal(b_new(x, ctx, dict(base)), ref), f"flag absent, {flags}")
-        c.ok(torch.equal(b_new(x, ctx, {**base, "saya_dual_mode": False}), ref), f"flag False, {flags}")
-        c.ok(torch.equal(b_new(x, ctx, {**base, "saya_dual_mode": False, "saya_dual": {"garbage": 1}}), ref), f"flag False ignores payload, {flags}")
+        c.ok(torch.equal(b_new(x, ctx, dict(base)), ref), f"payload absent, {flags}")
+        c.ok(torch.equal(b_new(x, ctx, {**base, "saya_dual": None}), ref), f"payload None, {flags}")
     x, ctx = _inputs([0])
     replaced = lambda q, k, v, e: q * 2
     opts = {**_base([0]), "patches_replace": {"attn2": {("middle", 0, 0): replaced}}, "block": ("middle", 0)}
@@ -183,7 +173,7 @@ def test_core_dual_cond_selection_and_operator():
                 calls.clear()
                 xx, cc = _inputs(flags_)
                 b_new(xx, cc, _opts(flags_, _payload(mode="spy")))
-                return dict(counts), list(calls[1:])  # calls[0] is attn1's self-attention
+                return dict(counts), list(calls)  # attn1's self-attention runs in the core module, not counted here (M1)
 
             c.eq(run([1]), ({"k": 1, "v": 1}, [1]), "all-uncond batch: MAIN only, P1/P2 to_k/to_v/attention never called")
             c.eq(run([1, 1]), ({"k": 1, "v": 1}, [2]), "all-uncond batch of 2 chunks: MAIN only")
@@ -229,15 +219,15 @@ def test_core_dual_fusion_is_core_owned():
     flags = [1, 0]
     x, ctx = _inputs(flags)
     ok_payload = _payload()
-    c.eq(sorted(new.SAYA_FUSION_MODES), ["main_locked_delta", "main_only"], "core table: main_only (identity) and main_locked_delta")
+    c.eq(sorted(new.SAYA_FUSION_MODES), ["main_locked_delta", "main_locked_delta_dynamic", "main_only"], "core table: main_only (identity), main_locked_delta, main_locked_delta_dynamic")
     p = dict(ok_payload); p["fusion"] = lambda *a: a[0]
     _raises_with(c, lambda: b_new(x, ctx, _opts(flags, p)), "saya_dual", "callable under a 'fusion' key")
     _raises_with(c, lambda: b_new(x, ctx, _opts(flags, _payload(mode=lambda *a: a[0]))), "fusion_mode must be a string", "callable as fusion_mode")
     _raises_with(c, lambda: b_new(x, ctx, _opts(flags, _payload(mode="unknown"))), "unknown fusion_mode", "unknown fusion_mode")
     _raises_with(c, lambda: b_new(x, ctx, _opts(flags, _payload(params={"gain": 1.0}))), "does not accept parameters", "unlisted parameter")
     _raises_with(c, lambda: b_new(x, ctx, _opts(flags, _payload(params=[1]))), "params a dict", "params not a dict")
-    for bad in (1, "yes"):
-        _raises_with(c, lambda bad=bad: b_new(x, ctx, {**_opts(flags), "saya_dual_mode": bad}), "must be a bool", f"non-bool flag {bad!r}")
+    for bad in (1, "yes", [1]):
+        _raises_with(c, lambda bad=bad: b_new(x, ctx, {**_opts(flags), "saya_dual": bad}), "must be a dict", f"non-dict payload {bad!r}")
     real = dict(new.SAYA_FUSION_MODES)
     new.SAYA_FUSION_MODES["bad_shape"] = (lambda m, a, b, ma, mb: m[:1], frozenset())
     new.SAYA_FUSION_MODES["boom"] = (lambda m, a, b, ma, mb: (_ for _ in ()).throw(ValueError("boom")), frozenset())
@@ -300,7 +290,8 @@ def test_core_dual_fail_closed_shapes():
     def run(opts, label, xx=x, cc=ctx):
         c.raises(RuntimeError, lambda: b_new(xx, cc, opts), label)
 
-    o = _opts(flags); del o["saya_dual"]; run(o, "payload absent")
+    o = _opts(flags); del o["saya_dual"]
+    c.ok(torch.equal(b_new(x, ctx, o), b_head(x, ctx, _base(flags))), "payload absent = no engine: stock output (Solo)")
     for key in ("p1", "p2", "mask_1", "mask_2", "fusion_mode", "params"):
         p = _payload(); del p[key]; run(_opts(flags, p), f"payload missing {key}")
     run(_opts(flags, _payload(p1=torch.zeros(2, 7, CTX))), "p1 batch != 1")
@@ -462,34 +453,182 @@ def test_core_locked_delta_dtype_and_uncond():
         b16(x.bfloat16(), ctx.bfloat16(), _opts([1, 1], _payload(mode="main_locked_delta")))
     finally:
         attn2.to_k.forward, new.optimized_attention = real_k, real_attn
-    c.eq((counts["k"], len(calls)), (1, 2), "all-uncond batch under main_locked_delta: no PERSON to_k / attention (attn1 + MAIN only)")
+    c.eq((counts["k"], len(calls)), (1, 1), "all-uncond batch under main_locked_delta: no PERSON to_k / attention (MAIN only; attn1 is the core's)")
     _raises_with(c, lambda: b16(*[t.bfloat16() for t in _inputs([1, 0])], _opts([1, 0], _payload(mode="main_locked_delta", params={"gain": 1.0}))),
                  "does not accept parameters", "no gain parameter exists on main_locked_delta")
     return c.report()
 
 
-def _git_ok():
-    r = subprocess.run(["git", "rev-parse", "--is-inside-work-tree"], cwd=COMFY_ROOT, capture_output=True, text=True)
-    return r.returncode == 0 and r.stdout.strip() == "true"
-
-
 def test_core_diff_is_isolated():
+    """M1: the engine lives in the pack; the Saya copy of a block is a subclass of the stock class whose only addition is
+    the hook check; nothing in the pack depends on a patched core (the rollback injection aside)."""
+    new, b_new, b_head = _blocks()
+    import comfy.ldm.modules.attention as attention
+    from harness import PACK_ROOT
     c = Check("core_diff_is_isolated")
-    if not _git_ok():
-        c.skip("ComfyUI is not a git checkout: use the installer's `saya verify` for the patch check")
-        return c.report()
-    files = subprocess.run(["git", "diff", "--name-only", "HEAD"], cwd=COMFY_ROOT, capture_output=True, text=True, check=True).stdout.split()
-    allowed = {"comfy/ldm/modules/attention.py", "comfy/model_management.py"}  # attention: required; model_management: optional AMD patch
-    c.ok("comfy/ldm/modules/attention.py" in files or not files, f"attention.py patched vs HEAD (diff: {files})")
-    c.ok(set(files) <= allowed, f"only Saya core files differ from HEAD, found {files}")
-    diff = subprocess.run(["git", "diff", "-U0", "HEAD", "comfy/ldm/modules/attention.py"], cwd=COMFY_ROOT, capture_output=True, text=True, check=True).stdout
-    removed = [line for line in diff.splitlines() if line.startswith("-") and not line.startswith("---")]
-    if diff:
-        c.eq(removed, ["-            if block_attn2 in attn2_replace_patch:"], "single removed line: if -> elif")
+    c.ok(new.__file__.startswith(str(PACK_ROOT)), f"engine module in the pack ({new.__file__})")
+    c.ok(type(b_new).saya_original_class is attention.BasicTransformerBlock and type(b_new).__mro__[1] is attention.BasicTransformerBlock,
+         "Saya block = direct subclass of the stock block class")
+    c.ok(b_new.saya_source[0].attn2 is b_new.attn2.saya_attn[0] and b_new.attn2.to_q is b_new.saya_source[0].attn2.to_q, "proxy shares the stock attn2 projections")
+    c.eq(list(b_new.state_dict().keys()), list(b_head.state_dict().keys()), "state_dict keys identical to the stock block")
+    return c.report()
+
+
+def test_core_dynamic_ownership():
+    new, b_new, _ = _blocks()
+    c = Check("core_dynamic_ownership")
+    flags = [1, 0]
+    x, ctx = _inputs(flags)
+    new._SAYA_OWNERSHIP_STATE.clear()
+    g = torch.Generator().manual_seed(11)
+    anchors = {"p1_anchor": (torch.randn(1, 6, CTX, generator=g), [1, 2]), "p2_anchor": (torch.randn(1, 6, CTX, generator=g), [1, 3]),
+               "person_anchor": (torch.randn(1, 6, CTX, generator=g), [1])}
+    static = _payload(mode="main_locked_delta")
+    dynamic = dict(static, fusion_mode="main_locked_delta_dynamic", params={"start_sigma": 5.0, **anchors})
+    no_anchor = dict(static, fusion_mode="main_locked_delta_dynamic", params={"start_sigma": 5.0})
+    ref = b_new(x, ctx, _opts(flags, static))
+    c.ok(torch.equal(b_new(x, ctx, _opts(flags, dynamic, sigmas=torch.tensor([9.0]))), ref), "sigma above start_sigma: bit-identical to main_locked_delta")
+    c.ok(torch.equal(b_new(x, ctx, _opts(flags, no_anchor, sigmas=torch.tensor([3.0]))), ref), "no anchors: static split")
+    c.ok(torch.equal(b_new(x, ctx, _opts(flags, dynamic, sigmas=torch.tensor([4.0]))), ref), "first step below start_sigma: map not ready, static split")
+    out = b_new(x, ctx, _opts(flags, dynamic, sigmas=torch.tensor([3.0])))
+    c.ok(bool(torch.isfinite(out).all()) and out.shape == ref.shape, "dynamic step: finite, same shape")
+    own = next(iter(new._SAYA_OWNERSHIP_STATE.values()))["map"]
+    c.ok(own is not None and own.shape == (1, 3, *HW), "ownership map [cond, 3, H, W] (P1 vote, person, background)")
+    n = b_new.norm2(x)
+    q = b_new.attn2.to_q(n)
+    m1 = torch.cat([torch.ones(2, 8, 1), torch.zeros(2, 8, 1)], dim=1)
+    masks = new.saya_dynamic_masks(b_new, n, q, dynamic, [1], 1, *HW, [m1, 1 - m1], {"sigmas": torch.tensor([3.0])})
+    c.ok(torch.allclose(masks[0] + masks[1], torch.ones_like(m1)), "dynamic masks keep mask_1 + mask_2 == 1")
+    c.ok(bool(((masks[0] == 0) | (masks[0] == 1)).all()), "no P1/P2 blend weight")
+    c.ok(torch.equal(masks[0][0], m1[0]), "uncond element keeps the static mask")
+    affinity, anchor = new.saya_ownership_evidence(b_new, n[1:], q[1:], (anchors["p1_anchor"], anchors["p2_anchor"], anchors["person_anchor"]))
+    c.ok(affinity.shape == (1, 16, 16) and anchor.shape == (1, 3, 16), "evidence: affinity [B, N, N], anchors [B, 3, N]")
+    labels, owner, confident, zone_owner, zone_role, _ = new.saya_ownership_zones(affinity, anchor, HW, {**new.SAYA_DYNAMIC_DEFAULTS, "zones": 3})
+    c.ok(bool(((owner == 0) | (owner == 1)).all() & ((confident == 0) | (confident == 1)).all()), "zone ownership exclusively 0/1")
+    c.ok(all(len(set(owner[0][labels[0] == z].tolist())) <= 1 for z in range(3)), "a whole zone has a single owner")
+    one_sided = torch.stack([anchor[:, 0], anchor[:, 0] - 99, anchor[:, 2]], dim=1)
+    _, _, confident, _, _, _ = new.saya_ownership_zones(affinity, one_sided, HW, {**new.SAYA_DYNAMIC_DEFAULTS, "zones": 3})
+    c.ok(not bool(confident.any()), "gate: without an anchor zone for each person, static split everywhere")
+    no_person = torch.stack([anchor[:, 0], anchor[:, 1], torch.full_like(anchor[:, 2], -1.0)], dim=1)
+    _, _, _, _, zone_role, _ = new.saya_ownership_zones(affinity, no_person, HW, {**new.SAYA_DYNAMIC_DEFAULTS, "zones": 3})
+    c.ok(not bool((zone_role == new.SAYA_ZONE_LINKED).any()), "no person presence: no zone is linked (background stays static)")
+    # Link veto: zone 2 (half its pixels clearly P1) is tied to P2's head and body; zone 3 is P2's body.
+    lab = torch.tensor([0, 0, 1, 1] * 2 + [2, 2, 3, 3] * 2)
+    tied = torch.zeros(16, 16)
+    for z in range(4):
+        tied[(lab == z).nonzero()[:, 0][:, None], (lab == z).nonzero()[:, 0]] = 1.0
+    for a, b in ((3, 1), (1, 3), (2, 3), (3, 2), (2, 1)):
+        tied[(lab == a).nonzero()[:, 0][:, None], (lab == b).nonzero()[:, 0]] = 0.7
+    tied = tied / tied.sum(-1, keepdim=True)
+    lit_p1 = torch.where(lab == 0, 3.0, -1.0)
+    lit_p1[(lab == 2).nonzero()[:2, 0]] = 2.5
+    veto_anchor = torch.stack([lit_p1, torch.where(lab == 1, 3.0, torch.where(lab == 3, 0.5, -1.0)), torch.where(lab == 2, 0.3, 1.0)])[None]
+    _, _, _, zone_owner, zone_role, _ = new.saya_ownership_zones(tied[None], veto_anchor, HW, {**new.SAYA_DYNAMIC_DEFAULTS, "zones": 4, "background_main": True})
+    c.eq(zone_owner[0].tolist(), [0, 1, -1, 1], "link veto: a zone with >= contest_share pixels clearly the other person is not linked; the real body still is")
+    split = torch.stack([torch.tensor([[3.0] * 8 + [-3.0] * 8]), torch.zeros(1, 16), torch.ones(1, 16)], dim=1)
+    one_zone = torch.full((1, 16, 16), 1 / 16)
+    _, _, confident, _, _, _ = new.saya_ownership_zones(one_zone, split, HW, {**new.SAYA_DYNAMIC_DEFAULTS, "zones": 1})
+    c.ok(not bool(confident.any()), "a lone contested zone (clearly P1 and clearly P2 pixels) stays static")
+    real_zones = new.saya_ownership_zones
+
+    def hysteresis(script):
+        """0 / 1 = person found; "m" = anchor zones present but this pixel unassigned (a miss); "x" = no anchor zone (no evidence)."""
+        steps = iter(script)
+
+        def scripted(affinity, anchor, grid, params):
+            f = next(steps)
+            owner = torch.full((1, 16), 1.0 if f == 0 else 0.0)
+            return torch.zeros(1, 16, dtype=torch.long), owner, torch.full((1, 16), 1.0 if f in (0, 1) else 0.0), None, None, {"gate": [f != "x"]}
+        new.saya_ownership_zones = scripted
+        try:
+            state = {"sigma": 1.0, "grid": [4, 4], "count": 1, "active": None, "affinity": torch.zeros(1, 16, 16), "anchor": torch.zeros(1, 3, 16)}
+            seen = []
+            for _ in script:
+                new._saya_finish_ownership_step(state, new.SAYA_DYNAMIC_DEFAULTS)
+                seen.append(int(state["active"][0, 0, 0]))
+        finally:
+            new.saya_ownership_zones = real_zones
+        return seen
+    c.eq(hysteresis([0, 0, 0, "m", 0, "m", "m", 1, 1, 1]), [-1, -1, 0, 0, 0, 0, -1, -1, -1, 1],
+         "hysteresis: 3 confirmations to appear, 1 miss tolerated, 2 misses or the other person -> static, 3 confirmations again")
+    c.eq(hysteresis([0, "x", 0, "x", 0, "x", "x", "x", 0, 1]), [-1, -1, -1, -1, 0, 0, 0, 0, 0, -1],
+         "hysteresis: a step without anchor zones is skipped (no confirmation, no miss)")
+    # zone_fallback: zone 0 = person zone across the split (75 % on the P1 side) -> whole zone P1;
+    # zone 1 = background -> pixel-wise; zone 2 = contested -> pixel-wise; zone 3 = head anchor -> pixel-wise.
+    labels = torch.tensor([[0] * 4 + [1] * 4 + [2] * 4 + [3] * 4])
+    def staged(affinity, anchor, grid, params):
+        info = {"contested": torch.tensor([[False, False, True, False]]), "person": torch.tensor([[True, False, True, True]]), "gate": [True]}
+        return labels, torch.zeros(1, 16), torch.zeros(1, 16), torch.tensor([[-1, -1, -1, 0]]), torch.tensor([[0, 0, 0, new.SAYA_ZONE_ANCHOR]]), info
+    new.saya_ownership_zones = staged
+    try:
+        side = torch.tensor([[1.0, 1.0, 1.0, 0.0] + [1.0] * 4 + [1.0, 1.0, 0.0, 0.0] + [0.0] * 4]).reshape(1, 4, 4)
+        state = {"sigma": 1.0, "grid": [4, 4], "count": 1, "active": None, "affinity": torch.zeros(1, 16, 16), "anchor": torch.zeros(1, 3, 16), "static_grid": side}
+        new._saya_finish_ownership_step(state, {**new.SAYA_DYNAMIC_DEFAULTS, "zone_fallback": True})
+        got = state["block"].flatten().tolist()
+    finally:
+        new.saya_ownership_zones = real_zones
+    c.eq(got, [0] * 4 + [-1] * 12, "zone_fallback: a person zone across the split goes whole to the majority side; background, contested and head zones stay pixel-wise")
+    state = {"sigma": 1.0, "grid": [4, 4], "count": 1, "active": None, "affinity": torch.zeros(1, 16, 16), "anchor": torch.zeros(1, 3, 16), "static_grid": side, "block": None}
+    new.saya_ownership_zones = staged
+    try:
+        new._saya_finish_ownership_step(state, new.SAYA_DYNAMIC_DEFAULTS)
+    finally:
+        new.saya_ownership_zones = real_zones
+    c.ok(state["block"] is None, "zone_fallback off by default: no block map")
+    # background_main: zone 1 (no person, no owner) becomes background after confirm_steps steps -> MAIN only.
+    new.saya_ownership_zones = staged
+    try:
+        state = {"sigma": 1.0, "grid": [4, 4], "count": 1, "active": None, "affinity": torch.zeros(1, 16, 16), "anchor": torch.zeros(1, 3, 16), "static_grid": side, "block": None}
+        for _ in range(3):
+            new._saya_finish_ownership_step(state, {**new.SAYA_DYNAMIC_DEFAULTS, "background_main": True})
+        bg = state["map"][0, 2].flatten().tolist()
+        state_off = {"sigma": 1.0, "grid": [4, 4], "count": 1, "active": None, "affinity": torch.zeros(1, 16, 16), "anchor": torch.zeros(1, 3, 16), "static_grid": side, "block": None}
+        for _ in range(3):
+            new._saya_finish_ownership_step(state_off, new.SAYA_DYNAMIC_DEFAULTS)
+    finally:
+        new.saya_ownership_zones = real_zones
+    c.eq(bg, [0.0] * 4 + [1.0] * 4 + [0.0] * 8, "background_main: only the person-free, unowned zone becomes background (after 3 confirmations)")
+    c.ok(float(state_off["map"][0, 2].sum()) == 0, "background_main off by default: no background")
+    new.saya_ownership_zones = staged
+    try:
+        person_anchor = torch.zeros(1, 3, 16)
+        person_anchor[0, 2, 4:6] = 1.0  # two pixels of the background zone where the person anchor is above the mean
+        state = {"sigma": 1.0, "grid": [4, 4], "count": 1, "active": None, "affinity": torch.zeros(1, 16, 16), "anchor": person_anchor, "static_grid": side, "block": None}
+        for _ in range(3):
+            new._saya_finish_ownership_step(state, {**new.SAYA_DYNAMIC_DEFAULTS, "background_main": True})
+    finally:
+        new.saya_ownership_zones = real_zones
+    c.eq(state["map"][0, 2].flatten().tolist(), [0.0] * 6 + [1.0] * 2 + [0.0] * 8, "background_main: a person pixel inside a background zone keeps the static split")
+    # main_scene: background pixels of cond elements take the scene-only MAIN attention, the rest is untouched.
+    attn2 = b_new.attn2
+    q = attn2.to_q(b_new.norm2(x))
+    main_out = torch.randn(2, 16, DIM)
+    scene = torch.randn(1, 5, CTX)
+    key_payload = dict(dynamic, params={**dynamic["params"], "main_scene": scene})
+    bg_map = torch.zeros(1, 3, 4, 4)
+    bg_map[0, 2, :2] = 1.0
+    new._SAYA_OWNERSHIP_STATE.clear()
+    new._SAYA_OWNERSHIP_STATE[id(key_payload["p1"])] = {"map": bg_map}
+    out = new.saya_scene_main(attn2, q, main_out, key_payload, [1], 1, 4, 4, {})
+    background = bg_map[0, 2].flatten().bool()
+    c.ok(torch.equal(out[0], main_out[0]), "main_scene: uncond element untouched")
+    c.ok(torch.equal(out[1][~background], main_out[1][~background]), "main_scene: person / static pixels keep MAIN + ACTION")
+    c.ok(not torch.allclose(out[1][background], main_out[1][background]), "main_scene: background pixels take the scene-only MAIN")
+    no_scene = dict(dynamic, params=dict(dynamic["params"]))
+    c.ok(new.saya_scene_main(attn2, q, main_out, no_scene, [1], 1, 4, 4, {}) is main_out, "no main_scene: MAIN unchanged")
+    new._SAYA_OWNERSHIP_STATE.clear()
+    new._SAYA_OWNERSHIP_STATE.clear()
+    try:
+        b_new(x, ctx, _opts(flags, dynamic))
+        c.ok(False, "missing sigmas must raise")
+    except RuntimeError:
+        c.ok(True, "missing sigmas raises RuntimeError")
+    new._SAYA_OWNERSHIP_STATE.clear()
     return c.report()
 
 
 TESTS = (
+    test_core_dynamic_ownership,
     test_core_dual_off_bit_identical_to_head,
     test_core_dual_main_identity,
     test_core_dual_cond_selection_and_operator,

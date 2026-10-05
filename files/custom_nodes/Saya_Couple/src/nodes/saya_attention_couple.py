@@ -1,7 +1,5 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
 # Saya Attention Couple PPM — local vendor copy of "Attention Couple (PPM)" (pamparamm/ComfyUI-ppm).
-# Original implementation: laksjdjf, hako-mikan, Haoming02; ComfyUI-ppm by pamparamm (AGPL-3.0-or-later).
-# Adapted by Saya Couple: this file stays under AGPL-3.0-or-later (see THIRD_PARTY_NOTICES.md).
+# Original implementation: laksjdjf, hako-mikan, Haoming02 (GPL-3.0); the ppm pack itself is AGPL-3.0.
 # Copied 2026-09-18: algorithmic behavior unchanged (execute()'s logic carried over as-is),
 # distinct ComfyUI identity (class/key "SayaAttentionCouplePPM", display name
 # "Saya Attention Couple PPM") so it does not collide with the official node.

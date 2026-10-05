@@ -1,7 +1,8 @@
 """Capability-based compatibility checks. Nothing here imports ComfyUI: it only reads its source.
 
 Three independent axes:
-  A. Saya attention core  -> comfy/ldm/modules/attention.py + the runtime keys the forced attn2 path reads
+  A. Saya engine (2.0)     -> the stock core APIs the engine is injected through (ModelPatcher object patches) and
+                              the runtime keys it reads; NO core file is modified any more
   B. Saya custom node pack -> every ComfyUI module/symbol the pack imports, and the MultiMaskCouple custom node
   C. AMD VRAM patch        -> comfy/model_management.py code the optional patch touches
 
@@ -25,12 +26,19 @@ UNSUPPORTED = "UNSUPPORTED"
 
 CORE_MODULE_ROOTS = ("comfy", "comfy_extras", "comfy_api", "nodes", "server", "folder_paths", "node_helpers", "latent_preview", "execution")
 
-# Runtime contracts of the Saya attention path (read in transformer_options / call shapes it relies on).
-ATTENTION_ANCHORS = (
+# Runtime contracts of the Saya engine (2.0: injected with ModelPatcher object patches, the core is left stock).
+ENGINE_ANCHORS = (
     ("comfy/samplers.py", r'transformer_options\["cond_or_uncond"\]\s*=\s*cond_or_uncond\[:\]', "sampler passes cond/uncond rows"),
+    ("comfy/samplers.py", r'transformer_options\["sigmas"\]\s*=\s*timestep', "sampler passes the step sigmas (dynamic ownership)"),
     ("comfy/ldm/modules/attention.py", r'transformer_options\["activations_shape"\]\s*=\s*list\(x\.shape\)', "latent H/W reach the transformer blocks"),
     ("comfy/ldm/modules/attention.py", r'optimized_attention\(q, k, v, self\.heads, attn_precision=self\.attn_precision, transformer_options=transformer_options\)', "attention backends accept transformer_options"),
+    ("comfy/ldm/modules/attention.py", r'self\.attn2\(n, context=context_attn2, value=value_attn2, transformer_options=transformer_options\)', "BasicTransformerBlock.forward calls self.attn2(...) (engine entry point)"),
+    ("comfy/model_patcher.py", r'def add_object_patch\(', "ModelPatcher.add_object_patch (engine injection)"),
+    ("comfy/model_patcher.py", r'object_patches_backup', "ModelPatcher restores object patches on unpatch"),
+    ("comfy/patcher_extension.py", r'ON_DETACH\s*=', "CallbacksMP.ON_DETACH (restore when a clone is dropped)"),
+    ("comfy/utils.py", r'def deepcopy_list_dict\(', "clone() keeps payload tensors by reference"),
 )
+LEGACY_ATTENTION_PATCH = "patches/legacy/saya_dual_attention_1.x.patch"
 # Object APIs the pack reads beyond plain imports.
 PACK_ANCHORS = (
     ("comfy/model_patcher.py", r'self\.wrappers\b[^=\n]*=', "ModelPatcher.wrappers"),
@@ -152,17 +160,25 @@ def original_text(root: str, fp: patchlib.FilePatch) -> tuple[str | None, str]:
     return text, st
 
 
-def check_attention(root: str, pkg: str, tested: dict) -> Axis:
-    ax = Axis("Saya attention core")
-    fp = load_patch(os.path.join(pkg, "patches", "saya_dual_attention.patch"))
-    orig, st = original_text(root, fp)
-    ax.add(st in ("clean", "applied"), f"saya_dual_attention.patch on {fp.path}: {st}")
-    for rel, rx, why in ATTENTION_ANCHORS:
-        src = orig if rel == fp.path else read(root, rel)
+def legacy_patch_state(root: str, pkg: str) -> str:
+    """State of the 1.x core patch on attention.py: 'applied' means a 1.x install is still there (the 2.0 installer removes it)."""
+    fp = load_patch(os.path.join(pkg, LEGACY_ATTENTION_PATCH))
+    text = read(root, fp.path)
+    return "missing" if text is None else patchlib.status(text, fp)
+
+
+def check_engine(root: str, pkg: str, tested: dict) -> Axis:
+    ax = Axis("Saya engine (object patches, no core modification)")
+    for rel, rx, why in ENGINE_ANCHORS:
+        src = read(root, rel)
         ax.add(src is not None and re.search(rx, src) is not None, f"{why} ({rel})")
-    ax.notes.append(f"patch state: {st}")
+    legacy = legacy_patch_state(root, pkg)
+    ax.notes.append("legacy 1.x core patch: " + ("APPLIED (the installer will remove it)" if legacy == "applied" else "absent"))
     ax.status = UNSUPPORTED if ax.failures else (TESTED if is_tested_core(root, tested) else POTENTIAL)
     return ax
+
+
+check_attention = check_engine  # name kept for tools written against 1.x
 
 
 def check_pack(root: str, pkg: str, tested: dict) -> Axis:
@@ -219,8 +235,9 @@ def check_pack(root: str, pkg: str, tested: dict) -> Axis:
 
 
 def is_tested_core(root: str, tested: dict) -> bool:
-    """OFFICIALLY TESTED = every key core file is byte-identical to the tested ComfyUI (Saya patches reversed)."""
-    patched = tested.get("files_patched", {})
+    """OFFICIALLY TESTED = every key core file is byte-identical to the tested ComfyUI (optional AMD patch applied or
+    not; a still-applied legacy 1.x patch counts too, the installer removes it)."""
+    patched = dict(tested.get("files_patched", {}), **tested.get("files_patched_legacy", {}))
     for rel, want in tested["key_files"].items():
         text = read(root, rel)
         if text is None:
@@ -253,4 +270,4 @@ def load_tested(pkg: str) -> dict:
 
 def check_all(root: str, pkg: str) -> list[Axis]:
     tested = load_tested(pkg)
-    return [check_attention(root, pkg, tested), check_pack(root, pkg, tested), check_amd(root, pkg, tested)]
+    return [check_engine(root, pkg, tested), check_pack(root, pkg, tested), check_amd(root, pkg, tested)]

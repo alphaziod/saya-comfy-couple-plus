@@ -272,10 +272,19 @@ function showReviewPopup(node, message) {
     };
     const continueButton = makeButton("CONTINUE · PHASE 2", "#237a3b");
     const restartButton = makeButton("REDO · PHASE 1", "#9a4d16");
-    buttons.append(restartButton, continueButton);
+    // STOP: keep this Phase 1 result on screen and on disk (candidate not validated, nothing requeued), so the
+    // settings that produced it (background, prompt, seed) can be adjusted before deciding. Saya, 2026-10-05.
+    const stopButton = makeButton("STOP · GARDER", "#3d4451");
+    stopButton.title = "Arrête la séquence sans valider ni relancer : le candidat reste sur disque, rien n'est lancé.";
+    buttons.append(stopButton, restartButton, continueButton);
     card.append(title, img, buttons);
     overlay.append(card);
     document.body.append(overlay);
+
+    stopButton.onclick = () => {
+        if (generation !== sequenceGeneration) return;
+        stopSequenceCleanly();
+    };
 
     continueButton.onclick = async () => {
         if (!sequenceRunning || generation !== sequenceGeneration) return;

@@ -16,8 +16,21 @@ const COLORS = {
     couple: { color: "#4a2f46", bgcolor: "#68435f" },
 };
 
-// Neutral, numbered slots (the detector used by each slot is chosen in the workflow).
-const DETAILER_LABELS = Array.from({ length: 13 }, (_, i) => `Detailer ${String(i + 1).padStart(2, "0")}`);
+const DETAILER_LABELS = [
+    "Body",
+    "Head & Hair",
+    "Face",
+    "Full Eyes",
+    "Eyes · One by One",
+    "Breasts",
+    "Hands",
+    "Feet",
+    "Buttocks",
+    "Anus",
+    "Vulva",
+    "Penis",
+    "NSFW",
+];
 
 const USDU_LABELS = [
     "USDU 1",

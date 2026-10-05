@@ -2,6 +2,8 @@
 
 Usage:
     PYTHONDONTWRITEBYTECODE=1 <ComfyUI python> tests/run_all.py
+
+Set SAYA_COMFYUI_ROOT when the pack is not inside <ComfyUI>/custom_nodes/.
 """
 
 from __future__ import annotations
@@ -21,6 +23,10 @@ import test_geometry
 import test_upscale_mode
 import test_multi_couple
 import test_core_saya_dual
+import test_ownership_anchors
+import test_action_imprint
+import test_ownership_map
+import test_background_picker
 import test_dual_wiring
 import test_nodes_compute
 import test_phase_nodes
@@ -42,6 +48,10 @@ import test_workflow_compat
 import test_workflow_v030
 import test_audit_regressions
 import test_multimask_grid
+import test_fable_audit
+import test_main_prompt
+import test_deprecated
+import test_couple_context
 
 
 def guarded(tests):
@@ -89,7 +99,15 @@ def main() -> int:
     absorb(guarded(test_upscale_mode.TESTS))
     absorb(guarded(test_multi_couple.TESTS))
     absorb(guarded(test_core_saya_dual.TESTS))
+    absorb(guarded(test_ownership_anchors.TESTS))
+    absorb(guarded(test_action_imprint.TESTS))
+    absorb(guarded(test_ownership_map.TESTS))
+    absorb(guarded(test_background_picker.TESTS))
     absorb(guarded(test_dual_wiring.TESTS))
+    absorb(guarded(test_fable_audit.TESTS))
+    absorb(guarded(test_main_prompt.TESTS))
+    absorb(guarded(test_deprecated.TESTS))
+    absorb(guarded(test_couple_context.TESTS))
 
     print("== couple crop F8 ==")
     absorb(guarded(test_couple_crop_f8.TESTS))

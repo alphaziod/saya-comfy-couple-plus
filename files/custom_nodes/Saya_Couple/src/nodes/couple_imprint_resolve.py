@@ -16,6 +16,7 @@ from typing import Any
 from ..services.imprint_integrity import (
     IMPRINT_METADATA_KEY,
     SayaImprintIntegrityError,
+    read_png_info,
     verify_or_raise,
 )
 from .couple_imprint_v2 import (
@@ -59,12 +60,7 @@ def _json_object(text: Any, path: Any, label: str) -> dict[str, Any]:
 
 def _read_png_chunks(path: Path) -> tuple[Any, Any]:
     try:
-        from PIL import Image  # type: ignore
-    except ImportError as error:  # pragma: no cover
-        raise _fail(path, "PIL unavailable to read the PNG metadata") from error
-    try:
-        with Image.open(path) as handle:
-            info = dict(handle.info or {})
+        info = read_png_info(path)
     except (OSError, ValueError) as error:
         raise _fail(path, f"unreadable PNG ({error})") from error
     return info.get(MANIFEST_METADATA_KEY), info.get(IMPRINT_METADATA_KEY)

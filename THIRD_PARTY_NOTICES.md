@@ -5,10 +5,11 @@
 | Part of this repository | Origin | License |
 |---|---|---|
 | Saya Couple original code (installer, tests, tools, most of `files/custom_nodes/Saya_Couple/`) | this project | **GPL-3.0-or-later** (see `LICENSE`) |
-| `patches/saya_dual_attention.patch`, `patches/amd_vram_safety.patch`, `files/comfy/**` | modifications of **ComfyUI** | **GPL-3.0** (ComfyUI's license) |
+| `patches/amd_vram_safety.patch` (optional), `patches/legacy/saya_dual_attention_1.x.patch` (1.x, kept so the installer can remove it) | modifications of **ComfyUI** | **GPL-3.0** (ComfyUI's license) |
 | `files/custom_nodes/Saya_Couple/src/ppm_vendor/**` | vendored from **pamparamm/ComfyUI-ppm** | **AGPL-3.0-or-later** (`LICENSES/AGPL-3.0.txt`) |
 | `files/custom_nodes/Saya_Couple/src/nodes/saya_attention_couple.py` | adapted from ComfyUI-ppm's "Attention Couple (PPM)" node | **AGPL-3.0-or-later** |
 | `patches/third_party/ultimatesdupscale_saya_couple_crop.patch` | modification of **ssitu/ComfyUI_UltimateSDUpscale** | **GPL-3.0** |
+| `patches/third_party/res4lyf_hidream_attention_split.patch` | modification of **ClownsharkBatwing/RES4LYF** (optional, HiDream on 16 GB) | RES4LYF's license (AGPL-3.0 text + its commercial-service clause) |
 
 The repository's **main license is GPL-3.0-or-later** (`LICENSE`). It also **contains components under other licenses**:
 the files listed as AGPL-3.0-or-later **remain AGPL** (they do not become GPL by being here) and carry an
@@ -21,8 +22,11 @@ The machine-readable per-file list (origin, license, sha256) is `MANIFEST.json`.
 ## ComfyUI
 
 - Upstream: https://github.com/comfy-org/ComfyUI, license GPL-3.0 (text in `LICENSES/GPL-3.0.txt`).
-- Saya ships **patches** to two ComfyUI files, plus reference copies of those two files as patched for the tested
-  upstream commit `41db8f4f` (`files/comfy/**`). Changes are described in `README.md` ("Core files modified").
+- Since 2.0 Saya **modifies no ComfyUI file**: the couple engine is attached with ComfyUI's public `ModelPatcher`
+  API. The repository still contains two patches to ComfyUI files: the **optional** AMD VRAM patch
+  (`patches/amd_vram_safety.patch`, applied only on request) and the 1.x attention patch
+  (`patches/legacy/saya_dual_attention_1.x.patch`), kept only so the installer can reverse it on a 1.x install.
+  No patched reference copy of a ComfyUI file is shipped any more.
 
 ## pamparamm/ComfyUI-ppm (vendored)
 

@@ -103,7 +103,7 @@ def _couple_crop_gate_missing(node_class: Any) -> str | None:
     """Why the installed engine cannot honour the couple-crop gate, or None when it can.
 
     The gate lives in an optional patch of ComfyUI_UltimateSDUpscale
-    (patches/third_party/ultimatesdupscale_saya_couple_crop.patch in the release).
+    (tools/core_patches/ultimate_sd_upscale_saya_couple_crop.patch in the release).
     A stock build ignores the variable and every tile then squashes the
     full-frame P1/P2 masks into itself.
     """
@@ -137,7 +137,7 @@ def _delegate_with_couple_crop_env(node_class: Any, call: dict[str, Any], couple
         if missing:
             logging.warning(
                 "[Saya Couple] USDU couple crop unavailable (%s): P1/P2 masks are applied full-frame to every tile. "
-                "Apply the optional patches/third_party/ultimatesdupscale_saya_couple_crop.patch from the Saya Couple release.",
+                "Apply the optional tools/core_patches/ultimate_sd_upscale_saya_couple_crop.patch from the Saya Couple pack (git apply inside custom_nodes/ComfyUI_UltimateSDUpscale).",
                 missing,
             )
     previous = os.environ.get(_SAYA_COUPLE_CROP_ENV)

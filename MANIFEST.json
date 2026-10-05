@@ -1,7 +1,7 @@
 {
  "schema": 1,
- "saya_version": "1.0.2",
- "tested_upstream": "ComfyUI 41db8f4f (v0.34.0+77)",
+ "saya_version": "2.0.0",
+ "tested_upstream": "ComfyUI 41db8f4f (v0.34.0+77) - 2.0: stock core, no modification",
  "files": [
   {
    "path": ".gitignore",
@@ -17,7 +17,7 @@
   {
    "path": "CHANGELOG.md",
    "type": "markdown",
-   "sha256": "bf9d71d84d886cf6cb2c4459a69efe0421c7a18aa5cdb1afb48c639646dfc389",
+   "sha256": "b2d10415291b8c70729be36f0cc1f0e2e38745e28e832f2c816e4921b677b99a",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -39,7 +39,7 @@
   {
    "path": "README.md",
    "type": "markdown",
-   "sha256": "05d09c5d80ac997fefbfb565cfa4df81291c8d8da40e68b1fddd92c2452ccc63",
+   "sha256": "25631ef3f306e5456601859bd40563a58d3e39f564c1e47871b4ac0cae92b09f",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -50,7 +50,7 @@
   {
    "path": "THIRD_PARTY_NOTICES.md",
    "type": "markdown",
-   "sha256": "53d99b79ac05f195867d665dc1c8eec4e509c2bea0541fcb439d1c18bf285c69",
+   "sha256": "cac6c306182723d0b496fe94f68e4e8f5566ed24d2c68b2c26511aaf92133b30",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -61,7 +61,7 @@
   {
    "path": "compatibility.json",
    "type": "json",
-   "sha256": "bc1ba8eaa9e10c965702b82fab612965589c1a58da614f3085633efc36f27c1f",
+   "sha256": "02d38f2f4ee9de989501a4fbddb7d9ba591c71bc61eaa2e0919f693b753589da",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -116,7 +116,29 @@
   {
    "path": "docs/DEVELOPMENT_HISTORY.md",
    "type": "markdown",
-   "sha256": "7933f250c0e7ac1754533be8d532ec7e5b8b5f85f615835913caac29440c76b2",
+   "sha256": "a387829598b3d9d56e07ab28abe3ae3dfa9a5f14fc7e26326e38ea9afc03f0a2",
+   "destination": null,
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": false,
+   "component": "docs",
+   "description": ""
+  },
+  {
+   "path": "docs/PROMPTS_GUIDE_SFW_EN.md",
+   "type": "markdown",
+   "sha256": "411b5d27b09636bc38ced33131bffd06ec5e740894e29bb8d596898fa47025dc",
+   "destination": null,
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": false,
+   "component": "docs",
+   "description": ""
+  },
+  {
+   "path": "docs/PROMPTS_GUIDE_SFW_FR.md",
+   "type": "markdown",
+   "sha256": "4c2fd656497191b595af911d3c501630f941f268f7575f490cab64045fb9591d",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -138,7 +160,7 @@
   {
    "path": "docs/RELEASE_CHECKLIST.md",
    "type": "markdown",
-   "sha256": "4ceaa4bc8db29e007d494982fbf9db7d72cc74bcdf06813d833d976aaacb0e3b",
+   "sha256": "2a53764d12b9fcc7c1609e90c37ef23efe2e6ecdedb178bdb5c0b7e2744288a6",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -169,30 +191,6 @@
    "description": ""
   },
   {
-   "path": "files/comfy/model_management.py",
-   "type": "python",
-   "sha256": "ad00a433603f7d337adf33fcc578401c5a8fef6812ca452d59db1c53212eb8cf",
-   "destination": "comfy/model_management.py",
-   "origin": "ComfyUI + Saya AMD patch",
-   "license": "GPL-3.0 (ComfyUI)",
-   "required": false,
-   "component": "amd_optional",
-   "description": "REFERENCE: patched model_management.py for the tested upstream (optional AMD patch).",
-   "upstream_expected": "ComfyUI 41db8f4f (v0.34.0+77)"
-  },
-  {
-   "path": "files/comfy/ldm/modules/attention.py",
-   "type": "python",
-   "sha256": "48dfedc4a28a40538a80d62794e5c82d65633205bc56f8501eed4d01fdab0dbc",
-   "destination": "comfy/ldm/modules/attention.py",
-   "origin": "ComfyUI + Saya patch",
-   "license": "GPL-3.0 (ComfyUI)",
-   "required": true,
-   "component": "saya_core",
-   "description": "REFERENCE: patched attention.py for the tested upstream. The installer applies the patch; it never copies this file.",
-   "upstream_expected": "ComfyUI 41db8f4f (v0.34.0+77)"
-  },
-  {
    "path": "files/custom_nodes/Saya_Couple/.gitignore",
    "type": "file",
    "sha256": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
@@ -206,7 +204,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/README.md",
    "type": "markdown",
-   "sha256": "532237a67a3c4ea1b91a011a2900d4a9fa0f726988ecceb6784d452806e61110",
+   "sha256": "14b454da56d60c7ebe4526b4d5de2321920cb9416c6de12eab3bef294e20fbb8",
    "destination": "custom_nodes/Saya_Couple/README.md",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -217,7 +215,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/VERSION.txt",
    "type": "text",
-   "sha256": "9fd28642d3aca191e5c7fc2383cfd6fabb2aac8743f029dabb8989ac584e31bc",
+   "sha256": "c28fcca53637bc88e124af1725df13cb98c69dedefd62fb3cdbe1cdb6b760624",
    "destination": "custom_nodes/Saya_Couple/VERSION.txt",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -228,7 +226,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/__init__.py",
    "type": "python",
-   "sha256": "d9123429486d2ea1e1b930600721c65c782a9779363fcbe5f055ba3fa88cc162",
+   "sha256": "3c8355581b4c22c1a6bb39c2194b9be8a5280bae224f4ed427ec30f679b83591",
    "destination": "custom_nodes/Saya_Couple/__init__.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -239,7 +237,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/registry.py",
    "type": "python",
-   "sha256": "6b932c568d593fb91ebd62bf8109663d7cf46dc8d3d3754e48e73f48904cd917",
+   "sha256": "8afd348eeaf531acbe1e55f0a6a1b40f623dabb894a82c5ed6cac54561134fee",
    "destination": "custom_nodes/Saya_Couple/registry.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -259,15 +257,37 @@
    "description": "Saya Couple custom node pack"
   },
   {
-   "path": "files/custom_nodes/Saya_Couple/core_patch/saya_dual_attention.patch",
-   "type": "patch",
-   "sha256": "5c7ac8cb50d1fd12d7d47bac6ca4a7625591894e5387ccef263db871f8dee5b4",
-   "destination": "custom_nodes/Saya_Couple/core_patch/saya_dual_attention.patch",
-   "origin": "derived from ComfyUI (patch)",
-   "license": "GPL-3.0 (ComfyUI)",
+   "path": "files/custom_nodes/Saya_Couple/data/backgrounds.json",
+   "type": "json",
+   "sha256": "2f8c754ef5312807f5d74b5d3fddd7fdbb4c0c75ab3c9e5879069b104ca7badc",
+   "destination": "custom_nodes/Saya_Couple/data/backgrounds.json",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
    "required": true,
    "component": "saya_node",
-   "description": "copy of the core patch, used by the pack tests"
+   "description": "data: background stock / prompt tag menus (plain JSON, editable)"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/data/backgrounds_fou.json",
+   "type": "json",
+   "sha256": "124f42039d8db5519c47b9dd028d67f5d75bccde27de75a6a0c5aa9522bfb328",
+   "destination": "custom_nodes/Saya_Couple/data/backgrounds_fou.json",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "data: background stock / prompt tag menus (plain JSON, editable)"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/data/main_prompt_tags.json",
+   "type": "json",
+   "sha256": "4e37126c5ab80b7836cab1e65ae7da732c0d1064f29a46678838cab42c32a94d",
+   "destination": "custom_nodes/Saya_Couple/data/main_prompt_tags.json",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "data: background stock / prompt tag menus (plain JSON, editable)"
   },
   {
    "path": "files/custom_nodes/Saya_Couple/src/__init__.py",
@@ -327,8 +347,30 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/duo_geometry/usdu_pass_node.py",
    "type": "python",
-   "sha256": "bc5ec787619b31e2cd6765b431947115cfb9995ea8237c7e6859ff3657e50682",
+   "sha256": "a8ba2d1a964e72dded9291c864b726fdc5a7459a91c0b26d333bdd73092cdb55",
    "destination": "custom_nodes/Saya_Couple/src/duo_geometry/usdu_pass_node.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "Saya Couple custom node pack"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/src/engine/__init__.py",
+   "type": "python",
+   "sha256": "17490e9f4156a0d084c524c38ea554ca7d077fb7f422fa2216f501ab50392f29",
+   "destination": "custom_nodes/Saya_Couple/src/engine/__init__.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "Saya Couple custom node pack"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/src/engine/dual_attention.py",
+   "type": "python",
+   "sha256": "9bf6ea684ea320fc8b168010f880323589d522be39229ae12674c7f22213a5e4",
+   "destination": "custom_nodes/Saya_Couple/src/engine/dual_attention.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
    "required": true,
@@ -340,6 +382,28 @@
    "type": "python",
    "sha256": "b055bb82b108fb50a1c4636e2bcdd42ef2d0185450408acffa71bf7babf8447e",
    "destination": "custom_nodes/Saya_Couple/src/nodes/__init__.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "Saya Couple custom node pack"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/src/nodes/background_details.py",
+   "type": "python",
+   "sha256": "1f485b220019177aad4f3a5c07bf9ea99e6a225eda877120052be1cd977bfa88",
+   "destination": "custom_nodes/Saya_Couple/src/nodes/background_details.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "Saya Couple custom node pack"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/src/nodes/background_picker.py",
+   "type": "python",
+   "sha256": "aa851983f203cfb8162b17a18efa8a3e21dc1f634cc952ae975752f8c89f7cbc",
+   "destination": "custom_nodes/Saya_Couple/src/nodes/background_picker.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
    "required": true,
@@ -369,9 +433,20 @@
    "description": "Saya Couple custom node pack"
   },
   {
+   "path": "files/custom_nodes/Saya_Couple/src/nodes/couple_context.py",
+   "type": "python",
+   "sha256": "c30dab185e931cabe114da83d3f37f77881d2118fe65881ca6328e0e89cef36e",
+   "destination": "custom_nodes/Saya_Couple/src/nodes/couple_context.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "Saya Couple custom node pack"
+  },
+  {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/couple_hidream_reconstruct.py",
    "type": "python",
-   "sha256": "605eb65147fc57925d9fd906a5c85b286250db1a3be61588f58cf89cbdfd23bc",
+   "sha256": "ce80845ced9682d03138c03fb2fbc44caaa24ce77a91b82fcbfdebee819968e6",
    "destination": "custom_nodes/Saya_Couple/src/nodes/couple_hidream_reconstruct.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -393,7 +468,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/couple_imprint_resolve.py",
    "type": "python",
-   "sha256": "dbaa6e1282f291a34a801c6284ee08faaf38f9944f53ee542637dac9826ebbe3",
+   "sha256": "725cf354302dba838b1bf82e1405e100bac6ebe304e77153a9d733caf3e58c33",
    "destination": "custom_nodes/Saya_Couple/src/nodes/couple_imprint_resolve.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -404,7 +479,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/couple_imprint_v2.py",
    "type": "python",
-   "sha256": "1c7b4639110b3c55020d87a1db0722522bcd712381de1514919735f6bc30227e",
+   "sha256": "f57a9d9e7f80bd7d43efcd7c691cce1766c9ad2babfe4e07c5ebc47c21f9ba54",
    "destination": "custom_nodes/Saya_Couple/src/nodes/couple_imprint_v2.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -415,8 +490,19 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/couple_reconstruct.py",
    "type": "python",
-   "sha256": "0ea6c4230a8644ede73bba47147cfc957b0a74df3415e5566695cc6510004dc8",
+   "sha256": "12029258779689062dcc63ee1fa5dcb78bdb83572b801aa9102f6c52b8e03a38",
    "destination": "custom_nodes/Saya_Couple/src/nodes/couple_reconstruct.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "Saya Couple custom node pack"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/src/nodes/deprecated.py",
+   "type": "python",
+   "sha256": "79fb6c87f3d8671048b95c4493849f6e28f4521413e729784aa77dad32ff2116",
+   "destination": "custom_nodes/Saya_Couple/src/nodes/deprecated.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
    "required": true,
@@ -512,10 +598,43 @@
    "description": "Saya Couple custom node pack"
   },
   {
+   "path": "files/custom_nodes/Saya_Couple/src/nodes/main_prompt.py",
+   "type": "python",
+   "sha256": "8068f77377f09a53ffdb2f223131373c92b225e904c9fea9cb6e2ce26f23a45c",
+   "destination": "custom_nodes/Saya_Couple/src/nodes/main_prompt.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "Saya Couple custom node pack"
+  },
+  {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/naturalize_postprocess.py",
    "type": "python",
    "sha256": "10e8f2d8bd0a7eabc74c20eff1f1a47adde0757db8fa382bffbdf2b04525e7e6",
    "destination": "custom_nodes/Saya_Couple/src/nodes/naturalize_postprocess.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "Saya Couple custom node pack"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/src/nodes/ownership_anchors.py",
+   "type": "python",
+   "sha256": "984b0a98d9f8ed9d5241b9e929e0c289d181e7cbebcc776d63cd457d907ef144",
+   "destination": "custom_nodes/Saya_Couple/src/nodes/ownership_anchors.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "Saya Couple custom node pack"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/src/nodes/ownership_map.py",
+   "type": "python",
+   "sha256": "5395a2d84fdbb0ffa166b2f3776f043a5287a43736d7a22c2879aacb0b5aad1a",
+   "destination": "custom_nodes/Saya_Couple/src/nodes/ownership_map.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
    "required": true,
@@ -536,7 +655,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/region_masks.py",
    "type": "python",
-   "sha256": "376a7130c564c1a474fdec07a4d4f90fbf17bafe546cfd10b9f4c5a288d1d2c4",
+   "sha256": "e3db3616b9924776714d1ea1d31b34e297970562283af106537c8b05bcf2ba2e",
    "destination": "custom_nodes/Saya_Couple/src/nodes/region_masks.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -558,7 +677,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/saya_attention_couple.py",
    "type": "python",
-   "sha256": "bd248f0016ac3ce0968dd8a5957bdce373ab198b61ba07b2a6b314ffbca3dba5",
+   "sha256": "eb55424a42f382344a3ea6d2d47a0b1c85ba7acf31e8f403c6348c66f9298685",
    "destination": "custom_nodes/Saya_Couple/src/nodes/saya_attention_couple.py",
    "origin": "adapted from pamparamm/ComfyUI-ppm 'Attention Couple (PPM)' node",
    "license": "AGPL-3.0-or-later",
@@ -569,7 +688,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/saya_dual_attention.py",
    "type": "python",
-   "sha256": "aeeea3075cb4e7f57f75ea6e13f69dff9c83d3d221930f2e1011de05d308379d",
+   "sha256": "8cc0ce9983aa569f6fdb6c9b2a30d2176edea891eb8def46c8b5342adbc9a579",
    "destination": "custom_nodes/Saya_Couple/src/nodes/saya_dual_attention.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -580,7 +699,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/saya_multi_couple.py",
    "type": "python",
-   "sha256": "0628a8e8b33f65273769d96ca6eb965ea5003598a81a993d99e51b4fec1aef61",
+   "sha256": "805c043db2caa7f3f1afff89810a401a37c53a981eec3a01af131bfa1c2c8ef1",
    "destination": "custom_nodes/Saya_Couple/src/nodes/saya_multi_couple.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -602,7 +721,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/saya_split_mask.py",
    "type": "python",
-   "sha256": "1e89502f0ae91b976c665e7cf170061824a92cbaf1d458763a9174912208e83b",
+   "sha256": "1d97f0c4389ed5abb493eebfb999cbba30f32582979ec896e5ab39c1584b5c42",
    "destination": "custom_nodes/Saya_Couple/src/nodes/saya_split_mask.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -635,7 +754,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/ppm_vendor/README.md",
    "type": "markdown",
-   "sha256": "e066e0a669c897e8be39849c92e9778846a0b255d76bc8410e6da4be9b2d276f",
+   "sha256": "93f1601618f53c2154be2124caf6ca01dbd739789bfd8ca1553ee7ac33a0b649",
    "destination": "custom_nodes/Saya_Couple/src/ppm_vendor/README.md",
    "origin": "pamparamm/ComfyUI-ppm (vendored)",
    "license": "AGPL-3.0-or-later",
@@ -646,7 +765,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/ppm_vendor/__init__.py",
    "type": "python",
-   "sha256": "5c55dd3948bdf6d32a2642b34b32ae0c8df399d26ef4c9f0d2a893979d8db051",
+   "sha256": "a214db51c3680edcccde730f5ae58faeb01155398e75529a00e03827e2668f5d",
    "destination": "custom_nodes/Saya_Couple/src/ppm_vendor/__init__.py",
    "origin": "pamparamm/ComfyUI-ppm (vendored)",
    "license": "AGPL-3.0-or-later",
@@ -657,7 +776,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/ppm_vendor/attention_couple/__init__.py",
    "type": "python",
-   "sha256": "61816ed950fe365bd382bd75aec55017b2717bb0de0353f3daf06c3cc65158ca",
+   "sha256": "a78fdffd0b20154f4f0334bedd949f8f1aae6796e55adee655055c8c41fb6ee1",
    "destination": "custom_nodes/Saya_Couple/src/ppm_vendor/attention_couple/__init__.py",
    "origin": "pamparamm/ComfyUI-ppm (vendored)",
    "license": "AGPL-3.0-or-later",
@@ -668,7 +787,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/ppm_vendor/attention_couple/common.py",
    "type": "python",
-   "sha256": "a218c99e5a8c096720baccd27264c8ad423ca451d28328934b2cc4e77914db32",
+   "sha256": "e49b8283e59673b16f0df1dea24e35e1366784c6259baff2b69a692555da78fd",
    "destination": "custom_nodes/Saya_Couple/src/ppm_vendor/attention_couple/common.py",
    "origin": "pamparamm/ComfyUI-ppm (vendored, MODIFIED by Saya)",
    "license": "AGPL-3.0-or-later",
@@ -679,7 +798,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/ppm_vendor/attention_couple/cosmos_couple.py",
    "type": "python",
-   "sha256": "2675e0a9eb48a351181fc4c6661725956198c1cbb4ff9dcd7f202affeb2fb3a1",
+   "sha256": "f27f73f9c61bf7d9ef74fbedc82ec113ec10f40cfb200f379c2136082d57abaf",
    "destination": "custom_nodes/Saya_Couple/src/ppm_vendor/attention_couple/cosmos_couple.py",
    "origin": "pamparamm/ComfyUI-ppm (vendored)",
    "license": "AGPL-3.0-or-later",
@@ -690,7 +809,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/ppm_vendor/attention_couple/unet_couple.py",
    "type": "python",
-   "sha256": "37603c4c0b284d0f3bfd1a4083796a8b93b42efcffd108bb1e2fe2b7726440aa",
+   "sha256": "6a96724c68f7c5748db1b83e2fa28f0118a7d8224e44214dc9196887b5ab770d",
    "destination": "custom_nodes/Saya_Couple/src/ppm_vendor/attention_couple/unet_couple.py",
    "origin": "pamparamm/ComfyUI-ppm (vendored, MODIFIED by Saya)",
    "license": "AGPL-3.0-or-later",
@@ -701,7 +820,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/ppm_vendor/negpip/__init__.py",
    "type": "python",
-   "sha256": "4fdc9711b62bdd4782d038c5e3a6886f5ddc1e60b76f1373dd779b559951e10e",
+   "sha256": "7b25291845ade2df9417ef85da0ab90d5ec99c86372edb6be830109714788398",
    "destination": "custom_nodes/Saya_Couple/src/ppm_vendor/negpip/__init__.py",
    "origin": "pamparamm/ComfyUI-ppm (vendored)",
    "license": "AGPL-3.0-or-later",
@@ -712,7 +831,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/ppm_vendor/negpip/anima_negpip.py",
    "type": "python",
-   "sha256": "0c9358f7047a7bc23f5f72dcbb2f82b33b774dc8e2cebf629d4e8bfaea20fbb3",
+   "sha256": "4a25d4731ff3e64d71cc1ae38c93478a456b186bdd7e6cdc7750cdb67d4398b4",
    "destination": "custom_nodes/Saya_Couple/src/ppm_vendor/negpip/anima_negpip.py",
    "origin": "pamparamm/ComfyUI-ppm (vendored)",
    "license": "AGPL-3.0-or-later",
@@ -756,7 +875,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/services/image_phases.py",
    "type": "python",
-   "sha256": "45e90372d0de7367c7e244fb47a4c19c9047a8a5ad83373c3b37ee8d7f57c43e",
+   "sha256": "7692323ecd0dde6f2fb074c62c42d277fae6f2a0d867560bf98740448f420bad",
    "destination": "custom_nodes/Saya_Couple/src/services/image_phases.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -767,7 +886,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/services/imprint_integrity.py",
    "type": "python",
-   "sha256": "491a76b7e9b9de46928035b7988bbe4fb82e9baae5a9588acf5c1018d3d7c219",
+   "sha256": "2018d4bc2eb3335b8083a1bff73f6d0d0ca8d4dc524ea9cd901ce62da6bb8659",
    "destination": "custom_nodes/Saya_Couple/src/services/imprint_integrity.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -778,7 +897,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/services/models.py",
    "type": "python",
-   "sha256": "32412245758488bf0a1609574b8b8df5c3148e6bd87183f975cf0676ac0209c2",
+   "sha256": "1c8f9f0d7f4afefd94d0cf37f8105225932772589227eec2c66ddeb811518638",
    "destination": "custom_nodes/Saya_Couple/src/services/models.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -787,10 +906,10 @@
    "description": "Saya Couple custom node pack"
   },
   {
-   "path": "files/custom_nodes/Saya_Couple/tests/_patchlib.py",
+   "path": "files/custom_nodes/Saya_Couple/tests/diag_saya_dual_propagation.py",
    "type": "python",
-   "sha256": "c7d8632b4adc99ff6ad3c18501ee5127bd88c51149779cf4d0d475df8ca75bda",
-   "destination": "custom_nodes/Saya_Couple/tests/_patchlib.py",
+   "sha256": "7e979112c6c7a1c469c831994c97d9c1873ed4a0e5067350a5a1c81433e821fa",
+   "destination": "custom_nodes/Saya_Couple/tests/diag_saya_dual_propagation.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
    "required": true,
@@ -800,7 +919,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tests/harness.py",
    "type": "python",
-   "sha256": "e9d0208a23fe3987b65a0f7d2d72418948c698b909aaba569859cd5bce65e911",
+   "sha256": "0a74451204bb3cb5c3681b598a86d94f2b839d075eeb1585ce8f30b7dffc211d",
    "destination": "custom_nodes/Saya_Couple/tests/harness.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -811,8 +930,19 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tests/run_all.py",
    "type": "python",
-   "sha256": "e8446a8a3bc66e7466ac9ee418fa220d53e99f1b1048c2faa284020b2d62f631",
+   "sha256": "f455ed43d9c27a0d3f211fb9e6be6ef3d13c3605fbdb128752dba74d56c79c8e",
    "destination": "custom_nodes/Saya_Couple/tests/run_all.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "pack test suite (installed with the node)"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/tests/test_action_imprint.py",
+   "type": "python",
+   "sha256": "efbac288c8319185c9d99f0ec78fda52fa13efdd95e444b3a5bdabf8aad5df8e",
+   "destination": "custom_nodes/Saya_Couple/tests/test_action_imprint.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
    "required": true,
@@ -822,8 +952,19 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tests/test_audit_regressions.py",
    "type": "python",
-   "sha256": "ea4dc7d4b68dbe085fae529f77c0be23796614c655609d032c17f7dc5f8280a0",
+   "sha256": "b388da6b8f4f4bcaf0fb04ddf00d062ffe48419770d56a52a2975a726bee4437",
    "destination": "custom_nodes/Saya_Couple/tests/test_audit_regressions.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "pack test suite (installed with the node)"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/tests/test_background_picker.py",
+   "type": "python",
+   "sha256": "a11f8268e7f57bc23816a7a7665166e5de6dcb05677d7f5549f7b482f82fd2c2",
+   "destination": "custom_nodes/Saya_Couple/tests/test_background_picker.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
    "required": true,
@@ -844,8 +985,19 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tests/test_core_saya_dual.py",
    "type": "python",
-   "sha256": "50c81046782c7f0de81b44c1d6bdb80db62ffbe4414ab2e20bb66664a3d458e3",
+   "sha256": "7ca8d0346a8b773bc5cbc6453d05bc78372a54d34b35d77028e8a248e02dba4a",
    "destination": "custom_nodes/Saya_Couple/tests/test_core_saya_dual.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "pack test suite (installed with the node)"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/tests/test_couple_context.py",
+   "type": "python",
+   "sha256": "472bd83222eb4cfc654507d755e886d37e1365ef4e30e05a7db813cf36b64f0d",
+   "destination": "custom_nodes/Saya_Couple/tests/test_couple_context.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
    "required": true,
@@ -857,6 +1009,17 @@
    "type": "python",
    "sha256": "8e7731bcb6a977e4a9f6417f6a3851fdea3633e844bcc3a2b5a3d77581215db7",
    "destination": "custom_nodes/Saya_Couple/tests/test_couple_crop_f8.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "pack test suite (installed with the node)"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/tests/test_deprecated.py",
+   "type": "python",
+   "sha256": "33da4e7547a185c87b89537d8e12a3ca62d6ee35f005e429a98706a3a7ff9b01",
+   "destination": "custom_nodes/Saya_Couple/tests/test_deprecated.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
    "required": true,
@@ -877,8 +1040,19 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tests/test_dual_wiring.py",
    "type": "python",
-   "sha256": "18b0a79eddb97bd1d4d47e82881ca415fd2ccb499435706cfa9de10047beee09",
+   "sha256": "4d600c92ae4625c500a71eb704ac61234aaac1b375f64e31d483e72fc05020ad",
    "destination": "custom_nodes/Saya_Couple/tests/test_dual_wiring.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "pack test suite (installed with the node)"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/tests/test_fable_audit.py",
+   "type": "python",
+   "sha256": "a395a35b4e9c0ad2422266bd69a5d99d0915fd7d087bea6e8833aecc927db6e9",
+   "destination": "custom_nodes/Saya_Couple/tests/test_fable_audit.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
    "required": true,
@@ -954,7 +1128,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tests/test_hub_ui.cjs",
    "type": "javascript",
-   "sha256": "96309c5f9c0beaf2dff6b89e78b0e0a70f38a60e362e5a591603e24636848f0b",
+   "sha256": "e03547dac3b5593850a23379d6c818c78126fd071b234f64dad459859a1aef05",
    "destination": "custom_nodes/Saya_Couple/tests/test_hub_ui.cjs",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -965,7 +1139,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tests/test_image_phase_controller.cjs",
    "type": "javascript",
-   "sha256": "59b8431a5929efce59f87fe1e82196da19e60f9d1b7c956de3d68a68b8d01767",
+   "sha256": "bcadced583ad20028fd7b0b12005d8e1caaeea1764aee82fe8f3967c7e057f6c",
    "destination": "custom_nodes/Saya_Couple/tests/test_image_phase_controller.cjs",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -985,9 +1159,20 @@
    "description": "pack test suite (installed with the node)"
   },
   {
+   "path": "files/custom_nodes/Saya_Couple/tests/test_main_prompt.py",
+   "type": "python",
+   "sha256": "07e9f01d6d80d786f2dc79d8d685e49fbc9cdf412ac244bf0e02883bb96fbb51",
+   "destination": "custom_nodes/Saya_Couple/tests/test_main_prompt.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "pack test suite (installed with the node)"
+  },
+  {
    "path": "files/custom_nodes/Saya_Couple/tests/test_multi_couple.py",
    "type": "python",
-   "sha256": "60be1cef1b737b952519882c2144f84966c4049ae04c91ab33ddf1dc9d4e5732",
+   "sha256": "bf80fd37cc03eb70d0d80f65e6e9fcbbc213898dcc9f876da5d8970881419f03",
    "destination": "custom_nodes/Saya_Couple/tests/test_multi_couple.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -998,7 +1183,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tests/test_multimask_grid.py",
    "type": "python",
-   "sha256": "ecd29b234cfd4b922b2a9b54e716498d1696fe9775f742a6c035886d0b179c6e",
+   "sha256": "9af443231a89115c2c9c056022e52bab04183dc142529402a605785ebb99200e",
    "destination": "custom_nodes/Saya_Couple/tests/test_multimask_grid.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1022,6 +1207,28 @@
    "type": "python",
    "sha256": "296ffa2489457134f0b188488da821c4b49ae6a475052c3a1523970eefab3795",
    "destination": "custom_nodes/Saya_Couple/tests/test_nodes_compute.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "pack test suite (installed with the node)"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/tests/test_ownership_anchors.py",
+   "type": "python",
+   "sha256": "de198cc747d4c1ffd657a555b508c1dc38eea4b3204842ca35d4ee21db028705",
+   "destination": "custom_nodes/Saya_Couple/tests/test_ownership_anchors.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "pack test suite (installed with the node)"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/tests/test_ownership_map.py",
+   "type": "python",
+   "sha256": "88122130a03566594adff036290fefcbf8f3bb75ef7f566b830103d1bd993a7b",
+   "destination": "custom_nodes/Saya_Couple/tests/test_ownership_map.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
    "required": true,
@@ -1075,7 +1282,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tests/test_registry.py",
    "type": "python",
-   "sha256": "a21242ca28df02ecc91067cce91540a95bfed8d91c5f46a54327b1dae2637461",
+   "sha256": "b4874428228e875d0352298b298c1d1ea772a5aa50c2c11e5c0e9d92cf28a47d",
    "destination": "custom_nodes/Saya_Couple/tests/test_registry.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1119,7 +1326,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tests/test_upscale_mode.py",
    "type": "python",
-   "sha256": "a9c6eb09d7b46aeebdd10fa8430d15ce6af152130a12f6003e34c7913e2df647",
+   "sha256": "75a0ff210117033a07ebc6b84866d58317a944a732efa3983f608b094dc351b6",
    "destination": "custom_nodes/Saya_Couple/tests/test_upscale_mode.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1185,7 +1392,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tests/test_workflow_v030.py",
    "type": "python",
-   "sha256": "4fd1653d469cd4a7ff62abc1e7b75db08a18be131f55486af67f87700d14ba41",
+   "sha256": "fe0f5a2fa2fe69d5169efcc99831e4215f153724e9800fae655cb90e1f36ba5f",
    "destination": "custom_nodes/Saya_Couple/tests/test_workflow_v030.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1194,9 +1401,64 @@
    "description": "pack test suite (installed with the node)"
   },
   {
+   "path": "files/custom_nodes/Saya_Couple/tools/check_comfyui_compat.py",
+   "type": "python",
+   "sha256": "b2a884d65df8ba32e0313a205406b2851db38a04b36a0ef299e58f28333149c6",
+   "destination": "custom_nodes/Saya_Couple/tools/check_comfyui_compat.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "Saya Couple custom node pack"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/tools/core_patches/amd_vram_safety.patch",
+   "type": "patch",
+   "sha256": "37825f2277d04741c937bdf578c97a907dc4eed096ee8ce7f4055e473c201eca",
+   "destination": "custom_nodes/Saya_Couple/tools/core_patches/amd_vram_safety.patch",
+   "origin": "derived from ComfyUI (patch)",
+   "license": "GPL-3.0 (ComfyUI)",
+   "required": true,
+   "component": "saya_node",
+   "description": "copy of the optional AMD patch + its apply script (pack tools)"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/tools/core_patches/apply_amd_vram_patch.py",
+   "type": "python",
+   "sha256": "6579b044e3751e0d6393601d8e28ef953fe2595b6c2035c4195d3b8d833411b9",
+   "destination": "custom_nodes/Saya_Couple/tools/core_patches/apply_amd_vram_patch.py",
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": true,
+   "component": "saya_node",
+   "description": "Saya Couple custom node pack"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/tools/core_patches/res4lyf_hidream_attention_split.patch",
+   "type": "patch",
+   "sha256": "8dbf8e55b4d2499a636f59791aebe0050b866452d9a471faf3f4fea183e9aad4",
+   "destination": "custom_nodes/Saya_Couple/tools/core_patches/res4lyf_hidream_attention_split.patch",
+   "origin": "derived from ClownsharkBatwing/RES4LYF (patch)",
+   "license": "AGPL-3.0 + RES4LYF non-commercial clause",
+   "required": true,
+   "component": "saya_node",
+   "description": "copy of the optional RES4LYF HiDream patch (pack tools)"
+  },
+  {
+   "path": "files/custom_nodes/Saya_Couple/tools/core_patches/ultimate_sd_upscale_saya_couple_crop.patch",
+   "type": "patch",
+   "sha256": "f08ae01a75e1d9133a1f76f9339d7817662c02f1c9f985065fc806b30da7233d",
+   "destination": "custom_nodes/Saya_Couple/tools/core_patches/ultimate_sd_upscale_saya_couple_crop.patch",
+   "origin": "derived from ssitu/ComfyUI_UltimateSDUpscale (patch)",
+   "license": "GPL-3.0",
+   "required": true,
+   "component": "saya_node",
+   "description": "copy of the optional USDU per-tile patch (pack tools)"
+  },
+  {
    "path": "files/custom_nodes/Saya_Couple/web/image_phase_controller.js",
    "type": "javascript",
-   "sha256": "0f24f70ab7653df276ab9dff64570535b5a594c40cd02797e361f046c86e7661",
+   "sha256": "2da1fa15f0c473502771909d864e9c05592a6a9add0f1c114616dbf8cb03f824",
    "destination": "custom_nodes/Saya_Couple/web/image_phase_controller.js",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1207,7 +1469,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/web/saya_hub_ui.js",
    "type": "javascript",
-   "sha256": "ca50192dc4488efad4b804202fa7c9440b12986369c711032c20ec28897de11f",
+   "sha256": "aa4ec2cefc195927994d518185640cbdd2173cf60a173cc88e5c8d332817dba6",
    "destination": "custom_nodes/Saya_Couple/web/saya_hub_ui.js",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1284,7 +1546,7 @@
   {
    "path": "installer/saya_installer/cli.py",
    "type": "python",
-   "sha256": "d7e85fcee9845450ba78df57c8c9eb4feaea16439a162620049383b17c894ffc",
+   "sha256": "64a0667c1b6ede3e915396c720f264c24acf64ad76cb198b0abbb8d8c1de2320",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1295,7 +1557,7 @@
   {
    "path": "installer/saya_installer/compat.py",
    "type": "python",
-   "sha256": "1e0bf945c735375356d57d19316f9e3705329b884031154834b72677f1984a0e",
+   "sha256": "6fc9e5d8fb6bd6d0ebdd34007f2cc6818985efcb1fd5bcba4270f9eae0b18bb6",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1328,7 +1590,7 @@
   {
    "path": "installer/saya_installer/smoke.py",
    "type": "python",
-   "sha256": "e73b5a2ef515f5098be4ff50eb53378c2672958c82151e623630e9fead8b8f37",
+   "sha256": "79e96e3b091517084668c90c3196a3dca0ec8ee7ed737955140a27be26c57d7b",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1339,31 +1601,43 @@
   {
    "path": "patches/amd_vram_safety.patch",
    "type": "patch",
-   "sha256": "4493e133cc663217a52c9e8629d0497613840926de81176fd6d583ac5f81c699",
+   "sha256": "37825f2277d04741c937bdf578c97a907dc4eed096ee8ce7f4055e473c201eca",
    "destination": "comfy/model_management.py",
    "origin": "derived from ComfyUI",
    "license": "GPL-3.0 (ComfyUI)",
    "required": false,
    "component": "amd_optional",
-   "description": "OPTIONAL AMD/ROCm VRAM safety patch",
-   "upstream_expected": "ComfyUI 41db8f4f (v0.34.0+77)"
+   "description": "OPTIONAL AMD/ROCm VRAM safety patch (VRAM cap, full unloads; fraction clamped since 2.0)",
+   "upstream_expected": "ComfyUI 41db8f4f (v0.34.0+77) - 2.0: stock core, no modification"
   },
   {
-   "path": "patches/saya_dual_attention.patch",
+   "path": "patches/legacy/saya_dual_attention_1.x.patch",
    "type": "patch",
    "sha256": "5c7ac8cb50d1fd12d7d47bac6ca4a7625591894e5387ccef263db871f8dee5b4",
-   "destination": "comfy/ldm/modules/attention.py",
+   "destination": null,
    "origin": "derived from ComfyUI",
    "license": "GPL-3.0 (ComfyUI)",
-   "required": true,
-   "component": "saya_core",
-   "description": "REQUIRED core patch: MAIN/P1/P2 forced attn2 path, main_locked_delta, PERSON gain 0.78",
-   "upstream_expected": "ComfyUI 41db8f4f (v0.34.0+77)"
+   "required": false,
+   "component": "legacy",
+   "description": "1.x core patch, kept ONLY so that `saya install` can remove it when upgrading from 1.x; never applied by 2.0",
+   "upstream_expected": "ComfyUI 41db8f4f (v0.34.0+77) - 2.0: stock core, no modification"
+  },
+  {
+   "path": "patches/third_party/res4lyf_hidream_attention_split.patch",
+   "type": "patch",
+   "sha256": "8dbf8e55b4d2499a636f59791aebe0050b866452d9a471faf3f4fea183e9aad4",
+   "destination": null,
+   "origin": "derived from ClownsharkBatwing/RES4LYF",
+   "license": "AGPL-3.0 + RES4LYF non-commercial clause",
+   "required": false,
+   "component": "third_party_optional",
+   "description": "OPTIONAL, not installed: HiDream masked attention split by head groups (~5 GB saved on 16 GB GPUs)",
+   "upstream_expected": "RES4LYF 119679d"
   },
   {
    "path": "patches/third_party/ultimatesdupscale_saya_couple_crop.patch",
    "type": "patch",
-   "sha256": "d4bdf8abb3bc2dbc7a82088590a626fa2618f15c3d15c281810643f0c663eda3",
+   "sha256": "f08ae01a75e1d9133a1f76f9339d7817662c02f1c9f985065fc806b30da7233d",
    "destination": null,
    "origin": "derived from ssitu/ComfyUI_UltimateSDUpscale",
    "license": "GPL-3.0",
@@ -1386,7 +1660,7 @@
   {
    "path": "tests/installer_scenarios.py",
    "type": "python",
-   "sha256": "e0e8e2c0eeec0cdbad00a336359fbfe66d779251d0cf05ce42163929cfcd2e4b",
+   "sha256": "1190a33de880452871761405bf1292a21ff63986eb7236ff02a0c093e42e3e87",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1408,7 +1682,7 @@
   {
    "path": "tests/proof_gain.py",
    "type": "python",
-   "sha256": "569bc0fca3fa93e53ae4bdb3d3a186f7ca6a5a6ed2882b88150b427b4d046817",
+   "sha256": "d081ea85f9889b80dfac9ec24f78025f73d4cddb49e0408ee23c9c7cbff20c45",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1441,7 +1715,7 @@
   {
    "path": "tools/build_demo_workflow.py",
    "type": "python",
-   "sha256": "b79e9419cf0bb94cf4c334f455ace88358f4acd7fb01905c767de518df2a11af",
+   "sha256": "59be8c45cfea8f65fe2a4196abefee924efdb20ec7afd441d836c3f8aed98118",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1452,7 +1726,7 @@
   {
    "path": "tools/build_full_workflow.py",
    "type": "python",
-   "sha256": "fa9285e9e4c7c4b7993a51cd9e0ae3fb9e2db9bced16ca04fa38e7651d8581c8",
+   "sha256": "b2495d973b5a7ebd688b75f4d0301d396487177e174c99df999a633bc17df433",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1463,7 +1737,7 @@
   {
    "path": "tools/build_manifest.py",
    "type": "python",
-   "sha256": "da6c3e83224cbc9e43723daa3c7262b0102b1d68c16c86de26f71a05cbea2b38",
+   "sha256": "99800526ac5e0d0be2a528c1878239223729c401283657a568680840289e15fa",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1507,7 +1781,7 @@
   {
    "path": "workflows/Saya_Couple_Demo.json",
    "type": "json",
-   "sha256": "aa41e69a179fb8cd111f70e93321937b003538636392b4a06fa8f38da75a7665",
+   "sha256": "d08a8916147518904da06a5fa51fc6395c4e9652373854cade8c4bf5193d4292",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1518,7 +1792,7 @@
   {
    "path": "workflows/Saya_Couple_Demo_api.json",
    "type": "json",
-   "sha256": "81c86cce6f2ce88a4dbf3674e1ad85881fddbf01fc41b2b1690072657eb13b5b",
+   "sha256": "443a63810f74338924f0e7ccb90323c8cbf66aae111f0c923e24f7333e9eefb0",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1529,7 +1803,7 @@
   {
    "path": "workflows/Saya_Couple_Full.json",
    "type": "json",
-   "sha256": "c5f43336ab7b80e39adc57e2e761982405e3874b999089aa6502bd64a6bf6530",
+   "sha256": "82f265050731d398982ede7da9dbe12b39f6572bc6b3b474cd1f29159254bb48",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1540,7 +1814,7 @@
   {
    "path": "workflows/demo_prompt.json",
    "type": "json",
-   "sha256": "86448c18f0421e30b59c0db5eeebf38d09bc30f115176dd18c5234740fdb1a82",
+   "sha256": "8a0e57f5fd2d59462f32a07090478d8e5f7c6acde90f2809dda16fbade8ff5c8",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",

@@ -1,7 +1,3 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
-# Vendored verbatim from pamparamm/ComfyUI-ppm (src/attention_couple/cosmos_couple.py), AGPL-3.0-or-later.
-# Original implementation: laksjdjf, hako-mikan, Haoming02; ComfyUI-ppm by pamparamm. Unmodified.
-
 import itertools
 from typing import Any, Callable
 

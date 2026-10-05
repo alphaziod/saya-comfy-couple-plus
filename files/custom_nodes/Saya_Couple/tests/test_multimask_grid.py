@@ -2,6 +2,7 @@
 that are not a multiple of 32 SDXL's rounded-up downsampling defeats the guess (1584x2320: 73x50 read
 as 50x73, mask transposed). The Saya wrapper hands it the real activation grid."""
 
+import inspect
 import math
 
 import torch
@@ -107,7 +108,7 @@ def test_unchanged_where_the_guess_was_right():
 def test_production_couple_is_wrapped():
     _, couple = _mmc()
     c = Check("multimask_production_patches_wrapped")
-    c.ok(couple.apply_multimask_couple.__defaults__[-1] is couple._attention_couple_patch,
+    c.ok(inspect.signature(couple.apply_multimask_couple).parameters["couple_fn"].default is couple._attention_couple_patch,
          "apply_multimask_couple defaults to the wrapping couple function")
     wrapped = couple._on_real_grid(lambda q, k, v, extra: extra["original_shape"])
     c.eq(wrapped(None, None, None, {"original_shape": [1, 4, 290, 198], "activations_shape": [1, 640, 73, 50]}),

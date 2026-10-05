@@ -43,7 +43,11 @@ import torch.nn.functional as functional
 from .couple_imprint_v2 import (
     FEATHER_AXIS_FRACTION,
     FEATHER_PIXEL_SIGMA,
+    OWNERSHIP_BACKGROUND,
+    OWNERSHIP_P1,
+    OWNERSHIP_P2,
     assert_geometry_coherence,
+    build_ownership_map,
 )
 
 
@@ -227,8 +231,12 @@ def _rasterize_regions(
     *,
     device: torch.device | None,
     dtype: torch.dtype,
+    background: bool = False,
 ) -> tuple[torch.Tensor, torch.Tensor | None]:
     """Geometry imprint -> (mask_1, mask_2|None) UNWEIGHTED (H,W) rects, feather applied.
+
+    ``background``: map background cells are left to neither person (the caller adds the
+    scene-only region on ``derive_background_mask``); off, they keep the static split.
 
     Shared rasterization step for both ``derive_masks`` (PPM amplitude, weight baked
     into the mask) and ``derive_raw_region_masks`` (MultiMaskCouple, weight carried on
@@ -246,7 +254,66 @@ def _rasterize_regions(
     mask_2 = None
     if region_2 is not None:
         mask_2 = region_mask_rect(region_2, height, width, feather, unit, floor, device=device, dtype=dtype)
+        mask_1, mask_2 = apply_ownership_map(couple.get("ownership_map"), mask_1, mask_2, floor, background=background)
     return mask_1, mask_2
+
+
+def apply_ownership_map(
+    ownership_map: dict[str, Any] | None,
+    mask_1: torch.Tensor,
+    mask_2: torch.Tensor,
+    floor: float = 0.0,
+    *,
+    background: bool = False,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Overlay the Sampler 1 ownership map on the static (H,W) region masks.
+
+    A P1 (P2) cell gives 1.0 to its owner and ``floor`` to the other, with hard edges (binary
+    ownership, never a blend); undecided cells keep the static split. Background cells keep it
+    too, unless ``background``: then they go to neither person (scene-only region, added by the
+    caller). The map grid is resized NEAREST to the current pass, like the engine's own map.
+    """
+    if ownership_map is None:
+        return mask_1, mask_2
+    codes = _ownership_codes(ownership_map, *mask_1.shape).to(mask_1.device)
+    p1 = codes == ord(OWNERSHIP_P1)
+    p2 = codes == ord(OWNERSHIP_P2)
+    if background:
+        scene = codes == ord(OWNERSHIP_BACKGROUND)
+        p1, p2 = p1 | scene, p2 | scene
+    on = torch.ones_like(mask_1)
+    off = torch.full_like(mask_1, float(floor))
+    mask_1 = torch.where(codes == ord(OWNERSHIP_P1), on, torch.where(p2, off, mask_1))
+    mask_2 = torch.where(codes == ord(OWNERSHIP_P2), on, torch.where(p1, off, mask_2))
+    return mask_1, mask_2
+
+
+def _ownership_codes(ownership_map: dict[str, Any], height: int, width: int) -> torch.Tensor:
+    rows = build_ownership_map(**ownership_map)["rows"]
+    codes = torch.tensor([[ord(cell) for cell in row] for row in rows], dtype=torch.float32)
+    return functional.interpolate(codes[None, None], size=(height, width), mode="nearest-exact")[0, 0]
+
+
+def derive_background_mask(
+    imprint: dict[str, Any],
+    height: int,
+    width: int,
+    batch: int = 1,
+    *,
+    device: torch.device | None = None,
+    dtype: torch.dtype = torch.float32,
+) -> torch.Tensor | None:
+    """(B,H,W) mask of the map's background cells (1.0, hard edges) for the scene-only region
+    (MAIN without ACTION, like Sampler 1's background), or None: no map or no background cell."""
+    _check_grid(height, width)
+    couple = imprint.get("couple_imprint") if isinstance(imprint, dict) else None
+    ownership_map = couple.get("ownership_map") if isinstance(couple, dict) else None
+    if ownership_map is None or "person_2" not in couple.get("prompts", {}):
+        return None
+    scene = (_ownership_codes(ownership_map, height, width) == ord(OWNERSHIP_BACKGROUND)).to(dtype)
+    if not bool(scene.any()):
+        return None
+    return to_batch(scene.to(device or torch.device("cpu")), batch)
 
 
 def derive_masks(
@@ -259,6 +326,7 @@ def derive_masks(
     person_weight: float | None = None,
     device: torch.device | None = None,
     dtype: torch.dtype = torch.float32,
+    background: bool = False,
 ) -> "SayaRegionMasks":
     """Geometry imprint -> masks (B,H,W) at the CURRENT pass' resolution.
 
@@ -271,17 +339,23 @@ def derive_masks(
     """
     _check_grid(height, width)
     base, person = attention_weights(imprint, base_weight=base_weight, person_weight=person_weight)
-    mask_1, mask_2 = _rasterize_regions(imprint, height, width, device=device, dtype=dtype)
+    scene = derive_background_mask(imprint, height, width, device=device, dtype=dtype)[0] if background else None
+    mask_1, mask_2 = _rasterize_regions(imprint, height, width, device=device, dtype=dtype, background=scene is not None)
     mask_1 = mask_1 * person
     if mask_2 is not None:
         mask_2 = mask_2 * person
     base_mask = torch.full((height, width), base, dtype=dtype, device=device or torch.device("cpu"))
+    if scene is not None:
+        # Background cells: the scene-only MAIN replaces the global MAIN (which carries the ACTION).
+        base_mask = base_mask * (1 - scene)
+        scene = to_batch(scene * base, batch)
     return SayaRegionMasks(
         base=to_batch(base_mask, batch),
         person_1=to_batch(mask_1, batch),
         person_2=to_batch(mask_2, batch) if mask_2 is not None else None,
         height=height,
         width=width,
+        scene=scene,
     )
 
 
@@ -293,8 +367,12 @@ def derive_raw_region_masks(
     *,
     device: torch.device | None = None,
     dtype: torch.dtype = torch.float32,
+    background: bool = False,
 ) -> tuple[torch.Tensor, torch.Tensor | None]:
     """Geometry imprint -> UNWEIGHTED (B,H,W) region masks (mask_1, mask_2|None).
+
+    ``background``: map background cells go to neither person; the caller then adds the
+    scene-only region on ``derive_background_mask`` (never without it: no coverage there).
 
     The MultiMaskCouple contract (``saya_multi_couple.py::apply_multimask_couple``):
     the mask carries only the region's geometry (amplitude ~1 inside, feathered
@@ -304,7 +382,7 @@ def derive_raw_region_masks(
     imprint has no P2 (never fabricated).
     """
     _check_grid(height, width)
-    mask_1, mask_2 = _rasterize_regions(imprint, height, width, device=device, dtype=dtype)
+    mask_1, mask_2 = _rasterize_regions(imprint, height, width, device=device, dtype=dtype, background=background)
     return (
         to_batch(mask_1, batch),
         to_batch(mask_2, batch) if mask_2 is not None else None,
@@ -315,7 +393,8 @@ class SayaRegionMasks:
     """A pass' masks: (B,H,W), white = active, P2 is None when absent."""
 
     def __init__(self, base: torch.Tensor, person_1: torch.Tensor,
-                 person_2: torch.Tensor | None, height: int, width: int) -> None:
+                 person_2: torch.Tensor | None, height: int, width: int,
+                 scene: torch.Tensor | None = None) -> None:
         for name, mask in (("base", base), ("person_1", person_1)):
             if mask.ndim != 3 or mask.shape[1:] != (height, width):
                 raise SayaMaskError(
@@ -328,6 +407,8 @@ class SayaRegionMasks:
         self.base = base
         self.person_1 = person_1
         self.person_2 = person_2
+        # Scene-only region (map background cells), base weight; None = no background region.
+        self.scene = scene
         self.height = height
         self.width = width
 

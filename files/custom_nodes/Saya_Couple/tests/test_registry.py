@@ -9,7 +9,7 @@ def test_registry_complete():
     mappings = pack.NODE_CLASS_MAPPINGS
     displays = pack.NODE_DISPLAY_NAME_MAPPINGS
 
-    c.eq(len(mappings), 53, "node count")
+    c.eq(len(mappings), 59, "node count")
     c.eq(len(set(mappings)), len(mappings), "duplicate class_type keys")
     c.eq(set(displays), set(mappings), "display-name keys != registry keys")
     c.ok(bool(pack.WEB_DIRECTORY), "WEB_DIRECTORY set")
@@ -51,8 +51,8 @@ def test_compat_alias():
     m = pack.NODE_CLASS_MAPPINGS
     c.ok("SayaNear4KTargetCalculator" in m, "alias registered")
     c.ok(
-        m["SayaNear4KTargetCalculator"] is m["SayaUpscaleTargetCalculator"],
-        "alias must be the same class as SayaUpscaleTargetCalculator",
+        issubclass(m["SayaNear4KTargetCalculator"], m["SayaUpscaleTargetCalculator"]),
+        "alias must behave as SayaUpscaleTargetCalculator (deprecated subclass since 2026-10-05)",
     )
     return c.report()
 
