@@ -1,0 +1,35 @@
+RES4LYF local patch (hidream/model.py) found on Saya's machine on 2026-10-05 (audit Fable, FO-16): masked attention split by head groups
+(~1 GiB each) so the HiDream mask does not materialize ~5 GB of scores. Not upstream. Base: RES4LYF 119679d (2026-05-20).
+Apply inside custom_nodes/RES4LYF with: git apply res4lyf_hidream_attention_split.patch
+
+diff --git a/hidream/model.py b/hidream/model.py
+index 2a56f56..4cd3c4a 100644
+--- a/hidream/model.py
++++ b/hidream/model.py
+@@ -264,13 +264,19 @@ class AttentionBuffer:
+ def attention(q: Tensor, k: Tensor, v: Tensor, rope: Tensor, mask: Optional[Tensor] = None):
+     q, k = apply_rope(q, k, rope)
+     if mask is not None:
+-        AttentionBuffer.buffer = attention_pytorch(
+-            q.view(q.shape[0], -1, q.shape[-1] * q.shape[-2]), 
+-            k.view(k.shape[0], -1, k.shape[-1] * k.shape[-2]), 
+-            v.view(v.shape[0], -1, v.shape[-1] * v.shape[-2]), 
+-            q.shape[2],
+-            mask=mask,
+-            )
++        # SDPA with an explicit mask materializes heads*L*S scores (~5 GB at ~5k tokens): split by head groups (~1 GiB each)
++        heads = q.shape[2]
++        groups = min(heads, -(-(q.shape[0] * heads * q.shape[1] * k.shape[1] * q.element_size()) // 2**30))
++        bounds = [heads * i // groups for i in range(groups + 1)]
++        AttentionBuffer.buffer = torch.cat([
++            attention_pytorch(
++                q[:, :, h0:h1].reshape(q.shape[0], q.shape[1], -1),
++                k[:, :, h0:h1].reshape(k.shape[0], k.shape[1], -1),
++                v[:, :, h0:h1].reshape(v.shape[0], v.shape[1], -1),
++                h1 - h0,
++                mask=mask,
++                )
++            for h0, h1 in zip(bounds, bounds[1:])], dim=-1)
+     else:
+         AttentionBuffer.buffer = optimized_attention(
+             q.view(q.shape[0], -1, q.shape[-1] * q.shape[-2]), 

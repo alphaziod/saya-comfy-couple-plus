@@ -1,9 +1,3 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
-# Vendored from pamparamm/ComfyUI-ppm (src/attention_couple/unet_couple.py), AGPL-3.0-or-later.
-# Original implementation: laksjdjf, hako-mikan, Haoming02; ComfyUI-ppm by pamparamm.
-# MODIFIED by Saya Couple (2026-09): per-tile mask cropping from transformer_options['saya_couple_crop'] (opt-in; unchanged behaviour without it).
-# This file remains under AGPL-3.0-or-later (see THIRD_PARTY_NOTICES.md).
-
 import itertools
 from typing import Any
 

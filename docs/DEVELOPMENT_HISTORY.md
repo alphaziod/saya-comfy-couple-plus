@@ -67,3 +67,49 @@ limbs; judge character details only on close shots; a first pass may have 2–3 
   `dual_attention_enabled` boolean; ComfyUI coerces 0.5 to True. The demo workflow sets it explicitly.
 - The two "verbatim" vendored ComfyUI-ppm files had in fact been modified (per-tile mask cropping); they now
   say so.
+
+## 2.0: dynamic ownership, then the engine leaves the core
+
+### Why fixed masks were not enough
+
+With two drawn half-frame masks, a character that leans into the other half, a hand across the middle, or a
+background object on the wrong side all received the wrong text. Soft transitions were tried and rejected (a
+blurred or overlapping boundary mixes the two identities instead of choosing). What the model *itself* thinks
+about each cell was the only signal that did not need an external detector: the cross-attention affinity of every
+latent cell to each character's anchor tokens.
+
+### The ownership engine, version by version
+
+- v14 / v15: cells nobody claims are given to MAIN (background = MAIN). First time the background stopped carrying
+  a character's colours.
+- v20 / v21: person-to-background leakage measured at 14 %, then 2 % (residual on a circular proxy).
+- v22: zones (k-means on the affinities), persistence across steps, a "link veto" that refuses a zone connected
+  to the other character's confirmed zone, and the main-scene rule. Measured on 900 images in three batches, then
+  a 100-character crash test and a 30/30 duo grammar. The rules were each added against a measured failure; they
+  were not validated by blind A/B review, which stays on the list.
+- The map read after Sampler 1 is handed to every later pass. In Sampler 2 it is harmless (Sampler 2 does not
+  repaint ownership); its value is the scene-only background and the downstream transport.
+
+### The audit that became 2.0
+
+A full audit of the pack (fresh install, bug classes, invariants, hidden dependencies, dead code, architecture)
+found that the distributed core patch no longer matched the engine, that the compatibility checker gave a false
+negative on a clean ComfyUI, that the whole pack failed without MultiMaskCouple, that two fallbacks to the static
+split were silent, and that the ownership-map capture trusted graph topology instead of a key. Each got a fix and
+a test.
+
+The architecture question was whether the engine could leave `comfy/ldm/modules/attention.py` at all. A prototype
+on `ModelPatcher.add_object_patch` (shallow copy of each transformer block, proxy `attn2`, ON_DETACH restore)
+passed 10/10 checks and was bit-identical on GPU; the move was then done verbatim (same engine source, only the
+injection changed), checked bit for bit against the core patch at the same seeds, and the core went back to
+stock. Two cleanups followed with the same rule (identical images or nothing): a typed couple context for phases
+2 to 6 (22 fewer executed nodes, imprint parsed 3 times per phase instead of 8) and the deprecation of thirteen
+node types nothing used.
+
+### Small things found on the way
+
+- The AMD VRAM cap could compute a negative fraction when another process already held the VRAM; clamped.
+- A local change to RES4LYF (HiDream attention split, needed on 16 GB) had never been captured; it is now a
+  patch in `patches/third_party/`.
+- Two copies of the same third-party packs were installed side by side; the duplicates were removed.
+- The background stock the picker used lived outside the pack; it now ships with it (7 409 entries).

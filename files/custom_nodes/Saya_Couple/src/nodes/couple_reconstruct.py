@@ -54,6 +54,7 @@ from typing import Any, Callable
 
 from . import conditioning_cache as cache
 from .couple_imprint_v2 import (
+    OWNERSHIP_BACKGROUND,
     ROLE_BASE_CLIP,
     ROLE_MODEL_2,
     ROLE_PHASE_MODEL,
@@ -64,8 +65,9 @@ from .couple_imprint_v2 import (
     canonical_imprint_json,
     parse_imprint_json,
     validate_imprint_v2,
+    scene_text,
 )
-from .region_masks import SayaMaskError, attention_weights, derive_masks, derive_raw_region_masks
+from .region_masks import SayaMaskError, attention_weights, derive_background_mask, derive_masks, derive_raw_region_masks
 from .saya_attention_couple import SayaAttentionCouplePPM
 from .saya_multi_couple import apply_multimask_couple
 
@@ -118,11 +120,13 @@ _encode_text: Callable[[Any, str], Any] = _default_encode_text
 # ---------------------------------------------------------------------------
 
 def _default_apply_couple_patch(model: Any, base_cond: Any, base_mask: Any,
-                                cond_1: Any, mask_1: Any, cond_2: Any, mask_2: Any) -> Any:
+                                cond_1: Any, mask_1: Any, cond_2: Any, mask_2: Any,
+                                cond_3: Any = None, mask_3: Any = None) -> Any:
     """PPM vendor patch (crop/tile-aware — USDU, Detailers). Exactly once."""
-    # cond_3/mask_3 never used: P2 absent is a HARD ERROR upstream.
+    # cond_3/mask_3 = the scene-only background region of the Sampler 1 map (never a third person:
+    # P2 absent is a HARD ERROR upstream).
     patched, = SayaAttentionCouplePPM().couple(
-        model, base_cond, base_mask, cond_1, mask_1, cond_2, mask_2
+        model, base_cond, base_mask, cond_1, mask_1, cond_2, mask_2, cond_3, mask_3
     )
     return patched
 
@@ -136,6 +140,7 @@ def _default_apply_multimask_patch(
     cond_1: Any, neg_1: Any, cond_2: Any, neg_2: Any,
     strength_1: float, strength_2: float,
     base_weight: float, person_weight: float, main: Any,
+    scene: Any = None, background_mask: Any = None,
 ) -> Any:
     """MultiMaskCouple patch (full-frame only — Hires Fix, Phase 6), reusing
     the same core Phase 1 Sampler 2 uses (``saya_multi_couple.apply_multimask_couple``).
@@ -144,6 +149,7 @@ def _default_apply_multimask_patch(
     return apply_multimask_couple(
         model, clip, mask_1, mask_2, cond_1, neg_1, cond_2, neg_2,
         strength_1, strength_2, base_weight, person_weight, main=main,
+        scene=scene, background_mask=background_mask,
     )
 
 
@@ -642,16 +648,9 @@ def read_imprint_from_png(checkpoint_path: str) -> dict[str, Any]:
         raise SayaCoupleReconstructError(
             "imprint load: empty checkpoint path — cannot verify (no fallback)"
         )
+    from ..services.imprint_integrity import read_png_info
     try:
-        from PIL import Image  # type: ignore
-    except ImportError as error:  # pragma: no cover
-        raise SayaCoupleReconstructError(
-            "imprint load: PIL unavailable to read the PNG metadata"
-        ) from error
-    try:
-        with Image.open(checkpoint_path) as handle:
-            metadata = dict(getattr(handle, "text", {}) or {})
-            metadata.update(handle.info or {})
+        metadata = read_png_info(checkpoint_path)
     except FileNotFoundError:
         raise SayaCoupleReconstructError(
             f"imprint load: checkpoint not found: {checkpoint_path!r}"
@@ -738,13 +737,6 @@ class SayaCoupleReconstruct:
             "required": {
                 "model": ("MODEL",),
                 "clip": ("CLIP",),
-                "checkpoint_identities": ("STRING", {
-                    "default": "", "multiline": True, "forceInput": True,
-                    "tooltip": "Canonical JSON: list of {role, identifier, source} "
-                               "from the checkpoint hub's REAL widgets. "
-                               "Mismatch/absence = HARD ERROR. models_used is "
-                               "NEVER consulted.",
-                }),
                 "image": ("IMAGE", {
                     "tooltip": "Image of the CURRENT pass: fixes the geometry "
                                "re-derivation resolution (never the imprint's "
@@ -752,6 +744,15 @@ class SayaCoupleReconstruct:
                 }),
             },
             "optional": {
+                # Historic inputs (unchanged for saved workflows): identities + imprint OR imprint_json.
+                # Since P-A (2026-10-05) a SAYA_COUPLE_CONTEXT replaces all three (one parse per phase).
+                "checkpoint_identities": ("STRING", {
+                    "default": "", "multiline": True, "forceInput": True,
+                    "tooltip": "Canonical JSON: list of {role, identifier, source} "
+                               "from the checkpoint hub's REAL widgets. "
+                               "Mismatch/absence = HARD ERROR. models_used is "
+                               "NEVER consulted. Not needed with a context.",
+                }),
                 "imprint": ("SAYA_IMPRINT", {"forceInput": True}),
                 "imprint_json": ("STRING", {
                     "default": "", "multiline": True, "forceInput": True,
@@ -763,6 +764,10 @@ class SayaCoupleReconstruct:
                     "tooltip": "OFF (default) = Couple, unchanged behavior. ON = SOLO: "
                                "MAIN + PERSON 1 only, person_2 ignored entirely, no "
                                "attention-couple patch, model returned unpatched.",
+                }),
+                "context": ("SAYA_COUPLE_CONTEXT", {
+                    "tooltip": "SayaCoupleContextLoad output for THIS model: identities + imprint already validated "
+                               "and targeted. Connect it INSTEAD of checkpoint_identities / imprint / imprint_json.",
                 }),
             },
         }
@@ -803,43 +808,61 @@ class SayaCoupleReconstruct:
         self,
         model: Any,
         clip: Any,
-        checkpoint_identities: str,
         image: Any,
+        checkpoint_identities: str = "",
         imprint: dict[str, Any] | None = None,
         imprint_json: str | None = None,
         solo: bool = False,
+        context: Any = None,
     ) -> tuple[Any, Any, Any, str, Any]:
         report: list[str] = [f"SayaCoupleReconstruct — schema v{SCHEMA_VERSION}"]
 
-        # -- strict imprint read -----------------------------------------------
-        if (imprint is None) == (not imprint_json):
-            raise SayaCoupleReconstructError(
-                "imprint: connect EXACTLY ONE source (SAYA_IMPRINT or imprint_json)"
-            )
-        try:
-            data = parse_imprint_json(imprint_json) if imprint_json else validate_imprint_v2(imprint)
-        except SayaCoupleImprintError as error:
-            raise SayaCoupleReconstructError(f"imprint: {error}") from error
-        couple = data["couple_imprint"]
-        recipe = data["reconstruction_recipe"]
-        report.append("imprint: v2 OK (data-only, geometry coherent)")
+        if context is not None:
+            # -- P-A: everything comes from the context, parsed / validated / identity-checked once per phase --
+            if imprint is not None or imprint_json or checkpoint_identities:
+                raise SayaCoupleReconstructError(
+                    "context: connect EITHER a SAYA_COUPLE_CONTEXT OR the historic inputs "
+                    "(checkpoint_identities + imprint / imprint_json), never both"
+                )
+            from .couple_context import validate_context
+            validate_context(context, "context")
+            data = context["imprint"]
+            couple = data["couple_imprint"]
+            recipe = data["reconstruction_recipe"]
+            hub = context["identities"]
+            report.append(f"imprint: from context (target {context['target']}, validated once by SayaCoupleContextLoad)")
+            report.extend(f"{kind}: OK — {recipe[kind]['role']} == {recipe[kind]['identifier']}" for kind in ("checkpoint_identity", "clip_identity"))
+            report.append("models_used: NOT consulted (hand-maintained widget)")
+        else:
+            # -- strict imprint read (historic path) --------------------------------
+            if (imprint is None) == (not imprint_json):
+                raise SayaCoupleReconstructError(
+                    "imprint: connect EXACTLY ONE source (SAYA_IMPRINT or imprint_json), or a context"
+                )
+            try:
+                data = parse_imprint_json(imprint_json) if imprint_json else validate_imprint_v2(imprint)
+            except SayaCoupleImprintError as error:
+                raise SayaCoupleReconstructError(f"imprint: {error}") from error
+            couple = data["couple_imprint"]
+            recipe = data["reconstruction_recipe"]
+            report.append("imprint: v2 OK (data-only, geometry coherent)")
 
-        # -- hub identities (MUST NOT consult models_used — no code path here) --
-        # Active identically in Couple AND Solo: the hard identity check does not
-        # depend on person_2 being present.
-        hub = parse_hub_identities(checkpoint_identities)
-        try:
-            report.extend(verify_recipe_identities(recipe, hub))
-        except SayaCoupleReconstructError as error:
-            raise SayaCoupleReconstructError(f"identities: {error}") from error
-        report.append("models_used: NOT consulted (hand-maintained widget)")
+            # -- hub identities (MUST NOT consult models_used — no code path here) --
+            # Active identically in Couple AND Solo: the hard identity check does not
+            # depend on person_2 being present.
+            hub = parse_hub_identities(checkpoint_identities)
+            try:
+                report.extend(verify_recipe_identities(recipe, hub))
+            except SayaCoupleReconstructError as error:
+                raise SayaCoupleReconstructError(f"identities: {error}") from error
+            report.append("models_used: NOT consulted (hand-maintained widget)")
 
         if solo:
             return self._reconstruct_solo(model, clip, hub, data, report)
 
         # -- re-encode 4 roles, provenance logged -----------------------------
         prompts = couple["prompts"]
-        roles = [("main", prompts["main"]), ("person_1", prompts["person_1"])]
+        roles = [("main", scene_text(prompts)), ("person_1", prompts["person_1"])]
         if "person_2" in prompts:
             roles.append(("person_2", prompts["person_2"]))
         else:
@@ -865,6 +888,18 @@ class SayaCoupleReconstruct:
                 encoded_any = True
             texts[role] = text
             ledger.record(role, call_index)
+        # Scene-only MAIN (no ACTION) for the background cells of the Sampler 1 map.
+        scene_cond = None
+        if any(OWNERSHIP_BACKGROUND in row for row in couple.get("ownership_map", {}).get("rows", [])):
+            if prompts.get("action", "").strip():
+                key = cache.cache_key(clip_key, prompts["main"])
+                scene_cond = cache.load(FAMILY, key)
+                if scene_cond is None:
+                    scene_cond = _encode_text(clip, prompts["main"])
+                    cache.save(FAMILY, key, scene_cond)
+                    encoded_any = True
+            else:
+                scene_cond = conds["main"]
         if encoded_any:
             cache.release_clip(clip)
         ledger.assert_distinct()
@@ -893,11 +928,18 @@ class SayaCoupleReconstruct:
         detect_existing_couple_hook(model_options)
         batch, height, width = self._image_grid(image)
         base_weight, person_weight = attention_weights(data)
+        background = derive_background_mask(data, height, width, batch=batch)
+        if background is not None:
+            report.append(f"ownership_map: {float(background[0].mean()):.1%} background -> scene-only MAIN region (no ACTION, no person)")
+        elif couple.get("ownership_map") is not None:
+            report.append("ownership_map: P1/P2 cells applied, no background cell")
+        scene_kwargs = {} if background is None else {"scene": scene_cond, "background_mask": background}
 
         # -- PPM (crop/tile-aware): weight baked into the mask amplitude -------
         try:
             ppm_masks = derive_masks(data, height, width, batch=batch,
-                                     base_weight=base_weight, person_weight=person_weight)
+                                     base_weight=base_weight, person_weight=person_weight,
+                                     background=background is not None)
         except SayaMaskError as error:
             raise SayaCoupleReconstructError(f"geometry: {error}") from error
         if ppm_masks.person_2 is None:  # pragma: no cover — P2 absent refused upstream
@@ -906,6 +948,7 @@ class SayaCoupleReconstruct:
             model, base_cond, ppm_masks.base,
             ppm_person_1, ppm_masks.person_1,
             ppm_person_2, ppm_masks.person_2,
+            *((scene_cond, ppm_masks.scene) if ppm_masks.scene is not None else ()),
         )
         mark_couple_patch(patched_ppm, family="attn2_patch/attn2_output_patch (PPM)")
         report.append(
@@ -915,7 +958,8 @@ class SayaCoupleReconstruct:
 
         # -- MultiMaskCouple (full-frame only): weight on mask_strength --------
         try:
-            raw_mask_1, raw_mask_2 = derive_raw_region_masks(data, height, width, batch=batch)
+            raw_mask_1, raw_mask_2 = derive_raw_region_masks(data, height, width, batch=batch,
+                                                             background=background is not None)
         except SayaMaskError as error:
             raise SayaCoupleReconstructError(f"geometry: {error}") from error
         if raw_mask_2 is None:  # pragma: no cover — P2 absent refused upstream
@@ -924,7 +968,7 @@ class SayaCoupleReconstruct:
             model, clip, raw_mask_1, raw_mask_2,
             conds["person_1"], negative, conds["person_2"], negative,
             strengths["strength_1"], strengths["strength_2"],
-            base_weight, person_weight, base_cond,
+            base_weight, person_weight, base_cond, **scene_kwargs,
         )
         mark_couple_patch(patched_multimask, family="patches_replace.attn2 (MultiMaskCouple)")
         report.append(
@@ -957,7 +1001,7 @@ class SayaCoupleReconstruct:
         """
         couple = data["couple_imprint"]
         prompts = couple["prompts"]
-        main_text = prompts["main"]
+        main_text = scene_text(prompts)
         person_1_text = prompts["person_1"]
         negative_text = prompts["negative"]
         solo_text = f"{main_text}, {person_1_text}" if person_1_text else main_text

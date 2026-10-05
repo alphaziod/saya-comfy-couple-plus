@@ -1,9 +1,3 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
-# Vendored from pamparamm/ComfyUI-ppm (src/attention_couple/common.py), AGPL-3.0-or-later.
-# Original implementation: laksjdjf, hako-mikan, Haoming02; ComfyUI-ppm by pamparamm.
-# MODIFIED by Saya Couple (2026-09): added crop_mask_to_tile() to cut couple masks per upscale tile.
-# This file remains under AGPL-3.0-or-later (see THIRD_PARTY_NOTICES.md).
-
 import math
 from typing import Any
 

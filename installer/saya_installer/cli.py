@@ -23,7 +23,7 @@ STATE_FILE = ".saya_install.json"
 BACKUP_DIR = ".saya_backups"
 NODE_DIR = "custom_nodes/Saya_Couple"
 LEGACY_NODE_DIRS = ("custom_nodes/Saya_Couple_Upated",)
-ATTENTION_PATCH = "patches/saya_dual_attention.patch"
+LEGACY_ATTENTION_PATCH = compat.LEGACY_ATTENTION_PATCH  # 1.x only: removed at upgrade, never applied by 2.0
 AMD_PATCH = "patches/amd_vram_safety.patch"
 
 
@@ -198,11 +198,45 @@ def cmd_check_compat(args) -> int:
     return 1 if blocking else 0
 
 
+def remove_legacy_patch(root: str, state: dict) -> str:
+    """Upgrade from 1.x: reverse the 1.x core patch on attention.py (the 2.0 engine lives in the pack)."""
+    fp = patch_of(LEGACY_ATTENTION_PATCH)
+    rel = fp.path
+    text = compat.read(root, rel)
+    new = patchlib.apply_to_text(text, fp, reverse=True) if text is not None else None
+    if new is None:
+        raise RuntimeError(f"{rel}: the 1.x patch does not reverse cleanly; file left untouched (restore it from your backup or `saya restore`)")
+    with open(os.path.join(root, rel), "w", encoding="utf-8", newline="") as f:
+        f.write(new)
+    rec = state["core_files"].setdefault(rel, {"existed": True, "sha256_before": None, "component": "saya_core"})
+    rec["sha256_after"] = sha256_file(os.path.join(root, rel))
+    rec["legacy_patch_removed_by"] = manifest()["saya_version"]
+    save_state(root, state)
+    st = patchlib.status(new, fp)
+    if rec.get("sha256_before") and rec["sha256_after"] == rec["sha256_before"]:
+        return "file byte-identical to the backup taken before the 1.x install"
+    return f"patch state now: {st}"
+
+
 def install_node(root: str, state: dict) -> dict:
-    """Copies the custom node. Returns counts. Keeps the previous folder (if foreign) inside the backup."""
+    """Copies the custom node. Returns counts. Keeps the previous folder (if foreign) inside the backup.
+    Files installed by a previous Saya version and gone from this one are removed (upgrade)."""
     dest_root = os.path.join(root, NODE_DIR)
     entries = node_entries()
     ours = state["node_dir"]["files"]
+    wanted = {e["destination"] for e in entries}
+    removed = 0
+    for rel in [r for r in list(ours) if r not in wanted]:
+        p = os.path.join(root, rel)
+        if os.path.isfile(p):
+            os.remove(p)
+            removed += 1
+        del ours[rel]
+    for dirpath, dirs, files in os.walk(dest_root, topdown=False):
+        if os.path.basename(dirpath) == "__pycache__":
+            shutil.rmtree(dirpath, ignore_errors=True)
+        elif os.path.isdir(dirpath) and not os.listdir(dirpath) and dirpath != dest_root:
+            os.rmdir(dirpath)
     if os.path.isdir(dest_root) and not ours:
         state["node_dir"]["existed_before"] = True
         saved = os.path.join(root, state["backup"], "previous_" + os.path.basename(NODE_DIR))
@@ -219,7 +253,7 @@ def install_node(root: str, state: dict) -> dict:
             shutil.copy2(os.path.join(PKG, e["path"]), dst)
             copied += 1
         ours[e["destination"]] = e["sha256"]
-    return {"copied": copied, "unchanged": kept}
+    return {"copied": copied, "unchanged": kept, "removed": removed}
 
 
 def cmd_install(args) -> int:
@@ -242,13 +276,17 @@ def cmd_install(args) -> int:
                 "\n           disable or remove it after installing, or ComfyUI will load both.")
 
     say("\n[2/7] What will change")
-    say(f"  REQUIRED core modification : comfy/ldm/modules/attention.py  (patch: {patch_state(root, ATTENTION_PATCH)})")
+    legacy = patch_state(root, LEGACY_ATTENTION_PATCH)
+    say("  core modification          : NONE (2.0 runs on the stock core: the engine is injected with ModelPatcher object patches)")
+    if legacy == "applied":
+        say("  upgrade from 1.x           : the 1.x core patch is still on comfy/ldm/modules/attention.py -> it will be REMOVED (file back to upstream)")
     say(f"  custom node                : {NODE_DIR}/ ({len(node_entries())} files)")
     level, msg = gpu.amd_recommendation(gpu.detect(py))
     say(f"  OPTIONAL AMD patch          : comfy/model_management.py - {msg}")
-    say("\n  !! Saya modifies ComfyUI's own files. A ComfyUI update can undo or break this.")
-    say("  !! BACK UP YOUR OWN COMFYUI INSTALLATION FIRST. The installer also keeps a backup,")
-    say("  !! but your own copy is the one you can trust. Use at your own risk.")
+    if legacy == "applied" or level in ("recommended", "strongly_recommended"):
+        say("\n  !! The optional AMD patch (and the removal of a 1.x patch) modify ComfyUI's own files.")
+        say("  !! BACK UP YOUR OWN COMFYUI INSTALLATION FIRST. The installer also keeps a backup,")
+        say("  !! but your own copy is the one you can trust. Use at your own risk.")
     if args.dry_run:
         say("\n--dry-run: stopping before any change.")
         return 0
@@ -263,21 +301,23 @@ def cmd_install(args) -> int:
     else:
         bdir = os.path.join(root, state["backup"])
         say(f"  existing Saya install found: reusing its original backup {state['backup']} (restore goes back to before the FIRST install)")
-    backup_file(root, state, "comfy/ldm/modules/attention.py", "saya_core")
+    if legacy == "applied":
+        backup_file(root, state, "comfy/ldm/modules/attention.py", "saya_core")
     save_state(root, state)
     say(f"  backup folder: {os.path.relpath(bdir, root)}")
 
-    say("\n[4/7] Core patch (required)")
-    st = apply_patch(root, ATTENTION_PATCH)
-    state["core_files"].setdefault("comfy/ldm/modules/attention.py", {"existed": True, "sha256_before": None, "component": "saya_core"})
-    state["core_files"]["comfy/ldm/modules/attention.py"]["sha256_after"] = sha256_file(os.path.join(root, "comfy/ldm/modules/attention.py"))
-    save_state(root, state)
-    say(f"  attention.py: {st}")
+    say("\n[4/7] Core patch")
+    if legacy == "applied":
+        st = remove_legacy_patch(root, state)
+        say(f"  1.x core patch removed from attention.py ({st})")
+    else:
+        say("  none needed (2.0): attention.py left untouched")
 
     say("\n[5/7] Custom node")
     counts = install_node(root, state)
     save_state(root, state)
-    say(f"  {NODE_DIR}: {counts['copied']} copied, {counts['unchanged']} already up to date")
+    say(f"  {NODE_DIR}: {counts['copied']} copied, {counts['unchanged']} already up to date"
+        + (f", {counts['removed']} obsolete file(s) of the previous version removed" if counts.get("removed") else ""))
 
     say("\n[6/7] AMD VRAM safety patch (optional)")
     run_amd(root, state, py, args.amd, args.yes)
@@ -354,20 +394,18 @@ def conflicts(root: str) -> list[str]:
 def report(root: str, state: dict | None, py: str, full: bool = False) -> bool:
     ident = comfy_identity(root)
     axes = compat.check_all(root, PKG)
-    att_state = patch_state(root, ATTENTION_PATCH)
+    legacy = patch_state(root, LEGACY_ATTENTION_PATCH)
     amd_state = patch_state(root, AMD_PATCH)
     ok = True
     lines = [f"Saya Couple verify  (package {manifest()['saya_version']}, {platform.system()} {platform.machine()})",
              f"ComfyUI       : {root}",
              f"version/commit: {ident['version']} / {ident['commit'] or 'n/a (not git)'}",
-             f"compatibility : attention={axes[0].status} | pack={axes[1].status} | amd={axes[2].status}"]
-    att_word = {"applied": "OK", "clean": "MISSING", "conflict": "MODIFIED", "missing": "MISSING"}[att_state]
-    if state and att_state == "applied":
-        rec = state["core_files"].get("comfy/ldm/modules/attention.py", {})
-        if rec.get("sha256_after") and rec["sha256_after"] != sha256_file(os.path.join(root, "comfy/ldm/modules/attention.py")):
-            att_word = "OK (file changed since install, patch still intact)"
-    ok &= att_state == "applied"
-    lines.append(f"attention patch: {att_word}")
+             f"compatibility : engine={axes[0].status} | pack={axes[1].status} | amd={axes[2].status}"]
+    engine_ok = axes[0].status != compat.UNSUPPORTED
+    ok &= engine_ok
+    lines.append("core files    : " + ("stock attention.py (2.0 needs no core modification)" if legacy != "applied"
+                                       else "1.x CORE PATCH STILL APPLIED on attention.py -> run `saya install` to remove it"))
+    ok &= legacy != "applied"
     missing, changed = 0, 0
     for e in node_entries():
         h = sha256_file(os.path.join(root, e["destination"]))
@@ -380,7 +418,7 @@ def report(root: str, state: dict | None, py: str, full: bool = False) -> bool:
     for rel in ("comfy/ldm/modules/attention.py", "comfy/model_management.py"):
         lines.append(f"sha256 {rel}: {sha256_file(os.path.join(root, rel))}")
     deps = []
-    for dep, need in (("MultiMaskCouple", "required"), ("RES4LYF", "needed by the demo workflow")):
+    for dep, need in (("MultiMaskCouple", "required"), ("RES4LYF", "needed by the demo and full workflows"), ("ComfyUI-Impact-Pack", "full workflow detailers"), ("ComfyUI_UltimateSDUpscale", "full workflow USDU passes")):
         deps.append(f"{dep} {'present' if os.path.isdir(os.path.join(root, 'custom_nodes', dep)) else 'MISSING'} ({need})")
     lines.append("dependencies  : " + "; ".join(deps))
     ok &= os.path.isdir(os.path.join(root, "custom_nodes", "MultiMaskCouple"))
@@ -388,8 +426,9 @@ def report(root: str, state: dict | None, py: str, full: bool = False) -> bool:
     lines.append("conflicts     : " + ("; ".join(cf) if cf else "none known"))
     s = smoke(root, py)
     smoke_ok = bool(s.get("core_import") and s.get("saya_symbols") and s.get("dual_path_live") and s.get("pack_import")) and not s.get("errors")
+    ok &= all(os.path.isdir(os.path.join(root, "custom_nodes", d)) for d in ("MultiMaskCouple",))
     ok &= smoke_ok
-    lines.append(f"quick tests   : {'PASS' if smoke_ok else 'FAIL'}  (core import {s.get('core_import')}, dual path live {s.get('dual_path_live')}, "
+    lines.append(f"quick tests   : {'PASS' if smoke_ok else 'FAIL'}  (core import {s.get('core_import')}, engine path live {s.get('dual_path_live')}, "
                  f"gain {s.get('gain')}, pack import {s.get('pack_import')} / {s.get('pack_nodes')} nodes)")
     for err in s.get("errors", []):
         lines.append(f"   error: {err}")

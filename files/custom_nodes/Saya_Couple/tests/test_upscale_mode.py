@@ -7,10 +7,10 @@ from pathlib import Path
 
 import torch
 
-from harness import Check, load_pack
+from harness import COMFY_ROOT, Check, load_pack
 
-W = Path(os.environ.get("SAYA_TEST_WORKFLOW_DIR", "user/default/workflows"))
-WORKFLOW = W / os.environ.get("SAYA_TEST_UPSCALE_WORKFLOW", "Saya_Couple_Full.json")
+W = COMFY_ROOT / "user" / "default" / "workflows"
+WORKFLOW = W / "ILUSTCOUPLECLEAN_UPSCALE_FINAL.json"
 DEFAULT = "RealESRGAN_x4plus_anime_6B.safetensors"
 
 
@@ -63,11 +63,8 @@ def test_upscale_mode_ui():
     c.eq(list(req), ["image", "upscale_mode", "upscale_model_name", "classic_method", "upscale_by"], "exact widgets")
     c.eq(req["upscale_mode"][0], ["UPSCALE MODEL", "CLASSIC"], "modes")
     c.eq(req["classic_method"][0], list(nodes.ImageScale.upscale_methods), "classic methods = ImageScale")
-    installed = list(folder_paths.get_filename_list("upscale_models"))
-    if installed:
-        c.eq(req["upscale_model_name"][0], installed, "models = folder_paths")
-    if DEFAULT in installed:
-        c.ok(DEFAULT in req["upscale_model_name"][0] and req["upscale_model_name"][1]["default"] == DEFAULT, "RealESRGAN default present")
+    c.eq(req["upscale_model_name"][0], list(folder_paths.get_filename_list("upscale_models")), "models = folder_paths")
+    c.ok(DEFAULT in req["upscale_model_name"][0] and req["upscale_model_name"][1]["default"] == DEFAULT, "RealESRGAN default present")
     ub = req["upscale_by"][1]
     c.ok(math.isfinite(ub["default"]) and ub["min"] <= ub["default"] <= ub["max"] and ub["min"] > 0, "upscale_by default valid")
     c.eq(S.RETURN_TYPES, ("IMAGE",), "single IMAGE output")
@@ -105,11 +102,8 @@ def test_upscale_mode_classic():
 
 
 def test_upscale_mode_model():
-    c = Check("upscale_mode_model")
-    if DEFAULT not in __import__("folder_paths").get_filename_list("upscale_models"):
-        c.skip(f"upscale model {DEFAULT} not installed in models/upscale_models")
-        return c.report()
     node, spy = _node(), _Spy()
+    c = Check("upscale_mode_model")
     try:
         img = _img()
         (c1,) = node.prepare(img, "UPSCALE MODEL", DEFAULT, "bicubic", 1.0)
@@ -137,7 +131,7 @@ def test_upscale_mode_real_model():
     node = _node()
     c = Check("upscale_mode_real_model")
     if DEFAULT not in __import__("folder_paths").get_filename_list("upscale_models"):
-        c.skip(f"upscale model {DEFAULT} not installed in models/upscale_models")
+        c.ok(False, f"{DEFAULT} not installed")
         return c.report()
     img = torch.rand(1, 32, 24, 3)
     (same,) = node.prepare(img, "UPSCALE MODEL", DEFAULT, "bicubic", 1.0)
@@ -181,7 +175,8 @@ def test_upscale_mode_workflow():
     load_pack()
     from saya_couple.src.nodes.saya_upscale_mode import SayaUpscaleMode as S
     if not WORKFLOW.exists():
-        c.ok(False, f"workflow missing: {WORKFLOW}")
+        # Maintainer-only file: its absence is not a defect of the pack (audit Fable 2026-10-05).
+        c.skip(f"workflow missing: {WORKFLOW}")
         return c.report()
     text = WORKFLOW.read_text()
     d = json.loads(text)

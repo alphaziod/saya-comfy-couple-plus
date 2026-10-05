@@ -71,7 +71,10 @@ def main():
     a = ap.parse_args()
     wf = copy.deepcopy(json.load(open(a.source, encoding="utf-8")))
     prompts = json.load(open(os.path.join(PKG, "workflows", "demo_prompt.json"), encoding="utf-8"))
-    by_title = {"Prompt · Base Scene": "MAIN", "Prompt · Person 1": "P1", "Prompt · Person 2": "P2", "Prompt · Negative": "NEGATIVE"}
+    # 2.0 grammar: MAIN (SayaMainPrompt node: prefix + background) / ACTION / P1 / P2 (identity + a separate anatomy text, emptied here) / NEGATIVE.
+    by_title = {"Prompt · Base Scene": "MAIN", "Prompt · Person 1": "P1", "Prompt · Person 2": "P2", "Prompt · Negative": "NEGATIVE",
+                "Prompt · Action": "ACTION", "Prompt · Anatomy P1": "", "Prompt · Anatomy P2": ""}
+    MAIN_NODE_TITLE = "Prompt · MAIN (prefix + background + tags)"
     graphs = [wf] + wf["definitions"]["subgraphs"]
     ckpts = [n["widgets_values"][0] for g in graphs for n in g.get("nodes", []) if n["type"] == "CheckpointLoaderSimple"]
     for name, rep in zip(ckpts, ("SELECT_YOUR_MODEL.safetensors", "SELECT_YOUR_REFINER_MODEL.safetensors")):
@@ -112,7 +115,21 @@ def main():
                     changed["labels"] += 1
             wv = n.get("widgets_values")
             if n.get("title") in by_title:
-                n["widgets_values"] = [prompts[by_title[n["title"]]]]
+                key = by_title[n["title"]]
+                n["widgets_values"] = [prompts[key] if key else ""]
+                changed["prompts"] += 1
+            elif n["type"] in ("SayaMainPromptFR", "SayaMainPrompt") and isinstance(wv, list):
+                # The maintainer uses the French labels; the public workflow ships the English node, same engine.
+                n["type"] = "SayaMainPrompt"
+                n["title"] = MAIN_NODE_TITLE
+                props["Node name for S&R"] = "SayaMainPrompt"
+                names = ["prefix", "background", "seed", "history", "ultra_detailed", "lighting", "time", "weather", "atmosphere", "palette", "detail", "rating", "custom_background", "extra"]
+                for inp, name in zip(n.get("inputs", []), names):
+                    inp["name"] = name
+                    inp["widget"] = {"name": name}
+                for o, name in zip(n.get("outputs", []), ("main_prompt", "background", "short_name", "info")):
+                    o["name"] = name
+                n["widgets_values"] = [prompts["PREFIX"], "free", 0, "fixed", "new", False] + ["none"] * 7 + [prompts["SCENE"], ""]
                 changed["prompts"] += 1
             elif n["type"] == "Lora Loader (LoraManager)":
                 n["widgets_values"] = [{"version": 1, "textWidgetName": "text"}, "", []]
@@ -127,8 +144,8 @@ def main():
                 changed["prompts"] += 1
             elif n["type"] == "SayaCoupleImprintPackV2" and isinstance(wv, list):
                 n["widgets_values"] = [("Saya_Couple_Full.json" if isinstance(v, str) and v.endswith(".json") else v) for v in wv]
-            elif n["type"] == "SayaMultiCouple" and isinstance(wv, list) and len(wv) == 4:
-                n["widgets_values"] = [wv[0], wv[1], wv[2], True]  # old saved value 0.5 sat where dual_attention_enabled is
+            elif n["type"] == "SayaMultiCouple" and isinstance(wv, list) and len(wv) < 11:
+                n["widgets_values"] = list(wv) + ["woman"] * (11 - len(wv))  # person_anchor (2.0): historic default
             if n.get("widgets_values") is not None:
                 n["widgets_values"] = scrub_models(n["widgets_values"])
 
@@ -169,7 +186,11 @@ def main():
                            "detailers, final upscale & naturalize). No model is included: pick your SDXL / Illustrious checkpoints, "
                            "VAEs, the HiDream models, the upscale model and one detector model per **Detailer 01-13** slot you use "
                            "(bypass the others with their toggles).\n\n"
-                           "Needs the Saya core patch (`./saya install`) and the custom nodes listed in the README "
+                           "Prompts follow the 4-field grammar (docs/PROMPTS_GUIDE_SFW_EN.md): MAIN = background only (the "
+                           "*Prompt · MAIN* node: prefix + a background from the stock or your own text), ACTION = what the two "
+                           "characters do, P1 / P2 = their appearance. Phase 1 reads each pixel's owner from the model's own attention "
+                           "(dynamic ownership) and hands that map to every later pass.\n\n"
+                           "Needs Saya Couple 2.0 (`./saya install`, no ComfyUI core modification) and the custom nodes listed in the README "
                            "(section *Full workflow*). For a first test, use the simple demo workflow instead."]})
     wf["last_node_id"] = max(wf.get("last_node_id", 0), note_id)
     text = json.dumps(wf, indent=1, ensure_ascii=False)

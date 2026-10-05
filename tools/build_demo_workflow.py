@@ -1,4 +1,4 @@
-"""Builds workflows/Saya_Couple_Demo.json from the maintainer's validated workflow.
+"""Builds workflows/Saya_Couple_Demo.json (+ the API prompt Saya_Couple_Demo_api.json) from the maintainer's validated workflow.
 
     python3 tools/build_demo_workflow.py --source /path/to/validated_workflow.json
 
@@ -12,6 +12,8 @@ import argparse
 import copy
 import json
 import os
+import urllib.parse
+import urllib.request
 
 PKG = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 S1_NAME = "Phase 1 · Sampler 1 · Base Generation"
@@ -43,9 +45,43 @@ def effective_sampler(wf, name):
     return values, sg, inner
 
 
+def write_api_prompt(wf, url, out):
+    """The same graph as an API prompt (/prompt format): widget values keyed by input name, links as [node, slot].
+    Input order per node type comes from a running ComfyUI's /object_info (frontend-only nodes are resolved)."""
+    nodes = {n["id"]: n for n in wf["nodes"]}
+    links = {l[0]: l for l in wf["links"]}
+    prompt = {}
+    for n in wf["nodes"]:
+        if n["type"] in ("MarkdownNote", "PrimitiveNode", "PrimitiveStringMultiline"):
+            continue
+        info = json.load(urllib.request.urlopen(f"{url}/object_info/{urllib.parse.quote(n['type'])}", timeout=15))[n["type"]]["input"]
+        order = list(info.get("required", {})) + list(info.get("optional", {}))
+        spec = dict(info.get("required", {}), **info.get("optional", {}))
+        inputs, widgets = {}, list(n.get("widgets_values") or [])
+        linked = {i["name"]: i["link"] for i in n["inputs"] if i.get("link") is not None}
+        for name in order:
+            kind = spec[name][0]
+            if name in linked:
+                l = links[linked[name]]
+                src = nodes[l[1]]
+                if src["type"] in ("PrimitiveNode", "PrimitiveStringMultiline"):  # frontend-only: inline the value
+                    inputs[name] = src["widgets_values"][0]
+                else:
+                    inputs[name] = [str(l[1]), l[2]]
+            elif isinstance(kind, list) or kind in ("INT", "FLOAT", "STRING", "BOOLEAN"):
+                if widgets:
+                    inputs[name] = widgets.pop(0)
+                    if name == "seed" and widgets and widgets[0] in ("fixed", "randomize", "increment", "decrement"):
+                        widgets.pop(0)
+        prompt[str(n["id"])] = {"class_type": n["type"], "inputs": inputs}
+    json.dump(prompt, open(out, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+    print("wrote", out, f"({len(prompt)} nodes)")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--source", required=True)
+    ap.add_argument("--object-info", default="http://127.0.0.1:8188", help="running ComfyUI, used to write the API prompt (input order per node type)")
     a = ap.parse_args()
     src = json.load(open(a.source, encoding="utf-8"))
     prompts = json.load(open(os.path.join(PKG, "workflows", "demo_prompt.json"), encoding="utf-8"))
@@ -88,24 +124,43 @@ def main():
     head = node(1, "MarkdownNote", [-40, -260], [560, 200], ["# SELECT YOUR SDXL / ILLUSTRIOUS MODEL HERE\n# THEN CLICK GENERATE\n\nPick a checkpoint in both loaders once (MODEL_1 = main model, MODEL_2 = refiner; the same model in both works). Random seed every run."])
     node(2, "MarkdownNote", [560, -260], [900, 200], [
         "**MAIN** = the world (scene, background, colours).  **P1** / **P2** = the two characters.\n\n"
-        "Saya keeps MAIN native in cross-attention and adds each character inside its mask as a *locked delta*; "
-        "the PERSON gain (0.78) lives in the patched core, not in this graph.\n\n"
-        "Needs: the Saya core patch (`./saya install`), custom nodes **Saya_Couple**, **MultiMaskCouple**, **RES4LYF**. "
+        "**ACTION** = what they do (count, framing, who is LEFT / RIGHT, pose): the characters receive MAIN + ACTION, the background MAIN only.\n\n"
+        "Saya keeps MAIN native in cross-attention and adds each character inside its region as a *locked delta* (gain 0.78, in the pack's engine). "
+        "With `ownership = dynamic` each pixel's owner is read from the model's own attention (anchors = the distinctive tags of P1 / P2).\n\n"
+        "Needs: custom nodes **Saya_Couple** (2.0: no ComfyUI core modification), **MultiMaskCouple**, **RES4LYF**. "
         "No model is included: choose any SDXL / Illustrious checkpoint in the two loaders."])
     ck1 = node(3, "CheckpointLoaderSimple", [-40, 0], [420, 100], [CKPT_1], "MODEL_1 · main checkpoint (Saya dual path)", by_type["CheckpointLoaderSimple"])
     ck2 = node(4, "CheckpointLoaderSimple", [-40, 150], [420, 100], [CKPT_2], "MODEL_2 · refiner checkpoint", by_type["CheckpointLoaderSimple"])
     enc = by_type["CLIPTextEncode"]
-    main = node(5, "CLIPTextEncode", [420, 0], [520, 260], [prompts["MAIN"]], "MAIN · scene / background", enc, GREEN)
-    p1 = node(6, "CLIPTextEncode", [420, 290], [520, 160], [prompts["P1"]], "P1 · first character", enc, BLUE)
-    p2 = node(7, "CLIPTextEncode", [420, 480], [520, 160], [prompts["P2"]], "P2 · second character", enc, RED)
-    neg = node(8, "CLIPTextEncode", [420, 670], [520, 110], [prompts["NEGATIVE"]], "NEGATIVE", enc)
-    for n in (main, p1, p2, neg):
+    # 2.0: MAIN = background only, built by SayaMainPrompt (prefix + a background from the stock, or the free text below);
+    # ACTION = what the two characters do (encoded apart, received by the characters only); P1 / P2 = appearance.
+    mp = node(5, "SayaMainPrompt", [420, -40], [520, 420], [prompts["PREFIX"], "free", 0, "fixed", "new", False] + ["none"] * 7 + [prompts["SCENE"], ""],
+              "MAIN · prefix + background (free text, or pick a category + seed)",
+              {"inputs": [], "outputs": [{"name": k, "type": "STRING"} for k in ("main_prompt", "background", "short_name", "info")]}, GREEN)
+    mp["inputs"] = []  # all widgets
+    main = node(22, "CLIPTextEncode", [420, 400], [520, 60], [""], "MAIN · encode", enc, GREEN)
+    act = node(23, "CLIPTextEncode", [420, 480], [520, 150], [prompts["ACTION"]], "ACTION · count, framing, LEFT / RIGHT, pose", enc, GREEN)
+    p1s = node(24, "PrimitiveStringMultiline", [-40, 620], [420, 150], [prompts["P1"]], "P1 · RIGHT character (text)",
+               {"inputs": [], "outputs": [{"name": "STRING", "type": "STRING"}]}, BLUE)
+    p2s = node(25, "PrimitiveStringMultiline", [-40, 800], [420, 150], [prompts["P2"]], "P2 · LEFT character (text)",
+               {"inputs": [], "outputs": [{"name": "STRING", "type": "STRING"}]}, RED)
+    p1 = node(6, "CLIPTextEncode", [420, 660], [520, 60], [""], "P1 · encode", enc, BLUE)
+    p2 = node(7, "CLIPTextEncode", [420, 740], [520, 60], [""], "P2 · encode", enc, RED)
+    neg = node(8, "CLIPTextEncode", [420, 830], [520, 110], [prompts["NEGATIVE"]], "NEGATIVE", enc)
+    for n in (act, neg):
         n["inputs"] = [i for i in n["inputs"] if i["name"] != "text"]
+    for n in (main, p1, p2):  # text comes from a link: keep the input, no widget value
+        n["widgets_values"] = []
+        for i in n["inputs"]:
+            if i["name"] == "text":
+                i["widget"] = {"name": "text"}
     lat = node(9, "EmptyLatentImage", [-40, 300], [420, 110], [832, 1216, 1], "Latent 832x1216",
                {"inputs": [], "outputs": [{"name": "LATENT", "type": "LATENT"}]})
     spl = node(10, "SayaSplitMask", [-40, 450], [420, 130], list(split["widgets_values"]), "Saya Split Mask (P1 | P2)", split, PURPLE)
-    cpl = node(11, "SayaMultiCouple", [980, 0], [400, 330], [couple["widgets_values"][0], couple["widgets_values"][1], False, True],
-               "Saya Multi Couple · dual attention ON", couple, PURPLE)
+    cw = list(couple["widgets_values"])  # strength_1, strength_2, solo, ownership, dynamic_start_sigma, background_main, zone_fallback, anchor_tokens, p1_anchors, p2_anchors, person_anchor
+    cw[2] = False
+    cpl = node(11, "SayaMultiCouple", [980, 0], [400, 420], cw + ["woman"] * (11 - len(cw)),
+               "Saya Multi Couple · dynamic ownership", couple, PURPLE)
     eps = node(12, "Epsilon Scaling", [1420, 0], [300, 60], list(chain["Epsilon Scaling"]["widgets_values"]), "Epsilon Scaling", chain["Epsilon Scaling"])
     czs = node(13, "CFGZeroStar", [1420, 100], [300, 30], [], "CFGZeroStar", chain["CFGZeroStar"])
     apg = node(14, "APG", [1420, 170], [300, 110], list(chain["APG"]["widgets_values"]), "APG", chain["APG"])
@@ -125,29 +180,32 @@ def main():
     save = node(21, "SaveImage", [2520, 100], [460, 620], ["SayaCouple/demo"], "Result",
                 {"inputs": [{"name": "images", "type": "IMAGE"}], "outputs": []})
 
-    for n in (main, p1, p2, neg):
+    for n in (main, act, p1, p2, neg):
         link(ck1, 1, n, "clip")
+    link(mp, 0, main, "text"); link(p1s, 0, p1, "text"); link(p2s, 0, p2, "text")
     link(lat, 0, spl, "latent")
     link(ck1, 0, cpl, "model_1"); link(ck1, 1, cpl, "clip")
     link(spl, 0, cpl, "mask_1"); link(spl, 1, cpl, "mask_2")
     link(p1, 0, cpl, "pos_1"); link(neg, 0, cpl, "neg_1"); link(p2, 0, cpl, "pos_2"); link(neg, 0, cpl, "neg_2")
-    link(ck2, 0, cpl, "model_2"); link(main, 0, cpl, "main")
+    link(ck2, 0, cpl, "model_2"); link(main, 0, cpl, "main"); link(act, 0, cpl, "action")
+    link(p1s, 0, cpl, "p1_text"); link(p2s, 0, cpl, "p2_text")
     link(cpl, 0, eps, "model"); link(eps, 0, czs, "model"); link(czs, 0, apg, "model"); link(apg, 0, pag, "model")
     link(pag, 0, k1, "model"); link(cpl, 2, k1, "positive"); link(cpl, 3, k1, "negative"); link(lat, 0, k1, "latent_image"); link(dbo, 0, k1, "options")
     link(cpl, 1, k2, "model"); link(cpl, 2, k2, "positive"); link(neg, 0, k2, "negative"); link(k1, 0, k2, "latent_image")
     link(seed, 0, k1, "seed"); link(seed, 0, k2, "seed")
     link(k2, 0, dec, "samples"); link(ck1, 2, dec, "vae"); link(dec, 0, save, "images")
 
-    wf = {"id": "saya-couple-demo", "revision": 0, "last_node_id": 21, "last_link_id": len(links), "nodes": nodes, "links": links,
+    wf = {"id": "saya-couple-demo", "revision": 0, "last_node_id": max(n["id"] for n in nodes), "last_link_id": len(links), "nodes": nodes, "links": links,
           "groups": [
-              {"id": 1, "title": "1 · Models & latent", "bounding": [-60, -40, 460, 640], "color": "#3f789e", "flags": {}},
-              {"id": 2, "title": "2 · Prompts  MAIN / P1 / P2", "bounding": [400, -40, 560, 840], "color": "#8A8", "flags": {}},
+              {"id": 1, "title": "1 · Models, latent, character texts", "bounding": [-60, -40, 460, 1000], "color": "#3f789e", "flags": {}},
+              {"id": 2, "title": "2 · Prompts  MAIN / ACTION / P1 / P2", "bounding": [400, -60, 560, 1020], "color": "#8A8", "flags": {}},
               {"id": 3, "title": "3 · Saya Couple", "bounding": [960, -40, 440, 400], "color": "#a1309b", "flags": {}},
               {"id": 4, "title": "4 · Shark dual sampler (validated Saya setup)", "bounding": [1400, -40, 1100, 620], "color": "#b06634", "flags": {}},
               {"id": 5, "title": "5 · Output", "bounding": [2500, -40, 500, 780], "color": "#444", "flags": {}}],
           "config": {}, "extra": {"ds": {"scale": 0.55, "offset": [120, 330]}}, "version": 0.4}
     out = os.path.join(PKG, "workflows", "Saya_Couple_Demo.json")
     json.dump(wf, open(out, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+    write_api_prompt(wf, a.object_info, os.path.join(PKG, "workflows", "Saya_Couple_Demo_api.json"))
 
     print("Sampler 1 (source effective -> demo):")
     for k in CLOWN_WIDGETS:

@@ -185,3 +185,12 @@ def pack_discriminant(pack_root: str | os.PathLike[str]) -> str:
         digest.update(f"{len(data)}:".encode("ascii"))
         digest.update(data)
     return f"sha256:{digest.hexdigest()}"
+
+
+def read_png_info(path):
+    """Text chunks of a PNG (``saya_phase_manifest``, ``saya_couple_imprint``...) as a plain dict. The one PNG
+    reader of the pack (P-E, 2026-10-05); callers map OSError / ValueError to their own error types."""
+    from PIL import Image
+
+    with Image.open(path) as handle:
+        return dict(handle.info or {})

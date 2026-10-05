@@ -6,19 +6,20 @@ provides tiny assert helpers so tests stay dependency-free.
 
 Run everything with:
     PYTHONDONTWRITEBYTECODE=1 <ComfyUI python> tests/run_all.py
+
+Set SAYA_COMFYUI_ROOT when the pack is not inside <ComfyUI>/custom_nodes/.
 """
 
 from __future__ import annotations
 
 import importlib.util
+import os
 import sys
 from pathlib import Path
 
-import os
-
-# ComfyUI root = custom_nodes/<pack>/tests/../../.. ; override with SAYA_COMFY_ROOT.
-COMFY_ROOT = Path(os.environ.get("SAYA_COMFY_ROOT") or Path(__file__).resolve().parents[3])
 PACK_ROOT = Path(__file__).resolve().parents[1]
+# <ComfyUI>/custom_nodes/<pack>/tests -> <ComfyUI>, unless SAYA_COMFYUI_ROOT says otherwise.
+COMFY_ROOT = Path(os.environ.get("SAYA_COMFYUI_ROOT") or PACK_ROOT.parents[1]).resolve()
 
 if str(COMFY_ROOT) not in sys.path:
     sys.path.insert(0, str(COMFY_ROOT))

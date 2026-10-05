@@ -1,5 +1,164 @@
 # Changelog
 
+## 2.0.0 — 2026-10-05
+
+The big one. 2.0 is the result of a full audit of the pack (bug classes, invariants, fresh install, architecture),
+done with the generations as the judge: every change below was tested, and the ones that touch the image were
+compared **pixel for pixel** with the previous state before being kept. Images at the same seed are unchanged
+unless stated.
+
+### No ComfyUI core modification any more
+
+- **The couple engine moved from `comfy/ldm/modules/attention.py` into the pack**
+  (`src/engine/dual_attention.py`, moved verbatim: forced attn2 path, `main_locked_delta` fusion, gain 0.78,
+  dynamic ownership). It is attached to a clone of MODEL_1 with ComfyUI's official
+  `ModelPatcher.add_object_patch`: each cross-attention block of the clone is a shallow copy whose `attn2` runs the
+  engine when the Saya payload is present and the stock cross-attention otherwise. ComfyUI installs the copies in
+  `patch_model()` and restores the originals in `unpatch_model()`; an ON_DETACH callback restores them too when a
+  clone is dropped without unpatching, so every clone puts back exactly what it found. State dict keys, LoRA
+  patches and weights are those of the stock block. **Phase 1 images are bit-identical** to the 1.x core patch at
+  the same seed (GPU parity, both models, after warm-up).
+- **Nothing under `comfy/` is shipped or patched.** `files/comfy/` and the required patch are gone; the reference
+  copy `patches/legacy/saya_dual_attention_1.x.patch` only serves the upgrade. The optional AMD VRAM patch is the
+  only core change the installer can still make.
+- The pack no longer checks for a core patch at startup; the fail-closed checks moved to the attachment itself
+  (object patch replacing a block class, another object patch on a block, model wrappers, attn2 patches /
+  replacements, attention overrides → clear error).
+- The engine's identity is traceable: the test harnesses record `engine_sha256` with every image.
+
+### Upgrading from 1.x
+
+- `./saya install` on a 1.x install **removes the 1.x core patch** (exact reverse of the same patch file, refused
+  if the file does not match), keeps the original pre-1.x backup for `restore`, **removes the obsolete pack files**
+  (`core_patch/`, …) and installs 2.0. `verify` reports `core files : stock attention.py` or
+  `1.x CORE PATCH STILL APPLIED`. New installer scenario L covers it (upgrade, obsolete file removed, verify OK,
+  restore byte-identical to the pre-1.x backup).
+- Every 1.x node type still exists; 1.x workflows load and run as they are.
+
+### Dynamic ownership and one map for every pass
+
+- **`SayaMultiCouple` ownership = `dynamic`** (the shipped workflows use it; `static_split` stays the default of the
+  node for old workflows): during the first steps of Sampler 1 the engine reads, in every cross-attention layer,
+  the affinity of each latent cell to P1's and P2's anchor tokens, clusters them into zones, confirms a zone's owner
+  when it is stable across steps and locks it. Unclaimed cells belong to MAIN (**background = MAIN**): the
+  background is painted by MAIN alone. No external detector of any kind; the drawn split masks only seed the
+  first steps.
+- **New node `Saya Ownership Map · Sampler 1 -> Imprint`**: runs right after Sampler 1, reads the final ownership
+  once, writes it into the couple imprint (`ownership_map`) and rebuilds MODEL_2 on it. Sampler 2, Hires Fix, USDU
+  tiles, HiDream, the detailers and Phase 6 all split P1 / P2 on that same map. The map is **bound to the sampling
+  that produced it** (keyed by its P1 conditioning, the engine's own key): a map from another MODEL_1, another
+  image or a batch is refused, and the static split is kept with a report that says why.
+- **New optional input `person_anchor`** on `SayaMultiCouple` (default `woman` = the validated behaviour, bit for
+  bit; `auto` adds `man`; or your own words): the generic "a person is here" anchor the dynamic mode starts from.
+  The person word lists now cover women, men, boys, girls and the common hybrid words.
+- **Silent fallbacks are not silent any more**: ownership = dynamic without a derivable anchor, or a grid above
+  the engine's token budget (presets ≥ 1536 × 832), used to fall back to the static split with no trace. Both now
+  log a warning that names the cause.
+- `zone_fallback` (give undecided cells to a person by block majority) stays available and off.
+
+### MAIN prompt builder and background stock
+
+- **New node `Saya Main Prompt · Prefix + Background + Tags`** (`SayaMainPrompt`): your prefix copied as written
+  (LoRA triggers, weights and spacing untouched), a background from the stock (41 categories, `seed` fixed = locked,
+  randomize = a new one each run, `free` = your own text, 5-entry shared history, `ultra_detailed` long form), one
+  tag per drop-down menu (lighting, time, weather, particles, palette, detail, rating) and `extra`. Outputs
+  `main_prompt`, `background`, `short_name`, `info`.
+- **`SayaMainPromptFR`**: the same node with French labels (inputs, categories, history, menus); tags are sent in
+  English, output identical to the English node.
+- **New node `Saya Background Picker · 40 categories`**: the background alone; stock of **7 409** hand-written
+  backgrounds (`data/backgrounds.json` 6 409 + `data/backgrounds_fou.json` 1 000 improbable places, `horror++`
+  category added). The stock ships with the pack (1.x's working copy fell back to a path on my machine).
+
+### Couple context (phases 2 to 6)
+
+- **New node `Saya Couple Context · Load`** (`SayaCoupleContextLoad`): Resolve / Load + Checkpoint Identities +
+  Retarget in one node. It resolves and validates the Phase 1 imprint **once per phase** and hands
+  `SayaCoupleReconstruct` a `SAYA_COUPLE_CONTEXT` per model (imprint, identities, source chain, retarget, phase,
+  debug). **`Saya Couple Context · Inspect`** prints it. The full workflow uses it in phases 2, 4, 5 and 6:
+  22 fewer executed nodes, imprint parsed 3 times per phase instead of 8, **images identical** (GPU, same seeds).
+  `SayaCoupleReconstruct` gained an optional `context` input; `checkpoint_identities` became optional. The historic
+  nodes still work.
+
+### Deprecated node types (still loadable)
+
+Thirteen types nothing in the current pipeline uses are kept under `saya/deprecated` with `[DEPRECATED]` in their
+title; they run as before and log one warning per session naming the replacement:
+`SayaImagePhaseController`, `SayaLazyCheckpointLoader`, `SayaImagePhaseCheckpointLoad`,
+`SayaImagePhaseCheckpointStop`, `SayaImagePhase1Stop`, `SayaCoupleImprintDerive`, `SayaWarmupGate`,
+`SayaDuoLatentShape`, `SayaDuoTiledUpscale`, `SayaResolutionScaleCalculator`, `SayaNear4KTargetCalculator`,
+`SayaKSamplerConfig`, `SayaPPMMasks`.
+
+### Phase review
+
+- **Third button, STOP · KEEP**: the Phase 1 review popup now offers *continue*, *redo (new seed)* and *stop and
+  keep this image* (for when the background or the pose is right and you want the image as it is, without the
+  later phases).
+
+### Fixes
+
+- **Fresh install was impossible in 1.x**: the distributed core patch did not carry the dynamic engine, and the
+  compatibility checker answered NOT COMPATIBLE on a clean ComfyUI (stale patch + a false negative on packages
+  without `__init__.py`). Fixed first by regenerating the patch, then made moot by the engine move.
+- **Without MultiMaskCouple the whole pack failed to load**, Solo included, because of an import at load time. The
+  import is now lazy, with a clear error only when a Couple pass actually needs it.
+- **Ownership map capture was not bound to the model that produced it** (it read "the only engine state there
+  is"); it is now keyed by the recipe's own P1 conditioning.
+- A silently substituted VAE (unreadable file → fallback) is now logged with the cause.
+- Installation messages pointed to files that did not exist; one test failed on a maintainer-only file instead of
+  skipping.
+- **AMD VRAM patch**: the VRAM cap is clamped to a valid fraction, so a second Python process starting while the
+  ComfyUI server holds the VRAM no longer dies with `Invalid fraction value`.
+- Windows: the debug signal handler the pack registers does not exist there; guarded.
+- Mask blur and PNG metadata reading had two implementations each; one is kept, bit-identical output.
+
+### Installer and compatibility
+
+- Compatibility axis A is now the **engine** (nine anchors read from the sources: the `self.attn2(...,
+  transformer_options=...)` call, `add_object_patch`, `object_patches_backup`, `ON_DETACH`,
+  `deepcopy_list_dict`, `cond_or_uncond` / `activations_shape`, …) instead of "does the patch apply".
+- `install` prints `core modification : NONE`; `verify` reports the state of `attention.py`, the AMD patch and the
+  four dependencies the workflows need (MultiMaskCouple, RES4LYF, Impact Pack, Ultimate SD Upscale).
+- `install` removes the files a previous version shipped that the new one no longer has.
+- Smoke test: the engine path is exercised on a real block through the object patch (`dual_path_live`).
+- `compatibility.json`: `files_patched` = optional AMD patch only; `files_patched_legacy` = the 1.x patched
+  `attention.py` (accepted as tested until the installer removes it).
+- The pack's own `tools/check_comfyui_compat.py --comfyui <root>` performs the same check without the installer
+  (reads the sources, imports nothing); optional dependencies (Impact Pack, Ultimate SD Upscale and its patch,
+  RES4LYF patch, AMD patch) are reported as OPTIONAL, never as failures.
+
+### Third-party patches (optional, by hand)
+
+- `patches/third_party/res4lyf_hidream_attention_split.patch` (new): the local RES4LYF change that lets the
+  HiDream pass run on 16 GB (attention split). Optional, documented, not installed by the installer.
+- `patches/third_party/ultimatesdupscale_saya_couple_crop.patch`: synced with the version in use.
+
+### Workflows
+
+- **Demo** rebuilt: `Saya Main Prompt` node (prefix + background + tags, free mode with the demo scene), ACTION
+  prompt, P1 / P2 text fed to the couple node for the anchors, dynamic ownership, `person_anchor`. Prompts in
+  `workflows/demo_prompt.json` follow the 4-field grammar (PREFIX, SCENE, ACTION, P1, P2, NEGATIVE). API version
+  regenerated from the server's node definitions.
+- **Full** rebuilt from the validated live workflow: `Saya Main Prompt` (English labels), ACTION, the Phase 1
+  ownership map node, `Saya Couple Context · Load` in phases 2 / 4 / 5 / 6, STOP · KEEP in the review. Same
+  neutralisation as before (checkpoints, VAEs, LoRAs, detectors, notes).
+
+### Documentation
+
+- README rewritten for 2.0 (no core modification, upgrade path, dynamic ownership, prompt grammar).
+- **Prompt guides** (new): `docs/PROMPTS_GUIDE_SFW_EN.md` and `docs/PROMPTS_GUIDE_SFW_FR.md`, the 4-field grammar
+  (MAIN = background only, ACTION, P1, P2), the validated tag families, weight syntax, what breaks ownership.
+
+### Tests
+
+- 165 pack tests (was 144), 173 with the full workflow loaded: the engine attachment (restore on unpatch and on
+  detach, class / object patch / wrapper refusals), the engine moved verbatim (hash), map capture bound to the
+  recipe, lazy MultiMaskCouple import, fallbacks that warn, `person_anchor`, the MAIN prompt node (EN / FR
+  equivalence, prefix verbatim, locked / random / free background, history), the context nodes (same output as the
+  historic chain, CPU cost), deprecated types, blur / PNG single implementations, workflow link and routing checks.
+- `tests/proof_gain.py` runs on the pack engine; `tests/installer_scenarios.py` 27 checks incl. the 1.x upgrade.
+- GPU: Phase 1 parity 1.x core patch vs 2.0 attachment bit-identical (both models); context nodes bit-identical on
+  3 seeds through phases 1 → 6; `person_anchor` checked on 4 images.
+
 ## 1.0.2 — 2026-09-29
 
 ### Full workflow

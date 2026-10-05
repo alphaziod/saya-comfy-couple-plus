@@ -72,7 +72,7 @@ def main():
         r = copy_tree(a.clean, tmp, "A")
         code, out = run(["install", "--yes", "--amd", "yes"], r, a.python)
         check("A1 fresh install exits 0", code == 0, out[-600:])
-        check("A2 attention.py == tested patched file", sha(os.path.join(r, CORE[0])) == tested["files_patched"][CORE[0]])
+        check("A2 attention.py untouched (2.0: no core modification)", sha(os.path.join(r, CORE[0])) == upstream[CORE[0]])
         check("A3 model_management.py == tested patched file", sha(os.path.join(r, CORE[1])) == tested["files_patched"][CORE[1]])
         code, out = run(["verify"], r, a.python)
         check("A4 verify RESULT OK", code == 0 and "RESULT        : OK" in out, out[-800:])
@@ -91,29 +91,55 @@ def main():
         check("A11 install again after restore", code == 0 and sha(os.path.join(r, CORE[1])) == upstream[CORE[1]], out[-600:])
 
         # B. restore refuses to silently overwrite a file changed after install
+        # (2.0: the only core file the installer can touch is the optional AMD patch, so the drift is simulated on it)
         r = copy_tree(a.clean, tmp, "B")
-        run(["install", "--yes", "--amd", "no"], r, a.python)
-        with open(os.path.join(r, CORE[0]), "a", encoding="utf-8") as f:
+        run(["install", "--yes", "--amd", "yes"], r, a.python)
+        with open(os.path.join(r, CORE[1]), "a", encoding="utf-8") as f:
             f.write("\n# user edit after install\n")
-        edited = sha(os.path.join(r, CORE[0]))
+        edited = sha(os.path.join(r, CORE[1]))
         code, out = run(["restore"], r, a.python, stdin="\n")
-        check("B1 drift detected and restore cancelled by default", code != 0 and "changed since install" in out and sha(os.path.join(r, CORE[0])) == edited, out[-600:])
+        check("B1 drift detected and restore cancelled by default", code != 0 and "changed since install" in out and sha(os.path.join(r, CORE[1])) == edited, out[-600:])
         code, out = run(["restore", "--force"], r, a.python)
-        check("B2 restore --force puts back the original", code == 0 and sha(os.path.join(r, CORE[0])) == upstream[CORE[0]], out[-600:])
+        check("B2 restore --force puts back the original", code == 0 and sha(os.path.join(r, CORE[1])) == upstream[CORE[1]], out[-600:])
 
-        # C. core already modified by someone else -> fail closed, nothing touched
+        # C. core whose engine entry point is gone (another modification) -> fail closed, nothing touched
         r = copy_tree(a.clean, tmp, "C")
         p = os.path.join(r, CORE[0])
-        txt = open(p, encoding="utf-8").read().replace("if block_attn2 in attn2_replace_patch:", "if block_attn2 in attn2_replace_patch:  # other extension", 1)
+        txt = open(p, encoding="utf-8").read().replace("n = self.attn2(n, context=context_attn2, value=value_attn2, transformer_options=transformer_options)",
+                                                       "n = self.attn2(n, context=context_attn2, value=value_attn2)", 1)
         open(p, "w", encoding="utf-8").write(txt)
         before = tree_hash(r)
         code, out = run(["install", "--yes"], r, a.python)
         check("C1 modified core -> UNSUPPORTED, exit != 0", code != 0 and "UNSUPPORTED" in out, out[-600:])
         check("C2 modified core -> nothing written", tree_hash(r) == before)
 
+        # L. upgrade from a 1.x install: the 1.x core patch is applied and recorded -> 2.0 removes it, verify OK, restore OK
+        r = copy_tree(a.clean, tmp, "L")
+        sys.path.insert(0, os.path.join(PKG, "installer"))
+        from saya_installer import cli as _cli, compat as _compat, patchlib as _patchlib
+        fp = _compat.load_patch(os.path.join(PKG, _compat.LEGACY_ATTENTION_PATCH))
+        bdir, state = _cli.new_backup(r, _cli.comfy_identity(r))
+        state["saya_version"] = "1.0.2"
+        _cli.backup_file(r, state, CORE[0], "saya_core")
+        patched = _patchlib.apply_to_text(open(os.path.join(r, CORE[0]), encoding="utf-8", newline="").read(), fp)
+        open(os.path.join(r, CORE[0]), "w", encoding="utf-8", newline="").write(patched)
+        state["core_files"][CORE[0]]["sha256_after"] = sha(os.path.join(r, CORE[0]))
+        os.makedirs(os.path.join(r, "custom_nodes", "Saya_Couple", "core_patch"), exist_ok=True)
+        open(os.path.join(r, "custom_nodes", "Saya_Couple", "core_patch", "old.patch"), "w").write("legacy file of 1.x\n")
+        state["node_dir"]["files"]["custom_nodes/Saya_Couple/core_patch/old.patch"] = sha(os.path.join(r, "custom_nodes", "Saya_Couple", "core_patch", "old.patch"))
+        _cli.save_state(r, state)
+        check("L0 precondition: 1.x patch applied and recorded", sha(os.path.join(r, CORE[0])) == tested["files_patched_legacy"][CORE[0]])
+        code, out = run(["install", "--yes", "--amd", "no"], r, a.python)
+        check("L1 upgrade install exits 0 and removes the 1.x core patch", code == 0 and "1.x core patch removed" in out and sha(os.path.join(r, CORE[0])) == upstream[CORE[0]], out[-700:])
+        check("L2 obsolete 1.x file removed", not os.path.exists(os.path.join(r, "custom_nodes", "Saya_Couple", "core_patch", "old.patch")))
+        code, out = run(["verify"], r, a.python)
+        check("L3 verify RESULT OK after upgrade", code == 0 and "RESULT        : OK" in out, out[-800:])
+        code, out = run(["restore", "--yes"], r, a.python)
+        check("L4 restore after upgrade: core byte-identical to the pre-1.x backup", code == 0 and sha(os.path.join(r, CORE[0])) == upstream[CORE[0]], out[-500:])
         # D. missing required dependency MultiMaskCouple -> refused
         r = copy_tree(a.clean, tmp, "D")
-        shutil.rmtree(os.path.join(r, "custom_nodes/MultiMaskCouple"))
+        dep = os.path.join(r, "custom_nodes/MultiMaskCouple")
+        os.unlink(dep) if os.path.islink(dep) else shutil.rmtree(dep)
         before = tree_hash(r)
         code, out = run(["install", "--yes"], r, a.python)
         check("D1 missing MultiMaskCouple -> refused, nothing written", code != 0 and tree_hash(r) == before, out[-400:])

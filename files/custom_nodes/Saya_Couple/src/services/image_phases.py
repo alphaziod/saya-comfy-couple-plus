@@ -102,7 +102,8 @@ def output_directory() -> Path:
         import folder_paths
 
         return Path(folder_paths.get_output_directory()).resolve()
-    except Exception:
+    except Exception as error:  # outside ComfyUI (tests, tools): say where the files go instead of guessing silently
+        LOGGER.warning("[Saya] ComfyUI output directory unavailable (%s: %s): using %s", type(error).__name__, error, Path.cwd() / "output")
         return (Path.cwd() / "output").resolve()
 
 
@@ -427,13 +428,10 @@ def _verify_transaction_match(path: Path, manifest: dict[str, Any]) -> None:
 def _verify_phase1_checkpoint(path: Path, manifest: dict[str, Any]) -> None:
     """Require one coherent Phase-1 PNG, sidecar transaction, and v2 imprint."""
     from ..nodes.couple_imprint_v2 import parse_imprint_json
-    from .imprint_integrity import IMPRINT_METADATA_KEY, verify_or_raise
-
-    from PIL import Image
+    from .imprint_integrity import IMPRINT_METADATA_KEY, read_png_info, verify_or_raise
 
     try:
-        with Image.open(path) as image:
-            imprint_json = image.info.get(IMPRINT_METADATA_KEY)
+        imprint_json = read_png_info(path).get(IMPRINT_METADATA_KEY)
     except (OSError, ValueError) as error:
         raise ValueError(f"Unreadable Phase 1 checkpoint: {path}: {error}") from error
     if not imprint_json:

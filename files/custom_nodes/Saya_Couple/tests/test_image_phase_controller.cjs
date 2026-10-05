@@ -42,6 +42,10 @@ vm.runInContext(source, context);
     for (const name of ["randomizeMasterSeedInPrompt", "randomSeed", "updateMasterSeed", "masterSeedNode"]) {
         assert.equal(source.includes(name), false, `${name} must not exist: rgthree owns the seed`);
     }
+    const stopBody = source.slice(source.indexOf("stopButton.onclick"), source.indexOf("continueButton.onclick"));
+    assert.match(stopBody, /stopSequenceCleanly\(\)/, "STOP ends the sequence cleanly (popup closed, nothing queued)");
+    assert.doesNotMatch(stopBody, /validate|redo|queuePhase/, "STOP never validates, redoes or queues");
+    assert.match(source, /buttons\.append\(stopButton, restartButton, continueButton\)/, "three buttons: STOP, REDO, CONTINUE");
     const restartBody = source.slice(source.indexOf("restartButton.onclick"), source.indexOf("function registerReviewNode"));
     assert.match(restartBody, /\/saya\/image-phases\/redo/, "REFAIRE calls /redo");
     assert.match(restartBody, /queuePhase\(1,/, "REFAIRE requeues Phase 1");

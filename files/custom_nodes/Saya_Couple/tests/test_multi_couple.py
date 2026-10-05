@@ -144,9 +144,11 @@ def test_multi_couple_schema_and_outputs():
         ["model_1", "clip", "mask_1", "mask_2", "pos_1", "neg_1", "pos_2", "neg_2", "strength_1", "strength_2"],
         "required input order",
     )
-    c.eq(list(schema["optional"]), ["model_2", "main", "solo"], "model_2/main/solo optional")
-    c.eq(node.RETURN_TYPES, ("MODEL", "MODEL", "CONDITIONING", "CONDITIONING"), "return types")
-    c.eq(node.RETURN_NAMES, ("MODEL_1_PATCHED", "MODEL_2_PATCHED", "CONDITIONING", "NEGATIVE"), "return names")
+    c.eq(list(schema["optional"]), ["model_2", "main", "action", "solo", "ownership", "dynamic_start_sigma", "background_main", "zone_fallback", "anchor_tokens", "p1_anchors", "p2_anchors", "p1_text", "p2_text", "person_anchor"], "model_2/main/solo/ownership/dynamic_start_sigma/anchor_tokens/anchors/texts/person_anchor optional (new entries at the end only)")
+    c.eq(schema["optional"]["anchor_tokens"][1]["default"], "phrase", "anchor_tokens defaults to the validated phrase mode")
+    c.eq(schema["optional"]["ownership"][1]["default"], "static_split", "ownership defaults to the historic static split")
+    c.eq(node.RETURN_TYPES, ("MODEL", "MODEL", "CONDITIONING", "CONDITIONING", "SAYA_COUPLE_RECIPE"), "return types")
+    c.eq(node.RETURN_NAMES, ("MODEL_1_PATCHED", "MODEL_2_PATCHED", "CONDITIONING", "NEGATIVE", "COUPLE_RECIPE"), "return names")
 
     model = _FakeModel()
     patched = _couple(_module(), model, _cond(1.0), _cond(2.0))
@@ -197,9 +199,7 @@ def test_multi_couple_main_conditioning_merge():
     fills = [float(item[0].mean()) for item in captured["positive"]]
     c.eq(fills, [9.0, 1.0, 9.0, 2.0], "MAIN + P1 / MAIN + P2 before masks")
     weights = [round(item[1]["mask_strength"], 6) for item in captured["positive"]]
-    from saya_couple.src.nodes.couple_imprint_v2 import DEFAULT_ATTENTION_PARAMS as P
-    base, person = round(P["base_weight"], 6), round(P["person_weight"], 6)
-    c.eq(weights, [base, person, base, person], "MAIN weighted as base, persons as person (like Phase 2+)")
+    c.eq(weights, [0.65, 0.35, 0.65, 0.35], "MAIN weighted as base, persons as person (DEFAULT_ATTENTION_PARAMS)")
     return c.report()
 
 
@@ -236,16 +236,15 @@ def test_multi_couple_zero_ppm_guard():
     src = NODE_PATH.read_text(encoding="utf-8")
     c.ok("ppm" not in src.lower(), "no 'ppm' reference in saya_multi_couple.py")
     c.ok(
-        re.search(r"^from custom_nodes\.MultiMaskCouple\.attention_couple import AttentionCouple$", src, re.M)
-        is not None,
-        "single import = MultiMaskCouple library",
+        len(re.findall(r"^\s*from custom_nodes\.MultiMaskCouple\.attention_couple import AttentionCouple$", src, re.M)) == 1,
+        "single import = MultiMaskCouple library (lazy, inside _multimask_couple, since the Fable audit)",
     )
     c.ok("SayaAttentionCouplePPM" not in src, "no reuse of the pack's old PPM code")
 
     module = _module()
 
     c.ok(Path(module.__file__) == NODE_PATH, "module resolved from the Saya pack")
-    dep_mod = sys.modules.get(module.AttentionCouple.__module__)
+    dep_mod = sys.modules.get(module._multimask_couple().__module__)
     dep_file = getattr(dep_mod, "__file__", "") or ""
     c.ok("MultiMaskCouple" in dep_file and dep_file.endswith("attention_couple.py"),
          f"AttentionCouple comes from the MultiMaskCouple pack ({dep_file})")
@@ -259,7 +258,7 @@ def test_multi_couple_solo():
     c = Check("multi_couple_solo")
     model_1, model_2 = _FakeModel(), _FakeModel()
     neg_1 = _cond(0.3)
-    m1, m2, positive, negative = node.apply(
+    m1, m2, positive, negative, _recipe = node.apply(
         model_1, clip, _mask(1), _mask(0), _cond(1.0), neg_1, _cond(2.0), _cond(-0.3),
         model_2=model_2, main=_cond(9.0), solo=True,
     )

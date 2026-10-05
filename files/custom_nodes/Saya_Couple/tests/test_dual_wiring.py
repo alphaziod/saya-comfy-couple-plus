@@ -1,4 +1,4 @@
-"""SayaMultiCouple -> core saya_dual_mode wiring: Couple is always dual, Solo never, exact payload, fail-closed."""
+"""SayaMultiCouple -> engine wiring (object patches, M1): Couple is always dual, Solo never, exact payload, fail-closed."""
 
 import ast
 import copy
@@ -40,6 +40,8 @@ class _RawModel:
         self.model = SimpleNamespace(diffusion_model=unet)
         self.model_options = {"transformer_options": {}}
         self.object_patches = {}
+        self.object_patches_backup = {}
+        self.callbacks = {}
         self.wrappers = {}
 
     def clone(self):
@@ -47,8 +49,19 @@ class _RawModel:
         new.model = self.model
         new.model_options = copy.deepcopy(self.model_options)
         new.object_patches = dict(self.object_patches)
+        new.object_patches_backup = {}
+        new.callbacks = {k: {k1: list(v1) for k1, v1 in v.items()} for k, v in self.callbacks.items()}
         new.wrappers = copy.deepcopy(self.wrappers)
         return new
+
+    def add_object_patch(self, name, obj):
+        self.object_patches[name] = obj
+
+    def add_callback(self, call_type, callback):
+        self.callbacks.setdefault(call_type, {}).setdefault(None, []).append(callback)
+
+    def blocks(self):
+        return [m for m in self.model.diffusion_model.modules() if hasattr(m, "attn2") and hasattr(m, "norm2")]
 
 
 def _node():
@@ -78,7 +91,7 @@ def test_solo_never_reaches_dual():
     module.enable_dual_attention = lambda *a, **k: called.append(1)
     try:
         model_1, model_2 = _RawModel(), _OldFakeModel()
-        m1, m2, _positive, _negative = node.apply(model_1, model_2=model_2, solo=True, **_inputs())
+        m1, m2, _positive, _negative, _recipe = node.apply(model_1, model_2=model_2, solo=True, **_inputs())
     finally:
         module.enable_dual_attention = original
     c.eq(called, [], "Solo never reaches the dual engine")
@@ -91,13 +104,18 @@ def test_dual_on_positive_flag_payload():
     c = Check("dual_on_positive_flag_payload")
     args = _inputs()
     model = _RawModel()
-    m1, m2, positive, negative = node.apply(model, **args)
+    m1, m2, positive, negative, _recipe = node.apply(model, **args)
     c.ok(positive is args["main"], "positive for Sampler 1 is exactly MAIN")
     c.ok(negative is args["neg_1"], "NEGATIVE unchanged")
     c.ok(m2 is None, "no model_2 -> MODEL_2_PATCHED None")
     options = m1.model_options["transformer_options"]
-    c.ok(options.get("saya_dual_mode") is True, "MODEL_1 carries saya_dual_mode=True")
-    c.ok("saya_dual_mode" not in model.model_options["transformer_options"] and "saya_dual" not in model.model_options["transformer_options"], "raw model untouched (clone)")
+    c.ok("saya_dual_mode" not in options, "MODEL_1 carries no core flag (object-patch injection)")
+    copies = [v for k, v in m1.object_patches.items() if k.startswith("diffusion_model.")]
+    c.ok(len(copies) == len(model.blocks()) > 0 and all(getattr(v, "saya_source", None) for v in copies), "one Saya block copy per cross-attention block")
+    c.ok(all(v.saya_source[0] is b for v, b in zip(copies, model.blocks())), "each copy wraps its own stock block")
+    c.ok(m1.callbacks.get("on_detach_after"), "ON_DETACH restore callback registered")
+    c.ok("saya_dual_mode" not in model.model_options["transformer_options"] and "saya_dual" not in model.model_options["transformer_options"]
+         and not model.object_patches and not model.callbacks, "raw model untouched (clone)")
     c.ok("patches_replace" not in options and "patches" not in options, "no historic couple patch on MODEL_1")
     payload = options["saya_dual"]
     c.eq(set(payload), {"p1", "p2", "mask_1", "mask_2", "fusion_mode", "params"}, "payload keys are exactly the contract")
@@ -135,10 +153,10 @@ def test_dual_on_model_2_is_historic():
         _OldFakeModel(), args["clip"], args["mask_1"], args["mask_2"], args["pos_1"], args["neg_1"],
         args["pos_2"], args["neg_2"], 1.0, 1.0, 0.65, 0.35, main=args["main"],
     )
-    m1, m2_on, positive, negative = node.apply(_RawModel(), model_2=_OldFakeModel(), **args)
+    m1, m2_on, positive, negative, _recipe = node.apply(_RawModel(), model_2=_OldFakeModel(), **args)
     c.eq(len(_attn2_patches(m2_on)), 1, "MODEL_2 has the MultiMaskCouple attn2 replace")
     c.ok(torch.equal(_run_patch(m2_on), _run_patch(reference)), "MODEL_2 patch output = apply_multimask_couple")
-    c.ok("saya_dual_mode" not in m2_on.model_options["transformer_options"], "MODEL_2 has no dual flag")
+    c.ok("saya_dual" not in m2_on.model_options["transformer_options"] and not getattr(m2_on, "object_patches", {}), "MODEL_2 has no engine payload nor object patch")
     c.ok(positive is args["main"] and negative is args["neg_1"], "other outputs unchanged")
     return c.report()
 
@@ -209,8 +227,14 @@ def test_dual_fail_closed_model():
     c.ok(bool(coupled.model_options["transformer_options"]["patches_replace"]["attn2"]), "precondition: real AttentionCouple installed patches")
     refused(coupled, "MODEL_1 that already received the historic AttentionCouple", "historic couple")
 
-    m = _RawModel(); m.model_options["transformer_options"].update(saya_dual_mode=True)
-    refused(m, "already carries saya_dual_mode", "already carries")
+    m = _RawModel(); m.model_options["transformer_options"]["saya_dual"] = {}
+    refused(m, "already carries the payload", "already carries")
+    from saya_couple.src.nodes.saya_dual_attention import saya_block, saya_block_names
+    m = _RawModel(); first, first_block = saya_block_names(m)[0]
+    m.add_object_patch(first, object())
+    refused(m, f"another pack's object patch on a transformer block ({first})", "another object patch")
+    m = _RawModel(); m.add_object_patch(first, saya_block(first_block))
+    refused(m, "already carries a Saya block copy", "already carries")
     m = _RawModel(); m.model_options["transformer_options"]["optimized_attention_override"] = lambda *a: None
     refused(m, "optimized_attention_override", "optimized_attention_override")
 
@@ -230,7 +254,7 @@ def test_dual_fail_closed_model():
     m.wrappers = {"diffusion_model": {}, "apply_model": {"k": []}}
     m.model_options.update(sampler_post_cfg_function=[lambda a: a], sampler_pre_cfg_function=[lambda a: a], sampler_cfg_function=lambda a: a)
     out = node.apply(m, **_inputs())
-    c.ok(out[0].model_options["transformer_options"]["saya_dual_mode"] is True, "empty wrappers and sampler_*_cfg functions (APG/CFGZeroStar/Epsilon/PAG) allowed")
+    c.ok("saya_dual" in out[0].model_options["transformer_options"] and out[0].object_patches, "empty wrappers and sampler_*_cfg functions (APG/CFGZeroStar/Epsilon/PAG) allowed")
     return c.report()
 
 

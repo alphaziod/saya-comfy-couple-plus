@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "note": "Compatibility is decided from the code the installer finds (capabilities), not from version numbers. This file records the officially tested core and the historical scan made at release time.",
+ "note": "Compatibility is decided from the code the installer finds (capabilities), not from version numbers. This file records the officially tested core and the historical scan made at release time. Since 2.0 the attention core is never modified; the legacy 1.x patch is only reversed at upgrade.",
  "officially_tested": [
   {
    "comfyui_version": "0.34.0",
@@ -13,8 +13,7 @@
     "comfy/model_management.py": "2995ba870f1bdc0cf7b25f7178ffd55195bfeef09e937788c5d9d650256d3fad"
    },
    "files_patched": {
-    "comfy/ldm/modules/attention.py": "48dfedc4a28a40538a80d62794e5c82d65633205bc56f8501eed4d01fdab0dbc",
-    "comfy/model_management.py": "ad00a433603f7d337adf33fcc578401c5a8fef6812ca452d59db1c53212eb8cf"
+    "comfy/model_management.py": "6ddad671348401a371bf2d3a06729cd07db8ae53ef75f0165f1ac211c7f24cd0"
    },
    "key_files": {
     "comfy/ldm/modules/attention.py": "9cafaafaf93ff53e8cbefb5e4a204014019985df2da8c1996bf40f1235fc2960",
@@ -27,7 +26,12 @@
     "comfy/sampler_helpers.py": "53c82235bfea0c4edf3cd5219f080c44c45ac1c9a6c3171f2aae151e18b56b91",
     "nodes.py": "8894bdfb49c8647f6997af374cdc033066eb21da6f15126117d0013216ec01b9",
     "comfyui_version.py": "8d554f7f87a4988fa77c6362ea89285989d24e21146d53321c86a609525c732a"
-   }
+   },
+   "files_patched_legacy": {
+    "comfy/ldm/modules/attention.py": "48dfedc4a28a40538a80d62794e5c82d65633205bc56f8501eed4d01fdab0dbc"
+   },
+   "date_2_0": "2026-10-05",
+   "note_2_0": "Saya Couple 2.0: no core modification (engine injected with ModelPatcher object patches); files_patched = optional AMD patch only; files_patched_legacy = attention.py with the 1.x patch (accepted as tested until the installer removes it)."
   }
  ],
  "history_scan": {
