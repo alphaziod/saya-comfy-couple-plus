@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- **AMD desktop VRAM reserve counted once.** The optional safety patch already excludes 1 GiB from the
+  allocator cap. `extra_reserved_memory()` now reserves only the part of `--reserve-vram` above that amount
+  while the cap is active. Uncapped devices keep their previous behavior; the hard cap, full unloads,
+  inference reserve and restriction on partial-model growth remain in place.
+- The installer upgrades the previous AMD patch using a checked three-line delta and preserves its original
+  backup. CPU checks cover fresh install, upgrade, idempotence, conflict refusal, reversal and five reserve cases.
+  HiDream completed two local GPU runs with full model loading (warm and cold conditioning cache); no general
+  speed or image-quality improvement is claimed. Workflows and artistic settings are unchanged.
+
 ## 2.0.1 — 2026-10-05
 
 ### Fix

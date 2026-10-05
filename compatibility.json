@@ -13,7 +13,7 @@
     "comfy/model_management.py": "2995ba870f1bdc0cf7b25f7178ffd55195bfeef09e937788c5d9d650256d3fad"
    },
    "files_patched": {
-    "comfy/model_management.py": "6ddad671348401a371bf2d3a06729cd07db8ae53ef75f0165f1ac211c7f24cd0"
+    "comfy/model_management.py": "533c30f95c65f712567c3101b264596acb28d6ee6f302b93c42e443f23576310"
    },
    "key_files": {
     "comfy/ldm/modules/attention.py": "9cafaafaf93ff53e8cbefb5e4a204014019985df2da8c1996bf40f1235fc2960",

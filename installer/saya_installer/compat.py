@@ -160,6 +160,18 @@ def original_text(root: str, fp: patchlib.FilePatch) -> tuple[str | None, str]:
     return text, st
 
 
+def amd_patch_for(root: str, pkg: str) -> patchlib.FilePatch:
+    """Use the reserve-only upgrade only when it produces the complete known AMD patch."""
+    full = load_patch(os.path.join(pkg, "patches", "amd_vram_safety.patch"))
+    text = read(root, full.path)
+    if text is not None and patchlib.status(text, full) == "conflict":
+        upgrade = load_patch(os.path.join(pkg, "patches", "amd_desktop_reserve.patch"))
+        updated = patchlib.apply_to_text(text, upgrade)
+        if updated is not None and patchlib.status(updated, full) == "applied":
+            return upgrade
+    return full
+
+
 def legacy_patch_state(root: str, pkg: str) -> str:
     """State of the 1.x core patch on attention.py: 'applied' means a 1.x install is still there (the 2.0 installer removes it)."""
     fp = load_patch(os.path.join(pkg, LEGACY_ATTENTION_PATCH))
@@ -250,7 +262,7 @@ def is_tested_core(root: str, tested: dict) -> bool:
 
 def check_amd(root: str, pkg: str, tested: dict) -> Axis:
     ax = Axis("AMD VRAM patch (optional)")
-    fp = load_patch(os.path.join(pkg, "patches", "amd_vram_safety.patch"))
+    fp = amd_patch_for(root, pkg)
     orig, st = original_text(root, fp)
     ax.add(st in ("clean", "applied"), f"amd_vram_safety.patch on {fp.path}: {st}")
     if orig is not None:

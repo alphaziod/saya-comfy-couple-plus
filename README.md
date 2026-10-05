@@ -351,6 +351,12 @@ The patch (a no-op on NVIDIA, CPU and anything that is not ROCm):
 NVIDIA users are never offered it. You always keep the choice: `./saya amd --check | --yes | --revert`. Launch
 flags I use with it: `--disable-dynamic-vram --reserve-vram 0.75`.
 
+The desktop reserve is counted once: with the AMD cap active, `--reserve-vram 0.75` is already covered by its
+1 GiB desktop headroom; `--reserve-vram 2` retains another 1 GiB. The inference reserve is unchanged.
+After pulling this update, run `./saya amd --yes --comfyui /path/to/ComfyUI` and restart ComfyUI. The installer
+also recognizes the previous AMD safety patch and applies only the reserve correction, preserving its backup.
+Use this installer command for upgrades; the standalone pack helper applies the complete patch to clean sources.
+
 ## Compatibility
 
 Compatibility is decided from **what your ComfyUI's code actually provides**, not from its version number. An old

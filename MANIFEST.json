@@ -17,7 +17,7 @@
   {
    "path": "CHANGELOG.md",
    "type": "markdown",
-   "sha256": "bfe861b20820fe3a0b43d9bd4fc1c0805d6b44f21d5cd29af4f9015357092396",
+   "sha256": "a09d80cec563b4a0624cc5583d8bb5497e9529b32f87f1de3f8ceda6adaf6214",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -39,7 +39,7 @@
   {
    "path": "README.md",
    "type": "markdown",
-   "sha256": "583d1f9520d6e3bdb22e23daac6c05e8c9f92c003c636374da7dbe44d08865af",
+   "sha256": "ee2b13ae5b7d173808dfa6f3ecb0273997b7738d0b3a72854bde3d9207bbc4dc",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -61,7 +61,7 @@
   {
    "path": "compatibility.json",
    "type": "json",
-   "sha256": "02d38f2f4ee9de989501a4fbddb7d9ba591c71bc61eaa2e0919f693b753589da",
+   "sha256": "7c38300a69f8b452e8d47d1f85c7430165941d20b939f9a6f9020dd1b7c9e1e2",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1414,7 +1414,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tools/core_patches/amd_vram_safety.patch",
    "type": "patch",
-   "sha256": "37825f2277d04741c937bdf578c97a907dc4eed096ee8ce7f4055e473c201eca",
+   "sha256": "7b103277b2958961d1fe8364357932fed2e76ea6c0ee314fa30b906734490282",
    "destination": "custom_nodes/Saya_Couple/tools/core_patches/amd_vram_safety.patch",
    "origin": "derived from ComfyUI (patch)",
    "license": "GPL-3.0 (ComfyUI)",
@@ -1546,7 +1546,7 @@
   {
    "path": "installer/saya_installer/cli.py",
    "type": "python",
-   "sha256": "64a0667c1b6ede3e915396c720f264c24acf64ad76cb198b0abbb8d8c1de2320",
+   "sha256": "1b3b0d0bcda96bdb298a8d7c9a0a3aacaec3eb2ebdea02cea8780de3c4928d81",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1557,7 +1557,7 @@
   {
    "path": "installer/saya_installer/compat.py",
    "type": "python",
-   "sha256": "6fc9e5d8fb6bd6d0ebdd34007f2cc6818985efcb1fd5bcba4270f9eae0b18bb6",
+   "sha256": "fd546335377c34d6e9f2e36634b6463645dc43c8969c5e539d175e379d6ff898",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1599,9 +1599,21 @@
    "description": "installer / release tooling"
   },
   {
+   "path": "patches/amd_desktop_reserve.patch",
+   "type": "patch",
+   "sha256": "d428f6a29151982197f0ff40bbe1db43982c4ebc45d50a9c46bfefbcf068ac29",
+   "destination": "comfy/model_management.py",
+   "origin": "derived from ComfyUI",
+   "license": "GPL-3.0 (ComfyUI)",
+   "required": false,
+   "component": "amd_optional",
+   "description": "OPTIONAL AMD/ROCm VRAM safety patch (VRAM cap, full unloads; fraction clamped since 2.0)",
+   "upstream_expected": "ComfyUI 41db8f4f (v0.34.0+77) - 2.0: stock core, no modification"
+  },
+  {
    "path": "patches/amd_vram_safety.patch",
    "type": "patch",
-   "sha256": "37825f2277d04741c937bdf578c97a907dc4eed096ee8ce7f4055e473c201eca",
+   "sha256": "7b103277b2958961d1fe8364357932fed2e76ea6c0ee314fa30b906734490282",
    "destination": "comfy/model_management.py",
    "origin": "derived from ComfyUI",
    "license": "GPL-3.0 (ComfyUI)",
@@ -1645,6 +1657,17 @@
    "component": "third_party_optional",
    "description": "OPTIONAL, not installed: per-tile Saya couple masks in Ultimate SD Upscale",
    "upstream_expected": "ComfyUI_UltimateSDUpscale bebd569"
+  },
+  {
+   "path": "tests/amd_desktop_reserve.py",
+   "type": "python",
+   "sha256": "e518d419895ddc29ddd6c61db4f29596014eb9a83511b514c7d0f2ff1d3ffa41",
+   "destination": null,
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": false,
+   "component": "test",
+   "description": "public test and validation scripts"
   },
   {
    "path": "tests/contact_sheet.py",
@@ -1737,7 +1760,7 @@
   {
    "path": "tools/build_manifest.py",
    "type": "python",
-   "sha256": "99800526ac5e0d0be2a528c1878239223729c401283657a568680840289e15fa",
+   "sha256": "52badc62d3d5a764e8401f303fe33e4100eeae34a62de970eb51289e65c0b7c5",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",

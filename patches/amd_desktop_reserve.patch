@@ -1,0 +1,14 @@
+diff --git a/comfy/model_management.py b/comfy/model_management.py
+index 6045dd03..a078e051 100644
+--- a/comfy/model_management.py
++++ b/comfy/model_management.py
+@@ -894,6 +894,9 @@ if is_amd() and get_torch_device().type == "cuda":
+     logging.info("AMD hard VRAM cap: {:.0f} MB of {:.0f} MB".format(AMD_VRAM_CAP / (1024 * 1024), _amd_total / (1024 * 1024)))
+ 
+ def extra_reserved_memory():
++    if AMD_VRAM_CAP is not None:
++        # get_free_memory already excludes the hard cap's desktop reserve.
++        return max(0, EXTRA_RESERVED_VRAM - AMD_DESKTOP_VRAM_HEADROOM)
+     return EXTRA_RESERVED_VRAM
+ 
+ def minimum_inference_memory():

@@ -43,7 +43,7 @@ def classify(rel: str) -> dict:
     elif rel.startswith("patches/legacy/"):
         e.update(destination=None, component="legacy", required=False, origin="derived from ComfyUI", license=GPL_COMFY,
                  description="1.x core patch, kept ONLY so that `saya install` can remove it when upgrading from 1.x; never applied by 2.0", upstream_expected=UPSTREAM)
-    elif rel == "patches/amd_vram_safety.patch":
+    elif rel in ("patches/amd_vram_safety.patch", "patches/amd_desktop_reserve.patch"):
         e.update(destination="comfy/model_management.py", component="amd_optional", origin="derived from ComfyUI", license=GPL_COMFY,
                  description="OPTIONAL AMD/ROCm VRAM safety patch (VRAM cap, full unloads; fraction clamped since 2.0)", upstream_expected=UPSTREAM)
     elif rel.startswith("patches/third_party/res4lyf"):

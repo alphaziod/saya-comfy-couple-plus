@@ -1,16 +1,15 @@
 Saya Couple — optional AMD/ROCm VRAM safety patch for ComfyUI core (comfy/model_management.py).
 Base: ComfyUI upstream 41db8f4f. Regenerated 2026-10-05 (fraction clamped when another process holds the VRAM). Only active on AMD GPUs under ROCm; no effect on NVIDIA/CPU.
 - hard VRAM cap = VRAM free at startup - 1 GiB for the desktop (set_per_process_memory_fraction)
-- get_free_memory clamped to the cap
+- get_free_memory clamped to the cap; desktop reserve counted once
 - full unload instead of partial unload
 - no re-promotion of an already partially loaded model
 Apply with apply_amd_vram_patch.py (git apply). Revert with --revert.
 
 diff --git a/comfy/model_management.py b/comfy/model_management.py
-index dd50f4c4..6045dd03 100644
 --- a/comfy/model_management.py
 +++ b/comfy/model_management.py
-@@ -819,7 +819,8 @@ class LoadedModel:
+@@ -819,7 +819,8 @@
          return False
  
      def model_unload(self, memory_to_free=None, unpatch_weights=True):
@@ -20,7 +19,7 @@ index dd50f4c4..6045dd03 100644
              if memory_to_free < self.model.loaded_size():
                  freed = self.model.partially_unload(self.model.offload_device, memory_to_free)
                  if freed >= memory_to_free:
-@@ -870,6 +871,28 @@ if args.reserve_vram is not None:
+@@ -870,7 +871,32 @@
      EXTRA_RESERVED_VRAM = args.reserve_vram * 1024 * 1024 * 1024
      logging.debug("Reserving {}MB vram for other applications.".format(EXTRA_RESERVED_VRAM / (1024 * 1024)))
  
@@ -47,21 +46,25 @@ index dd50f4c4..6045dd03 100644
 +    logging.info("AMD hard VRAM cap: {:.0f} MB of {:.0f} MB".format(AMD_VRAM_CAP / (1024 * 1024), _amd_total / (1024 * 1024)))
 +
  def extra_reserved_memory():
++    if AMD_VRAM_CAP is not None:
++        # get_free_memory already excludes the hard cap's desktop reserve.
++        return max(0, EXTRA_RESERVED_VRAM - AMD_DESKTOP_VRAM_HEADROOM)
      return EXTRA_RESERVED_VRAM
  
-@@ -1014,6 +1037,11 @@ def load_models_gpu(models, memory_required=0, force_patch_weights=False, minimu
-             if lowvram_model_memory == 0:
-                 lowvram_model_memory = 0.1
+ def minimum_inference_memory():
+@@ -1012,6 +1038,11 @@
+             lowvram_model_memory = lowvram_model_memory - loaded_memory
  
+             if lowvram_model_memory == 0:
++                lowvram_model_memory = 0.1
++
 +            # AMD: a later call with a smaller estimate must not grow an already resident model
 +            # into the headroom an earlier call reserved for activations and LoRA patching.
 +            if AMD_VRAM_CAP is not None and loaded_memory > 0:
-+                lowvram_model_memory = 0.1
-+
-         if vram_set_state == VRAMState.NO_VRAM:
-             lowvram_model_memory = 0.1
+                 lowvram_model_memory = 0.1
  
-@@ -1804,6 +1832,8 @@ def get_free_memory(dev=None, torch_free_too=False):
+         if vram_set_state == VRAMState.NO_VRAM:
+@@ -1804,6 +1835,8 @@
              mem_active = stats['active_bytes.all.current']
              mem_reserved = stats['reserved_bytes.all.current']
              mem_free_cuda, _ = torch.cuda.mem_get_info(dev)

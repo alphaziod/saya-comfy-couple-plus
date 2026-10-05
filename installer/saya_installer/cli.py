@@ -105,19 +105,21 @@ def comfy_identity(root: str) -> dict:
     return ident
 
 
-def patch_of(rel: str) -> patchlib.FilePatch:
+def patch_of(rel: str, root: str | None = None) -> patchlib.FilePatch:
+    if rel == AMD_PATCH and root is not None:
+        return compat.amd_patch_for(root, PKG)
     return compat.load_patch(os.path.join(PKG, rel))
 
 
 def patch_state(root: str, rel: str) -> str:
-    fp = patch_of(rel)
+    fp = patch_of(rel, root)
     text = compat.read(root, fp.path)
     return "missing" if text is None else patchlib.status(text, fp)
 
 
 def apply_patch(root: str, rel: str) -> str:
     """Applies the patch in place. Returns the new status. Never writes a partially patched file."""
-    fp = patch_of(rel)
+    fp = patch_of(rel, root)
     path = os.path.join(root, fp.path)
     text = compat.read(root, fp.path)
     st = patchlib.status(text, fp)
