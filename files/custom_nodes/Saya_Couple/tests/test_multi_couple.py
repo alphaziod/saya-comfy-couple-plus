@@ -267,6 +267,16 @@ def test_multi_couple_solo():
     c.eq(fills, [1.0, 9.0], "positive = MAIN + pos_1 only (pos_2 absent)")
     c.ok(negative is neg_1, "negative = neg_1")
 
+    # ACTION in Solo: concatenated to MAIN (as for the persons in Couple), so the pose is not lost in Phase 1.
+    m1, m2, positive, negative, _recipe = node.apply(
+        model_1, clip, _mask(1), _mask(0), _cond(1.0), neg_1, _cond(2.0), _cond(-0.3),
+        model_2=model_2, main=_cond(9.0), action=_cond(4.0, tokens=3), solo=True,
+    )
+    c.ok(m1 is model_1 and m2 is model_2, "solo + action: models still unpatched")
+    shapes = sorted((tuple(entry[0].shape), round(float(entry[0].mean()), 3)) for entry in positive)
+    c.eq(shapes, [((1, 5, 8), 1.0), ((1, 8, 8), round((9.0 * 5 + 4.0 * 3) / 8, 3))], "solo + action: positive = [MAIN ++ ACTION] + pos_1 (pos_2 absent)")
+    c.ok(negative is neg_1, "solo + action: negative = neg_1")
+
     return c.report()
 
 

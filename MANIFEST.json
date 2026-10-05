@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "saya_version": "2.0.0",
+ "saya_version": "2.0.1",
  "tested_upstream": "ComfyUI 41db8f4f (v0.34.0+77) - 2.0: stock core, no modification",
  "files": [
   {
@@ -17,7 +17,7 @@
   {
    "path": "CHANGELOG.md",
    "type": "markdown",
-   "sha256": "a67d36d10a4703ab1e406a8ed252650297be47e9d4adb542d7d4f693c1555e17",
+   "sha256": "bfe861b20820fe3a0b43d9bd4fc1c0805d6b44f21d5cd29af4f9015357092396",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -39,7 +39,7 @@
   {
    "path": "README.md",
    "type": "markdown",
-   "sha256": "bdc96b68211dd603cec9e2f4ecee1c904d11f41c2d7437df26c42265ade7288a",
+   "sha256": "583d1f9520d6e3bdb22e23daac6c05e8c9f92c003c636374da7dbe44d08865af",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -215,7 +215,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/VERSION.txt",
    "type": "text",
-   "sha256": "c28fcca53637bc88e124af1725df13cb98c69dedefd62fb3cdbe1cdb6b760624",
+   "sha256": "fe840f52fb5578d3f77eb497115eb02c6036601c3a53e60df7995c7276baa77a",
    "destination": "custom_nodes/Saya_Couple/VERSION.txt",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -699,7 +699,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/saya_multi_couple.py",
    "type": "python",
-   "sha256": "805c043db2caa7f3f1afff89810a401a37c53a981eec3a01af131bfa1c2c8ef1",
+   "sha256": "f868c913a8516c1d0e61ada86aadc6bf5a319f3b57cf0efa7d6d2827b64cf5e3",
    "destination": "custom_nodes/Saya_Couple/src/nodes/saya_multi_couple.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1172,7 +1172,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tests/test_multi_couple.py",
    "type": "python",
-   "sha256": "bf80fd37cc03eb70d0d80f65e6e9fcbbc213898dcc9f876da5d8970881419f03",
+   "sha256": "458306675ee8bd418d10932d5afa196d02c4f0d0c79de2c7ce1c83c60a150429",
    "destination": "custom_nodes/Saya_Couple/tests/test_multi_couple.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",

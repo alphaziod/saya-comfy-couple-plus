@@ -333,6 +333,10 @@ class SayaMultiCouple:
         prompt=None,
     ):
         if solo:
+            # Solo = MAIN (+ ACTION, concatenated as for the persons in Couple) + P1, neg_1; P2 is never read.
+            # Same text the phases rebuilt from the imprint use (scene_text: MAIN, ACTION, then PERSON 1).
+            if main is not None and action is not None:
+                main = ConditioningConcat().concat(main, action)[0]
             positive = ConditioningCombine().combine(main, pos_1)[0] if main is not None else pos_1
             return (model_1, model_2, positive, neg_1, None)
 

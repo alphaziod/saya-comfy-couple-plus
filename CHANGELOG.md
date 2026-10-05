@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0.1 — 2026-10-05
+
+### Fix
+
+- **Solo keeps the ACTION in Phase 1.** With *Couple / Solo* OFF, `SayaMultiCouple` encoded MAIN + P1 only and
+  dropped the `action` input; the phases rebuilt from the imprint (2 to 6) already used MAIN + ACTION + P1, so the
+  pose could change between Phase 1 and Phase 2. Solo now reads exactly MAIN (+ ACTION, concatenated as for the
+  characters in Couple) + P1 and the negative; P2 is never read. Couple mode unchanged (bit for bit: the Couple
+  path is not touched). Test added (`multi_couple_solo`). Solo renders with a connected ACTION change on purpose.
+
 ## 2.0.0 — 2026-10-05
 
 The big one. 2.0 is the result of a full audit of the pack (bug classes, invariants, fresh install, architecture),

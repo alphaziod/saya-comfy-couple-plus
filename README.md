@@ -9,14 +9,14 @@ Saya Couple is a ComfyUI custom node pack. One generation gets separate prompts 
 - **P1**: the first character's identity and attributes.
 - **P2**: the second character's identity and attributes.
 
-One switch turns the whole pipeline into **Solo mode** (MAIN + P1, one character, no couple machinery at all).
+One switch turns the whole pipeline into **Solo mode** (MAIN + ACTION + P1, one character, no couple machinery at all).
 
 | Couple mode | Solo mode |
 |:---:|:---:|
 | ![Couple: two characters, one scene](docs/images/demo_example.png) | ![Solo: one character, same scene](docs/images/solo_example.png) |
-| demo workflow, MAIN + P1 + P2 (1.x render) | full workflow, MAIN + P1 only (1.x render) |
+| demo workflow, MAIN + P1 + P2 (1.x render) | full workflow, MAIN + ACTION + P1 only (1.x render) |
 
-Current version: **2.0.0** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
+Current version: **2.0.1** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
 RDNA4 16 GB. It is first and foremost **a backup of my own ComfyUI setup**, made public in case it helps someone
 with the same problem. Take what you need.
 
@@ -110,10 +110,10 @@ every phase derives its behaviour from it, and nothing else can contradict it.
 
 | Pass | Couple mode (ON) | Solo mode (OFF) |
 |---|---|---|
-| Phase 1 · base sampling | Saya couple engine: MAIN + P1 in its region + P2 in its region, regions decided by the model itself (dynamic ownership) | MAIN + P1, no region, models unpatched |
-| Hires Fix, Phase 6 (full frame) | crop-aware couple attention on the Phase 1 ownership map | plain MAIN + P1 |
+| Phase 1 · base sampling | Saya couple engine: MAIN + P1 in its region + P2 in its region, regions decided by the model itself (dynamic ownership) | MAIN + ACTION + P1, no region, models unpatched |
+| Hires Fix, Phase 6 (full frame) | crop-aware couple attention on the Phase 1 ownership map | plain MAIN + ACTION + P1 |
 | USDU tiles, detailers (crops) | crop-aware couple attention: each tile/crop gets its own slice of the map | no couple patch, no crop |
-| Phase 3 · HiDream refine | two regions (P1, P2), text strictly separated | one global prompt (MAIN + P1), no regional patch |
+| Phase 3 · HiDream refine | two regions (P1, P2), text strictly separated | one global prompt (MAIN + ACTION + P1), no regional patch |
 
 Solo is not "Couple with the masks turned off": the couple nodes, patches and regional conditionings are not run at
 all, and P2 is never read. Couple needs a P2 prompt: an empty P2 in Couple mode stops Phase 1 with a clear message
