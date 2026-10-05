@@ -36,5 +36,5 @@ Run before every Saya Couple release. Commands assume the repository root.
 8. **Personal data scan**: `python3 tools/scan_personal_data.py --private <your private names file, kept OUTSIDE the repo>` → must print `CLEAN`.
 9. **Hashes**: bump `files/custom_nodes/Saya_Couple/VERSION.txt`, then `python3 tools/build_manifest.py`.
 10. **README / guides**: recommended gain, tested base, compatibility statuses, nothing marked available that is not;
-    published prompt guides are the SFW versions only, with no personal model, LoRA or trigger name.
+    published prompt guides carry no personal model, LoRA or trigger name and no explicit wording.
 11. Only then: tag and publish.

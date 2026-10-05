@@ -186,7 +186,7 @@ def main():
                            "detailers, final upscale & naturalize). No model is included: pick your SDXL / Illustrious checkpoints, "
                            "VAEs, the HiDream models, the upscale model and one detector model per **Detailer 01-13** slot you use "
                            "(bypass the others with their toggles).\n\n"
-                           "Prompts follow the 4-field grammar (docs/PROMPTS_GUIDE_SFW_EN.md): MAIN = background only (the "
+                           "Prompts follow the 4-field grammar (docs/PROMPTS_GUIDE_EN.md): MAIN = background only (the "
                            "*Prompt · MAIN* node: prefix + a background from the stock or your own text), ACTION = what the two "
                            "characters do, P1 / P2 = their appearance. Phase 1 reads each pixel's owner from the model's own attention "
                            "(dynamic ownership) and hands that map to every later pass.\n\n"

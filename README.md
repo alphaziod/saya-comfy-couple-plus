@@ -73,8 +73,8 @@ For a first run you only need the demo workflow. It takes about ten minutes.
    everything back.
 
 Then write your own prompts: the scene in MAIN, the shared action in ACTION, each character in their own prompt.
-That separation is the whole point. [docs/PROMPTS_GUIDE_SFW_EN.md](docs/PROMPTS_GUIDE_SFW_EN.md)
-([FR](docs/PROMPTS_GUIDE_SFW_FR.md)) is the full guide.
+That separation is the whole point. [docs/PROMPTS_GUIDE_EN.md](docs/PROMPTS_GUIDE_EN.md)
+([FR](docs/PROMPTS_GUIDE_FR.md)) is the full guide.
 
 ## Upgrading from 1.x
 
@@ -198,7 +198,7 @@ with French labels (`Saya Prompt MAIN · Préfixe + Décor + Tags`); both emit E
 Picker** gives the background alone.
 
 The full guide, with the validated tag families, the weight syntax and the things that break ownership:
-[docs/PROMPTS_GUIDE_SFW_EN.md](docs/PROMPTS_GUIDE_SFW_EN.md) · [docs/PROMPTS_GUIDE_SFW_FR.md](docs/PROMPTS_GUIDE_SFW_FR.md).
+[docs/PROMPTS_GUIDE_EN.md](docs/PROMPTS_GUIDE_EN.md) · [docs/PROMPTS_GUIDE_FR.md](docs/PROMPTS_GUIDE_FR.md).
 
 ## How it works
 

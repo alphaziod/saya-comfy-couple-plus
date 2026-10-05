@@ -1,7 +1,7 @@
-# GUIDE DE PROMPTS SFW — Saya Couple (appartenance dynamique, Saya Couple 2.0 — 05/10/2026)
+# GUIDE DE PROMPTS — Saya Couple (appartenance dynamique, Saya Couple 2.0 — 05/10/2026)
 
 > Guide du mode d’appartenance **dynamic** (Saya Couple 2.0). Basé sur : grammaire duo r6 (30/30 duos),
-> lots G/H/I (900 images, revues Codex), tests J/K, validation SFW du fond MAIN (v19), crash test 100 persos.
+> lots G/H/I (900 images, revues Codex), tests J/K, validation du fond MAIN (v19), crash test 100 persos.
 
 ## 1. Les 4 champs + le négatif
 
@@ -18,7 +18,7 @@
 │ P1 = apparence du perso de DROITE  (identité, ancres)                    │
 │ P2 = apparence du perso de GAUCHE  (identité, ancres)                    │
 ├──────────────────────────────────────────────────────────────────────────┤
-│ NÉGATIF = anti-qualité + anti-encart (+ anti-nudité en SFW)              │
+│ NÉGATIF = anti-qualité + anti-encart                                     │
 └──────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -292,7 +292,7 @@ Le masque dynamique trouve chaque perso en lisant ses **ancres**. Ce sont des ta
 
 ---
 
-## 5. Négatif SFW
+## 5. Négatif
 
 ```
 worst quality, low quality, normal quality, score_1, score_2, score_3, artist name, bad anatomy, bad hands,
@@ -336,7 +336,7 @@ Jamais dans P1/P2 ni dans l'ACTION : un trigger dans P1 ne s'appliquerait qu'à 
 
 ---
 
-## 7. Checklist SFW
+## 7. Checklist
 
 - [ ] MAIN = fond seulement : décor dense, aucune personne, ni statue, ni miroir, ni écran.
 - [ ] Triggers LoRA dans le préfixe de MAIN, une seule fois.
@@ -345,4 +345,4 @@ Jamais dans P1/P2 ni dans l'ACTION : un trigger dans P1 ne s'appliquerait qu'à 
 - [ ] ACTION : un tag de pose `(…:1.3)`, et l'endroit de chaque visage.
 - [ ] Aucune vue impossible, aucune négation, aucune prose de fusion.
 - [ ] P1/P2 : apparence seule, tags séparés, au moins un trait propre à chacune (espèce, cheveux, yeux).
-- [ ] Négatif SFW + neg2, sans `fused bodies`.
+- [ ] Négatif + neg2, sans `fused bodies`.

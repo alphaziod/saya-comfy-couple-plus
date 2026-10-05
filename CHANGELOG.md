@@ -145,7 +145,7 @@ title; they run as before and log one warning per session naming the replacement
 ### Documentation
 
 - README rewritten for 2.0 (no core modification, upgrade path, dynamic ownership, prompt grammar).
-- **Prompt guides** (new): `docs/PROMPTS_GUIDE_SFW_EN.md` and `docs/PROMPTS_GUIDE_SFW_FR.md`, the 4-field grammar
+- **Prompt guides** (new): `docs/PROMPTS_GUIDE_EN.md` and `docs/PROMPTS_GUIDE_FR.md`, the 4-field grammar
   (MAIN = background only, ACTION, P1, P2), the validated tag families, weight syntax, what breaks ownership.
 
 ### Tests

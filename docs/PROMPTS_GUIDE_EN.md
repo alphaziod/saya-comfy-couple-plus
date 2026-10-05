@@ -1,7 +1,7 @@
-# SFW PROMPT GUIDE — Saya Couple (dynamic ownership, Saya Couple 2.0 — 2026-10-05)
+# PROMPT GUIDE — Saya Couple (dynamic ownership, Saya Couple 2.0 — 2026-10-05)
 
 > Guide for the **dynamic** ownership mode (Saya Couple 2.0). Based on: duo grammar r6 (30/30 duos),
-> batches G/H/I (900 images, Codex reviews), J/K tests, SFW validation of MAIN background (v19), 100-character crash test.
+> batches G/H/I (900 images, Codex reviews), J/K tests, validation of the MAIN background (v19), 100-character crash test.
 
 ## 1. The 4 fields + the negative
 
@@ -18,7 +18,7 @@
 │ P1 = appearance of the RIGHT character  (identity, anchors)              │
 │ P2 = appearance of the LEFT character   (identity, anchors)              │
 ├──────────────────────────────────────────────────────────────────────────┤
-│ NEGATIVE = anti-quality + anti-inset (+ anti-nudity in SFW)              │
+│ NEGATIVE = anti-quality + anti-inset                                     │
 └──────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -292,7 +292,7 @@ The dynamic mask finds each character by reading its **anchors**. These are tags
 
 ---
 
-## 5. SFW negative
+## 5. Negative
 
 ```
 worst quality, low quality, normal quality, score_1, score_2, score_3, artist name, bad anatomy, bad hands,
@@ -336,7 +336,7 @@ Never in P1/P2 or the ACTION: a trigger in P1 would only apply to P1's zone.
 
 ---
 
-## 7. SFW checklist
+## 7. Checklist
 
 - [ ] MAIN = background only: dense scenery, no person, statue, mirror or screen.
 - [ ] LoRA triggers in the MAIN prefix, once.
@@ -345,4 +345,4 @@ Never in P1/P2 or the ACTION: a trigger in P1 would only apply to P1's zone.
 - [ ] ACTION: one pose tag `(…:1.3)`, and where each face is.
 - [ ] No impossible view, no negation, no fusion prose.
 - [ ] P1/P2: appearance only, separate tags, at least one unique trait each (species, hair, eyes).
-- [ ] SFW negative + neg2, without `fused bodies`.
+- [ ] Negative + neg2, without `fused bodies`.
