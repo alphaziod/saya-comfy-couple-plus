@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "saya_version": "2.1.1",
+ "saya_version": "2.1.2",
  "tested_upstream": "ComfyUI 41db8f4f (v0.34.0+77) - 2.0: stock core, no modification",
  "files": [
   {
@@ -17,7 +17,7 @@
   {
    "path": "CHANGELOG.md",
    "type": "markdown",
-   "sha256": "c6dd093cbf61246974fb2a3b06159c54017dc89fc9cc980125f45183ca94125f",
+   "sha256": "b87f2371f0f0ab3a9b6b1b33ab3f125155d468dbb0e7e33266c97de99ab0999a",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -39,7 +39,7 @@
   {
    "path": "README.md",
    "type": "markdown",
-   "sha256": "5e44e8ed864a201f65fc3e26ec5e3edda8f28f3b57e63ca5a733293575f0af96",
+   "sha256": "ed500a72cd1b84be109f952d39777a4b8b9bcd4e453efca2dd3b99f624d45d34",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -215,7 +215,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/VERSION.txt",
    "type": "text",
-   "sha256": "7b3ff271f1373cfb97e9e53349794e1450f3794e4c0788c54a2060c7596da821",
+   "sha256": "9f6271951edca02e0c8a669a79930626717b77f0443ad8a327b93a52e4194829",
    "destination": "custom_nodes/Saya_Couple/VERSION.txt",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -402,7 +402,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/background_picker.py",
    "type": "python",
-   "sha256": "aa851983f203cfb8162b17a18efa8a3e21dc1f634cc952ae975752f8c89f7cbc",
+   "sha256": "d6aceec856cd99dfd7f24fdf687cd30575f851ff7f2f42838584e712d811a20d",
    "destination": "custom_nodes/Saya_Couple/src/nodes/background_picker.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -611,7 +611,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/main_prompt.py",
    "type": "python",
-   "sha256": "8068f77377f09a53ffdb2f223131373c92b225e904c9fea9cb6e2ce26f23a45c",
+   "sha256": "65cf1cc30906be729cff112b23214c240b3b806a2923520a88c31d97af75c96e",
    "destination": "custom_nodes/Saya_Couple/src/nodes/main_prompt.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -974,7 +974,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tests/test_background_picker.py",
    "type": "python",
-   "sha256": "a11f8268e7f57bc23816a7a7665166e5de6dcb05677d7f5549f7b482f82fd2c2",
+   "sha256": "98c565041e15b252733117d4f7c26b686a214a53276bc4553632215f98c12857",
    "destination": "custom_nodes/Saya_Couple/tests/test_background_picker.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",

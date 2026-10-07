@@ -70,6 +70,7 @@ class SayaMainPrompt:
             "optional": {
                 "custom_background": ("STRING", {"default": "", "multiline": True, "tooltip": "background = free: this text is the background, as written."}),
                 "extra": ("STRING", {"default": "", "multiline": True, "tooltip": "Appended as written after the tags (never touched)."}),
+                "unsafe_backgrounds": ("BOOLEAN", {"default": False, "tooltip": "OFF = fairground rides (carousels...) are never drawn. ON = they can be drawn too."}),
             },
         }
 
@@ -81,15 +82,15 @@ class SayaMainPrompt:
                    "history, ultra) + tags from the menus + extra (verbatim).")
 
     @classmethod
-    def IS_CHANGED(cls, prefix, background, seed, history=picker.NEW, ultra_detailed=False, custom_background="", extra="", **tags):
+    def IS_CHANGED(cls, prefix, background, seed, history=picker.NEW, ultra_detailed=False, custom_background="", extra="", unsafe_backgrounds=False, **tags):
         if history in (picker.BACK, picker.FORWARD):
             return float("nan")  # moves the history cursor: must run every time
         state = json.dumps(picker.read_state()) if history == picker.STAY else ""
-        return f"{prefix}|{background}|{seed}|{history}|{ultra_detailed}|{custom_background}|{extra}|{sorted(tags.items())}|{state}"
+        return f"{prefix}|{background}|{seed}|{history}|{ultra_detailed}|{custom_background}|{extra}|{unsafe_backgrounds}|{sorted(tags.items())}|{state}"
 
     def compose(self, prefix: str, background: str, seed: int, history: str = picker.NEW, ultra_detailed: bool = False,
-                custom_background: str = "", extra: str = "", **tags: str) -> tuple[str, str, str, str]:
-        bg_text, short, info = picker.SayaBackgroundPicker().choose(background, seed, history, ultra_detailed, custom_background)
+                custom_background: str = "", extra: str = "", unsafe_backgrounds: bool = False, **tags: str) -> tuple[str, str, str, str]:
+        bg_text, short, info = picker.SayaBackgroundPicker().choose(background, seed, history, ultra_detailed, custom_background, unsafe_backgrounds)
         chosen = [tags[group["name"]] for group in tag_groups() if tags.get(group["name"], NONE) != NONE]
         main = join_prompt([prefix, bg_text, ", ".join(chosen), extra])
         return main, bg_text, short, f"{info} | tags: {', '.join(chosen) or NONE}"
@@ -150,6 +151,7 @@ class SayaMainPromptFR:
             "optional": {
                 "decor_libre": ("STRING", {"default": "", "multiline": True, "tooltip": "decor = libre : ce texte est le décor, tel quel."}),
                 "complement": ("STRING", {"default": "", "multiline": True, "tooltip": "Ajouté tel quel après les tags (jamais modifié)."}),
+                "decors_unsafe": ("BOOLEAN", {"default": False, "tooltip": "OFF = les attractions de fête foraine (manèges...) ne sont jamais tirées. ON = elles peuvent l'être."}),
             },
         }
 
@@ -171,11 +173,11 @@ class SayaMainPromptFR:
         return _from_fr(CATEGORIES_FR, decor), _from_fr(HISTORY_FR, historique), tags
 
     @classmethod
-    def IS_CHANGED(cls, prefixe, decor, seed, historique=HISTORY_FR[picker.NEW], ultra_detaille=False, decor_libre="", complement="", **tags_fr):
+    def IS_CHANGED(cls, prefixe, decor, seed, historique=HISTORY_FR[picker.NEW], ultra_detaille=False, decor_libre="", complement="", decors_unsafe=False, **tags_fr):
         background, history, tags = cls._english(decor, historique, tags_fr)
-        return SayaMainPrompt.IS_CHANGED(prefixe, background, seed, history, ultra_detaille, decor_libre, complement, **tags)
+        return SayaMainPrompt.IS_CHANGED(prefixe, background, seed, history, ultra_detaille, decor_libre, complement, decors_unsafe, **tags)
 
     def composer(self, prefixe: str, decor: str, seed: int, historique: str = HISTORY_FR[picker.NEW], ultra_detaille: bool = False,
-                 decor_libre: str = "", complement: str = "", **tags_fr: str) -> tuple[str, str, str, str]:
+                 decor_libre: str = "", complement: str = "", decors_unsafe: bool = False, **tags_fr: str) -> tuple[str, str, str, str]:
         background, history, tags = self._english(decor, historique, tags_fr)
-        return SayaMainPrompt().compose(prefixe, background, seed, history, ultra_detaille, decor_libre, complement, **tags)
+        return SayaMainPrompt().compose(prefixe, background, seed, history, ultra_detaille, decor_libre, complement, decors_unsafe, **tags)

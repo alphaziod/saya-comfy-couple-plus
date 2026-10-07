@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.1.2 — 2026-10-08
+
+### Background Picker
+
+- **Fairground rides are out of random draws by default.** Backgrounds whose name or main place is a carousel, a
+  fairground or an amusement park (33 in the stock) are no longer drawn by `all` or by a category. They stay in the stock.
+- **New `unsafe` switch** (off by default) to draw them too: `unsafe` on *Saya Background Picker*,
+  `unsafe_backgrounds` on *Saya Main Prompt*, `decors_unsafe` on *Saya Prompt MAIN (FR)*. It is the last input of each
+  node, so saved workflows keep their settings.
+- **Locked seeds keep their background.** The draw still runs on the whole stock; only a seed that lands on a
+  fairground ride with the switch off is redrawn among the others, with the same seed. Test `background_picker_unsafe`.
+
 ## 2.1.1 — 2026-10-08
 
 ### Backgrounds

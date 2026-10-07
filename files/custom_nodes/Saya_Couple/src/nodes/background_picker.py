@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 import os
 import random
+import re
 from pathlib import Path
 from typing import Any
 
@@ -58,12 +59,31 @@ def load_stock() -> list[dict[str, str]]:
     return _stock_cache["items"]
 
 
-def pick(category: str, seed: int) -> dict[str, str]:
+#: Backgrounds kept out of every draw unless ``unsafe`` is on: fairground rides (carousels...) are too close to
+#: childhood to come up at random under a couple scene. They stay in the stock and are drawn only on purpose.
+UNSAFE_RX = re.compile(r"carousel|carrousel|man[eè]ge|merry-go-round|fairground|amusement park|f[eê]te foraine|parc forain|chevaux de bois", re.I)
+_PLACE_RX = re.compile(r"\(([^():]+):1\.\d\)")
+
+
+def is_unsafe(entry: dict[str, str]) -> bool:
+    """Judged on the name and the main place only: a carousel as a mere object (bottling carousel) does not count."""
+    place = _PLACE_RX.search(entry.get("bg", ""))
+    return bool(UNSAFE_RX.search(f"{entry.get('name', '')} {place.group(1) if place else ''}"))
+
+
+def pick(category: str, seed: int, unsafe: bool = False) -> dict[str, str]:
     stock = load_stock()
     pool = stock if category == ALL else [b for b in stock if b["cat"] == category]
     if not pool:
         raise SayaBackgroundError(f"no background in category {category!r}")
-    return random.Random(seed).choice(pool)
+    rng = random.Random(seed)
+    chosen = rng.choice(pool)  # same first draw as before: a locked seed keeps its background
+    if unsafe or not is_unsafe(chosen):
+        return chosen
+    safe = [b for b in pool if not is_unsafe(b)]
+    if not safe:
+        raise SayaBackgroundError(f"category {category!r} only holds unsafe backgrounds: turn unsafe on to draw them")
+    return rng.choice(safe)  # unsafe draw redrawn from the safe ones, still a pure function of (category, seed)
 
 
 def ultra_text(entry: dict[str, str]) -> str:
@@ -131,6 +151,7 @@ class SayaBackgroundPicker:
             },
             "optional": {
                 "custom": ("STRING", {"default": "", "multiline": True, "tooltip": "free: this text is used as the background."}),
+                "unsafe": ("BOOLEAN", {"default": False, "tooltip": "OFF = fairground rides (carousels...) are never drawn. ON = they can be drawn too."}),
             },
         }
 
@@ -141,14 +162,14 @@ class SayaBackgroundPicker:
     DESCRIPTION = "Background (MAIN = scenery only) from the categorized stock, locked or random like a seed, back / forward through the last 5 generations."
 
     @classmethod
-    def IS_CHANGED(cls, category, seed, history=NEW, ultra_detailed=False, custom=""):
+    def IS_CHANGED(cls, category, seed, history=NEW, ultra_detailed=False, custom="", unsafe=False):
         if history in (BACK, FORWARD):
             return float("nan")  # moves the cursor: must run every time
         state = json.dumps(read_state()) if history == STAY else ""
-        return f"{category}|{seed}|{history}|{ultra_detailed}|{custom}|{state}"
+        return f"{category}|{seed}|{history}|{ultra_detailed}|{custom}|{unsafe}|{state}"
 
     def choose(self, category: str, seed: int, history: str = NEW, ultra_detailed: bool = False,
-               custom: str = "") -> tuple[str, str, str]:
+               custom: str = "", unsafe: bool = False) -> tuple[str, str, str]:
         if history != NEW:
             state = read_state()
             entries = state["entries"]
@@ -164,7 +185,7 @@ class SayaBackgroundPicker:
                     f"{history} -> {where} ({cursor + 1}/{len(entries)}): {entry['id']} [{entry['cat']}] {entry['name']} (seed {entry['seed']}{ultra})")
         if category == FREE:
             return custom.strip(), "free", "free: custom text" if custom.strip() else "free: no background injected"
-        chosen = pick(category, seed)
+        chosen = pick(category, seed, unsafe)
         text = ultra_text(chosen) if ultra_detailed else chosen["bg"]
         # L'historique garde le texte réellement envoyé : back / forward redonne exactement la même version.
         push_history({"id": chosen["id"], "cat": chosen["cat"], "name": chosen["name"], "short": short_name(chosen),
