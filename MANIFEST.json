@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "saya_version": "2.1.0",
+ "saya_version": "2.1.1",
  "tested_upstream": "ComfyUI 41db8f4f (v0.34.0+77) - 2.0: stock core, no modification",
  "files": [
   {
@@ -17,7 +17,7 @@
   {
    "path": "CHANGELOG.md",
    "type": "markdown",
-   "sha256": "928f791161f6153eef2e53af20b8cc6cfd6280fd2b30b7498125de45cef543a9",
+   "sha256": "c6dd093cbf61246974fb2a3b06159c54017dc89fc9cc980125f45183ca94125f",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -39,7 +39,7 @@
   {
    "path": "README.md",
    "type": "markdown",
-   "sha256": "7498daea99d4ca5634fb2d6ba6319e6a3f707109c7e70a52b640deb33c4052f2",
+   "sha256": "5e44e8ed864a201f65fc3e26ec5e3edda8f28f3b57e63ca5a733293575f0af96",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -127,7 +127,7 @@
   {
    "path": "docs/PROMPTS_GUIDE_EN.md",
    "type": "markdown",
-   "sha256": "19b0aa07bb431aa5efd1b40a44d09074f4b9a5c4204379462c4ec70efe24cf44",
+   "sha256": "b815e70512ea98bd9a5c7e651b50eb0708608e7bd230b82a81fb71ccc2421343",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -138,7 +138,7 @@
   {
    "path": "docs/PROMPTS_GUIDE_FR.md",
    "type": "markdown",
-   "sha256": "466eb2d9fc84ed1ead13e46dc512f13114da7c0a25ba2793f5c1a2af4787664c",
+   "sha256": "3802365ceb7b15c7323a03d8771b0dffc8456e214b4c11179909fd0060277fd5",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -215,7 +215,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/VERSION.txt",
    "type": "text",
-   "sha256": "c89b87c262e9d5ffd20e73aac74a1772adcc9f5a21682cc33adcf5086e5fef5c",
+   "sha256": "7b3ff271f1373cfb97e9e53349794e1450f3794e4c0788c54a2060c7596da821",
    "destination": "custom_nodes/Saya_Couple/VERSION.txt",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -259,7 +259,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/data/backgrounds.json",
    "type": "json",
-   "sha256": "2f8c754ef5312807f5d74b5d3fddd7fdbb4c0c75ab3c9e5879069b104ca7badc",
+   "sha256": "16da8986dabff9717bcf41c3f1a1933c12f211978113d056d16776b2361cff85",
    "destination": "custom_nodes/Saya_Couple/data/backgrounds.json",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",

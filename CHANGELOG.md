@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.1.1 — 2026-10-08
+
+### Backgrounds
+
+- **The background stock grows from 7 409 to 8 799** (1 390 new, same format: `bg` + hand-detailed `ultra`, 41 categories unchanged).
+  - 32 hand-written places that were missing: pastel patisserie, cat cafe, royal marble baths, empty public bathhouse, art deco hotel pool, gamer bedroom, streamer studio, jazz lounge, snowy pine forest, dojo, fairy domain, infernal throne hall…
+  - 193 style × time-of-day combinations for the most requested kinds of places: 8 living room styles, 8 bedroom styles, luxury lounges, gamer rooms, sport halls, pastel places, royal baths, infernal halls.
+  - 1 164 places from a large list of ideas (urban corners, craft workshops, transport, landscapes, gardens, heritage, industry, science, spa and leisure, uncanny and dreamlike places, near future, weather moods, horror, medieval, modern city, nostalgia, dystopia, places of worship, cosmic horror, oppressive architecture), translated into prompt tags and filtered: no person or silhouette in the scenery, no object that creates an extra figure or an inset (mirror, statue, portrait, mannequin, mask, screen), nothing related to childhood, no gore, no place of captivity.
+  - A creepy dismantled carousel in the fog (horror category).
+- Background Picker tests pass on the larger stock.
+
+### Prompt guides
+
+- `PROMPTS_GUIDE_EN.md` / `PROMPTS_GUIDE_FR.md` gain **§8, lessons from a 2 500-character solo batch**: where a tag lands in the CLIP chunks matters more than its weight, framing first, light weights for age tags, colour words that bleed, a flat chest on an adult body still to be proven, how original characters keep their identity, creatures that stay about 80 % human, the sticky liquid nobody asked for, matched backgrounds, LoRA triggers, weak concepts, describing what must look good, locking a written size, colours of small details, per-character negatives, Sampler 2 drawing the details, species materials on the whole body.
+
 ## 2.1.0 — 2026-10-07
 
 ### Fixes

@@ -346,3 +346,114 @@ Never in P1/P2 or the ACTION: a trigger in P1 would only apply to P1's zone.
 - [ ] No impossible view, no negation, no fusion prose.
 - [ ] P1/P2: appearance only, separate tags, at least one unique trait each (species, hair, eyes).
 - [ ] Negative + neg2, without `fused bodies`.
+
+---
+
+## 8. Lessons from the 2 500-character solo batch (2026-10-07)
+
+Conditions: solo pack (Sampler 1 + Sampler 2), control batches of 10 images judged by eye, and A/B tests with one fresh seed shared by the variants of one character. ✓ = seen on those batches · ○ = applied, not yet confirmed on a full batch.
+
+### 8.1 Solo reads one conditioning ✓
+
+Since Saya Couple 2.1.0, Solo sends MAIN ++ ACTION ++ P1 as **one** conditioning. Before, the scene and the character were averaged as two predictions: half of the guidance had no character in it (wrong clothes, wrong person). Nothing to write differently: Solo now listens to P1.
+
+### 8.2 Where a tag lands matters more than its weight ✓
+
+- In Solo the text is MAIN + ACTION + P1, often 7 chunks of 75 tokens. A trait in the **last chunk** is drowned: a body or species trait written at the end of P1 came out shapeless or absent.
+- The SDXL global vector (pooled) comes from the **first chunk**. When it holds the room, the image is "about" the room.
+- **Rules:** keep the pose short (about one chunk); put the defining traits of the character (species, body) right after `1girl` and the age; put the framing at the very start of the ACTION.
+
+### 8.3 Framing ✓
+
+- Start of the ACTION: `(cowboy shot:1.3), close medium shot, front view, framing from the top of the head to just below the knees`.
+- Negative: `very wide shot, far away, small figure, tiny person, establishing shot, empty space around subject`.
+- A sitting pose needs a seat that fits the place: `seated on a seat that fits the place (chair, bench, sofa, bed edge, low wall, rock)`.
+- Don't lock the hands unless the pose needs it: forced hand positions make stiff poses.
+
+### 8.4 Weights: less is more ✓
+
+- Heavy age weights (`(mature adult woman:1.2)` on every character) made bodies older and characters look like pale copies of each other.
+- Keep weights for 2 or 3 identity traits. Age and maturity tags stay unweighted, or 1.1 at most.
+- A light push is enough: `adult woman`, `adult face`, `adult body`. The characters must still look like young adults (twenties), not 30 or 40.
+
+### 8.5 Colour words bleed ✓
+
+- `dark chocolate hair` left dark brown patches on fair skin; `caramel hair` warmed the skin. Food colours carry a skin meaning in the training data.
+- Hair: write neutral colour names (`dark brown hair`, `golden brown hair`). Skin: food colours are fine when they are meant for the skin (`warm mocha skin`).
+- One strong colour weighted at 1.2–1.3 spreads further than an unweighted one.
+
+### 8.6 Flat chest on an adult body: to be proven ○
+
+- Adult women with an almost flat chest exist, and a flat-chested character is as adult as any other. With this model, the right trigger has **not been found yet**.
+- What we saw: `flat chest` (and `boy chest`) pulled bodies and faces younger, especially on fantasy characters, even with maturity tags. The tag mostly comes with young-looking characters in the training data.
+- Candidates to test, on clothed characters first, one change at a time: `tall female`, `toned body`, `broad shoulders`, `mature female`, `adult face`, light weights.
+- Until a combination is proven, published workflows write `small breasts` with `adult woman, adult face, adult body`.
+- Any image where a character looks under-age is deleted, and the combination that produced it is not kept.
+
+### 8.7 Original characters keep their identity ✓○
+
+- Give each original character **2 or 3 fixed physical signatures**, each in a different category: a face mark (`mole under left eye`, `freckles across nose`), a hair feature (`single silver streak in bangs`, `ahoge`, `braided sidelock`), an eye shape (`tsurime`, `tareme`), a body mark (`small star tattoo on hip`), a face shape (`sharp jawline`, `high cheekbones`). Keep them in the first chunk.
+- Remove the generic text every character shares, like `natural anime eyes, soft detailed face`: it gives everyone the same face.
+- One expression only. Two contradictory expressions (`flustered expression` + `stern expression`) give a random face.
+
+### 8.8 Creatures: about 80 % human ○
+
+- Species traits are **additions**: tail, horns, animal ears, scales, wings on the back, fins on the forearms and calves, glowing marks. Arms, legs, hands and feet stay human.
+- Avoid `… from the waist down`, `lower body`, `instead of legs`, `wings as arms`, `talons`, `hooves`. Write `(long snake tail:1.2), snake scales on hips and thighs` for a lamia, `(feathered wings on back:1.2), feathers on forearms and calves` for a harpy.
+- Name the real species early, from the character's concept and not only its category: an "ice spirit" filed as a fairy got fairy wings instead of ice.
+
+| Concept | Write | Avoid |
+|---|---|---|
+| slime | `slime girl, (translucent gelatinous skin:1.25), humanoid slime body` | `dripping slime` (a human covered in slime) |
+| ghost | `ghost girl, (translucent body:1.2), ethereal glow` | nothing about the species |
+| ice spirit | `ice spirit, (ice crystals growing from back:1.2), frost patterns on skin` | `fairy wings` |
+| jellyfish | `jellyfish girl, jellyfish bell hat, glowing tentacle-like hair` | — |
+| golem / statue | `golem girl, (stone skin:1.2), cracked rock texture` / `living statue, (chipped marble skin:1.2)` | — |
+| dryad | `dryad, (bark-textured skin patches:1.15), vines wrapped around arms and legs` | — |
+| doll | `porcelain doll, (cracked porcelain skin:1.2), doll joints` | — |
+
+### 8.9 Sticky white liquid nobody asked for ✓
+
+- `water droplets` in the background, `dripping …`, `goo` and `oiled` spread on the bodies like white glue.
+- Remove `water droplets` from the scenery, and add to the negative: `white liquid, sticky white fluid, glue, dripping white fluid`. Slime characters keep their slime.
+
+### 8.10 Backgrounds matched to the character ○
+
+About 90 % of the characters get a background from a category that fits their theme (gothic → gothic, castle, night; fairy → forest, garden; android → tech, cyberpunk; mermaid → water, beach), and 10 % a surprise background for variety.
+
+### 8.11 LoRAs ✓
+
+- Check that each active LoRA's trigger is in the MAIN prefix; LoRA Manager stores it (`trainedWords`). A LoRA turned off loses its trigger too.
+- Model 2 gets Model 1's LoRAs through **Saya LoRA Family Filter · Model 2**: SDXL model 2 → SDXL LoRAs only, Illustrious model 2 → Illustrious and SDXL.
+
+### More lessons from the solo batch
+
+The solo batch tested body details closely. These rules came out of it; they apply to any body part. ✓ = seen on that batch · ○ = applied to other parts, not tested yet.
+
+### 8.12 A weak concept needs three things ✓
+
+A state the model rarely draws (it falls back to its default) only held with all three together: the Danbooru tag weighted 1.3, two or three plain descriptive tags of the same state, and the opposite state in the negative. One of the three alone was not enough. Examples: `(closed eyes:1.3), peaceful sleeping face` + negative `open eyes`; `(short hair:1.3), hair above the shoulders` + negative `long hair`.
+
+### 8.13 Describe what must look good ✓
+
+A body part written with its name alone is drawn at the model's default, often stiff or deformed. Three or four shape and quality words fixed it: `well-shaped`, `smooth`, `gentle curve`, `natural`. Examples: `slender fingers, natural relaxed hands`, `well-shaped bare feet`, `smooth collarbone`. Add `deformed …, misshapen …` for that part in the negative.
+
+### 8.14 Lock a written size with the other sizes in the negative ✓
+
+A written body size drifted as soon as an age tag was added. The negative of the other sizes holds the written one: `slim build` → negative `curvy, voluptuous, plump`; `short` → negative `tall female` ○.
+
+### 8.15 Colours of small body details follow the skin ✓
+
+Details the model colours by default (pink or red) clash on very pale or very dark skin and give a two-tone look. Write the colour that matches the skin tone (pale skin → pink, dark skin → dark brown), and add `two-tone …, discolored …` for that part in the negative. Keep an off-palette colour only when it is the character's style (a pale gothic character with dark details works).
+
+### 8.16 Per-character negatives ✓
+
+One global negative cannot serve every character. Build part of the negative from the character itself: the sizes it does not have, the state it is not in, the species it is not. A slime character must not get `slime on skin` in its negative; everyone else should.
+
+### 8.17 Sampler 1 sketches, Sampler 2 draws the details ✓
+
+In this setup Sampler 1 stops at step 13 of 16 and hands over a noisy image. Sampler 2 forms the fine details: faces, hands, small body parts. Sampler 2 at denoise 0.4 kept Sampler 1's design better than 0.6 in the solo pack. Its model and its LoRAs matter as much as Sampler 1's for the details.
+
+### 8.18 A non-human species changes the whole body, not one spot ○
+
+When a species has its own material (stone, wood, metal, porcelain, ice, jelly), write it for the skin **and** for the visible parts that should share it: `stone skin`, `stone fingers`; `porcelain doll joints` on elbows and knees; `metal body, mechanical joints`. Without it, the model gives a human body with one patch of material.

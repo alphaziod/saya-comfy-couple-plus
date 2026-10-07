@@ -346,3 +346,114 @@ Jamais dans P1/P2 ni dans l'ACTION : un trigger dans P1 ne s'appliquerait qu'à 
 - [ ] Aucune vue impossible, aucune négation, aucune prose de fusion.
 - [ ] P1/P2 : apparence seule, tags séparés, au moins un trait propre à chacune (espèce, cheveux, yeux).
 - [ ] Négatif + neg2, sans `fused bodies`.
+
+---
+
+## 8. Leçons du lot solo de 2 500 persos (07/10/2026)
+
+Conditions : pack solo (Sampler 1 + Sampler 2), lots de contrôle de 10 images jugés à l'œil, et tests A/B avec une seed neuve partagée par les variantes d'un même perso. ✓ = vu sur ces lots · ○ = appliqué, pas encore confirmé sur un lot complet.
+
+### 8.1 Le solo lit une seule conditioning ✓
+
+Depuis Saya Couple 2.1.0, le Solo envoie MAIN ++ ACTION ++ P1 en **une seule** conditioning. Avant, la scène et le perso étaient moyennés comme deux prédictions : la moitié du guidage ne contenait aucun perso (mauvais vêtements, mauvaise personne). Rien à écrire autrement : le Solo écoute maintenant P1.
+
+### 8.2 L'endroit où tombe un tag compte plus que son poids ✓
+
+- En Solo, le texte est MAIN + ACTION + P1, souvent 7 tranches de 75 tokens. Un trait dans la **dernière tranche** est noyé : un trait du corps ou d'espèce écrit à la fin de P1 sortait informe ou absent.
+- Le vecteur global de SDXL (pooled) vient de la **première tranche**. Quand elle contient la pièce, l'image parle de la pièce.
+- **Règles :** pose courte (environ une tranche) ; les traits qui définissent le perso (espèce, corps) juste après `1girl` et l'âge ; le cadrage tout au début de l'ACTION.
+
+### 8.3 Cadrage ✓
+
+- Début de l'ACTION : `(cowboy shot:1.3), close medium shot, front view, framing from the top of the head to just below the knees`.
+- Négatif : `very wide shot, far away, small figure, tiny person, establishing shot, empty space around subject`.
+- Une pose assise a besoin d'un siège qui va avec le lieu : `seated on a seat that fits the place (chair, bench, sofa, bed edge, low wall, rock)`.
+- Ne bloque pas les mains si la pose n'en a pas besoin : des mains imposées donnent des poses raides.
+
+### 8.4 Les poids : moins, c'est mieux ✓
+
+- Des poids d'âge lourds (`(mature adult woman:1.2)` sur tous les persos) vieillissaient les corps, et les persos devenaient de pâles copies les uns des autres.
+- Garde les poids pour 2 ou 3 traits d'identité. Les tags d'âge et de maturité restent sans poids, ou à 1.1 au plus.
+- Une poussée légère suffit : `adult woman`, `adult face`, `adult body`. Les persos doivent rester de jeunes adultes (la vingtaine), pas 30 ou 40 ans.
+
+### 8.5 Les mots de couleur débordent ✓
+
+- `dark chocolate hair` laissait des zones brun foncé sur une peau claire ; `caramel hair` réchauffait la peau. Les couleurs alimentaires ont un sens de peau dans les données d'entraînement.
+- Cheveux : des noms de couleur neutres (`dark brown hair`, `golden brown hair`). Peau : les couleurs alimentaires sont bonnes quand elles visent la peau (`warm mocha skin`).
+- Une couleur forte pondérée à 1.2–1.3 déborde plus loin qu'une couleur sans poids.
+
+### 8.6 Poitrine plate sur un corps adulte : à prouver ○
+
+- Des femmes adultes à la poitrine presque plate existent, et un perso flat chest est aussi adulte que les autres. Avec ce modèle, le bon déclencheur **n'a pas encore été trouvé**.
+- Ce qu'on a vu : `flat chest` (et `boy chest`) tirait le corps et le visage vers le jeune, surtout sur les persos fantastiques, même avec des tags de maturité. Dans les données d'entraînement, le tag va surtout avec des persos d'aspect jeune.
+- Pistes à tester, d'abord sur des persos habillés, un changement à la fois : `tall female`, `toned body`, `broad shoulders`, `mature female`, `adult face`, poids légers.
+- Tant qu'aucune combinaison n'est prouvée, les workflows publiés écrivent `small breasts` avec `adult woman, adult face, adult body`.
+- Toute image où un perso paraît mineur est supprimée, et la combinaison qui l'a produite n'est pas gardée.
+
+### 8.7 Les persos originaux gardent leur identité ✓○
+
+- Donne à chaque perso original **2 ou 3 signatures physiques fixes**, chacune dans une catégorie différente : une marque du visage (`mole under left eye`, `freckles across nose`), un détail de cheveux (`single silver streak in bangs`, `ahoge`, `braided sidelock`), une forme d'yeux (`tsurime`, `tareme`), une marque du corps (`small star tattoo on hip`), une forme de visage (`sharp jawline`, `high cheekbones`). Garde-les dans la première tranche.
+- Retire le texte générique que tous les persos partagent, comme `natural anime eyes, soft detailed face` : il donne à tous le même visage.
+- Une seule expression. Deux expressions contradictoires (`flustered expression` + `stern expression`) donnent un visage au hasard.
+
+### 8.8 Créatures : environ 80 % humaines ○
+
+- Les traits d'espèce sont des **ajouts** : queue, cornes, oreilles animales, écailles, ailes dans le dos, nageoires sur les avant-bras et les mollets, marques lumineuses. Bras, jambes, mains et pieds restent humains.
+- Évite `… from the waist down`, `lower body`, `instead of legs`, `wings as arms`, `talons`, `hooves`. Écris `(long snake tail:1.2), snake scales on hips and thighs` pour une lamia, `(feathered wings on back:1.2), feathers on forearms and calves` pour une harpie.
+- Nomme la vraie espèce tôt, d'après le concept du perso et pas seulement sa catégorie : un « esprit de glace » rangé en fée avait des ailes de fée au lieu de glace.
+
+| Concept | Écrire | Éviter |
+|---|---|---|
+| slime | `slime girl, (translucent gelatinous skin:1.25), humanoid slime body` | `dripping slime` (une humaine couverte de slime) |
+| fantôme | `ghost girl, (translucent body:1.2), ethereal glow` | aucun mot d'espèce |
+| esprit de glace | `ice spirit, (ice crystals growing from back:1.2), frost patterns on skin` | `fairy wings` |
+| méduse | `jellyfish girl, jellyfish bell hat, glowing tentacle-like hair` | — |
+| golem / statue | `golem girl, (stone skin:1.2), cracked rock texture` / `living statue, (chipped marble skin:1.2)` | — |
+| dryade | `dryad, (bark-textured skin patches:1.15), vines wrapped around arms and legs` | — |
+| poupée | `porcelain doll, (cracked porcelain skin:1.2), doll joints` | — |
+
+### 8.9 Le liquide blanc collant que personne n'a demandé ✓
+
+- `water droplets` dans le décor, `dripping …`, `goo` et `oiled` s'étalaient sur les corps comme de la colle blanche.
+- Retire `water droplets` du décor, et ajoute au négatif : `white liquid, sticky white fluid, glue, dripping white fluid`. Les persos slime gardent leur slime.
+
+### 8.10 Décors assortis au perso ○
+
+Environ 90 % des persos reçoivent un décor d'une catégorie qui va avec leur thème (gothique → gothic, castle, night ; fée → forest, garden ; androïde → tech, cyberpunk ; sirène → water, beach), et 10 % un décor surprise pour la variété.
+
+### 8.11 LoRA ✓
+
+- Vérifie que le trigger de chaque LoRA active est dans le préfixe de MAIN ; LoRA Manager le stocke (`trainedWords`). Une LoRA coupée perd aussi son trigger.
+- Le modèle 2 reçoit les LoRA du modèle 1 par **Saya LoRA Family Filter · Model 2** : modèle 2 SDXL → LoRA SDXL seulement, modèle 2 Illustrious → Illustrious et SDXL.
+
+### Autres leçons du lot solo
+
+Le lot solo a testé de près les détails du corps. Ces règles en sortent ; elles valent pour n'importe quelle partie du corps. ✓ = vu sur ce lot · ○ = appliqué à d'autres parties, pas encore testé.
+
+### 8.12 Un concept faible a besoin de trois choses ✓
+
+Un état que le modèle dessine rarement (il retombe sur son défaut) n'a tenu qu'avec les trois ensemble : le tag Danbooru à 1.3, deux ou trois tags descriptifs simples du même état, et l'état opposé dans le négatif. Un seul des trois ne suffisait pas. Exemples : `(closed eyes:1.3), peaceful sleeping face` + négatif `open eyes` ; `(short hair:1.3), hair above the shoulders` + négatif `long hair`.
+
+### 8.13 Décris ce qui doit être beau ✓
+
+Une partie du corps écrite avec son seul nom est dessinée au défaut du modèle, souvent raide ou déformée. Trois ou quatre mots de forme et de qualité l'ont corrigée : `well-shaped`, `smooth`, `gentle curve`, `natural`. Exemples : `slender fingers, natural relaxed hands`, `well-shaped bare feet`, `smooth collarbone`. Ajoute `deformed …, misshapen …` pour cette partie dans le négatif.
+
+### 8.14 Verrouille une taille écrite avec les autres tailles en négatif ✓
+
+Une silhouette écrite dérivait dès qu'un tag d'âge était ajouté. Le négatif des autres silhouettes tient celle qui est écrite : `slim build` → négatif `curvy, voluptuous, plump` ; `short` → négatif `tall female` ○.
+
+### 8.15 Les couleurs des petits détails du corps suivent la peau ✓
+
+Les détails que le modèle colore par défaut (rose ou rouge) jurent sur une peau très pâle ou très foncée et donnent un effet bicolore. Écris la couleur qui va avec le ton de peau (peau pâle → rose, peau foncée → brun foncé), et ajoute `two-tone …, discolored …` pour cette partie dans le négatif. Garde une couleur hors palette seulement quand c'est le style du perso (un perso gothique à peau blanche avec des détails sombres, ça marche).
+
+### 8.16 Des négatifs propres à chaque perso ✓
+
+Un seul négatif global ne peut pas servir à tous les persos. Construis une partie du négatif à partir du perso lui-même : les tailles qu'il n'a pas, l'état dans lequel il n'est pas, l'espèce qu'il n'est pas. Un perso slime ne doit pas avoir `slime on skin` dans son négatif ; tous les autres, oui.
+
+### 8.17 Le Sampler 1 esquisse, le Sampler 2 dessine les détails ✓
+
+Dans ce réglage, le Sampler 1 s'arrête au step 13 sur 16 et passe une image bruitée. Le Sampler 2 forme les détails fins : visages, mains, petites parties du corps. Dans le pack solo, le Sampler 2 à denoise 0.4 a mieux gardé le dessin du Sampler 1 qu'à 0.6. Son modèle et ses LoRA comptent autant que ceux du Sampler 1 pour les détails.
+
+### 8.18 Une espèce non humaine change tout le corps, pas un seul endroit ○
+
+Quand une espèce a sa propre matière (pierre, bois, métal, porcelaine, glace, gelée), écris-la pour la peau **et** pour les parties visibles qui doivent la partager : `stone skin`, `stone fingers` ; `porcelain doll joints` aux coudes et aux genoux ; `metal body, mechanical joints`. Sans ça, le modèle donne un corps humain avec une seule plaque de matière.

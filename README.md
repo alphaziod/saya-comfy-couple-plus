@@ -16,7 +16,7 @@ One switch turns the whole pipeline into **Solo mode** (MAIN + ACTION + P1, one 
 | ![Couple: two characters, one scene](docs/images/demo_example.png) | ![Solo: one character, same scene](docs/images/solo_example.png) |
 | demo workflow, MAIN + P1 + P2 (1.x render) | full workflow, MAIN + ACTION + P1 only (1.x render) |
 
-Current version: **2.1.0** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
+Current version: **2.1.1** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
 RDNA4 16 GB. It is first and foremost **a backup of my own ComfyUI setup**, made public in case it helps someone
 with the same problem. Take what you need.
 
@@ -196,7 +196,7 @@ The 2.0 grammar has four fields and a negative. The short version:
 - **Negative**: the usual quality negatives.
 
 The **Saya Main Prompt** node builds MAIN for you: your prefix is copied as written (LoRA triggers and weights
-untouched), a background is drawn from a stock of 7 409 hand-written backgrounds in 41 categories (seed locked,
+untouched), a background is drawn from a stock of 8 799 backgrounds in 41 categories (seed locked,
 randomised each run, or your own text, with a 5-entry history and an *ultra detailed* long form), one tag per
 drop-down menu (lighting, time, weather, particles, palette, detail), then your extra text. The same node exists
 with French labels (`Saya Prompt MAIN · Préfixe + Décor + Tags`); both emit English tags. **Saya Background
