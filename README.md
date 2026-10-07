@@ -460,7 +460,7 @@ Full story: [docs/DEVELOPMENT_HISTORY.md](docs/DEVELOPMENT_HISTORY.md).
 **This project was heavily AI-assisted.** AI models helped read and analyse ComfyUI's code, implement, test,
 diagnose, audit, write the installer and this documentation. 2.0 comes out of a full audit of the pack (bug
 classes, invariants, fresh install, architecture) whose every change was tested and compared with the previous
-state before being kept.
+state before being kept. The AI tools used for this work: **Claude**, **Z Code**, **Codex** and **Kimi**.
 
 What stayed human: the goals, the expected behaviour, the visual evaluation of every campaign, and the decisions to
 keep or reject approaches. An alternative "dual-stream" core was dropped on visual results even though some numbers
