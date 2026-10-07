@@ -5,7 +5,7 @@
 Structure, wiring and every sampler/pass setting are kept. Only these change:
 - prompts -> workflows/demo_prompt.json (adult, clothed, non-sexual);
 - personal checkpoints / VAEs / LoRAs / detector models -> SELECT_* placeholders, LoRA stacks emptied;
-- the 13 detailer slots are named "Detailer 01" ... "Detailer 13" (titles, labels, rgthree group toggles);
+- the 13 detailer slots are named "Detailer 1" ... "Detailer 13" (titles, labels, rgthree group toggles);
   internal socket names are untouched so the graph keeps working;
 - private notes in the workflow metadata are dropped.
 """
@@ -30,7 +30,7 @@ DETECTOR = "segm/SELECT_DETECTOR_MODEL.pt"
 
 def slot(name):
     name = ALIASES.get(name, name)
-    return f"Detailer {DETAILERS.index(name) + 1:02d}"
+    return f"Detailer {DETAILERS.index(name) + 1}"
 
 
 # Longest names first so "Eyes · One by One" / "Full Eyes" / "Head & Hair" win over "Eyes" / "Hair".
@@ -73,7 +73,8 @@ def main():
     prompts = json.load(open(os.path.join(PKG, "workflows", "demo_prompt.json"), encoding="utf-8"))
     # 2.0 grammar: MAIN (SayaMainPrompt node: prefix + background) / ACTION / P1 / P2 (identity + a separate anatomy text, emptied here) / NEGATIVE.
     by_title = {"Prompt · Base Scene": "MAIN", "Prompt · Person 1": "P1", "Prompt · Person 2": "P2", "Prompt · Negative": "NEGATIVE",
-                "Prompt · Action": "ACTION", "Prompt · Anatomy P1": "", "Prompt · Anatomy P2": ""}
+                "Prompt · Action": "ACTION", "Prompt · Anatomy P1": "", "Prompt · Anatomy P2": "",
+                "Prompt · Person 1 · Anatomy": "", "Prompt · Person 2 · Anatomy": ""}
     MAIN_NODE_TITLE = "Prompt · MAIN (prefix + background + tags)"
     graphs = [wf] + wf["definitions"]["subgraphs"]
     ckpts = [n["widgets_values"][0] for g in graphs for n in g.get("nodes", []) if n["type"] == "CheckpointLoaderSimple"]
@@ -184,20 +185,20 @@ def main():
         "widgets_values": ["# SELECT YOUR MODELS, THEN CLICK GENERATE\n\n"
                            "This is the complete 6-phase Saya Couple pipeline (sampling, hires / USDU, HiDream refine, pre-detail, "
                            "detailers, final upscale & naturalize). No model is included: pick your SDXL / Illustrious checkpoints, "
-                           "VAEs, the HiDream models, the upscale model and one detector model per **Detailer 01-13** slot you use "
+                           "VAEs, the HiDream models, the upscale model and one detector model per **Detailer 1-13** slot you use "
                            "(bypass the others with their toggles).\n\n"
                            "Prompts follow the 4-field grammar (docs/PROMPTS_GUIDE_EN.md): MAIN = background only (the "
                            "*Prompt · MAIN* node: prefix + a background from the stock or your own text), ACTION = what the two "
                            "characters do, P1 / P2 = their appearance. Phase 1 reads each pixel's owner from the model's own attention "
                            "(dynamic ownership) and hands that map to every later pass.\n\n"
                            "Needs Saya Couple 2.0 (`./saya install`, no ComfyUI core modification) and the custom nodes listed in the README "
-                           "(section *Full workflow*). For a first test, use the simple demo workflow instead."]})
+                           "(section *Full workflow*)."]})
     wf["last_node_id"] = max(wf.get("last_node_id", 0), note_id)
     text = json.dumps(wf, indent=1, ensure_ascii=False)
     # Stable ids of the detailer hub selectors (only referenced inside this file): same rename everywhere.
     for i, name in enumerate(DETAILERS, 1):
         key = {"Head & Hair": "head-hair", "Full Eyes": "full-eyes", "Eyes · One by One": "eyes-one-by-one"}.get(name, name.lower())
-        text = text.replace(f"saya-model-hub-detailers-selector-{key}\"", f"saya-model-hub-detailers-selector-detailer-{i:02d}\"")
+        text = text.replace(f"saya-model-hub-detailers-selector-{key}\"", f"saya-model-hub-detailers-selector-detailer-{i}\"")
     out = os.path.join(PKG, "workflows", "Saya_Couple_Full.json")
     open(out, "w", encoding="utf-8").write(text)
     print(changed)

@@ -9,7 +9,7 @@ def test_registry_complete():
     mappings = pack.NODE_CLASS_MAPPINGS
     displays = pack.NODE_DISPLAY_NAME_MAPPINGS
 
-    c.eq(len(mappings), 59, "node count")
+    c.eq(len(mappings), 60, "node count (60: + SayaLoraFamilyFilter, 2026-10-07)")
     c.eq(len(set(mappings)), len(mappings), "duplicate class_type keys")
     c.eq(set(displays), set(mappings), "display-name keys != registry keys")
     c.ok(bool(pack.WEB_DIRECTORY), "WEB_DIRECTORY set")

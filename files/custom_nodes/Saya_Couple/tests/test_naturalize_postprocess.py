@@ -70,7 +70,9 @@ def test_color_lock_full_takes_reference_chroma():
     ref = 0.85 * img + 0.15 * img[..., [2, 0, 1]]  # same content, modest hue/chroma shift: stays in gamut
     out = node.run(img, 0.0, 0.0, 0, reference=ref, color_lock=1.0)[0]
     from saya_couple.src.nodes.chroma_anchor import rgb_to_oklab
-    c.ok(float((_ab(out) - _ab(ref)).abs().max()) < 2e-3, "color_lock=1: output a/b == reference a/b")
+    from saya_couple.src.nodes.naturalize_postprocess import _blur_channels
+    blur = lambda x: _blur_channels(x, 2.0)
+    c.ok(float((blur(_ab(out)) - blur(_ab(ref))).abs().max()) < 2e-2, "color_lock=1: blurred output a/b == blurred reference a/b")
     c.ok(float((rgb_to_oklab(out)[..., 0] - rgb_to_oklab(img)[..., 0]).abs().max()) < 2e-3, "color_lock=1: lightness is the refine's")
     return c.report()
 
@@ -81,6 +83,17 @@ def test_color_lock_interpolation_is_monotone():
     dist = [float((_ab(node.run(img, 0.0, 0.0, 0, reference=ref, color_lock=a)[0]) - _ab(ref)).norm(dim=-1).mean())
             for a in (0.0, 0.25, 0.5, 0.75, 1.0)]
     c.ok(all(x > y for x, y in zip(dist, dist[1:])), f"chroma distance to reference strictly decreases: {[round(d, 4) for d in dist]}")
+    return c.report()
+
+
+def test_color_lock_no_fringe_on_moved_lines():
+    """The refine moves lines by a pixel: the lock must not paste the old line colour beside the new line."""
+    node, c = _node(), Check("naturalize_color_lock_no_fringe")
+    img = torch.full((1, 64, 64, 3), 0.85)
+    img[:, :, 30:33, :] = torch.tensor([0.1, 0.2, 0.8])  # blue line (iris / lash colour)
+    moved = torch.roll(img, 2, dims=2)
+    out = node.run(moved, 0.0, 0.0, 0, reference=img, color_lock=0.8)[0]
+    c.ok(float((out - moved).abs().max()) * 255 < 40, f"moved saturated line, smallest blur: max change {float((out - moved).abs().max()) * 255:.1f} levels (per-pixel lock: ~150)")
     return c.report()
 
 
@@ -132,6 +145,7 @@ TESTS = (
     test_zero_new_strengths_match_historic_grain_dither,
     test_color_lock_full_takes_reference_chroma,
     test_color_lock_interpolation_is_monotone,
+    test_color_lock_no_fringe_on_moved_lines,
     test_color_lock_needs_reference,
     test_shapes_finite_and_deterministic,
     test_extreme_images,

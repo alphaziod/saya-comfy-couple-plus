@@ -27,6 +27,7 @@ import test_ownership_anchors
 import test_action_imprint
 import test_ownership_map
 import test_background_picker
+import test_lora_family_filter
 import test_dual_wiring
 import test_nodes_compute
 import test_phase_nodes
@@ -103,6 +104,7 @@ def main() -> int:
     absorb(guarded(test_action_imprint.TESTS))
     absorb(guarded(test_ownership_map.TESTS))
     absorb(guarded(test_background_picker.TESTS))
+    absorb(guarded(test_lora_family_filter.TESTS))
     absorb(guarded(test_dual_wiring.TESTS))
     absorb(guarded(test_fable_audit.TESTS))
     absorb(guarded(test_main_prompt.TESTS))

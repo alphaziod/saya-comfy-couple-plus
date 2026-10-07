@@ -50,6 +50,7 @@ from .src.nodes.saya_attention_couple import SayaAttentionCouplePPM
 from .src.nodes.saya_multi_couple import SayaMultiCouple
 from .src.nodes.ownership_map import SayaOwnershipMapCapture
 from .src.nodes.background_picker import SayaBackgroundPicker
+from .src.nodes.lora_family_filter import SayaLoraFamilyFilter
 from .src.nodes.main_prompt import SayaMainPrompt, SayaMainPromptFR
 from .src.nodes.saya_split_mask import SayaSplitMask
 from .src.nodes.saya_upscale_mode import SayaUpscaleMode
@@ -131,6 +132,7 @@ NODE_CLASS_MAPPINGS: dict[str, type[Any]] = {
     "SayaMultiCouple": SayaMultiCouple,
     "SayaOwnershipMapCapture": SayaOwnershipMapCapture,
     "SayaBackgroundPicker": SayaBackgroundPicker,
+    "SayaLoraFamilyFilter": SayaLoraFamilyFilter,
     "SayaCoupleImprintPack": SayaCoupleImprintPack,
     "SayaCoupleImprintPackV2": SayaCoupleImprintPackV2,
     "SayaCoupleImprintUnpack": SayaCoupleImprintUnpack,
@@ -193,6 +195,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "SayaMultiCouple": "Saya Multi Couple · 2 models",
     "SayaOwnershipMapCapture": "Saya Ownership Map · Sampler 1 -> Imprint",
     "SayaBackgroundPicker": "Saya Background Picker · 40 categories",
+    "SayaLoraFamilyFilter": "Saya LoRA Family Filter · Model 2",
     "SayaCoupleImprintPack": "Saya Couple Imprint · Pack (DATA-ONLY v1)",
     "SayaCoupleImprintPackV2": "Saya Couple Imprint · Pack (DATA-ONLY v2)",
     "SayaCoupleImprintUnpack": "Saya Couple Imprint · Unpack (rebuild)",

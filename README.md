@@ -16,7 +16,7 @@ One switch turns the whole pipeline into **Solo mode** (MAIN + ACTION + P1, one 
 | ![Couple: two characters, one scene](docs/images/demo_example.png) | ![Solo: one character, same scene](docs/images/solo_example.png) |
 | demo workflow, MAIN + P1 + P2 (1.x render) | full workflow, MAIN + ACTION + P1 only (1.x render) |
 
-Current version: **2.0.1** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
+Current version: **2.1.0** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
 RDNA4 16 GB. It is first and foremost **a backup of my own ComfyUI setup**, made public in case it helps someone
 with the same problem. Take what you need.
 
@@ -123,7 +123,7 @@ instead of failing in Phase 2. The demo workflow is Couple only.
 
 | Part | What it is | Needed? |
 |---|---|---|
-| **Custom node pack** `custom_nodes/Saya_Couple/` (65 node types, 13 of them deprecated) | the couple engine and nodes, the MAIN prompt builder, plus the nodes my own workflow uses (phase checkpoints, HiDream helpers, upscale / detail passes, lazy loaders…) | install it all, ignore what you don't use |
+| **Custom node pack** `custom_nodes/Saya_Couple/` (66 node types, 13 of them deprecated) | the couple engine and nodes, the MAIN prompt builder, plus the nodes my own workflow uses (phase checkpoints, HiDream helpers, upscale / detail passes, lazy loaders…) | install it all, ignore what you don't use |
 | **Installer** `./saya` | install / upgrade / verify / restore / check-compat | recommended |
 | **AMD VRAM safety patch** `comfy/model_management.py` | keeps ROCm from starving the Linux desktop of VRAM | optional, AMD only |
 | **Demo workflow** | MAIN / ACTION / P1 / P2 + the two sampling passes, nothing else | start here |
@@ -145,8 +145,8 @@ P2, negative, the Saya split mask and Multi Couple in dynamic ownership, the two
 No phases, no detailers, no upscale. Random seed every run.
 
 The sampling core is **exactly the one of my validated setup** (RES4LYF ClownsharKSampler): MODEL_1 base pass
-16 steps / 13 run / cfg 6 with Epsilon Scaling, CFGZeroStar and DetailBoost, then MODEL_2 refine pass
-3 steps / denoise 0.5 / cfg 2. The gain 0.78 lives in the pack's engine, not in the graph. The prompts
+16 steps / 13 run / cfg 5 with Epsilon Scaling, CFGZeroStar and DetailBoost, then MODEL_2 refine pass
+3 steps / denoise 0.6 / cfg 2. The gain 0.78 lives in the pack's engine, not in the graph. The prompts
 (`workflows/demo_prompt.json`) follow the 4-field grammar: a dense multicoloured gamer room in MAIN, a seated hug
 in ACTION, two adult characters in P1 / P2. `Saya_Couple_Demo_api.json` is the same graph in API format.
 
@@ -160,11 +160,16 @@ in ACTION, two adult characters in P1 / P2. `Saya_Couple_Demo_api.json` is the s
 | 2 · Hires & USDU | hires fix (full frame) and two tiled Ultimate SD Upscale passes (crop-aware) |
 | 3 · HiDream | HiDream I1 refine: two text regions (P1 / P2) in Couple, one global prompt in Solo |
 | 4 · Pre-detail | light hires refine before the detailers |
-| 5 · Detailers | 13 detailer slots (Detailer 01 … 13), crop-aware couple attention |
-| 6 · Final | **Naturalize V2**: one light diffusion at the Phase 5 size with the real couple conditioning and colour lock / highlight taming, then the Remacri upscale to the final size, then soften and grain |
+| 5 · Detailers | 13 detailer slots (Detailer 1 … 13), crop-aware couple attention |
+| 6 · Final | **Naturalize V2**: one light diffusion at the Phase 5 size with the real couple conditioning and an area colour lock (2.1: lines keep their own colour, highlight taming off), then the Remacri upscale to the final size, then soften and grain |
 
 Phases 2 to 6 read the couple data through one **Saya Couple Context · Load** node per model (2.0): it resolves
 and validates the Phase 1 imprint once per phase and hands it to the reconstruct nodes.
+
+Model 2 (Sampler 2, and every pass set to Model 2) goes through **Saya LoRA Family Filter · Model 2** (2.1): it
+receives the LoRAs of your Model 1 stacks and keeps only those its family can take, read from LoRA Manager
+(SDXL model -> SDXL LoRAs; Illustrious model -> Illustrious + SDXL; other families -> all). Its `report` output says
+what passed and what was blocked.
 
 Cleaned for publication **without simplifying it**: same nodes, same wiring, same sampler and pass settings. Only
 these were neutralised: checkpoints, VAEs, LoRAs (stacks shipped empty), detector models (`SELECT_*`

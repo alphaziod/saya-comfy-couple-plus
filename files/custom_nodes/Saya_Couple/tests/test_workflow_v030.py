@@ -220,7 +220,9 @@ def test_usdu_position_switch():
         subgraphs = {s["id"]: s for s in workflow["definitions"]["subgraphs"]}
         if USDU_PASS not in subgraphs:
             continue
-        selector = next(n for n in workflow["nodes"] if n["type"] == USDU_POSITION)
+        selector = next((n for n in workflow["nodes"] if n["type"] == USDU_POSITION), None)
+        if selector is None:  # workflow without the movable USDU block (fixed placement): nothing to check here
+            continue
         c.eq(selector["widgets_values"], ["Phase 2"], f"{path.name}: default position is Phase 2")
         pas = subgraphs[USDU_PASS]
         switch = next(n for n in pas["nodes"] if n["type"] == "ComfySwitchNode")

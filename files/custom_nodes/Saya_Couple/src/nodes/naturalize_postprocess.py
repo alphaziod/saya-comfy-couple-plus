@@ -10,8 +10,34 @@ HIGHLIGHT_THRESHOLD = 0.7
 HIGHLIGHT_SIGMA_FRACTION = 0.004
 
 
+#: Scale of the colour that color_lock corrects, relative to the long side: only the colour of areas (skin, hair,
+#: clothes, light), never the colour of lines and small details (eyes, lashes, mouth), which follow the refine.
+LOCK_SIGMA_FRACTION = 0.006
+
+
+def _blur_channels(x, sigma):
+    """Separable gaussian over [B, H, W, C] (sigma in pixels), reflect padding, no clamping (a/b are signed)."""
+    radius = max(1, int(3 * sigma + 0.5))
+    coords = torch.arange(-radius, radius + 1, dtype=torch.float32, device=x.device)
+    kernel = torch.exp(-(coords * coords) / (2 * sigma * sigma))
+    kernel = (kernel / kernel.sum()).to(x.dtype)
+    channels = x.shape[-1]
+    work = x.movedim(-1, 1)
+    pad_h, pad_w = min(radius, work.shape[2] - 1), min(radius, work.shape[3] - 1)
+    k_w = kernel[radius - pad_w: radius + pad_w + 1].view(1, 1, 1, -1).expand(channels, 1, 1, -1)
+    k_h = kernel[radius - pad_h: radius + pad_h + 1].view(1, 1, -1, 1).expand(channels, 1, -1, 1)
+    work = F.conv2d(F.pad(work, (pad_w, pad_w, 0, 0), mode="reflect" if pad_w else "replicate"), k_w, groups=channels)
+    work = F.conv2d(F.pad(work, (0, 0, pad_h, pad_h), mode="reflect" if pad_h else "replicate"), k_h, groups=channels)
+    return work.movedim(1, -1)
+
+
 def lock_chroma(image, reference, amount):
-    """Keep ``image``'s OKLab lightness, pull its a/b toward ``reference``'s by ``amount`` (0..1)."""
+    """Keep ``image``'s OKLab lightness and fine colour, pull its LOW-FREQUENCY a/b toward ``reference``'s by ``amount``.
+
+    Only the blurred colour is corrected (ab + amount * (blur(ref ab) - blur(ab))): the refine redraws lines by a pixel
+    or two even at a low denoise, and a per-pixel lock pasted the old line colour next to the new line (colour fringes
+    on eyes, lashes, mouth). The colour drift of areas is still removed.
+    """
     reference = reference.to(device=image.device, dtype=torch.float32)
     if reference.shape[1:3] != image.shape[1:3]:
         reference = F.interpolate(reference.movedim(-1, 1), size=image.shape[1:3], mode="bilinear", align_corners=False).movedim(1, -1)
@@ -19,7 +45,9 @@ def lock_chroma(image, reference, amount):
     reference_ab = rgb_to_oklab(reference.clamp(0, 1))[..., 1:]
     if reference_ab.shape[0] != lab.shape[0]:
         reference_ab = reference_ab.expand(lab.shape[0], -1, -1, -1)
-    ab = torch.lerp(lab[..., 1:], reference_ab, amount)
+    sigma = max(2.0, LOCK_SIGMA_FRACTION * max(image.shape[1], image.shape[2]))
+    drift = _blur_channels(reference_ab - lab[..., 1:], sigma)
+    ab = lab[..., 1:] + amount * drift
     return oklab_to_rgb(torch.cat([lab[..., :1], ab], dim=-1))
 
 
@@ -61,9 +89,9 @@ class SayaNaturalizePostProcess:
         }, "optional": {
             "reference": ("IMAGE", {"tooltip": "Colour reference for color_lock: the image before the refine, aligned with image."}),
             "color_lock": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05,
-                "tooltip": "0 = refine colours kept, 1 = reference OKLab colour with the refine's lightness and detail."}),
+                "tooltip": "0 = refine colours kept, 1 = reference OKLab colour of areas (blurred) with the refine's lightness, lines and fine colour."}),
             "highlight_tame": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05,
-                "tooltip": "0 = off. Pulls local highlight peaks toward their surroundings; midtones and large bright areas are kept."}),
+                "tooltip": "0 = off (recommended). Pulls local highlight peaks toward their surroundings; it also hits the light side of every line and the eye catchlights."}),
         }}
 
     def run(self, image, grain_strength, dither_amount, seed, reference=None, color_lock=0.0, highlight_tame=0.0):

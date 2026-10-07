@@ -45,6 +45,12 @@ def test_ownership_anchors():
     c.eq(phrase_anatomy_anchors("1girl, futanari, pink hair, small breasts", "1girl, futanari, blue hair, small breasts"), ["pink hair"],
          "same body type and chest: head anchors only")
     c.eq(head_category("pubic hair"), "anatomy", "pubic hair is on the organ, not on the head")
+    hp_1, hp_2 = "1girl, green hair, medium penis, green hairy penis, erect penis", "1girl, blonde hair, small penis, blonde hairy penis, erect penis"
+    c.eq(phrase_anatomy_anchors(hp_1, hp_2), ["green hair", "medium penis", "green hairy penis"], "hairy penis in hair colour: its own anchor next to the size")
+    c.eq(phrase_anatomy_anchors(hp_2, hp_1), ["blonde hair", "small penis", "blonde hairy penis"], "hairy penis in hair colour: the other person")
+    c.eq(phrase_anatomy_anchors("1girl, green hair, medium penis, green hairy penis", "1girl, blue hair, medium penis"), ["green hair", "green hairy penis"],
+         "hairy penis only on one person: anchored, same size gives nothing")
+    c.eq(phrase_anatomy_anchors("1girl, green hair, black hairy penis", "1girl, blue hair, black hairy penis"), ["green hair"], "same hairy penis on both: nothing")
     c.eq(head_category("short black pixie cut"), "hair", "Danbooru hair style noun")
     c.eq(phrase_anatomy_anchors("1girl, pink hair, small clitoris, pussy", "1girl, blue hair, large clitoris, vagina"), ["pink hair", "small clitoris"],
          "clitoris size distinct; pussy / vagina are one organ")

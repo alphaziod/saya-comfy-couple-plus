@@ -1,6 +1,49 @@
 # Changelog
 
-## Unreleased
+## 2.1.0 — 2026-10-07
+
+### Fixes
+
+- **Solo Phase 1 follows the prompt again.** In Solo, `SayaMultiCouple` combined MAIN + ACTION and P1 with
+  `ConditioningCombine`, which averages two separate predictions: half of the guidance came from the scene and the
+  pose alone, with no character in it (wrong clothes, wrong person, censored or deformed results). Solo now sends
+  **one** conditioning, MAIN ++ ACTION ++ P1 (token concatenation), exactly like the phases rebuilt from the imprint
+  (one text "MAIN, ACTION, PERSON 1"). Couple mode is not touched. Test updated (`multi_couple_solo`).
+- **Naturalize colour lock no longer paints colour fringes.** `SayaNaturalizePostProcess` took the refine's
+  lightness and the reference's colour pixel by pixel. Even at denoise 0.1 the refine redraws lines by a pixel or
+  two, so the old line colour landed next to the new line: coloured halos on eyes, lashes and mouth, then amplified
+  by every later pass. The lock now corrects only the **blurred (area) colour** drift and keeps the refine's own
+  line colour. On a real image with lines moved by 1-3 px, the largest change drops from 75-84 to 6-21 levels (8 bit)
+  and no pixel moves by more than 20 levels any more. `color_lock` keeps its range and meaning for areas.
+- **Highlight taming off in the Full workflow.** It also darkened the light side of every line and the eye
+  catchlights (7 % of the pixels touched on a test image). The Full workflow ships it at 0; the tooltip says why.
+
+### New
+
+- **Saya LoRA Family Filter · Model 2** (`SayaLoraFamilyFilter`). Applies the LoRAs of the Model 1 stack to
+  Model 2, keeping only those its family can take, from the `base_model` LoRA Manager stores for each file: SDXL
+  model 2 -> SDXL LoRAs only; Illustrious model 2 -> Illustrious and SDXL; any other family -> everything (for now);
+  a LoRA without a known family passes and is reported. The checkpoint family comes from its metadata, or from its
+  folder when the metadata says "Unknown". UNet only (Model 2 keeps the Model 1 CLIP). Inputs: the five
+  `loaded_loras` outputs of LoRA Manager loaders, the Model 2 checkpoint name (text input that follows the loader),
+  free extra LoRAs; output `report` lists PASS / BLOCK / SKIP. Wired in the Full workflow; Model 2 used to run
+  without any LoRA. Tests: `lora_family_filter`.
+- **Pubic hair is an anatomy anchor of its own.** In `phrase_anatomy` ownership, "green pubic hair" or
+  "green hairy penis" is now a separate part next to the organ's size / state, so a hair colour that differs between
+  the two characters anchors each organ to its owner. Prompting tip: write `<hair colour> pubic hair` (the Danbooru
+  tag, known to Illustrious) rather than "hairy penis".
+
+### Workflows
+
+- **Demo and Full rebuilt from my current workflow** with `tools/build_demo_workflow.py` and
+  `tools/build_full_workflow.py` (same public-safe rules: demo prompts, `SELECT_*` placeholders, empty LoRA stacks,
+  no personal names). The Full workflow follows my own placement of the Hires + USDU block: the *MAIN · USDU
+  Position* selector of 2.0 is gone. Detailer slots are named **Detailer 1 … Detailer 13**. The Full builder also
+  empties the per-character anatomy fields under their current titles. The demo only gains the `person_anchor`
+  input; `Saya_Couple_Demo_api.json` is regenerated (unchanged).
+- The workflow check `test_usdu_position_switch` skips a workflow that has no USDU position selector.
+
+### AMD
 
 - **AMD desktop VRAM reserve counted once.** The optional safety patch already excludes 1 GiB from the
   allocator cap. `extra_reserved_memory()` now reserves only the part of `--reserve-vram` above that amount

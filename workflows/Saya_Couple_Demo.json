@@ -859,6 +859,16 @@
       "name": "p2_anchors"
      },
      "link": null
+    },
+    {
+     "localized_name": "person_anchor",
+     "name": "person_anchor",
+     "shape": 7,
+     "type": "STRING",
+     "widget": {
+      "name": "person_anchor"
+     },
+     "link": null
     }
    ],
    "outputs": [

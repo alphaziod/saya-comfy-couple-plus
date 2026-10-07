@@ -191,7 +191,14 @@ def hybrid_anchor_words(own: str, other: str) -> list[tuple[str, list[str]]]:
 POSE = {"spread", "crossed", "outstretched", "raised", "bound", "clenched", "holding", "grabbing", "folded", "lifted", "open"}
 
 
+# Hair on the organ ("green hairy penis", "pink pubic hair"): a part of its own, kept next to the organ's size or
+# state ("medium penis", "erect penis"). Its colour is the person's hair colour, so it tells whose organ it is.
+PUBIC_HAIR = {"hairy", "pubic"}
+
+
 def _head_noun(segment: str, name: str) -> str | None:
+    if name == "anatomy" and PUBIC_HAIR & set(words(segment)):
+        return "pubic"
     head = None
     for w in words(segment):
         if w in CATEGORIES_BY_NAME[name]:

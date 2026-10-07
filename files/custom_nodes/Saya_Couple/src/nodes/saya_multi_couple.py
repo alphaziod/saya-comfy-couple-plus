@@ -333,11 +333,14 @@ class SayaMultiCouple:
         prompt=None,
     ):
         if solo:
-            # Solo = MAIN (+ ACTION, concatenated as for the persons in Couple) + P1, neg_1; P2 is never read.
-            # Same text the phases rebuilt from the imprint use (scene_text: MAIN, ACTION, then PERSON 1).
-            if main is not None and action is not None:
-                main = ConditioningConcat().concat(main, action)[0]
-            positive = ConditioningCombine().combine(main, pos_1)[0] if main is not None else pos_1
+            # Solo = ONE conditioning MAIN ++ ACTION ++ P1 (token concat), neg_1; P2 is never read.
+            # Same as the phases rebuilt from the imprint (one text "MAIN, ACTION, PERSON 1", encoded in 77-token
+            # chunks). Never ConditioningCombine: it averages two separate predictions, so half of the guidance came
+            # from MAIN + ACTION alone (scenery + pose, no person, no nudity): clothes, censorship, wrong person.
+            positive = main
+            for part in (action, pos_1):
+                if part is not None:
+                    positive = part if positive is None else ConditioningConcat().concat(positive, part)[0]
             return (model_1, model_2, positive, neg_1, None)
 
         scene = main
