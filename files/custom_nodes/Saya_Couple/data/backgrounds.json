@@ -62391,6 +62391,726 @@
    "bg": "outdoors, (dismantled rusted carousel in an old square:1.2), broken carousel canopy, scattered carved horse figures lying in the weeds, peeling gold paint, rusted poles, cracked cobblestones, dead leaves, night, cold fog, sickly green lamplight, faded red and green colors, eerie creepy mood, depth of field, rich detailed background",
    "short": "manege demonte",
    "ultra": "outdoors, (dismantled rusted carousel in an old square:1.2), broken carousel canopy, scattered carved horse figures lying in the weeds, peeling gold paint, rusted poles, cracked cobblestones, dead leaves, night, cold fog, sickly green lamplight, faded red and green colors, eerie creepy mood, flaking gilt on the canopy, rust streaks on the poles, moss in the cobblestone gaps, fog drifting around the lamp, cracked painted wood grain, depth of field, rich detailed background"
+  },
+  {
+   "id": "BG-7800",
+   "cat": "strange",
+   "name": "Réserve de musée aux tableaux emballés",
+   "bg": "indoors, (museum storage room:1.2), wrapped paintings, metal racks, plastic sheeting, wooden crates, concrete floor, hanging cables, dim overhead light, cold shadows, muted grey, dusty ambiance, depth of field, rich detailed background",
+   "short": "Réserve de musée",
+   "ultra": "indoors, (museum storage room:1.2), wrapped paintings, metal racks, plastic sheeting, wooden crates, concrete floor, hanging cables, dim overhead light, cold shadows, muted grey, dusty ambiance, dust motes, rope knots, faded labels on crates, scuffed floor marks, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7801",
+   "cat": "gothic",
+   "name": "Salon de coiffure aux miroirs anciens",
+   "bg": "indoors, (old barber salon:1.2), antique mirrors, leather chairs, cracked tiles, glass bottles, brass fixtures, peeling wallpaper, dim yellow light, dusk, sepia tones, faded melancholy, depth of field, rich detailed background",
+   "short": "Salon de coiffure",
+   "ultra": "indoors, (old barber salon:1.2), antique mirrors, leather chairs, cracked tiles, glass bottles, brass fixtures, peeling wallpaper, dim yellow light, dusk, sepia tones, faded melancholy, silvering stains on mirrors, dust on counter, rusty scissors rack, cobwebs, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7802",
+   "cat": "gothic",
+   "name": "Conservation des costumes historiques",
+   "bg": "indoors, (costume conservation room:1.2), empty dress forms, old gowns on racks, glass cases, tissue paper, wooden drawers, lace fabric, dim lamp light, pale glow, faded velvet red, hushed ambiance, depth of field, rich detailed background",
+   "short": "Conservation des costumes",
+   "ultra": "indoors, (costume conservation room:1.2), empty dress forms, old gowns on racks, glass cases, tissue paper, wooden drawers, lace fabric, dim lamp light, pale glow, faded velvet red, hushed ambiance, moth holes, dust on lace, tarnished buttons, faded ribbons, scattered pins, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7803",
+   "cat": "strange",
+   "name": "Galerie de sculptures avant le vernissage",
+   "bg": "indoors, (empty sculpture gallery:1.2), marble statues, white pedestals, polished floor, spotlights, draped cloths, tall windows, spotlight glow, evening light, cold white, quiet ambiance, depth of field, rich detailed background",
+   "short": "Galerie de sculptures",
+   "ultra": "indoors, (empty sculpture gallery:1.2), marble statues, white pedestals, polished floor, spotlights, draped cloths, tall windows, spotlight glow, evening light, cold white, quiet ambiance, dust sheets, reflections on floor, chisel marks, faint scuffs, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7804",
+   "cat": "garden",
+   "name": "Jardin de sculptures envahi d'herbes",
+   "bg": "outdoors, (overgrown sculpture garden:1.2), weathered statues, tall grass, stone paths, ivy, broken pedestals, iron gate, wild flowers, overcast light, late afternoon, green moss, melancholic ambiance, depth of field, rich detailed background",
+   "short": "Jardin de sculptures",
+   "ultra": "outdoors, (overgrown sculpture garden:1.2), weathered statues, tall grass, stone paths, ivy, broken pedestals, iron gate, wild flowers, overcast light, late afternoon, green moss, melancholic ambiance, moss on stone, cracked plinth, dew on grass, fallen leaves, vines on arms, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7805",
+   "cat": "gothic",
+   "name": "Galerie de miroirs aux bougies",
+   "bg": "indoors, (mirror gallery:1.2), tall mirrors, lit candles, candelabras, gilded frames, parquet floor, long corridor, candlelight, warm glow, gold and amber, eerie ambiance, depth of field, rich detailed background",
+   "short": "Galerie de miroirs",
+   "ultra": "indoors, (mirror gallery:1.2), tall mirrors, lit candles, candelabras, gilded frames, parquet floor, long corridor, candlelight, warm glow, gold and amber, eerie ambiance, wax drips, endless reflections, gilded scrollwork, smoke wisps, dust on frames, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7806",
+   "cat": "gothic",
+   "name": "Galerie de portraits près d'une fenêtre",
+   "bg": "indoors, (portrait gallery:1.2), old painted portraits, gilded frames, tall window, curtains, wooden floor, velvet bench, window light, pale daylight, dark brown, solemn ambiance, depth of field, rich detailed background",
+   "short": "Galerie de portraits",
+   "ultra": "indoors, (portrait gallery:1.2), old painted portraits, gilded frames, tall window, curtains, wooden floor, velvet bench, window light, pale daylight, dark brown, solemn ambiance, dust in light beams, cracked paint, frame carvings, faded rug, cobwebs in corners, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7807",
+   "cat": "gothic",
+   "name": "Antiquaire aux miroirs superposés",
+   "bg": "indoors, (antique shop:1.2), stacked mirrors, old furniture, dusty clocks, porcelain, carved cabinets, oil lamps, dim lamp light, golden glow, dark wood, cluttered ambiance, depth of field, rich detailed background",
+   "short": "Antiquaire aux miroirs",
+   "ultra": "indoors, (antique shop:1.2), stacked mirrors, old furniture, dusty clocks, porcelain, carved cabinets, oil lamps, dim lamp light, golden glow, dark wood, cluttered ambiance, dusty glass, tarnished brass, hanging price tags, cracked frames, layered reflections, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7808",
+   "cat": "cyberpunk",
+   "name": "Salle d'arcade aux reflets colorés",
+   "bg": "indoors, (retro arcade hall:1.2), arcade cabinets, glowing screens, neon lights, glossy floor, mirrored wall, carpet pattern, neon glow, night, magenta and cyan, electric ambiance, depth of field, rich detailed background",
+   "short": "Salle d arcade",
+   "ultra": "indoors, (retro arcade hall:1.2), arcade cabinets, glowing screens, neon lights, glossy floor, mirrored wall, carpet pattern, neon glow, night, magenta and cyan, electric ambiance, screen glare, worn joysticks, carpet stains, flickering bulbs, coin slot lights, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7809",
+   "cat": "city",
+   "name": "Cinéma en plein air sur un toit",
+   "bg": "outdoors, (rooftop open-air cinema:1.2), big white screen, folding chairs, string lights, rooftop railing, city skyline, projector booth, night, screen glow, deep blue, quiet ambiance, depth of field, rich detailed background",
+   "short": "Cinéma en plein",
+   "ultra": "outdoors, (rooftop open-air cinema:1.2), big white screen, folding chairs, string lights, rooftop railing, city skyline, projector booth, night, screen glow, deep blue, quiet ambiance, empty chairs in rows, projector beam, dust in beam, fairy bulbs, water tank, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7810",
+   "cat": "water",
+   "name": "Écran de cinéma flottant sur un lac",
+   "bg": "outdoors, (lake with floating cinema screen:1.2), floating screen, calm lake, wooden pontoon, reeds, distant mountains, small boats, moonlight, night, silver blue, dreamy ambiance, depth of field, rich detailed background",
+   "short": "Écran de cinéma",
+   "ultra": "outdoors, (lake with floating cinema screen:1.2), floating screen, calm lake, wooden pontoon, reeds, distant mountains, small boats, moonlight, night, silver blue, dreamy ambiance, ripples, screen reflection, mist on water, mooring ropes, fireflies, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7811",
+   "cat": "dream",
+   "name": "Lac reflétant une autre saison",
+   "bg": "outdoors, (calm lake:1.2), mirror-like water, autumn reflection, green summer shore, wooden pier, pine trees, mist, soft morning light, golden hour, teal and orange, surreal ambiance, depth of field, rich detailed background",
+   "short": "Lac reflétant",
+   "ultra": "outdoors, (calm lake:1.2), mirror-like water, autumn reflection, green summer shore, wooden pier, pine trees, mist, soft morning light, golden hour, teal and orange, surreal ambiance, drifting leaves, perfect reflection, pebbles, dew, thin ripples, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7812",
+   "cat": "desert",
+   "name": "Désert de miroirs naturels",
+   "bg": "outdoors, (desert salt flat:1.2), salt flats, mirror-like pools, cracked ground, distant dunes, rock outcrop, dry bushes, bright sunlight, sunset, pale gold, surreal ambiance, depth of field, rich detailed background",
+   "short": "Désert de miroirs",
+   "ultra": "outdoors, (desert salt flat:1.2), salt flats, mirror-like pools, cracked ground, distant dunes, rock outcrop, dry bushes, bright sunlight, sunset, pale gold, surreal ambiance, sky reflection, salt crystals, heat haze, sand ripples, cracked crust, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7813",
+   "cat": "bathroom",
+   "name": "Salle de bains au miroir embué",
+   "bg": "indoors, (old bathroom:1.2), fogged mirror, clawfoot tub, cracked tiles, brass taps, steam, wooden stool, frosted window, dim light, cold morning, pale green, damp ambiance, depth of field, rich detailed background",
+   "short": "Salle de bains",
+   "ultra": "indoors, (old bathroom:1.2), fogged mirror, clawfoot tub, cracked tiles, brass taps, steam, wooden stool, frosted window, dim light, cold morning, pale green, damp ambiance, water droplets, condensation streaks, rust stains, peeling paint, mildew in corners, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7814",
+   "cat": "strange",
+   "name": "Réserve de musée, statues sous des draps",
+   "bg": "indoors, (museum storage room:1.2), statues under sheets, dust sheets, wooden crates, metal shelves, a lone shape without pedestal, concrete floor, dim overhead light, cold shadows, grey and white, uneasy ambiance, depth of field, rich detailed background",
+   "short": "Réserve de musée",
+   "ultra": "indoors, (museum storage room:1.2), statues under sheets, dust sheets, wooden crates, metal shelves, a lone shape without pedestal, concrete floor, dim overhead light, cold shadows, grey and white, uneasy ambiance, dust on sheets, sheet folds, scuffed floor, hanging tags, cobwebs, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7815",
+   "cat": "gothic",
+   "name": "Galerie de portraits aux yeux grattés",
+   "bg": "indoors, (portrait gallery:1.2), scratched painted portraits, gilded frames, one covered painting, wooden floor, velvet rope, tall windows, dim window light, dusk, dark brown, oppressive ambiance, depth of field, rich detailed background",
+   "short": "Galerie de portraits",
+   "ultra": "indoors, (portrait gallery:1.2), scratched painted portraits, gilded frames, one covered painting, wooden floor, velvet rope, tall windows, dim window light, dusk, dark brown, oppressive ambiance, scratch marks on canvas, peeling paint, dust sheet, dusty frames, dried varnish drips, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7816",
+   "cat": "temple",
+   "name": "Temple désert aux statues tournées vers l'entrée",
+   "bg": "indoors, (deserted temple:1.2), stone statues facing entrance, incense smoke, stone columns, altar, oil lamps, worn steps, dim lamp light, smoky haze, dark stone grey, tense ambiance, depth of field, rich detailed background",
+   "short": "Temple désert",
+   "ultra": "indoors, (deserted temple:1.2), stone statues facing entrance, incense smoke, stone columns, altar, oil lamps, worn steps, dim lamp light, smoky haze, dark stone grey, tense ambiance, burning incense sticks, ash, carved reliefs, candle wax, cracked flagstones, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7817",
+   "cat": "underground",
+   "name": "Sanctuaire souterrain aux statues sans visage",
+   "bg": "indoors, (underground shrine:1.2), faceless carved figures, still bronze bells, stone arches, damp walls, stone steps, torch brackets, dim torch light, cold gloom, dark teal, eerie ambiance, depth of field, rich detailed background",
+   "short": "Sanctuaire souterrain",
+   "ultra": "indoors, (underground shrine:1.2), faceless carved figures, still bronze bells, stone arches, damp walls, stone steps, torch brackets, dim torch light, cold gloom, dark teal, eerie ambiance, dripping water, moss, carved glyphs, bell ropes, rock dust, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7818",
+   "cat": "city",
+   "name": "Boutique de mannequins, un mannequin vers la vitre",
+   "bg": "indoors, (mannequin shop:1.2), smooth faced mannequins, shop window, wooden stands, fabric rolls, display platforms, checkered floor, streetlight glow through window, night, cold blue, uneasy ambiance, depth of field, rich detailed background",
+   "short": "Boutique de mannequins",
+   "ultra": "indoors, (mannequin shop:1.2), smooth faced mannequins, shop window, wooden stands, fabric rolls, display platforms, checkered floor, streetlight glow through window, night, cold blue, uneasy ambiance, dust on shoulders, window reflections, loose pins, hanging price tags, scattered fabric, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7819",
+   "cat": "strange",
+   "name": "Atelier de masques aux sourires déformés",
+   "bg": "indoors, (mask workshop:1.2), distorted smiling masks, workbench, paint pots, carving tools, shelves, one mask under a lamp, focused lamp light, warm pool, ochre and red, uneasy ambiance, depth of field, rich detailed background",
+   "short": "Atelier de masques",
+   "ultra": "indoors, (mask workshop:1.2), distorted smiling masks, workbench, paint pots, carving tools, shelves, one mask under a lamp, focused lamp light, warm pool, ochre and red, uneasy ambiance, wood shavings, paint splatters, wire hooks, plaster dust, brush jars, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7820",
+   "cat": "horror",
+   "name": "Prison désaffectée, une porte verrouillée",
+   "bg": "indoors, (abandoned prison:1.2), open cells, one locked door, iron bars, long corridor, catwalks, peeling paint, concrete floor, dim light, shafts of dusty light, rust brown, oppressive ambiance, depth of field, rich detailed background",
+   "short": "Prison désaffectée",
+   "ultra": "indoors, (abandoned prison:1.2), open cells, one locked door, iron bars, long corridor, catwalks, peeling paint, concrete floor, dim light, shafts of dusty light, rust brown, oppressive ambiance, rust on bars, chipped paint, water stains, heavy padlock, scattered debris, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7821",
+   "cat": "tech",
+   "name": "Salle de surveillance aux écrans identiques",
+   "bg": "indoors, (surveillance room:1.2), rows of monitors, same door on every screen, control desk, swivel chairs, cables, dark walls, screen glow, cold light, blue-green, tense ambiance, depth of field, rich detailed background",
+   "short": "Salle de surveillance",
+   "ultra": "indoors, (surveillance room:1.2), rows of monitors, same door on every screen, control desk, swivel chairs, cables, dark walls, screen glow, cold light, blue-green, tense ambiance, screen static, blinking LEDs, cable bundles, dust on keys, coffee stains, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7822",
+   "cat": "gothic",
+   "name": "Salle aux miroirs couverts",
+   "bg": "indoors, (room of covered mirrors:1.2), mirrors covered with cloth, one faint reflection through fabric, wooden floor, candles, old armchair, heavy drapes, candlelight, dim glow, black and grey, eerie ambiance, depth of field, rich detailed background",
+   "short": "Salle aux miroirs",
+   "ultra": "indoors, (room of covered mirrors:1.2), mirrors covered with cloth, one faint reflection through fabric, wooden floor, candles, old armchair, heavy drapes, candlelight, dim glow, black and grey, eerie ambiance, fabric folds, dust, wax drips, faint glints, thread frays, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7823",
+   "cat": "garden",
+   "name": "Jardin de statues voilées vers un banc vide",
+   "bg": "outdoors, (garden of veiled statues:1.2), veiled statues, empty stone bench, gravel path, hedges, fountain, iron lamps, dusk light, mist, grey and green, silent ambiance, depth of field, rich detailed background",
+   "short": "Jardin de statues",
+   "ultra": "outdoors, (garden of veiled statues:1.2), veiled statues, empty stone bench, gravel path, hedges, fountain, iron lamps, dusk light, mist, grey and green, silent ambiance, fluttering veils, wet gravel, moss, fallen petals, fog wisps, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7824",
+   "cat": "city",
+   "name": "Galerie d'art contemporaine ouverte sur la rue",
+   "bg": "indoors, (contemporary art gallery:1.2), abstract sculptures, large windows, white walls, polished concrete floor, spotlights, street view, evening light, spotlight glow, white and grey, quiet ambiance, depth of field, rich detailed background",
+   "short": "Galerie d art",
+   "ultra": "indoors, (contemporary art gallery:1.2), abstract sculptures, large windows, white walls, polished concrete floor, spotlights, street view, evening light, spotlight glow, white and grey, quiet ambiance, window reflections, track lights, floor gloss, shadows of sculptures, small plinths, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7825",
+   "cat": "ruins",
+   "name": "Jardin de statues aux visages érodés",
+   "bg": "outdoors, (ancient statue garden:1.2), statues with eroded faces, stone path, overgrown ivy, broken columns, stone benches, old trees, soft overcast light, late afternoon, moss green, melancholic ambiance, depth of field, rich detailed background",
+   "short": "Jardin de statues",
+   "ultra": "outdoors, (ancient statue garden:1.2), statues with eroded faces, stone path, overgrown ivy, broken columns, stone benches, old trees, soft overcast light, late afternoon, moss green, melancholic ambiance, lichen on stone, fallen leaves, worn carvings, cracked plinth, weeds, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7826",
+   "cat": "industrial",
+   "name": "Réservoir d'eau derrière des grillages",
+   "bg": "outdoors, (fenced water reservoir:1.2), chain-link fences, concrete tank, barbed wire, metal gate, pipes, gravel ground, overcast light, dusk, cold grey, tense ambiance, depth of field, rich detailed background",
+   "short": "Réservoir d eau",
+   "ultra": "outdoors, (fenced water reservoir:1.2), chain-link fences, concrete tank, barbed wire, metal gate, pipes, gravel ground, overcast light, dusk, cold grey, tense ambiance, rusted wire, puddles, peeling concrete, padlock, weeds at fence base, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7827",
+   "cat": "house",
+   "name": "Appartement barricadé aux murs de plans",
+   "bg": "indoors, (barricaded apartment:1.2), boarded windows, walls covered in plans, furniture stacked at door, string lines, desk, bare bulb, dim bulb light, narrow light slits, yellowed paper, paranoid ambiance, depth of field, rich detailed background",
+   "short": "Appartement barricadé",
+   "ultra": "indoors, (barricaded apartment:1.2), boarded windows, walls covered in plans, furniture stacked at door, string lines, desk, bare bulb, dim bulb light, narrow light slits, yellowed paper, paranoid ambiance, pins and tape, scattered papers, thread lines, dusty floor, coffee cups, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7828",
+   "cat": "tech",
+   "name": "Salle de contrôle aux écrans brisés",
+   "bg": "indoors, (control room:1.2), broken monitors, control consoles, dangling cables, swivel chairs, glass shards, dark walls, flickering light, emergency red, dark blue, tense ambiance, depth of field, rich detailed background",
+   "short": "Salle de contrôle",
+   "ultra": "indoors, (control room:1.2), broken monitors, control consoles, dangling cables, swivel chairs, glass shards, dark walls, flickering light, emergency red, dark blue, tense ambiance, sparks, cracked glass, dust, blinking LEDs, torn wires, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7829",
+   "cat": "gothic",
+   "name": "Église barricadée à plaques métalliques",
+   "bg": "indoors, (barricaded church:1.2), metal plates over doors, wooden pews, stained glass, stone arches, boarded windows, altar, dim colored light, dusk, dark stone, oppressive ambiance, depth of field, rich detailed background",
+   "short": "Église barricadée",
+   "ultra": "indoors, (barricaded church:1.2), metal plates over doors, wooden pews, stained glass, stone arches, boarded windows, altar, dim colored light, dusk, dark stone, oppressive ambiance, rusty bolts, dust, cracked glass, candle stubs, fallen debris, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7830",
+   "cat": "city",
+   "name": "Place dominée par des écrans de surveillance",
+   "bg": "outdoors, (public square:1.2), large surveillance screens, tall poles, cameras, empty benches, wet paving, grey buildings, cold twilight, screen glow, grey-blue, dystopian ambiance, depth of field, rich detailed background",
+   "short": "Place dominée par",
+   "ultra": "outdoors, (public square:1.2), large surveillance screens, tall poles, cameras, empty benches, wet paving, grey buildings, cold twilight, screen glow, grey-blue, dystopian ambiance, camera lenses, rain puddles, cable trails, flickering static, street markings, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7831",
+   "cat": "underground",
+   "name": "Crypte inondée aux statues sans visage",
+   "bg": "indoors, (flooded crypt:1.2), faceless statues, floating offerings, stone pillars, still water, arches, iron candle stands, dim candlelight, cold gleam, dark teal, eerie ambiance, depth of field, rich detailed background",
+   "short": "Crypte inondée",
+   "ultra": "indoors, (flooded crypt:1.2), faceless statues, floating offerings, stone pillars, still water, arches, iron candle stands, dim candlelight, cold gleam, dark teal, eerie ambiance, floating flowers, wax drips, ripples, moss, dripping ceiling, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7832",
+   "cat": "temple",
+   "name": "Sanctuaire à l'idole enveloppée de tissus",
+   "bg": "indoors, (stone shrine:1.2), idol wrapped in damp cloth, stone altar, carved walls, oil lamps, puddles, heavy incense bowls, dim lamp light, faint glow, dark grey, uneasy ambiance, depth of field, rich detailed background",
+   "short": "Sanctuaire",
+   "ultra": "indoors, (stone shrine:1.2), idol wrapped in damp cloth, stone altar, carved walls, oil lamps, puddles, heavy incense bowls, dim lamp light, faint glow, dark grey, uneasy ambiance, wet fabric folds, dripping water, soot, ritual bowls, moss on stone, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7833",
+   "cat": "gothic",
+   "name": "Chapelle de verre noir aux reflets décalés",
+   "bg": "indoors, (black glass chapel:1.2), black glass walls, offset reflections, narrow altar, dark floor, tall arches, glass pews, cold glow, dim light, black and violet, eerie ambiance, depth of field, rich detailed background",
+   "short": "Chapelle de verre",
+   "ultra": "indoors, (black glass chapel:1.2), black glass walls, offset reflections, narrow altar, dark floor, tall arches, glass pews, cold glow, dim light, black and violet, eerie ambiance, mirrored shards, distorted reflections, glints, polished floor, faint haze, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7834",
+   "cat": "underground",
+   "name": "Temple souterrain, escaliers autour d'une idole",
+   "bg": "indoors, (underground temple:1.2), stairs spiraling down, central idol, stone walls, torches, carved pillars, deep pit, torch light, warm gloom, amber and black, ominous ambiance, depth of field, rich detailed background",
+   "short": "Temple souterrain escaliers",
+   "ultra": "indoors, (underground temple:1.2), stairs spiraling down, central idol, stone walls, torches, carved pillars, deep pit, torch light, warm gloom, amber and black, ominous ambiance, worn steps, carved glyphs, smoke, dripping water, dust, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7835",
+   "cat": "temple",
+   "name": "Temple de cuivre oxydé aux cierges reflétés",
+   "bg": "indoors, (oxidized copper temple:1.2), verdigris copper walls, lit tapers, polished altar, reflections, tall columns, bronze bowls, candlelight, warm glow, green and gold, mystical ambiance, depth of field, rich detailed background",
+   "short": "Temple de cuivre",
+   "ultra": "indoors, (oxidized copper temple:1.2), verdigris copper walls, lit tapers, polished altar, reflections, tall columns, bronze bowls, candlelight, warm glow, green and gold, mystical ambiance, wax drips, patina streaks, flickering reflections, incense smoke, stone steps, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7836",
+   "cat": "desert",
+   "name": "Sanctuaire désertique, idole dans son ombre",
+   "bg": "outdoors, (desert shrine:1.2), stone idol seen as shadow, sandstone walls, wind-blown sand, pillars, stone steps, dry weeds, low sunlight, long shadows, ochre and rust, ominous ambiance, depth of field, rich detailed background",
+   "short": "Sanctuaire désertique idole",
+   "ultra": "outdoors, (desert shrine:1.2), stone idol seen as shadow, sandstone walls, wind-blown sand, pillars, stone steps, dry weeds, low sunlight, long shadows, ochre and rust, ominous ambiance, sand drifts, cracked stone, wind ripples, carved reliefs, dust haze, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7837",
+   "cat": "temple",
+   "name": "Temple aux statues tournées vers une petite porte",
+   "bg": "indoors, (temple hall:1.2), statues facing a small door, stone columns, worn floor, oil lamps, incense, carved walls, dim lamp light, narrow glow, dark gold, uneasy ambiance, depth of field, rich detailed background",
+   "short": "Temple aux statues",
+   "ultra": "indoors, (temple hall:1.2), statues facing a small door, stone columns, worn floor, oil lamps, incense, carved walls, dim lamp light, narrow glow, dark gold, uneasy ambiance, door gap light, candle wax, dust, carved patterns, ash, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7838",
+   "cat": "water",
+   "name": "Temple submergé révélé par la marée basse",
+   "bg": "outdoors, (submerged temple:1.2), half-sunk temple, tidal pools, reflections, stone steps, seaweed, pillars, low tide light, dawn, teal and grey, mysterious ambiance, depth of field, rich detailed background",
+   "short": "Temple submergé révélé",
+   "ultra": "outdoors, (submerged temple:1.2), half-sunk temple, tidal pools, reflections, stone steps, seaweed, pillars, low tide light, dawn, teal and grey, mysterious ambiance, wet stone, barnacles, ripples, mist, shells, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7839",
+   "cat": "water",
+   "name": "Rue inondée au reflet d'une ville ancienne",
+   "bg": "outdoors, (flooded street:1.2), flooded road, reflected old city, lamp posts, building facades, still water, drifting leaves, dusk light, soft glow, blue and amber, dreamy ambiance, depth of field, rich detailed background",
+   "short": "Rue inondée",
+   "ultra": "outdoors, (flooded street:1.2), flooded road, reflected old city, lamp posts, building facades, still water, drifting leaves, dusk light, soft glow, blue and amber, dreamy ambiance, ripples, reflected rooftops, floating debris, wet stone, mist, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7840",
+   "cat": "dream",
+   "name": "Palais enfoui au plafond d'océan",
+   "bg": "indoors, (buried palace:1.2), ceiling reflecting an endless ocean, marble columns, grand hall, stone floor, ornate arches, stairs, blue glow, dim light, deep blue, surreal ambiance, depth of field, rich detailed background",
+   "short": "Palais enfoui",
+   "ultra": "indoors, (buried palace:1.2), ceiling reflecting an endless ocean, marble columns, grand hall, stone floor, ornate arches, stairs, blue glow, dim light, deep blue, surreal ambiance, rippling light, carved details, dust, shimmer, cracked tiles, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7841",
+   "cat": "night",
+   "name": "Rue aux flaques de constellations",
+   "bg": "outdoors, (rainy street:1.2), puddles reflecting constellations, wet pavement, lamp posts, old buildings, empty benches, night, starlight, deep indigo, dreamy ambiance, depth of field, rich detailed background",
+   "short": "Rue aux flaques",
+   "ultra": "outdoors, (rainy street:1.2), puddles reflecting constellations, wet pavement, lamp posts, old buildings, empty benches, night, starlight, deep indigo, dreamy ambiance, moving star reflections, ripples, glints, drizzle, mist, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7842",
+   "cat": "horror",
+   "name": "Couloir d'hôpital aux néons défaillants",
+   "bg": "indoors, (hospital corridor:1.2), flickering fluorescent lights, empty gurneys, peeling walls, tiled floor, closed doors, metal carts, flickering light, greenish glow, sickly green, uneasy ambiance, depth of field, rich detailed background",
+   "short": "Couloir d hôpital",
+   "ultra": "indoors, (hospital corridor:1.2), flickering fluorescent lights, empty gurneys, peeling walls, tiled floor, closed doors, metal carts, flickering light, greenish glow, sickly green, uneasy ambiance, stained tiles, scuffed walls, dust, broken ceiling panel, puddle, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7843",
+   "cat": "horror",
+   "name": "Cantine fermée derrière une vitre blindée",
+   "bg": "indoors, (closed canteen:1.2), armored glass, long tables, metal trays, serving counter, locked shutters, tiled walls, cold fluorescent light, dim glow, grey and green, oppressive ambiance, depth of field, rich detailed background",
+   "short": "Cantine fermée derrière",
+   "ultra": "indoors, (closed canteen:1.2), armored glass, long tables, metal trays, serving counter, locked shutters, tiled walls, cold fluorescent light, dim glow, grey and green, oppressive ambiance, scratched glass, stacked trays, dust, stained floor, steel handles, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7844",
+   "cat": "horror",
+   "name": "Dortoir aux couchettes métalliques",
+   "bg": "indoors, (bare dormitory:1.2), metal bunk beds, bare springs, concrete walls, barred window, bare bulb, tiled floor, dim bulb light, cold shadows, grey, oppressive ambiance, depth of field, rich detailed background",
+   "short": "Dortoir aux couchettes",
+   "ultra": "indoors, (bare dormitory:1.2), metal bunk beds, bare springs, concrete walls, barred window, bare bulb, tiled floor, dim bulb light, cold shadows, grey, oppressive ambiance, rusty frames, peeling paint, stains, chains, dust, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7845",
+   "cat": "horror",
+   "name": "Salle d'interrogatoire au miroir noir",
+   "bg": "indoors, (interrogation room:1.2), chair bolted to floor, black one-way mirror, metal table, concrete walls, hanging lamp, floor drain, harsh lamp light, cone of light, grey and black, tense ambiance, depth of field, rich detailed background",
+   "short": "Salle d interrogatoire",
+   "ultra": "indoors, (interrogation room:1.2), chair bolted to floor, black one-way mirror, metal table, concrete walls, hanging lamp, floor drain, harsh lamp light, cone of light, grey and black, tense ambiance, scratches on table, bolts, dust, water stains, scuffed floor, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7846",
+   "cat": "horror",
+   "name": "Couloir de cellules aux caméras rouillées",
+   "bg": "indoors, (cell block corridor:1.2), rusty cameras, steel cell doors, long corridor, metal grates, concrete floor, pipes, flickering light, red glow, rust and grey, oppressive ambiance, depth of field, rich detailed background",
+   "short": "Couloir de cellules",
+   "ultra": "indoors, (cell block corridor:1.2), rusty cameras, steel cell doors, long corridor, metal grates, concrete floor, pipes, flickering light, red glow, rust and grey, oppressive ambiance, rust streaks, peeling paint, dripping pipe, scratched doors, dust, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7847",
+   "cat": "horror",
+   "name": "Salle de rationnement aux guichets verrouillés",
+   "bg": "indoors, (rationing hall:1.2), locked ticket windows, metal grilles, queue rails, concrete pillars, bare bulbs, worn floor, dim fluorescent light, cold glow, grey-green, bleak ambiance, depth of field, rich detailed background",
+   "short": "Salle de rationnement",
+   "ultra": "indoors, (rationing hall:1.2), locked ticket windows, metal grilles, queue rails, concrete pillars, bare bulbs, worn floor, dim fluorescent light, cold glow, grey-green, bleak ambiance, rust, scratched glass, faded paint, litter, shutters, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7848",
+   "cat": "horror",
+   "name": "Tour de contrôle sur un camp boueux",
+   "bg": "outdoors, (muddy compound:1.2), watchtower, barbed wire, mud ground, fences, floodlights, wooden huts, puddles, overcast light, cold dawn, grey brown, bleak ambiance, depth of field, rich detailed background",
+   "short": "Tour de contrôle",
+   "ultra": "outdoors, (muddy compound:1.2), watchtower, barbed wire, mud ground, fences, floodlights, wooden huts, puddles, overcast light, cold dawn, grey brown, bleak ambiance, mud tracks, wire coils, puddles, rust, fog, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7849",
+   "cat": "horror",
+   "name": "Cellule vitrée face à un jardin inaccessible",
+   "bg": "indoors, (glass cell:1.2), glass walls, bare bench, garden beyond glass, metal door, concrete floor, bright flowers, soft daylight, cold light, pale grey and green, melancholic ambiance, depth of field, rich detailed background",
+   "short": "Cellule vitrée face",
+   "ultra": "indoors, (glass cell:1.2), glass walls, bare bench, garden beyond glass, metal door, concrete floor, bright flowers, soft daylight, cold light, pale grey and green, melancholic ambiance, fingerprint smudges, reflections, potted plants outside, dust, sun patches, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7850",
+   "cat": "horror",
+   "name": "Hangar rempli de cages vides",
+   "bg": "indoors, (large hangar:1.2), empty metal cages, steel beams, concrete floor, hanging chains, high windows, stacked crates, dim light, dusty shafts, rust brown, oppressive ambiance, depth of field, rich detailed background",
+   "short": "Hangar rempli",
+   "ultra": "indoors, (large hangar:1.2), empty metal cages, steel beams, concrete floor, hanging chains, high windows, stacked crates, dim light, dusty shafts, rust brown, oppressive ambiance, rusted latches, straw bits, dust, oil stains, pigeon feathers, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7851",
+   "cat": "horror",
+   "name": "Cour grillagée aux miradors aveugles",
+   "bg": "outdoors, (fenced yard:1.2), chain-link fence, blind watchtowers, barbed wire, concrete ground, floodlight poles, gate, grey light, dusk, cold grey, bleak ambiance, depth of field, rich detailed background",
+   "short": "Cour grillagée",
+   "ultra": "outdoors, (fenced yard:1.2), chain-link fence, blind watchtowers, barbed wire, concrete ground, floodlight poles, gate, grey light, dusk, cold grey, bleak ambiance, rust, wire coils, cracks in concrete, weeds, puddles, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7852",
+   "cat": "horror",
+   "name": "Cour de détention sous projecteurs",
+   "bg": "outdoors, (detention yard:1.2), blinding floodlights, high walls, razor wire, concrete ground, metal gate, watchtower, harsh floodlight, night, white and black, oppressive ambiance, depth of field, rich detailed background",
+   "short": "Cour de détention",
+   "ultra": "outdoors, (detention yard:1.2), blinding floodlights, high walls, razor wire, concrete ground, metal gate, watchtower, harsh floodlight, night, white and black, oppressive ambiance, long shadows, glare, wire coils, cracks, dust haze, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7853",
+   "cat": "horror",
+   "name": "Salle de jugement au fauteuil vide",
+   "bg": "indoors, (empty courtroom:1.2), empty judge's chair, wooden benches, high bench, dock, tall windows, marble floor, cold window light, dim glow, dark wood, tense ambiance, depth of field, rich detailed background",
+   "short": "Salle de jugement",
+   "ultra": "indoors, (empty courtroom:1.2), empty judge's chair, wooden benches, high bench, dock, tall windows, marble floor, cold window light, dim glow, dark wood, tense ambiance, dust in light, scratched wood, heavy curtains, worn rug, cold shadows, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7854",
+   "cat": "horror",
+   "name": "Hall d'hôtel barricadé en dortoir",
+   "bg": "indoors, (barricaded hotel lobby:1.2), boarded doors, stacked furniture, cots, reception desk, chandelier, marble floor, dim light, thin slits of light, faded gold, bleak ambiance, depth of field, rich detailed background",
+   "short": "Hall d hôtel",
+   "ultra": "indoors, (barricaded hotel lobby:1.2), boarded doors, stacked furniture, cots, reception desk, chandelier, marble floor, dim light, thin slits of light, faded gold, bleak ambiance, dust, torn blankets, broken glass, stained carpet, cobwebs, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7855",
+   "cat": "horror",
+   "name": "Réserve de nourriture derrière des grilles",
+   "bg": "indoors, (locked food storage:1.2), metal grilles, shelves, crates, canned goods, padlocks, concrete walls, dim bulb light, cold shadows, grey-green, tense ambiance, depth of field, rich detailed background",
+   "short": "Réserve de nourriture",
+   "ultra": "indoors, (locked food storage:1.2), metal grilles, shelves, crates, canned goods, padlocks, concrete walls, dim bulb light, cold shadows, grey-green, tense ambiance, rust, dust, scratched grilles, stacked cans, stains, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7856",
+   "cat": "horror",
+   "name": "Chapelle de prison, autel derrière barreaux",
+   "bg": "indoors, (abandoned prison chapel:1.2), altar behind bars, wooden pews, stone walls, barred windows, iron gate, faded cross, dim window light, dusty glow, grey and brown, somber ambiance, depth of field, rich detailed background",
+   "short": "Chapelle de prison",
+   "ultra": "indoors, (abandoned prison chapel:1.2), altar behind bars, wooden pews, stone walls, barred windows, iron gate, faded cross, dim window light, dusty glow, grey and brown, somber ambiance, rust, peeling paint, dust, candle stubs, cracked floor, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7857",
+   "cat": "horror",
+   "name": "Chambre sans fenêtre au mobilier fixé",
+   "bg": "indoors, (windowless room:1.2), bolted furniture, dirty vent, bare walls, steel door, bare bulb, worn floor, dim bulb light, cold gloom, dull green, oppressive ambiance, depth of field, rich detailed background",
+   "short": "Chambre sans fenêtre",
+   "ultra": "indoors, (windowless room:1.2), bolted furniture, dirty vent, bare walls, steel door, bare bulb, worn floor, dim bulb light, cold gloom, dull green, oppressive ambiance, grime, water stains, bolts, scuff marks, dust, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7858",
+   "cat": "horror",
+   "name": "Cage de verre suspendue dans un hangar",
+   "bg": "indoors, (industrial hangar:1.2), dirty glass cage, suspended chains, steel beams, concrete floor, pipes, high windows, dim light, dusty beams, grey-green, eerie ambiance, depth of field, rich detailed background",
+   "short": "Cage de verre",
+   "ultra": "indoors, (industrial hangar:1.2), dirty glass cage, suspended chains, steel beams, concrete floor, pipes, high windows, dim light, dusty beams, grey-green, eerie ambiance, smudged glass, rust, oil puddles, dust, cables, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7859",
+   "cat": "horror",
+   "name": "Galerie aux murs capitonnés tachés",
+   "bg": "indoors, (padded gallery:1.2), padded walls, open seams, stains, long corridor, steel door, bare bulbs, dim light, flickering, dirty white, oppressive ambiance, depth of field, rich detailed background",
+   "short": "Galerie aux murs",
+   "ultra": "indoors, (padded gallery:1.2), padded walls, open seams, stains, long corridor, steel door, bare bulbs, dim light, flickering, dirty white, oppressive ambiance, torn stitching, stuffing, grime, stains, dust, depth of field, rich detailed background",
+   "unsafe": "captivity"
+  },
+  {
+   "id": "BG-7860",
+   "cat": "horror",
+   "name": "Hall de miroirs déformants verdâtres",
+   "bg": "indoors, (hall of distorting mirrors:1.2), warped mirrors, greenish reflections, marble floor, tall columns, dim chandeliers, empty hall, dim green light, flickering, sickly green, eerie ambiance, depth of field, rich detailed background",
+   "short": "Hall de miroirs",
+   "ultra": "indoors, (hall of distorting mirrors:1.2), warped mirrors, greenish reflections, marble floor, tall columns, dim chandeliers, empty hall, dim green light, flickering, sickly green, eerie ambiance, bent reflections, smudges, dust, cracked glass, condensation, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7861",
+   "cat": "gothic",
+   "name": "Chambre de miroirs piqués et velours humide",
+   "bg": "indoors, (mirror-lined bedroom:1.2), spotted mirrors, damp velvet, iron bed, heavy curtains, wooden floor, oil lamp, dim lamp light, warm gloom, dark red, decayed ambiance, depth of field, rich detailed background",
+   "short": "Chambre de miroirs",
+   "ultra": "indoors, (mirror-lined bedroom:1.2), spotted mirrors, damp velvet, iron bed, heavy curtains, wooden floor, oil lamp, dim lamp light, warm gloom, dark red, decayed ambiance, mold spots, silvering stains, peeling wallpaper, dust, damp stains, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7862",
+   "cat": "horror",
+   "name": "Galerie aux vitrines fissurées et mannequins",
+   "bg": "indoors, (gallery of display cases:1.2), cracked display cases, disproportionate mannequins, tall pedestals, tiled floor, dim spotlights, spotlight glow, dim light, cold grey, uneasy ambiance, depth of field, rich detailed background",
+   "short": "Galerie aux vitrines",
+   "ultra": "indoors, (gallery of display cases:1.2), cracked display cases, disproportionate mannequins, tall pedestals, tiled floor, dim spotlights, spotlight glow, dim light, cold grey, uneasy ambiance, glass cracks, dust, reflections, scattered pins, fabric scraps, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7863",
+   "cat": "horror",
+   "name": "Hall aux sculptures difformes gluantes",
+   "bg": "indoors, (grotesque sculpture hall:1.2), deformed sculptures, glossy slimy surfaces, stone floor, columns, dim lamps, puddles, dim sickly light, wet gleam, olive green, unsettling ambiance, depth of field, rich detailed background",
+   "short": "Hall aux sculptures",
+   "ultra": "indoors, (grotesque sculpture hall:1.2), deformed sculptures, glossy slimy surfaces, stone floor, columns, dim lamps, puddles, dim sickly light, wet gleam, olive green, unsettling ambiance, slime drips, glossy sheen, puddles, cracks, dust, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7864",
+   "cat": "horror",
+   "name": "Galerie de statues hideuses démesurées",
+   "bg": "indoors, (gallery of grotesque statues:1.2), oversized grotesque statues, marble floor, high ceiling, pedestals, dim spotlights, arches, dim light, cold shadows, stone grey, oppressive ambiance, depth of field, rich detailed background",
+   "short": "Galerie de statues",
+   "ultra": "indoors, (gallery of grotesque statues:1.2), oversized grotesque statues, marble floor, high ceiling, pedestals, dim spotlights, arches, dim light, cold shadows, stone grey, oppressive ambiance, chisel marks, cracks, dust, long shadows, moss, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7865",
+   "cat": "horror",
+   "name": "Salon aux fauteuils déformés et visages écrasés",
+   "bg": "indoors, (distorted salon:1.2), twisted armchairs, sculptures with crushed faces, rug, fireplace, heavy curtains, wooden floor, dim firelight, warm gloom, dark brown, uneasy ambiance, depth of field, rich detailed background",
+   "short": "Salon aux fauteuils",
+   "ultra": "indoors, (distorted salon:1.2), twisted armchairs, sculptures with crushed faces, rug, fireplace, heavy curtains, wooden floor, dim firelight, warm gloom, dark brown, uneasy ambiance, dust, faded rug, cracks, ash, cobwebs, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7866",
+   "cat": "gothic",
+   "name": "Salle de prière aux miroirs vers les bancs",
+   "bg": "indoors, (prayer hall:1.2), mirrors facing pews, wooden benches, candles, stone arches, narrow windows, stone floor, candlelight, dim glow, dark gold, eerie ambiance, depth of field, rich detailed background",
+   "short": "Salle de prière",
+   "ultra": "indoors, (prayer hall:1.2), mirrors facing pews, wooden benches, candles, stone arches, narrow windows, stone floor, candlelight, dim glow, dark gold, eerie ambiance, wax drips, dust, reflections of benches, cracks, shadows, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7867",
+   "cat": "gothic",
+   "name": "Temple aux portraits d'un même visage",
+   "bg": "indoors, (temple hall:1.2), walls covered with identical painted portraits, stone columns, oil lamps, altar, worn floor, dim lamp light, warm shadows, dark red, uneasy ambiance, depth of field, rich detailed background",
+   "short": "Temple aux portraits",
+   "ultra": "indoors, (temple hall:1.2), walls covered with identical painted portraits, stone columns, oil lamps, altar, worn floor, dim lamp light, warm shadows, dark red, uneasy ambiance, peeling paint, soot, dust, frame edges, wax, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7868",
+   "cat": "gothic",
+   "name": "Salle du culte aux masques souriants",
+   "bg": "indoors, (cult hall:1.2), ceiling covered with smiling masks, stone altar, candles, wooden benches, dark drapes, stone floor, candlelight, dim glow, dark red and black, ominous ambiance, depth of field, rich detailed background",
+   "short": "Salle du culte",
+   "ultra": "indoors, (cult hall:1.2), ceiling covered with smiling masks, stone altar, candles, wooden benches, dark drapes, stone floor, candlelight, dim glow, dark red and black, ominous ambiance, hanging strings, wax drips, dust, painted grins, ash, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7869",
+   "cat": "gothic",
+   "name": "Sanctuaire de miroirs couverts, un découvert",
+   "bg": "indoors, (mirror sanctuary:1.2), covered mirrors, one uncovered mirror, stone floor, candles, heavy drapes, narrow altar, candlelight, dim glow, dark violet, eerie ambiance, depth of field, rich detailed background",
+   "short": "Sanctuaire de miroirs",
+   "ultra": "indoors, (mirror sanctuary:1.2), covered mirrors, one uncovered mirror, stone floor, candles, heavy drapes, narrow altar, candlelight, dim glow, dark violet, eerie ambiance, cloth folds, wax drips, dust, glints, thread frays, depth of field, rich detailed background",
+   "unsafe": "figures"
+  },
+  {
+   "id": "BG-7870",
+   "cat": "horror++",
+   "name": "Boucherie abandonnée aux crochets ensanglantés",
+   "bg": "indoors, (abandoned butcher shop:1.2), bloody meat hooks, tiled walls, steel counter, chopping block, scale, cold display, stained floor, dim light, flickering fluorescent, dark red, grim ambiance, depth of field, rich detailed background",
+   "short": "Boucherie abandonnée",
+   "ultra": "indoors, (abandoned butcher shop:1.2), bloody meat hooks, tiled walls, steel counter, chopping block, scale, cold display, stained floor, dim light, flickering fluorescent, dark red, grim ambiance, blood drips, stained tiles, rust, flies, dried splatters, depth of field, rich detailed background",
+   "unsafe": "gore"
+  },
+  {
+   "id": "BG-7871",
+   "cat": "horror++",
+   "name": "Scène de crime sous la pluie",
+   "bg": "outdoors, (crime scene street:1.2), police tape, blood stains, wet pavement, streetlight, evidence markers, alley walls, rainy night, streetlight glow, dark blue and red, grim ambiance, depth of field, rich detailed background",
+   "short": "Scène de crime",
+   "ultra": "outdoors, (crime scene street:1.2), police tape, blood stains, wet pavement, streetlight, evidence markers, alley walls, rainy night, streetlight glow, dark blue and red, grim ambiance, rain streaks, blood splatters, puddles, taped lines, reflections, depth of field, rich detailed background",
+   "unsafe": "gore"
+  },
+  {
+   "id": "BG-7872",
+   "cat": "horror++",
+   "name": "Couloir maculé de sang sous un néon",
+   "bg": "indoors, (blood-stained corridor:1.2), blood smears, flickering neon, stained walls, tiled floor, closed doors, long smears, flickering neon light, cold glow, sickly green and red, tense ambiance, depth of field, rich detailed background",
+   "short": "Couloir maculé",
+   "ultra": "indoors, (blood-stained corridor:1.2), blood smears, flickering neon, stained walls, tiled floor, closed doors, long smears, flickering neon light, cold glow, sickly green and red, tense ambiance, blood drips, smears, stained tiles, dust, cracked paint, depth of field, rich detailed background",
+   "unsafe": "gore"
+  },
+  {
+   "id": "BG-7873",
+   "cat": "horror++",
+   "name": "Salle d'opération aux draps tachés de sang",
+   "bg": "indoors, (abandoned operating room:1.2), blood-stained sheets, surgical lamp, steel table, tiled walls, trolley, cabinets, dim surgical light, cold glow, pale green and red, grim ambiance, depth of field, rich detailed background",
+   "short": "Salle d opération",
+   "ultra": "indoors, (abandoned operating room:1.2), blood-stained sheets, surgical lamp, steel table, tiled walls, trolley, cabinets, dim surgical light, cold glow, pale green and red, grim ambiance, blood splatter, rust, dust, stained tiles, cracked lamp, depth of field, rich detailed background",
+   "unsafe": "gore"
+  },
+  {
+   "id": "BG-7874",
+   "cat": "horror++",
+   "name": "Chambre froide aux carcasses animales",
+   "bg": "indoors, (cold storage room:1.2), hanging animal carcasses, steel hooks, frost, tiled walls, metal rails, drain, cold light, blue glow, pale blue and red, grim ambiance, depth of field, rich detailed background",
+   "short": "Chambre froide",
+   "ultra": "indoors, (cold storage room:1.2), hanging animal carcasses, steel hooks, frost, tiled walls, metal rails, drain, cold light, blue glow, pale blue and red, grim ambiance, frost, blood drips, rails, ice crystals, stains, depth of field, rich detailed background",
+   "unsafe": "gore"
+  },
+  {
+   "id": "BG-7875",
+   "cat": "horror++",
+   "name": "Cave de tueur aux murs éclaboussés",
+   "bg": "indoors, (killer's cellar:1.2), rusty tools, splattered walls, workbench, stone steps, bare bulb, stained floor, dim bulb light, deep shadows, dark red, grim ambiance, depth of field, rich detailed background",
+   "short": "Cave de tueur",
+   "ultra": "indoors, (killer's cellar:1.2), rusty tools, splattered walls, workbench, stone steps, bare bulb, stained floor, dim bulb light, deep shadows, dark red, grim ambiance, blood splatters, rust, cobwebs, stained rags, dust, depth of field, rich detailed background",
+   "unsafe": "gore"
+  },
+  {
+   "id": "BG-7876",
+   "cat": "horror++",
+   "name": "Abattoir désaffecté aux rigoles rouges",
+   "bg": "indoors, (abandoned slaughterhouse:1.2), red gutters, hanging hooks, tiled walls, steel rails, concrete floor, drains, dim light, dusty beams, rust and red, grim ambiance, depth of field, rich detailed background",
+   "short": "Abattoir désaffecté",
+   "ultra": "indoors, (abandoned slaughterhouse:1.2), red gutters, hanging hooks, tiled walls, steel rails, concrete floor, drains, dim light, dusty beams, rust and red, grim ambiance, blood streaks, rust, dried stains, flies, peeling tiles, depth of field, rich detailed background",
+   "unsafe": "gore"
+  },
+  {
+   "id": "BG-7877",
+   "cat": "horror++",
+   "name": "Salle de bains éclaboussée de sang",
+   "bg": "indoors, (blood-splattered bathroom:1.2), torn shower curtain, blood splatters, bathtub, cracked tiles, sink, mirror, flickering light, cold glow, white and red, grim ambiance, depth of field, rich detailed background",
+   "short": "Salle de bains",
+   "ultra": "indoors, (blood-splattered bathroom:1.2), torn shower curtain, blood splatters, bathtub, cracked tiles, sink, mirror, flickering light, cold glow, white and red, grim ambiance, blood drips, stained tiles, broken rings, mold, water stains, depth of field, rich detailed background",
+   "unsafe": "gore"
+  },
+  {
+   "id": "BG-7878",
+   "cat": "horror++",
+   "name": "Ruelle pluvieuse, flaque de sang",
+   "bg": "outdoors, (rainy alley:1.2), pool of blood, lamp post, wet brick walls, dumpsters, puddles, fire escape, rainy night, streetlight glow, dark blue and red, grim ambiance, depth of field, rich detailed background",
+   "short": "Ruelle pluvieuse flaque",
+   "ultra": "outdoors, (rainy alley:1.2), pool of blood, lamp post, wet brick walls, dumpsters, puddles, fire escape, rainy night, streetlight glow, dark blue and red, grim ambiance, rain streaks, blood in puddle, steam, reflections, wet bricks, depth of field, rich detailed background",
+   "unsafe": "gore"
+  },
+  {
+   "id": "BG-7879",
+   "cat": "horror++",
+   "name": "Laboratoire clandestin aux paillasses sanglantes",
+   "bg": "indoors, (clandestine laboratory:1.2), blood-stained benches, glass flasks, steel cabinets, microscopes, hanging lamp, tiled floor, dim lamp light, cold glow, green and red, grim ambiance, depth of field, rich detailed background",
+   "short": "Laboratoire clandestin",
+   "ultra": "indoors, (clandestine laboratory:1.2), blood-stained benches, glass flasks, steel cabinets, microscopes, hanging lamp, tiled floor, dim lamp light, cold glow, green and red, grim ambiance, blood splatters, cracked glass, rust, dust, stained rags, depth of field, rich detailed background",
+   "unsafe": "gore"
   }
  ]
 }

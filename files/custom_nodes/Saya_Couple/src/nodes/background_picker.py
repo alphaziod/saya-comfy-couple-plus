@@ -59,14 +59,18 @@ def load_stock() -> list[dict[str, str]]:
     return _stock_cache["items"]
 
 
-#: Backgrounds kept out of every draw unless ``unsafe`` is on: fairground rides (carousels...) are too close to
-#: childhood to come up at random under a couple scene. They stay in the stock and are drawn only on purpose.
+#: Backgrounds kept out of every draw unless ``unsafe`` is on: the ones marked ``"unsafe": "figures" | "captivity" |
+#: "gore"`` in the stock, and fairground rides (carousels...), too close to childhood to come up at random under a
+#: couple scene. They stay in the stock and are drawn only on purpose.
 UNSAFE_RX = re.compile(r"carousel|carrousel|man[eè]ge|merry-go-round|fairground|amusement park|f[eê]te foraine|parc forain|chevaux de bois", re.I)
 _PLACE_RX = re.compile(r"\(([^():]+):1\.\d\)")
 
 
 def is_unsafe(entry: dict[str, str]) -> bool:
-    """Judged on the name and the main place only: a carousel as a mere object (bottling carousel) does not count."""
+    """A background marked ``unsafe`` in the stock (figures, captivity, gore), or a fairground ride judged on the name
+    and the main place only (a carousel as a mere object, like a bottling carousel, does not count)."""
+    if entry.get("unsafe"):
+        return True
     place = _PLACE_RX.search(entry.get("bg", ""))
     return bool(UNSAFE_RX.search(f"{entry.get('name', '')} {place.group(1) if place else ''}"))
 
@@ -151,7 +155,7 @@ class SayaBackgroundPicker:
             },
             "optional": {
                 "custom": ("STRING", {"default": "", "multiline": True, "tooltip": "free: this text is used as the background."}),
-                "unsafe": ("BOOLEAN", {"default": False, "tooltip": "OFF = fairground rides (carousels...) are never drawn. ON = they can be drawn too."}),
+                "unsafe": ("BOOLEAN", {"default": False, "tooltip": "OFF = unsafe backgrounds (fairground rides, figures, captivity, gore) are never drawn. ON = they can be drawn too."}),
             },
         }
 

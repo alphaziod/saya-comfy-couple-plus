@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.1.3 — 2026-10-08
+
+### Background Picker
+
+- **80 new backgrounds marked `unsafe`** in the stock (`"unsafe": "figures"` 48, `"captivity"` 22, `"gore"` 10): places
+  whose scenery itself carries figures, captivity or gore. Like the fairground rides, they are kept out of random draws
+  unless the `unsafe` switch is on (Picker, Main Prompt, Prompt MAIN FR); the switch tooltips now name all four kinds.
+- Locked seeds keep their background (same redraw rule as 2.1.2). Test `background_picker_unsafe` covers a marked entry.
+
 ## 2.1.2 — 2026-10-08
 
 ### Background Picker

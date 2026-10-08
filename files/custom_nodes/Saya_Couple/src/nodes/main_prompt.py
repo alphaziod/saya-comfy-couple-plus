@@ -70,7 +70,7 @@ class SayaMainPrompt:
             "optional": {
                 "custom_background": ("STRING", {"default": "", "multiline": True, "tooltip": "background = free: this text is the background, as written."}),
                 "extra": ("STRING", {"default": "", "multiline": True, "tooltip": "Appended as written after the tags (never touched)."}),
-                "unsafe_backgrounds": ("BOOLEAN", {"default": False, "tooltip": "OFF = fairground rides (carousels...) are never drawn. ON = they can be drawn too."}),
+                "unsafe_backgrounds": ("BOOLEAN", {"default": False, "tooltip": "OFF = unsafe backgrounds (fairground rides, figures, captivity, gore) are never drawn. ON = they can be drawn too."}),
             },
         }
 
@@ -151,7 +151,7 @@ class SayaMainPromptFR:
             "optional": {
                 "decor_libre": ("STRING", {"default": "", "multiline": True, "tooltip": "decor = libre : ce texte est le décor, tel quel."}),
                 "complement": ("STRING", {"default": "", "multiline": True, "tooltip": "Ajouté tel quel après les tags (jamais modifié)."}),
-                "decors_unsafe": ("BOOLEAN", {"default": False, "tooltip": "OFF = les attractions de fête foraine (manèges...) ne sont jamais tirées. ON = elles peuvent l'être."}),
+                "decors_unsafe": ("BOOLEAN", {"default": False, "tooltip": "OFF = les décors unsafe (fête foraine, figures, captivité, gore) ne sont jamais tirés. ON = ils peuvent l'être."}),
             },
         }
 

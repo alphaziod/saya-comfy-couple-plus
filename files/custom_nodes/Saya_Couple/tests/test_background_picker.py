@@ -83,16 +83,18 @@ def test_background_picker_unsafe():
         stock = [{"id": f"BG-{k:03d}", "cat": "horror", "name": f"lieu {k}", "bg": f"indoors, place {k}", "ultra": f"indoors, place {k}, more"}
                  for k in range(1, 21)]
         stock.append({"id": "BG-900", "cat": "horror", "name": "manege demonte", "bg": "outdoors, (rusted carousel:1.2), fog", "ultra": "outdoors, (rusted carousel:1.2), fog, more"})
+        stock.append({"id": "BG-901", "cat": "horror", "name": "galerie de miroirs", "bg": "indoors, (hall of mirrors:1.2)", "ultra": "indoors, (hall of mirrors:1.2), more", "unsafe": "figures"})
         (tmp / "backgrounds.json").write_text(json.dumps({"backgrounds": stock}))
         bp.STOCK_PATHS, bp.HISTORY_PATH, bp.DATA_DIR = [(tmp / "backgrounds.json",), (tmp / "absent.json",)], tmp / "history.json", tmp
         bp._stock_cache.clear()
         try:
             off = {bp.pick("horror", s)["id"] for s in range(400)}
             on = {bp.pick("horror", s, unsafe=True)["id"] for s in range(400)}
-            c.ok("BG-900" not in off, "unsafe OFF: a carousel is never drawn")
+            c.ok("BG-900" not in off and "BG-901" not in off, "unsafe OFF: a carousel or a background marked unsafe is never drawn")
+            c.ok("BG-901" in on, "unsafe ON: a background marked unsafe can be drawn")
             c.ok("BG-900" in on, "unsafe ON: the carousel can be drawn")
             same = all(bp.pick("horror", s)["id"] == random.Random(s).choice(bp.load_stock())["id"]
-                       for s in range(400) if random.Random(s).choice(bp.load_stock())["id"] != "BG-900")
+                       for s in range(400) if random.Random(s).choice(bp.load_stock())["id"] not in ("BG-900", "BG-901"))
             c.ok(same, "a seed that did not land on a carousel keeps exactly the same background (locked seeds unchanged)")
             node = bp.SayaBackgroundPicker()
             c.ok("unsafe" in node.INPUT_TYPES()["optional"], "unsafe is an optional input (saved workflows keep their widget order)")
