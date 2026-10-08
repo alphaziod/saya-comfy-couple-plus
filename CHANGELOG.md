@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.2.2 — 2026-10-08
+
+### Dual sampling hand-off moved to 27 / 30 (Demo and Full)
+
+- Sampler 1 (ClownsharKSampler, MODEL_1) now runs **27 of 30 steps** instead of 13 of 16; Sampler 2 (`resample`) still
+  finishes the last 3 steps. At 13 / 16 the hand-off happened at sigma 0.369, before small anatomy (glans, its rim,
+  shaft colour) is formed, and the refine pass could not rebuild it: smooth "capped" glans, one-tone beige shaft. At
+  27 / 30 the hand-off is at sigma 0.199, like the earlier SamplerCustomAdvanced dual it replaced, and the detail
+  survives. Measured on solo renders: 13 / 16 against 27 / 30 with both samplers, then 10 + 10 renders at 27 / 30.
+  Cost: about +12 s per image on Sampler 1.
+- In `resample` mode Sampler 2 continues Sampler 1's own sigma schedule: its `steps` / `denoise` widgets are not
+  read when it resumes an unfinished run.
+
 ## 2.2.1 — 2026-10-08
 
 ### Same positive order in every phase

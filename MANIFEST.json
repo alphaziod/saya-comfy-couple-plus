@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "saya_version": "2.2.1",
+ "saya_version": "2.2.2",
  "tested_upstream": "ComfyUI 41db8f4f (v0.34.0+77) - 2.0: stock core, no modification",
  "files": [
   {
@@ -17,7 +17,7 @@
   {
    "path": "CHANGELOG.md",
    "type": "markdown",
-   "sha256": "51d28abe70cd28e5a32e516aac45b907c2bd5d2f9b76d9607092b15e05394e20",
+   "sha256": "4d7b5a8f87f1922dd409a20e100bba5ec8836f47853327889861cd0493f8b3fb",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -39,7 +39,7 @@
   {
    "path": "README.md",
    "type": "markdown",
-   "sha256": "a4a6deb1eda85cbb2e60216918b0083d0f5a3454aac8e969d9f1c857d6e126ac",
+   "sha256": "419c079da10cc25b8a08422658a3314ef073576bb7d4e557072662b8a0755185",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -215,7 +215,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/VERSION.txt",
    "type": "text",
-   "sha256": "fe650098093fad42070e8a2cacfb216a6c416af57bd26dd6ff479fef69f8bc71",
+   "sha256": "91930425f31d5132e78e0ad7195620e435121a2fdf87cf655f8323aa45ae0468",
    "destination": "custom_nodes/Saya_Couple/VERSION.txt",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1782,7 +1782,7 @@
   {
    "path": "tools/build_manifest.py",
    "type": "python",
-   "sha256": "52badc62d3d5a764e8401f303fe33e4100eeae34a62de970eb51289e65c0b7c5",
+   "sha256": "ea9864adae02cd317d7d48ed4c2e983e59cddf97ba86740a0b110d30dd6589a5",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1837,7 +1837,7 @@
   {
    "path": "workflows/Saya_Couple_Demo.json",
    "type": "json",
-   "sha256": "36699037863a5386948121518802cdb2d553071c510ff8d7c7612f536fc4ceaf",
+   "sha256": "efb73becad00b70acfc16b1b099cd597fba297fe6ebc76a2ee7e1885363cae38",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1848,7 +1848,7 @@
   {
    "path": "workflows/Saya_Couple_Demo_api.json",
    "type": "json",
-   "sha256": "a490028d9c3c2eb1f64fd79fa4cf0968d78a92b956d6aa1262137c74235055ee",
+   "sha256": "c469dabc2fc9e2541ce133ed936bf9e4824d19efa2ecb5b700951941cb7e1bb3",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1859,7 +1859,7 @@
   {
    "path": "workflows/Saya_Couple_Full.json",
    "type": "json",
-   "sha256": "415e7b1a3e07b3e58053331ba40ecfc32fbc54a4eea7d62762f3360dae3c2d34",
+   "sha256": "a232d28c5760eb0636f251319a3127439bf4f0c707a5fd60346c5d9c9a1f7bf8",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",

@@ -16,7 +16,7 @@ One switch turns the whole pipeline into **Solo mode** (MAIN + ACTION + P1, one 
 | ![Couple: two characters, one scene](docs/images/demo_example.png) | ![Solo: one character, same scene](docs/images/solo_example.png) |
 | demo workflow, MAIN + P1 + P2 (1.x render) | full workflow, MAIN + ACTION + P1 only (1.x render) |
 
-Current version: **2.2.1** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
+Current version: **2.2.2** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
 RDNA4 16 GB. It is first and foremost **a backup of my own ComfyUI setup**, made public in case it helps someone
 with the same problem. Take what you need.
 
@@ -145,7 +145,7 @@ P2, negative, the Saya split mask and Multi Couple in dynamic ownership, the two
 No phases, no detailers, no upscale. Random seed every run.
 
 The sampling core is **exactly the one of my validated setup** (RES4LYF ClownsharKSampler): MODEL_1 base pass
-16 steps / 13 run / cfg 5 with Epsilon Scaling, CFGZeroStar and DetailBoost, then MODEL_2 refine pass
+30 steps / 27 run / cfg 5 with Epsilon Scaling, CFGZeroStar and DetailBoost, then MODEL_2 refine pass
 3 steps / denoise 0.6 / cfg 2. The gain 0.78 lives in the pack's engine, not in the graph. The prompts
 (`workflows/demo_prompt.json`) follow the 4-field grammar: a dense multicoloured gamer room in MAIN, a seated hug
 in ACTION, two adult characters in P1 / P2. `Saya_Couple_Demo_api.json` is the same graph in API format.
