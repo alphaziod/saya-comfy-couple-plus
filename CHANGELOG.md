@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.2.1 — 2026-10-08
+
+### Same positive order in every phase
+
+- The imprint keeps **QUALITY apart**: *Saya Couple Imprint Pack V2* gains an optional `quality_prompt` input (last),
+  fed by the Main Prompt `prefix`; its `main_prompt` is then the `scene`. Absent = 2.1 imprints, read unchanged.
+- Every phase rebuilt from the imprint (Hires, HiDream, Refine, Detailers, Final Upscale, USDU) reads like Phase 1:
+  Couple MAIN `QUALITY, ACTION, background`, background cells `QUALITY, background`, Solo `QUALITY, ACTION, P1,
+  background` (HiDream Solo keeps its trigger first). Test `quality_imprint_order`.
+- Full workflow wired (`prefix` -> imprint `quality_text`, `scene` -> imprint main); `tools/migrate_workflow_v220.py`
+  gains this step (still idempotent, also on a Full already migrated to 2.2.0).
+- `test_action_imprint` now tests the pack under test, not the copy installed in ComfyUI.
+
 ## 2.2.0 — 2026-10-08
 
 ### Positive order: quality first, background last

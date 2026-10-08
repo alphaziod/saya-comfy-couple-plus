@@ -11,6 +11,9 @@
    `quality` input of SayaMultiCouple, through a new `quality` input of the subgraph holding it.
 3. P1 / P2 text assembly: the anatomy text becomes `string_a` and the identity text `string_b`, so the
    organ is encoded in the same CLIP chunk as the body it belongs to.
+4. Imprint: SayaCoupleImprintPackV2 receives `scene` as its main_prompt and the `prefix` on its new
+   `quality_prompt` input, so every later phase (Hires, HiDream, Refine, Detailers, Upscale) rebuilds
+   QUALITY first and the background last, like Phase 1.
 
 Idempotent: a workflow already migrated is written back unchanged. Every step asserts the shape it expects.
 """
@@ -56,12 +59,54 @@ def migrate(wf):
 
     couple_sg = next(sg for sg in subs if any(n["type"] == "SayaMultiCouple" for n in sg["nodes"]))
     multi = next(n for n in couple_sg["nodes"] if n["type"] == "SayaMultiCouple")
-    if any(i["name"] == "quality" for i in multi["inputs"]):
-        return wf  # 1. and 2. already done
     instance = next(n for n in wf["nodes"] if n["type"] == couple_sg["id"])
+    if not any(i["name"] == "quality" for i in multi["inputs"]):
+        _quality_and_scene(wf, root, links, couple_sg, multi, instance, new_link)
+    _imprint_quality(wf, root, links, couple_sg, instance, new_link)
+    wf["last_link_id"] = max(wf.get("last_link_id", 0), next_id[0])
+    for sg in subs:
+        state = sg.get("state")
+        if isinstance(state, dict) and "lastLinkId" in state:
+            state["lastLinkId"] = max(state["lastLinkId"], next_id[0])
+    return wf
+
+
+def _main_prompt_node(wf):
+    return next(n for n in wf["nodes"] if n["type"] in MAIN_PROMPT_TYPES)
+
+
+def _imprint_quality(wf, root, links, couple_sg, instance, new_link):
+    """4. the imprint stores QUALITY apart and MAIN = scene."""
+    pack = next(n for n in couple_sg["nodes"] if n["type"] == "SayaCoupleImprintPackV2")
+    if any(i["name"] == "quality_prompt" for i in pack["inputs"]):
+        return
+    mp = _main_prompt_node(wf)
+    inner = {l["id"]: l for l in couple_sg["links"]}
+    main_in = next(i for i in pack["inputs"] if i["name"] == "main_prompt")
+    sub_slot = inner[main_in["link"]]["origin_slot"]
+    sub_name = couple_sg["inputs"][sub_slot]["name"]
+    feed = links[next(i["link"] for i in instance["inputs"] if i["name"] == sub_name)]
+    assert feed[1] == mp["id"] and feed[2] == 0, "imprint main_prompt is not fed by main_prompt"
+    feed[2] = SCENE_SLOT
+    mp["outputs"][0]["links"].remove(feed[0])
+    mp["outputs"][SCENE_SLOT]["links"].append(feed[0])
+    li, lo = new_link(), new_link()
+    pack["inputs"].append({"localized_name": "quality_prompt", "name": "quality_prompt", "shape": 7, "type": "STRING", "link": li})
+    last = couple_sg["inputs"][-1]
+    couple_sg["inputs"].append({"id": str(uuid.uuid4()), "name": "quality_text", "type": "STRING", "linkIds": [li],
+                                "localized_name": "quality_text", "pos": [last["pos"][0], last["pos"][1] + 20]})
+    couple_sg["links"].append({"id": li, "origin_id": -10, "origin_slot": len(couple_sg["inputs"]) - 1,
+                               "target_id": pack["id"], "target_slot": len(pack["inputs"]) - 1, "type": "STRING"})
+    instance["inputs"].append({"localized_name": "quality_text", "name": "quality_text", "type": "STRING", "link": lo})
+    mp["outputs"][PREFIX_SLOT]["links"].append(lo)
+    wf["links"].append([lo, mp["id"], PREFIX_SLOT, instance["id"], len(instance["inputs"]) - 1, "STRING"])
+
+
+def _quality_and_scene(wf, root, links, couple_sg, multi, instance, new_link):
+    """1. and 2."""
 
     # 1. MAIN prompt: prefix / scene outputs, Phase 1 MAIN encode reads scene
-    mp = next(n for n in wf["nodes"] if n["type"] in MAIN_PROMPT_TYPES)
+    mp = _main_prompt_node(wf)
     assert len(mp["outputs"]) == 4, f"{mp['type']}: expected the 4 outputs of 2.1, got {len(mp['outputs'])}"
     mp["outputs"] += [{"name": name, "type": "STRING", "links": []} for name in NEW_OUTPUTS[mp["type"]]]
     main_links = [links[lid] for lid in mp["outputs"][0]["links"] or []]
@@ -99,12 +144,6 @@ def migrate(wf):
                     [lt, mp["id"], PREFIX_SLOT, quality["id"], 1, "STRING"],
                     [lo, quality["id"], 0, instance["id"], len(instance["inputs"]) - 1, "CONDITIONING"]]
     wf["last_node_id"] = max(wf.get("last_node_id", 0), quality["id"])
-    wf["last_link_id"] = max(wf.get("last_link_id", 0), next_id[0])
-    for sg in subs:
-        state = sg.get("state")
-        if isinstance(state, dict) and "lastLinkId" in state:
-            state["lastLinkId"] = max(state["lastLinkId"], next_id[0])
-    return wf
 
 
 def main():

@@ -2,7 +2,7 @@
  "id": "868afda2-e3eb-4a97-9431-e8d824175b2e",
  "revision": 32,
  "last_node_id": 100344,
- "last_link_id": 98990,
+ "last_link_id": 98992,
  "nodes": [
   {
    "id": 2678,
@@ -5492,7 +5492,6 @@
      "name": "main_prompt",
      "type": "STRING",
      "links": [
-      97079,
       97127
      ]
     },
@@ -5518,14 +5517,16 @@
      "name": "prefix",
      "type": "STRING",
      "links": [
-      98988
+      98988,
+      98992
      ]
     },
     {
      "name": "scene",
      "type": "STRING",
      "links": [
-      97020
+      97020,
+      97079
      ]
     }
    ],
@@ -7205,6 +7206,12 @@
      "name": "quality",
      "type": "CONDITIONING",
      "link": 98989
+    },
+    {
+     "localized_name": "quality_text",
+     "name": "quality_text",
+     "type": "STRING",
+     "link": 98992
     }
    ],
    "outputs": [
@@ -9567,7 +9574,7 @@
   [
    97079,
    100309,
-   0,
+   5,
    100048,
    6,
    "STRING"
@@ -10899,6 +10906,14 @@
    100048,
    23,
    "CONDITIONING"
+  ],
+  [
+   98992,
+   100309,
+   4,
+   100048,
+   24,
+   "STRING"
   ]
  ],
  "groups": [
@@ -10995,7 +11010,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 2,
@@ -11830,7 +11845,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -14190,7 +14205,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 18,
@@ -15172,7 +15187,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 15,
@@ -15750,7 +15765,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 16,
@@ -16092,6 +16107,19 @@
       "pos": [
        12819.904296875,
        1380
+      ]
+     },
+     {
+      "id": "f714be32-9aae-4e73-af6c-b05d16035b39",
+      "name": "quality_text",
+      "type": "STRING",
+      "linkIds": [
+       98991
+      ],
+      "localized_name": "quality_text",
+      "pos": [
+       12819.904296875,
+       1400
       ]
      }
     ],
@@ -16573,6 +16601,13 @@
          "name": "swap"
         },
         "link": 98078
+       },
+       {
+        "localized_name": "quality_prompt",
+        "name": "quality_prompt",
+        "shape": 7,
+        "type": "STRING",
+        "link": 98991
        }
       ],
       "outputs": [
@@ -17335,6 +17370,14 @@
       "target_id": 100043,
       "target_slot": 24,
       "type": "CONDITIONING"
+     },
+     {
+      "id": 98991,
+      "origin_id": -10,
+      "origin_slot": 24,
+      "target_id": 100044,
+      "target_slot": 17,
+      "type": "STRING"
      }
     ],
     "extra": {}
@@ -17345,7 +17388,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 8,
@@ -18790,7 +18833,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 1,
@@ -19600,7 +19643,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -19871,7 +19914,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 1,
@@ -20681,7 +20724,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 4,
@@ -23015,7 +23058,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 3,
@@ -24188,7 +24231,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 1,
@@ -24906,7 +24949,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 2,
@@ -36916,7 +36959,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 3,
@@ -38818,7 +38861,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 1,
@@ -41365,7 +41408,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -43836,7 +43879,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -44290,7 +44333,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -45107,7 +45150,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -45340,7 +45383,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -46229,7 +46272,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -48942,7 +48985,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -49367,7 +49410,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -49582,7 +49625,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98990,
+     "lastLinkId": 98992,
      "lastRerouteId": 575
     },
     "revision": 1,

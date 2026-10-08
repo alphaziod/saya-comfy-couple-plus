@@ -38,7 +38,7 @@ from typing import Any, Callable
 import torch
 
 from . import conditioning_cache as cache
-from .couple_imprint_v2 import SayaCoupleImprintError, scene_text, validate_imprint_v2
+from .couple_imprint_v2 import SayaCoupleImprintError, scene_text, solo_text as solo_prompt_text, validate_imprint_v2
 from .region_masks import SayaMaskError, apply_ownership_map, region_mask_rect, regions_from_geometry
 
 #: HiDream VAE factor: pixel = latent * 8.
@@ -161,7 +161,10 @@ class SayaCoupleHiDreamReconstruct:
         prompts = couple["prompts"]
         if solo:
             # Solo never reads person_2: one global MAIN + PERSON 1 text.
-            solo_positive = _join_prompt(hidream_trigger or "", scene_text(prompts), prompts["person_1"])
+            if prompts.get("quality"):  # 2.2 imprint: QUALITY, ACTION, PERSON 1, MAIN
+                solo_positive = _join_prompt(hidream_trigger or "", solo_prompt_text(prompts))
+            else:
+                solo_positive = _join_prompt(hidream_trigger or "", scene_text(prompts), prompts["person_1"])
             if not solo_positive:
                 raise SayaCoupleHiDreamReconstructError("MAIN and PERSON_1 are both empty: no Solo text")
             return couple, {"solo": solo_positive, "negative": prompts["negative"]}

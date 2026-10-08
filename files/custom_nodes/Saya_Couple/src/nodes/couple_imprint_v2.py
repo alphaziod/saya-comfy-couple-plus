@@ -144,6 +144,7 @@ def build_prompts(
     negative: str,
     person_2: str | None = None,
     action: str | None = None,
+    quality: str | None = None,
 ) -> dict[str, str]:
     """DATA-ONLY prompts. P2 empty/absent -> key ABSENT; negative "" stays "".
     ACTION (pose / act kept apart from MAIN) empty/absent -> key ABSENT (imprints written before it have none)."""
@@ -158,14 +159,39 @@ def build_prompts(
         prompts["person_2"] = person_2
     if action is not None and _require_text(action, "prompts.action").strip():
         prompts["action"] = action
+    # 2.2: QUALITY (quality tags + LoRA triggers) kept apart from MAIN, which is then the background only.
+    # Empty/absent -> key ABSENT (imprints written before 2.2 have none: MAIN holds prefix + background).
+    if quality is not None and _require_text(quality, "prompts.quality").strip():
+        prompts["quality"] = quality
     return prompts
+
+
+def _join(*parts: str | None) -> str:
+    return ",\n".join(p for p in parts if p and p.strip())
 
 
 def scene_text(prompts: dict[str, str]) -> str:
     """The persons' scene text in a reconstructed phase: MAIN, followed by ACTION when the imprint has one
-    (Phase 1 encodes them apart; the phases rebuilt from the imprint keep both, so the pose is never lost)."""
+    (Phase 1 encodes them apart; the phases rebuilt from the imprint keep both, so the pose is never lost).
+    2.2 imprint with QUALITY: QUALITY, ACTION, MAIN (quality read first, background last, as in Phase 1)."""
     action = prompts.get("action", "")
+    if prompts.get("quality"):
+        return _join(prompts["quality"], action, prompts["main"])
     return f"{prompts['main']},\n{action}" if action.strip() else prompts["main"]
+
+
+def background_text(prompts: dict[str, str]) -> str:
+    """The scene-only MAIN of the background cells: MAIN, or QUALITY, MAIN for a 2.2 imprint (never ACTION)."""
+    return _join(prompts.get("quality"), prompts["main"]) if prompts.get("quality") else prompts["main"]
+
+
+def solo_text(prompts: dict[str, str]) -> str:
+    """Solo positive rebuilt from the imprint: MAIN, ACTION, PERSON 1 (historic) or, for a 2.2 imprint,
+    QUALITY, ACTION, PERSON 1, MAIN (same order as the Phase 1 Solo conditioning)."""
+    if prompts.get("quality"):
+        return _join(prompts["quality"], prompts.get("action", ""), prompts["person_1"], prompts["main"])
+    main_text = scene_text(prompts)
+    return f"{main_text}, {prompts['person_1']}" if prompts["person_1"] else main_text
 
 
 # ---------------------------------------------------------------------------
@@ -693,6 +719,10 @@ class SayaCoupleImprintPackV2:
                 "solo": ("BOOLEAN", {"forceInput": True, "tooltip": "Couple Mode OFF. When connected, Couple with an empty PERSON_2 is refused here instead of in Phase 2."}),
                 "action_prompt": ("STRING", {"default": "", "multiline": True, "forceInput": True,
                                              "tooltip": "ACTION text (pose / act) of Phase 1, kept so the later phases rebuild MAIN + ACTION."}),
+                "quality_prompt": ("STRING", {"default": "", "multiline": True, "forceInput": True,
+                                              "tooltip": "2.2: quality tags + LoRA triggers (Saya Main Prompt 'prefix'). When wired, main_prompt "
+                                                         "is the background only ('scene'), and every later phase reads QUALITY first and "
+                                                         "the background last, like Phase 1."}),
             },
         }
 
@@ -724,6 +754,7 @@ class SayaCoupleImprintPackV2:
         swap: bool = False,
         solo: bool | None = None,
         action_prompt: str | None = None,
+        quality_prompt: str | None = None,
     ) -> tuple[dict[str, Any], str]:
         from ..services.imprint_integrity import pack_discriminant
 
@@ -764,6 +795,7 @@ class SayaCoupleImprintPackV2:
                 person_2=person_2_prompt,
                 negative=negative_prompt,
                 action=action_prompt,
+                quality=quality_prompt,
             ),
             geometry=build_two_region_geometry(
                 orientation=orientation,

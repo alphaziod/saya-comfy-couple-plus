@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "saya_version": "2.2.0",
+ "saya_version": "2.2.1",
  "tested_upstream": "ComfyUI 41db8f4f (v0.34.0+77) - 2.0: stock core, no modification",
  "files": [
   {
@@ -17,7 +17,7 @@
   {
    "path": "CHANGELOG.md",
    "type": "markdown",
-   "sha256": "be18ac99166b12ec7e3e0db3ba7242f0cdf31d2d0a4893724b9df12c18e347f9",
+   "sha256": "51d28abe70cd28e5a32e516aac45b907c2bd5d2f9b76d9607092b15e05394e20",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -39,7 +39,7 @@
   {
    "path": "README.md",
    "type": "markdown",
-   "sha256": "37a4a4da3f0304ac8c607d37f1553ad9aa3421134db67203daaa84d02febc688",
+   "sha256": "a4a6deb1eda85cbb2e60216918b0083d0f5a3454aac8e969d9f1c857d6e126ac",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -215,7 +215,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/VERSION.txt",
    "type": "text",
-   "sha256": "c4a2383a03bdb6739d16a0e24058e4b9c7da4e63d203e0be2f448868cc03c530",
+   "sha256": "fe650098093fad42070e8a2cacfb216a6c416af57bd26dd6ff479fef69f8bc71",
    "destination": "custom_nodes/Saya_Couple/VERSION.txt",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -446,7 +446,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/couple_hidream_reconstruct.py",
    "type": "python",
-   "sha256": "ce80845ced9682d03138c03fb2fbc44caaa24ce77a91b82fcbfdebee819968e6",
+   "sha256": "26a94ca8961362d575fdfcdd52d330222c269d5dd4f84630bcbd15d749fbefcc",
    "destination": "custom_nodes/Saya_Couple/src/nodes/couple_hidream_reconstruct.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -479,7 +479,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/couple_imprint_v2.py",
    "type": "python",
-   "sha256": "f57a9d9e7f80bd7d43efcd7c691cce1766c9ad2babfe4e07c5ebc47c21f9ba54",
+   "sha256": "2de13801ca89eb88c649497cfd085511d1ba9f0f922bd53ecfe3b2ab84568a77",
    "destination": "custom_nodes/Saya_Couple/src/nodes/couple_imprint_v2.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -490,7 +490,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/couple_reconstruct.py",
    "type": "python",
-   "sha256": "12029258779689062dcc63ee1fa5dcb78bdb83572b801aa9102f6c52b8e03a38",
+   "sha256": "472cf84f0e931c96835106844d14a32f352a5d357eb60367d29a4974d5491a3a",
    "destination": "custom_nodes/Saya_Couple/src/nodes/couple_reconstruct.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -952,7 +952,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tests/test_action_imprint.py",
    "type": "python",
-   "sha256": "efbac288c8319185c9d99f0ec78fda52fa13efdd95e444b3a5bdabf8aad5df8e",
+   "sha256": "153fd6ca3521da30e48318df401024f80a5379d238311bcbaa3ee879bdfa1732",
    "destination": "custom_nodes/Saya_Couple/tests/test_action_imprint.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1804,7 +1804,7 @@
   {
    "path": "tools/migrate_workflow_v220.py",
    "type": "python",
-   "sha256": "276a1f1fc2abd0024e4598f924dd906cbd9df2945b52b4af30ff9f82da4a56bb",
+   "sha256": "e277da43be93f099e9b8dfcf56f27a9ca69c6f81e31903e99eb523b5edc1ff3d",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1859,7 +1859,7 @@
   {
    "path": "workflows/Saya_Couple_Full.json",
    "type": "json",
-   "sha256": "34d74c140cb1445f7307aa66ad862a3249c1ad95f7002ab29f65f66c2a4aa202",
+   "sha256": "c54bc60167477057c4d77a04ad8c1019f153272413f8b5e446d954224b0054c4",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",

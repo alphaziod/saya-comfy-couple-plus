@@ -66,6 +66,8 @@ from .couple_imprint_v2 import (
     parse_imprint_json,
     validate_imprint_v2,
     scene_text,
+    background_text,
+    solo_text as solo_prompt_text,
 )
 from .region_masks import SayaMaskError, attention_weights, derive_background_mask, derive_masks, derive_raw_region_masks
 from .saya_attention_couple import SayaAttentionCouplePPM
@@ -892,10 +894,10 @@ class SayaCoupleReconstruct:
         scene_cond = None
         if any(OWNERSHIP_BACKGROUND in row for row in couple.get("ownership_map", {}).get("rows", [])):
             if prompts.get("action", "").strip():
-                key = cache.cache_key(clip_key, prompts["main"])
+                key = cache.cache_key(clip_key, background_text(prompts))
                 scene_cond = cache.load(FAMILY, key)
                 if scene_cond is None:
-                    scene_cond = _encode_text(clip, prompts["main"])
+                    scene_cond = _encode_text(clip, background_text(prompts))
                     cache.save(FAMILY, key, scene_cond)
                     encoded_any = True
             else:
@@ -1001,10 +1003,8 @@ class SayaCoupleReconstruct:
         """
         couple = data["couple_imprint"]
         prompts = couple["prompts"]
-        main_text = scene_text(prompts)
-        person_1_text = prompts["person_1"]
         negative_text = prompts["negative"]
-        solo_text = f"{main_text}, {person_1_text}" if person_1_text else main_text
+        solo_text = solo_prompt_text(prompts)
 
         base_clip = next(entry["identifier"] for entry in hub if entry["role"] == "base_clip")
         clip_key = cache.cache_key(base_clip, cache.clip_lora_fingerprint(clip))
