@@ -9,7 +9,7 @@ import os
 
 PKG = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SKIP_DIRS = {"__pycache__", ".git"}
-SKIP_FILES = {"MANIFEST.json"}
+SKIP_FILES = {"MANIFEST.json", ".git"}  # .git is a file in a git worktree
 UPSTREAM = "ComfyUI 41db8f4f (v0.34.0+77) - 2.0: stock core, no modification"
 
 GPL = "GPL-3.0-or-later"
