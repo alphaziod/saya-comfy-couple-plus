@@ -281,6 +281,10 @@ Le masque dynamique trouve chaque perso en lisant ses **ancres**. Ce sont des ta
 [yeux], [peau + marques], [silhouette + poitrine], [tenue], [état du moment]
 ```
 
+**2.2 : corps et anatomie d'abord.** CLIP encode des blocs de 75 tokens séparément. Mettez le tag de type (`1girl`, `1boy`…), peau,
+morphologie, poitrine et anatomie dans le premier bloc, puis cheveux, yeux et tenue : un organe encodé loin de son corps
+est dessiné comme un membre à part.
+
 **Ce qui change avec la scène mais reste propre à un perso** va à la **fin** de son P1/P2. Ce ne sont pas des ancres d'identité, mais il faut que ça reste dans sa zone :
 - **expression :** `smile`, `blush`, `closed eyes`, `open mouth`, `tears`, `embarrassed` ;
 - **état des vêtements :** `barefoot`, `rolled-up sleeves`, `loose hair`, `hood up`, `wet clothes` ;

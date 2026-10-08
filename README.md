@@ -16,7 +16,7 @@ One switch turns the whole pipeline into **Solo mode** (MAIN + ACTION + P1, one 
 | ![Couple: two characters, one scene](docs/images/demo_example.png) | ![Solo: one character, same scene](docs/images/solo_example.png) |
 | demo workflow, MAIN + P1 + P2 (1.x render) | full workflow, MAIN + ACTION + P1 only (1.x render) |
 
-Current version: **2.1.3** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
+Current version: **2.2.0** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
 RDNA4 16 GB. It is first and foremost **a backup of my own ComfyUI setup**, made public in case it helps someone
 with the same problem. Take what you need.
 
@@ -182,7 +182,8 @@ LoRA Manager, Fearnworks, DaSiWa, JPS); the list with links and licenses is in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). The 6-phase run is validated on my own install, with my models.
 
 **Older saved workflows** load as they are (see [Upgrading from 1.x](#upgrading-from-1x)). If you customised the
-0.2.0 Full workflow, `python3 tools/migrate_workflow_v030.py old.json new.json` still applies the 0.3.0 changes.
+0.2.0 Full workflow, `python3 tools/migrate_workflow_v030.py old.json new.json` still applies the 0.3.0 changes. For a customised 2.1 Full,
+`python3 tools/migrate_workflow_v220.py old.json new.json` wires the 2.2 positive order (quality first, background last).
 
 ## Writing prompts
 
@@ -194,6 +195,10 @@ The 2.0 grammar has four fields and a negative. The short version:
 - **P1 / P2 = one character each**: population tag, body, hair, eyes, outfit, expression. P1 left, P2 right unless
   the ACTION says otherwise.
 - **Negative**: the usual quality negatives.
+
+Since 2.2 the positive is read **quality first, background last**: wire *Saya Main Prompt* `prefix` (encoded apart) to
+*Saya Multi Couple* `quality` and its `scene` to `main` (the shipped workflows do it). Inside P1 / P2, put the body and
+anatomy first: tags are encoded in 75-token chunks, and the organ must share its chunk with the body it belongs to.
 
 The **Saya Main Prompt** node builds MAIN for you: your prefix is copied as written (LoRA triggers and weights
 untouched), a background is drawn from a stock of 8 799 backgrounds in 41 categories (seed locked,

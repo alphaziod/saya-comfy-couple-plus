@@ -1,5 +1,31 @@
 # Changelog
 
+## 2.2.0 — 2026-10-08
+
+### Positive order: quality first, background last
+
+- **Saya Main Prompt** (and the French node) gains two outputs, appended last so saved workflows keep their links:
+  `prefix` (quality tags + LoRA triggers alone) and `scene` (background + tags + extra, no prefix). `main_prompt` is
+  unchanged and still feeds the imprint, so later phases rebuild exactly as before.
+- **Saya Multi Couple** gains an optional `quality` input (last input). Wired, MAIN must be the `scene`: Solo reads
+  `QUALITY ++ ACTION ++ P1 ++ MAIN`, Couple gives MAIN `QUALITY ++ ACTION ++ MAIN` and the background pixels
+  `QUALITY ++ MAIN`; P1 / P2 stay separate contexts. Unwired = 2.1 behaviour, bit-identical. Tests
+  `multi_couple_quality_order`, `multi_couple_solo`, `test_main_prompt`.
+- **Workflows**: Demo and Full wired (QUALITY encode -> `quality`, MAIN encode reads `scene`). In the Full, the P1 / P2
+  assembly now puts the **anatomy text first** (`string_a`) and the identity second, so the organ is encoded in the same
+  CLIP chunk as the body it belongs to. `tools/migrate_workflow_v220.py old.json new.json` applies the same changes to a
+  customised 2.1 Full (idempotent).
+
+### Dynamic ownership anchors
+
+- Vocabulary from a 2 500-character batch: hair (`waves`, `strands`, `tuft`, `chignon`…), face and skin (`lipstick`,
+  `dimples`, `jawline`, `laugh lines`, facial hair…), species parts (`tentacles`, `tusks`, `doll joints`, `implants`,
+  `vines`, `crystals`…), outfit (`armband`, `collar`, `hat`, `jewelry`…), body types (`kitsune`, `dryad`, `gorgon`,
+  `undead`…) and genders (`femboy`, `new-half`, `otoko no ko`, `non-binary`, `intersex`, `transgender`…, hyphen or space).
+- Robust reading: every weight is removed, nested or stacked (`((white eyes:1.2):1.1)` -> `white eyes`), and a `-like`
+  comparison is not the noun (`doll-like` is not a doll).
+- `test_ownership_anchors` now tests the pack under test, not the copy installed in ComfyUI.
+
 ## 2.1.3 — 2026-10-08
 
 ### Background Picker

@@ -8,7 +8,7 @@ P2 = "1girl, adult, small breasts,\nmedium-length messy hair, (chestnut-brown ha
 
 def test_ownership_anchors():
     load_pack()
-    from custom_nodes.Saya_Couple_Upated.src.nodes.ownership_anchors import discriminant_anchors, head_category
+    from saya_couple.src.nodes.ownership_anchors import discriminant_anchors, head_category, phrases
 
     c = Check("ownership_anchors")
     a1, a2 = discriminant_anchors(P1, P2), discriminant_anchors(P2, P1)
@@ -20,7 +20,7 @@ def test_ownership_anchors():
     c.ok(not generic & set(a1 + a2), "no generic or shared phrase")
     c.eq(head_category("obsidian circlet between the horns"), "outfit", "an item placed on a feature is an outfit item")
     c.eq(discriminant_anchors("1girl, adult, smile", "1girl, adult, blush"), [], "nothing identity-bearing: no anchor (static split)")
-    from custom_nodes.Saya_Couple_Upated.src.nodes.ownership_anchors import distinctive_anchor_words
+    from saya_couple.src.nodes.ownership_anchors import distinctive_anchor_words
     p1 = "1girl, deep dark pink hair, small penis, erect penis"
     p2 = "1girl, chestnut-brown hair, faint pink blush, small nipples, medium penis, erect penis"
     d1 = dict(distinctive_anchor_words(p1, p2))
@@ -28,12 +28,12 @@ def test_ownership_anchors():
     c.ok("pink" in d1.get("deep dark pink hair", []), "distinctive: pink kept although the other has pink blush")
     c.eq(dict(distinctive_anchor_words(p2, p1)).get("medium penis"), ["medium"], "distinctive: the other organ's size")
     c.eq(discriminant_anchors(p1, p2), ["deep dark pink hair"], "phrase mode unchanged: no anatomy anchor for a shared organ")
-    from custom_nodes.Saya_Couple_Upated.src.nodes.ownership_anchors import hybrid_anchor_words
+    from saya_couple.src.nodes.ownership_anchors import hybrid_anchor_words
     h1 = dict(hybrid_anchor_words("1girl, long white floppy ears, deep dark pink hair, small penis", "1girl, long swept-back horns, chestnut-brown hair, medium penis"))
     c.eq(h1.get("long white floppy ears"), ["long", "white", "floppy", "ears"], "hybrid: own noun (ears vs horns) keeps the whole phrase")
     c.eq(h1.get("deep dark pink hair"), ["deep", "dark", "pink"], "hybrid: shared noun hair dropped")
     c.eq(h1.get("small penis"), ["small"], "hybrid: shared organ keeps its size only")
-    from custom_nodes.Saya_Couple_Upated.src.nodes.ownership_anchors import phrase_anatomy_anchors
+    from saya_couple.src.nodes.ownership_anchors import phrase_anatomy_anchors
     pa_1 = "1girl, long white floppy ears, deep dark pink hair, small penis, erect penis"
     pa_2 = "1girl, long swept-back horns, chestnut-brown hair, medium penis, erect penis"
     c.eq(phrase_anatomy_anchors(pa_1, pa_2), discriminant_anchors(pa_1, pa_2) + ["small penis"], "phrase_anatomy: phrase anchors unchanged + whole distinct anatomy phrase")
@@ -61,6 +61,19 @@ def test_ownership_anchors():
          "one anchor per organ")
     c.eq(phrase_anatomy_anchors("1girl, pink hair, thick thighs, wide hips, red lips, spread legs, hands on own hips", "1girl, blue hair, slim legs, narrow waist"),
          ["pink hair", "thick thighs", "wide hips", "red lips"], "body shape and details: one anchor per part, poses ignored")
+    # Pack 2500 audit (2026-10-08): nested / stacked weights, "-like" comparisons, gender spellings, new vocabulary
+    c.eq(phrases("((white eyes:1.2):1.1), (muted crimson eyes:1.2 :1.3:1.2)"), ["white eyes", "muted crimson eyes"],
+         "every weight removed, nested or stacked")
+    c.eq(head_category("doll-like cold beauty"), None, "'doll-like' is a comparison, not a doll body type")
+    c.eq(head_category("new-half"), "body", "new-half = newhalf (gender tag with a hyphen)")
+    c.eq(head_category("fem boy"), "body", "fem boy = femboy")
+    c.eq(head_category("otoko no ko"), "body", "otoko no ko = otokonoko")
+    c.eq([head_category(p) for p in ("honey-blonde waves", "stubble", "red lipstick", "doll joints", "silver hairclip", "hourglass figure")],
+         ["hair", "skin", "skin", "species", "outfit", "parts"], "pack vocabulary: waves, facial hair, lipstick, doll joints, hairclip, figure")
+    c.eq(phrase_anatomy_anchors("1boy, femboy, pink hair, small penis", "1girl, blue hair, pussy"), ["small penis", "pink hair", "1boy", "femboy"],
+         "femboy vs girl: organ, hair, then body / gender tags")
+    c.eq(phrase_anatomy_anchors("1boy, adult man, black hair, stubble, large penis", "1girl, adult woman, blonde hair, pussy"),
+         ["large penis", "black hair", "stubble", "1boy", "adult man"], "man vs woman: organ, hair, facial hair, gender")
     return c.report()
 
 

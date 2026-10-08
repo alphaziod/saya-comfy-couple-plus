@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "saya_version": "2.1.3",
+ "saya_version": "2.2.0",
  "tested_upstream": "ComfyUI 41db8f4f (v0.34.0+77) - 2.0: stock core, no modification",
  "files": [
   {
@@ -17,7 +17,7 @@
   {
    "path": "CHANGELOG.md",
    "type": "markdown",
-   "sha256": "50d156b59a74d91e98664d7690f28397399b85fa748a4da1bbe230d0fcecf467",
+   "sha256": "be18ac99166b12ec7e3e0db3ba7242f0cdf31d2d0a4893724b9df12c18e347f9",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -39,7 +39,7 @@
   {
    "path": "README.md",
    "type": "markdown",
-   "sha256": "a43c096a18c5b08e1c1964d75e1242503337a05537b09934644afedc19fc5672",
+   "sha256": "37a4a4da3f0304ac8c607d37f1553ad9aa3421134db67203daaa84d02febc688",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -127,7 +127,7 @@
   {
    "path": "docs/PROMPTS_GUIDE_EN.md",
    "type": "markdown",
-   "sha256": "b815e70512ea98bd9a5c7e651b50eb0708608e7bd230b82a81fb71ccc2421343",
+   "sha256": "a73b41abb5bc42bd06fc82b5efe986283a66d32c47d017c4955a9c4989175861",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -138,7 +138,7 @@
   {
    "path": "docs/PROMPTS_GUIDE_FR.md",
    "type": "markdown",
-   "sha256": "3802365ceb7b15c7323a03d8771b0dffc8456e214b4c11179909fd0060277fd5",
+   "sha256": "a5ed53baf9e7cf061d1538d8ab68cd13864a20d8ffcc5be72c6f74f7f27881a4",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -215,7 +215,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/VERSION.txt",
    "type": "text",
-   "sha256": "eb01a4e8e8922406f15a22cadc3fae28d4f513afe11b4734788eb2ea73cf034e",
+   "sha256": "c4a2383a03bdb6739d16a0e24058e4b9c7da4e63d203e0be2f448868cc03c530",
    "destination": "custom_nodes/Saya_Couple/VERSION.txt",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -611,7 +611,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/main_prompt.py",
    "type": "python",
-   "sha256": "72c4b25ac5e0698b6c862b34f481710c014d2280a47d57c4520374ea82e43503",
+   "sha256": "ddda4a96b650cfa67d8d92db1ee9269ac44dabfc06fcdb48a686ffd00d8b1643",
    "destination": "custom_nodes/Saya_Couple/src/nodes/main_prompt.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -633,7 +633,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/ownership_anchors.py",
    "type": "python",
-   "sha256": "7ff45da9ed9ae4c6c235f7e56b3de41a8cde111cbfde59615939e17e892d643b",
+   "sha256": "91b4bdfdd58b06c04f2333a7a8b1592bfc0235f8e2ac62362f3c91fdca6626ed",
    "destination": "custom_nodes/Saya_Couple/src/nodes/ownership_anchors.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -710,7 +710,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/saya_multi_couple.py",
    "type": "python",
-   "sha256": "701442d0b0f480a15115d98f5bb1b7325eb630a73f6a616a2f04238ad4437e29",
+   "sha256": "bf7b952b5b283f3a94e3c6e6fe7009541cc6439a92a22f802caa5ed1afbd9b78",
    "destination": "custom_nodes/Saya_Couple/src/nodes/saya_multi_couple.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1183,7 +1183,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tests/test_main_prompt.py",
    "type": "python",
-   "sha256": "07e9f01d6d80d786f2dc79d8d685e49fbc9cdf412ac244bf0e02883bb96fbb51",
+   "sha256": "f0f9ff25d727ca4eb5d1f78c36f3fae2819affffca790307ec0003efc0969934",
    "destination": "custom_nodes/Saya_Couple/tests/test_main_prompt.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1194,7 +1194,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tests/test_multi_couple.py",
    "type": "python",
-   "sha256": "243f8caba1311897fe8b856cae6a314781f3d46f9126e5b7e825c3bfa0d5e75d",
+   "sha256": "bc438e5021a932b72df23981f0ad8adb39e548801e2ccd48ee8999b22dcb6530",
    "destination": "custom_nodes/Saya_Couple/tests/test_multi_couple.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1238,7 +1238,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/tests/test_ownership_anchors.py",
    "type": "python",
-   "sha256": "fce3e3db1088c24094d721cd252fbb23003b8bc37b771f88de55227916c3a7b3",
+   "sha256": "bb148fdc8eecc4737d66213bb4034b91e7d5e40bfc3df85ddac8823823a65c5c",
    "destination": "custom_nodes/Saya_Couple/tests/test_ownership_anchors.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1760,7 +1760,7 @@
   {
    "path": "tools/build_demo_workflow.py",
    "type": "python",
-   "sha256": "59be8c45cfea8f65fe2a4196abefee924efdb20ec7afd441d836c3f8aed98118",
+   "sha256": "8b8b385ddd56a03691285d5327f15decfd36c48a7abb004a6da54e0411ec1558",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1802,6 +1802,17 @@
    "description": "installer / release tooling"
   },
   {
+   "path": "tools/migrate_workflow_v220.py",
+   "type": "python",
+   "sha256": "276a1f1fc2abd0024e4598f924dd906cbd9df2945b52b4af30ff9f82da4a56bb",
+   "destination": null,
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": false,
+   "component": "installer",
+   "description": "installer / release tooling"
+  },
+  {
    "path": "tools/scan_history.py",
    "type": "python",
    "sha256": "f5d505f6fa9daecc524b08bc63add6fb521b5e4794bcdbc4c22e19d546c25d89",
@@ -1826,7 +1837,7 @@
   {
    "path": "workflows/Saya_Couple_Demo.json",
    "type": "json",
-   "sha256": "d882ec40499d3234b1120a1ef7fff98e1c05e46973ffd8902a45f984239b0a3a",
+   "sha256": "36699037863a5386948121518802cdb2d553071c510ff8d7c7612f536fc4ceaf",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1837,7 +1848,7 @@
   {
    "path": "workflows/Saya_Couple_Demo_api.json",
    "type": "json",
-   "sha256": "443a63810f74338924f0e7ccb90323c8cbf66aae111f0c923e24f7333e9eefb0",
+   "sha256": "a490028d9c3c2eb1f64fd79fa4cf0968d78a92b956d6aa1262137c74235055ee",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1848,7 +1859,7 @@
   {
    "path": "workflows/Saya_Couple_Full.json",
    "type": "json",
-   "sha256": "5a60dc332fe5e087079e1438c7763e1f8cceeac441a8b5386afdde407e0491c6",
+   "sha256": "34d74c140cb1445f7307aa66ad862a3249c1ad95f7002ab29f65f66c2a4aa202",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",

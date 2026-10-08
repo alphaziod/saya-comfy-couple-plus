@@ -35,7 +35,7 @@
   "inputs": {
    "text": [
     "5",
-    0
+    5
    ],
    "clip": [
     "3",
@@ -163,7 +163,11 @@
    "p2_anchors": "",
    "p1_text": "adult woman, medium-length layered dark ash-brown hair, visible red streaks, pale skin, deep red eyes, calm detached expression, black t-shirt, jeans, casual clothes",
    "p2_text": "adult woman, medium-short deep dark pink hair, fluffy messy hair, side bangs, white eyes, black dot pupils, long white floppy rabbit ears, fluffy white rabbit tail, timid expression, oversized hoodie, casual clothes",
-   "person_anchor": "woman"
+   "person_anchor": "woman",
+   "quality": [
+    "26",
+    0
+   ]
   }
  },
  "12": {
@@ -305,6 +309,19 @@
     0
    ],
    "filename_prefix": "SayaCouple/demo"
+  }
+ },
+ "26": {
+  "class_type": "CLIPTextEncode",
+  "inputs": {
+   "clip": [
+    "3",
+    1
+   ],
+   "text": [
+    "5",
+    4
+   ]
   }
  }
 }

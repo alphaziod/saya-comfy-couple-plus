@@ -1,8 +1,8 @@
 {
  "id": "868afda2-e3eb-4a97-9431-e8d824175b2e",
  "revision": 32,
- "last_node_id": 100343,
- "last_link_id": 98986,
+ "last_node_id": 100344,
+ "last_link_id": 98990,
  "nodes": [
   {
    "id": 2678,
@@ -84,7 +84,8 @@
       97016,
       97017,
       97074,
-      98846
+      98846,
+      98987
      ]
     }
    ],
@@ -853,7 +854,7 @@
      ]
     }
    ],
-   "title": "CLIP · Main / Background",
+   "title": "CLIP · Main / Background only (read last)",
    "properties": {
     "cnr_id": "comfy-core",
     "ver": "0.34.0",
@@ -5491,7 +5492,6 @@
      "name": "main_prompt",
      "type": "STRING",
      "links": [
-      97020,
       97079,
       97127
      ]
@@ -5513,6 +5513,20 @@
      "name": "info",
      "type": "STRING",
      "links": []
+    },
+    {
+     "name": "prefix",
+     "type": "STRING",
+     "links": [
+      98988
+     ]
+    },
+    {
+     "name": "scene",
+     "type": "STRING",
+     "links": [
+      97020
+     ]
     }
    ],
    "title": "Prompt · MAIN (prefix + background + tags)",
@@ -7185,6 +7199,12 @@
      "shape": 7,
      "type": "STRING",
      "link": 98837
+    },
+    {
+     "localized_name": "quality",
+     "name": "quality",
+     "type": "CONDITIONING",
+     "link": 98989
     }
    ],
    "outputs": [
@@ -9141,6 +9161,62 @@
    "widgets_values": [
     "# SELECT YOUR MODELS, THEN CLICK GENERATE\n\nThis is the complete 6-phase Saya Couple pipeline (sampling, hires / USDU, HiDream refine, pre-detail, detailers, final upscale & naturalize). No model is included: pick your SDXL / Illustrious checkpoints, VAEs, the HiDream models, the upscale model and one detector model per **Detailer 1-13** slot you use (bypass the others with their toggles).\n\nPrompts follow the 4-field grammar (docs/PROMPTS_GUIDE_EN.md): MAIN = background only (the *Prompt · MAIN* node: prefix + a background from the stock or your own text), ACTION = what the two characters do, P1 / P2 = their appearance. Phase 1 reads each pixel's owner from the model's own attention (dynamic ownership) and hands that map to every later pass.\n\nNeeds Saya Couple 2.0 (`./saya install`, no ComfyUI core modification) and the custom nodes listed in the README (section *Full workflow*)."
    ]
+  },
+  {
+   "id": 100344,
+   "type": "CLIPTextEncode",
+   "pos": [
+    7252,
+    692
+   ],
+   "size": [
+    462,
+    98
+   ],
+   "flags": {
+    "pinned": false
+   },
+   "order": 76,
+   "mode": 0,
+   "inputs": [
+    {
+     "localized_name": "clip",
+     "name": "clip",
+     "type": "CLIP",
+     "link": 98987
+    },
+    {
+     "localized_name": "text",
+     "name": "text",
+     "type": "STRING",
+     "widget": {
+      "name": "text"
+     },
+     "link": 98988
+    }
+   ],
+   "outputs": [
+    {
+     "localized_name": "CONDITIONNEMENT",
+     "name": "CONDITIONING",
+     "type": "CONDITIONING",
+     "slot_index": 0,
+     "links": [
+      98989
+     ]
+    }
+   ],
+   "title": "CLIP · Quality + LoRA triggers (read first)",
+   "properties": {
+    "cnr_id": "comfy-core",
+    "ver": "0.34.0",
+    "Node name for S&R": "CLIPTextEncode"
+   },
+   "widgets_values": [
+    ""
+   ],
+   "color": "#302d47",
+   "bgcolor": "#47415f"
   }
  ],
  "links": [
@@ -9403,7 +9479,7 @@
   [
    97020,
    100309,
-   0,
+   5,
    100020,
    1,
    "STRING"
@@ -10799,6 +10875,30 @@
    100342,
    6,
    "STRING"
+  ],
+  [
+   98987,
+   2679,
+   0,
+   100344,
+   0,
+   "CLIP"
+  ],
+  [
+   98988,
+   100309,
+   4,
+   100344,
+   1,
+   "STRING"
+  ],
+  [
+   98989,
+   100344,
+   0,
+   100048,
+   23,
+   "CONDITIONING"
   ]
  ],
  "groups": [
@@ -10895,7 +10995,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 2,
@@ -11730,7 +11830,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -14090,7 +14190,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 18,
@@ -15072,7 +15172,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 15,
@@ -15650,7 +15750,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 16,
@@ -15979,6 +16079,19 @@
       "pos": [
        12819.904296875,
        1360
+      ]
+     },
+     {
+      "id": "90df0df9-f2e2-44a7-8452-d6cb39b22ab3",
+      "name": "quality",
+      "type": "CONDITIONING",
+      "linkIds": [
+       98990
+      ],
+      "localized_name": "quality",
+      "pos": [
+       12819.904296875,
+       1380
       ]
      }
     ],
@@ -16757,6 +16870,13 @@
          "name": "person_anchor"
         },
         "link": null
+       },
+       {
+        "localized_name": "quality",
+        "name": "quality",
+        "shape": 7,
+        "type": "CONDITIONING",
+        "link": 98990
        }
       ],
       "outputs": [
@@ -17207,6 +17327,14 @@
       "target_id": -20,
       "target_slot": 4,
       "type": "SAYA_COUPLE_RECIPE"
+     },
+     {
+      "id": 98990,
+      "origin_id": -10,
+      "origin_slot": 23,
+      "target_id": 100043,
+      "target_slot": 24,
+      "type": "CONDITIONING"
      }
     ],
     "extra": {}
@@ -17217,7 +17345,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 8,
@@ -18662,7 +18790,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 1,
@@ -19472,7 +19600,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -19743,7 +19871,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 1,
@@ -20553,7 +20681,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 4,
@@ -22887,7 +23015,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 3,
@@ -24060,7 +24188,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 1,
@@ -24778,7 +24906,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 2,
@@ -36788,7 +36916,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 3,
@@ -38690,7 +38818,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 1,
@@ -41237,7 +41365,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -43708,7 +43836,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -44162,7 +44290,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -44979,7 +45107,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -45212,7 +45340,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -46101,7 +46229,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -48814,7 +48942,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -48985,7 +49113,7 @@
         "widget": {
          "name": "string_a"
         },
-        "link": 98826
+        "link": 98827
        },
        {
         "localized_name": "string_b",
@@ -48994,7 +49122,7 @@
         "widget": {
          "name": "string_b"
         },
-        "link": 98827
+        "link": 98826
        },
        {
         "localized_name": "délimiteur",
@@ -49016,7 +49144,7 @@
         ]
        }
       ],
-      "title": "P1 · identity + anatomy",
+      "title": "P1 · anatomy + identity",
       "properties": {
        "cnr_id": "comfy-core",
        "ver": "0.34.0",
@@ -49054,7 +49182,7 @@
         "widget": {
          "name": "string_a"
         },
-        "link": 98828
+        "link": 98829
        },
        {
         "localized_name": "string_b",
@@ -49063,7 +49191,7 @@
         "widget": {
          "name": "string_b"
         },
-        "link": 98829
+        "link": 98828
        },
        {
         "localized_name": "délimiteur",
@@ -49085,7 +49213,7 @@
         ]
        }
       ],
-      "title": "P2 · identity + anatomy",
+      "title": "P2 · anatomy + identity",
       "properties": {
        "cnr_id": "comfy-core",
        "ver": "0.34.0",
@@ -49163,7 +49291,7 @@
       "origin_id": -10,
       "origin_slot": 0,
       "target_id": 100303,
-      "target_slot": 0,
+      "target_slot": 1,
       "type": "STRING"
      },
      {
@@ -49171,7 +49299,7 @@
       "origin_id": -10,
       "origin_slot": 1,
       "target_id": 100303,
-      "target_slot": 1,
+      "target_slot": 0,
       "type": "STRING"
      },
      {
@@ -49179,7 +49307,7 @@
       "origin_id": -10,
       "origin_slot": 2,
       "target_id": 100304,
-      "target_slot": 0,
+      "target_slot": 1,
       "type": "STRING"
      },
      {
@@ -49187,7 +49315,7 @@
       "origin_id": -10,
       "origin_slot": 3,
       "target_id": 100304,
-      "target_slot": 1,
+      "target_slot": 0,
       "type": "STRING"
      },
      {
@@ -49239,7 +49367,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 0,
@@ -49454,7 +49582,7 @@
     "state": {
      "lastGroupId": 3304,
      "lastNodeId": 100342,
-     "lastLinkId": 98986,
+     "lastLinkId": 98990,
      "lastRerouteId": 575
     },
     "revision": 1,

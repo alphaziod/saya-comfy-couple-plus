@@ -18,7 +18,7 @@ MAX_ANCHORS = 3
 
 CATEGORIES = (
     ("species", {"horn", "horns", "ear", "ears", "tail", "tails", "wing", "wings", "halo", "antler", "antlers", "fang", "fangs",
-                 "antennae", "fins"}),
+                 "antennae", "fins", "tentacles", "tusks", "claws", "paws", "hooves", "feathers", "gills", "stinger", "mane", "joints", "implants", "plating", "core", "limb", "prosthetic", "vines", "leaves", "moss", "crystals", "petals", "stitches", "gears"}),
     # Anatomy only one of the two persons has (the noun itself, see EXCLUSIVE_NOUN): anchors the organ to its
     # owner wherever it goes. Two persons with the same organ ("pale penis" / "medium penis") give no anchor:
     # the noun would light both organs.
@@ -28,16 +28,16 @@ CATEGORIES = (
     ("hair", {"hair", "streaks", "streak", "bangs", "locks", "ponytail", "twintails", "braid", "braids", "bob", "pixie", "curls",
               "forelock", "bun", "buns", "afro", "mohawk", "dreadlocks", "undercut", "mullet", "cut", "sidelocks", "sidelock", "ahoge",
               "drills", "drill", "ringlets", "updo", "hairdo", "topknot", "cornrows", "quiff", "pompadour", "flattop", "sidecut",
-              "intakes", "bald"}),
+              "intakes", "bald", "waves", "strands", "tuft", "chignon", "tresses", "fringe", "highlights", "pigtails", "plait", "plaits"}),
     ("eyes", {"eye", "eyes", "pupils", "irises", "iris", "sclera", "eyelashes", "eyebrows", "heterochromia", "eyeliner", "eyeshadow",
-              "tsurime", "tareme"}),
+              "tsurime", "tareme", "lashes", "brows", "monocle", "eyepatch"}),
     ("skin", {"skin", "skinned", "tan", "tanlines", "freckles", "mole", "birthmark", "scar", "scars", "tattoo", "tattoos", "markings",
-              "mark", "scales", "fur"}),
+              "mark", "scales", "fur", "marks", "spots", "patterns", "patches", "runes", "texture", "lipstick", "makeup", "blush", "dimples", "cheekbones", "jawline", "chin", "nose", "lines", "smudge", "stains", "smears", "bruises", "veining", "beard", "stubble", "mustache", "moustache", "sideburns", "goatee"}),
     ("outfit", {"sweater", "cardigan", "coat", "cape", "cloak", "dress", "gown", "robe", "robes", "armor", "armour", "helm",
                 "helmet", "gauntlet", "gauntlets", "gloves", "socks", "stockings", "scarf", "choker", "harness", "jacket",
                 "shirt", "skirt", "kimono", "yukata", "hoodie", "veil", "glasses", "goggles", "earrings", "necklace",
                 "bracelet", "ribbon", "bow", "mask", "circlet", "crown", "satchel", "bag", "boots", "sandals", "bodice", "fan",
-                "hairpin", "hairpins", "plume"}),
+                "hairpin", "hairpins", "plume", "armband", "wristband", "hairclip", "collar", "belt", "hat", "jewelry", "chains", "anklets", "anklet", "rings", "ring", "headphones", "eyewear", "bodysuit", "suit", "uniform", "accessories", "pen", "pencil", "straw", "flowers", "flower", "snowflakes", "headband", "tiara", "garter", "bandages", "earpiece"}),
 )
 # Body anchors, added after the head anchors in phrase_anatomy mode (never picked as one of the MAX_ANCHORS head
 # anchors): the chest and the body type / population (Danbooru: futanari, 1boy, otoko no ko, furry, cat girl,
@@ -50,13 +50,13 @@ BODY_CATEGORIES = (
               "androgynous", "mature", "milf", "gyaru", "furry", "anthro", "kemonomimi", "nekomimi", "catgirl", "catboy", "foxgirl",
               "wolfgirl", "doggirl", "bunnygirl", "elf", "dwarf", "fairy", "witch", "goddess", "android", "robot", "cyborg",
               "vampire", "succubus", "angel", "demon", "demoness", "devil", "oni", "monster", "dragon", "lamia", "harpy", "mermaid",
-              "centaur", "slime", "orc", "goblin", "giant", "ghost", "zombie"}),
+              "centaur", "slime", "orc", "goblin", "giant", "ghost", "zombie", "kitsune", "dryad", "undead", "yokai", "gorgon", "spirit", "nymph", "nereid", "golem", "gargoyle", "sphinx", "djinn", "imp", "valkyrie", "seraph", "alien", "ghoul", "doll", "automaton", "statue", "minotaur", "manticore", "nekomata", "masculine", "feminine", "intersex", "hermaphrodite", "nonbinary", "transgender", "genderless", "agender", "bishounen", "otokonoko", "josou", "reverse", "bunny", "rabbit", "fox", "wolf", "cat", "cow", "cheetah", "bat", "dragoness"}),
     # Body shape and small body details (Danbooru: thick_thighs, wide_hips, narrow_waist, abs, huge_ass, red_lips,
     # sharp_teeth, black_nails, navel_piercing, muscular, plump, curvy, petite...): one anchor per part.
     ("parts", {"thighs", "hips", "waist", "abs", "navel", "belly", "ass", "legs", "arms", "shoulders", "collarbone", "armpits",
                "ribs", "feet", "hands", "nails", "toenails", "lips", "teeth", "tongue", "piercing", "veins", "build", "physique",
                "muscular", "toned", "plump", "curvy", "chubby", "skinny", "slim", "slender", "petite", "athletic", "voluptuous",
-               "stocky", "lanky", "shortstack", "giantess"}),
+               "stocky", "lanky", "shortstack", "giantess", "figure", "tall", "nail", "polish", "posture"}),
 )
 CATEGORY_OF = {noun: name for name, nouns in CATEGORIES + BODY_CATEGORIES for noun in nouns}
 CATEGORIES_BY_NAME = dict(CATEGORIES + BODY_CATEGORIES)
@@ -81,7 +81,8 @@ def phrases(text: str) -> list[str]:
     out = []
     for raw in re.split(r"[,\n]", text):
         phrase = re.sub(r"[()\[\]{}]", "", raw)
-        phrase = re.sub(r":\s*-?[\d.]+\s*$", "", phrase).strip().lower()
+        # every weight, also nested or stacked ones ("(white eyes:1.2):1.1", "eyes:1.2 :1.3:1.2")
+        phrase = re.sub(r"\s*:\s*-?[\d.]+", "", phrase).strip().lower()
         if phrase:
             out.append(phrase)
     return out
@@ -95,13 +96,21 @@ SYNONYM = {"flacid": "flaccid", "limp": "flaccid", "hard": "erect", "gape": "gap
 
 
 def words(text: str) -> list[str]:
-    return [SYNONYM.get(w, w) for w in re.findall(r"[a-z]+", text.lower())]
+    # "doll-like", "cat-like": a comparison, not the noun itself (the succubus is not a doll)
+    text = re.sub(r"[a-z]+-like\b", " ", text.lower())
+    # gender tags written with a hyphen or a space: one word, as Danbooru tags them
+    text = re.sub(r"\bnew[- ]half\b", "newhalf", text)
+    text = re.sub(r"\bfem[- ]boy\b", "femboy", text)
+    text = re.sub(r"\botoko[- ]no[- ]ko\b", "otokonoko", text)
+    text = re.sub(r"\bnon[- ]binary\b", "nonbinary", text)
+    text = re.sub(r"\bdick[- ]girl\b", "dickgirl", text)
+    return [SYNONYM.get(w, w) for w in re.findall(r"[a-z]+", text)]
 
 
 def head_segment(phrase: str) -> str:
     """The phrase up to its first preposition or participle."""
     for match in re.finditer(r"[a-z]+", phrase):
-        if match.group() in HEAD_END:
+        if match.group() in HEAD_END and not phrase[:match.start()].endswith("-"):
             return phrase[:match.start()].strip()
     return phrase
 

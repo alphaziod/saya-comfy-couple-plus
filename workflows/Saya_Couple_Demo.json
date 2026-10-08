@@ -1,8 +1,8 @@
 {
  "id": "saya-couple-demo",
  "revision": 0,
- "last_node_id": 25,
- "last_link_id": 40,
+ "last_node_id": 26,
+ "last_link_id": 43,
  "nodes": [
   {
    "id": 1,
@@ -95,7 +95,8 @@
       3,
       4,
       5,
-      11
+      11,
+      41
      ]
     },
     {
@@ -190,9 +191,7 @@
     {
      "name": "main_prompt",
      "type": "STRING",
-     "links": [
-      6
-     ]
+     "links": []
     },
     {
      "name": "background",
@@ -208,6 +207,20 @@
      "name": "info",
      "type": "STRING",
      "links": []
+    },
+    {
+     "name": "prefix",
+     "type": "STRING",
+     "links": [
+      42
+     ]
+    },
+    {
+     "name": "scene",
+     "type": "STRING",
+     "links": [
+      6
+     ]
     }
    ],
    "properties": {
@@ -280,7 +293,7 @@
     "Node name for S&R": "CLIPTextEncode"
    },
    "widgets_values": [],
-   "title": "MAIN · encode",
+   "title": "MAIN · background only (read last)",
    "color": "#233",
    "bgcolor": "#355"
   },
@@ -761,6 +774,13 @@
      "shape": 7,
      "type": "STRING",
      "link": 22
+    },
+    {
+     "localized_name": "quality",
+     "name": "quality",
+     "shape": 7,
+     "type": "CONDITIONING",
+     "link": 43
     },
     {
      "localized_name": "strength_1",
@@ -1766,6 +1786,56 @@
     "SayaCouple/demo"
    ],
    "title": "Result"
+  },
+  {
+   "id": 26,
+   "type": "CLIPTextEncode",
+   "pos": [
+    420,
+    320
+   ],
+   "size": [
+    520,
+    60
+   ],
+   "flags": {},
+   "order": 5,
+   "mode": 0,
+   "inputs": [
+    {
+     "localized_name": "clip",
+     "name": "clip",
+     "type": "CLIP",
+     "link": 41
+    },
+    {
+     "localized_name": "text",
+     "name": "text",
+     "type": "STRING",
+     "widget": {
+      "name": "text"
+     },
+     "link": 42
+    }
+   ],
+   "outputs": [
+    {
+     "localized_name": "CONDITIONNEMENT",
+     "name": "CONDITIONING",
+     "type": "CONDITIONING",
+     "slot_index": 0,
+     "links": [
+      43
+     ]
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CLIPTextEncode"
+   },
+   "widgets_values": [],
+   "title": "QUALITY · prefix + LoRA triggers (read first)",
+   "color": "#233",
+   "bgcolor": "#355"
   }
  ],
  "links": [
@@ -1812,7 +1882,7 @@
   [
    6,
    5,
-   0,
+   5,
    22,
    1,
    "STRING"
@@ -2088,6 +2158,30 @@
    21,
    0,
    "IMAGE"
+  ],
+  [
+   41,
+   3,
+   1,
+   26,
+   0,
+   "CLIP"
+  ],
+  [
+   42,
+   5,
+   4,
+   26,
+   1,
+   "STRING"
+  ],
+  [
+   43,
+   26,
+   0,
+   11,
+   13,
+   "CONDITIONING"
   ]
  ],
  "groups": [

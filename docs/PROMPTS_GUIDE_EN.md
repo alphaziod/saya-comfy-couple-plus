@@ -281,6 +281,9 @@ The dynamic mask finds each character by reading its **anchors**. These are tags
 [eyes], [skin + marks], [body shape + chest], [outfit], [state of the moment]
 ```
 
+**2.2: body and anatomy first.** CLIP encodes 75-token chunks separately. Put the type tag (`1girl`, `1boy`…), skin, build, chest and the
+anatomy in the first chunk, then hair, eyes and outfit: an organ encoded away from its body is drawn as a separate limb.
+
 **What changes with the scene but stays specific to one character** goes at the **end** of its P1/P2. These are not identity anchors, but they need to stay in its zone:
 - **expression:** `smile`, `blush`, `closed eyes`, `open mouth`, `tears`, `embarrassed`;
 - **state of clothes:** `barefoot`, `rolled-up sleeves`, `loose hair`, `hood up`, `wet clothes`;

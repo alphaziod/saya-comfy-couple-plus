@@ -136,9 +136,11 @@ def main():
     # ACTION = what the two characters do (encoded apart, received by the characters only); P1 / P2 = appearance.
     mp = node(5, "SayaMainPrompt", [420, -40], [520, 420], [prompts["PREFIX"], "free", 0, "fixed", "new", False] + ["none"] * 7 + [prompts["SCENE"], ""],
               "MAIN · prefix + background (free text, or pick a category + seed)",
-              {"inputs": [], "outputs": [{"name": k, "type": "STRING"} for k in ("main_prompt", "background", "short_name", "info")]}, GREEN)
+              {"inputs": [], "outputs": [{"name": k, "type": "STRING"} for k in ("main_prompt", "background", "short_name", "info", "prefix", "scene")]}, GREEN)
     mp["inputs"] = []  # all widgets
-    main = node(22, "CLIPTextEncode", [420, 400], [520, 60], [""], "MAIN · encode", enc, GREEN)
+    # 2.2: QUALITY (prefix + LoRA triggers) encoded apart and read first; MAIN encodes the scene only, read last.
+    qual = node(26, "CLIPTextEncode", [420, 320], [520, 60], [""], "QUALITY · prefix + LoRA triggers (read first)", enc, GREEN)
+    main = node(22, "CLIPTextEncode", [420, 400], [520, 60], [""], "MAIN · background only (read last)", enc, GREEN)
     act = node(23, "CLIPTextEncode", [420, 480], [520, 150], [prompts["ACTION"]], "ACTION · count, framing, LEFT / RIGHT, pose", enc, GREEN)
     p1s = node(24, "PrimitiveStringMultiline", [-40, 620], [420, 150], [prompts["P1"]], "P1 · RIGHT character (text)",
                {"inputs": [], "outputs": [{"name": "STRING", "type": "STRING"}]}, BLUE)
@@ -149,7 +151,7 @@ def main():
     neg = node(8, "CLIPTextEncode", [420, 830], [520, 110], [prompts["NEGATIVE"]], "NEGATIVE", enc)
     for n in (act, neg):
         n["inputs"] = [i for i in n["inputs"] if i["name"] != "text"]
-    for n in (main, p1, p2):  # text comes from a link: keep the input, no widget value
+    for n in (qual, main, p1, p2):  # text comes from a link: keep the input, no widget value
         n["widgets_values"] = []
         for i in n["inputs"]:
             if i["name"] == "text":
@@ -161,6 +163,8 @@ def main():
     cw[2] = False
     cpl = node(11, "SayaMultiCouple", [980, 0], [400, 420], cw + ["woman"] * (11 - len(cw)),
                "Saya Multi Couple · dynamic ownership", couple, PURPLE)
+    if not any(i["name"] == "quality" for i in cpl["inputs"]):  # source saved before 2.2
+        cpl["inputs"].append({"localized_name": "quality", "name": "quality", "shape": 7, "type": "CONDITIONING", "link": None})
     eps = node(12, "Epsilon Scaling", [1420, 0], [300, 60], list(chain["Epsilon Scaling"]["widgets_values"]), "Epsilon Scaling", chain["Epsilon Scaling"])
     czs = node(13, "CFGZeroStar", [1420, 100], [300, 30], [], "CFGZeroStar", chain["CFGZeroStar"])
     apg = node(14, "APG", [1420, 170], [300, 110], list(chain["APG"]["widgets_values"]), "APG", chain["APG"])
@@ -180,9 +184,9 @@ def main():
     save = node(21, "SaveImage", [2520, 100], [460, 620], ["SayaCouple/demo"], "Result",
                 {"inputs": [{"name": "images", "type": "IMAGE"}], "outputs": []})
 
-    for n in (main, act, p1, p2, neg):
+    for n in (main, act, p1, p2, neg, qual):
         link(ck1, 1, n, "clip")
-    link(mp, 0, main, "text"); link(p1s, 0, p1, "text"); link(p2s, 0, p2, "text")
+    link(mp, 5, main, "text"); link(mp, 4, qual, "text"); link(qual, 0, cpl, "quality"); link(p1s, 0, p1, "text"); link(p2s, 0, p2, "text")
     link(lat, 0, spl, "latent")
     link(ck1, 0, cpl, "model_1"); link(ck1, 1, cpl, "clip")
     link(spl, 0, cpl, "mask_1"); link(spl, 1, cpl, "mask_2")

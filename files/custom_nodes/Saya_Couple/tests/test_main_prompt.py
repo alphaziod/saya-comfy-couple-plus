@@ -42,7 +42,7 @@ def test_main_prompt():
 
             # prefix verbatim (LoRA triggers, odd spacing, weights), background locked by seed
             prefix = "best quality,  absurdres, (mystyle_v8:1.1), scnr ,addmicrodetails"
-            main, bg, short, info = node.compose(prefix, "bedroom", 7, **none)
+            main, bg, short, info, *_ = node.compose(prefix, "bedroom", 7, **none)
             c.ok(main.startswith(prefix + ",\n"), f"prefix copied as written, then ',\\n': {main[:70]!r}")
             c.eq(bg, stock[0]["bg"], "background = the stock entry (category + seed)")
             c.eq(main, prefix + ",\n" + stock[0]["bg"], "no menu, no extra: MAIN = prefix + background")
@@ -55,13 +55,19 @@ def test_main_prompt():
 
             # menus and extra
             tags = dict(none, lighting="moonlight", palette="cool colors")
-            main, bg, short, info = node.compose(prefix, "bedroom", 7, extra="my extra, <lora:foo:0.8>", **tags)
+            main, bg, short, info, *_ = node.compose(prefix, "bedroom", 7, extra="my extra, <lora:foo:0.8>", **tags)
             c.eq(main, prefix + ",\n" + stock[0]["bg"] + ",\nmoonlight, cool colors,\nmy extra, <lora:foo:0.8>", "MAIN = prefix + background + chosen tags (menu order) + extra verbatim")
             c.ok("tags: moonlight, cool colors" in info, f"info lists the chosen tags: {info}")
+            # prefix / scene outputs (appended last): quality read first, scenery last when encoded apart
+            out = node.compose(prefix, "bedroom", 7, extra="my extra, <lora:foo:0.8>", **tags)
+            c.eq(len(out), 6, "6 outputs: main_prompt, background, short_name, info, prefix, scene")
+            c.eq(out[4], prefix, "prefix output = the prefix alone, verbatim")
+            c.eq(out[5], stock[0]["bg"] + ",\nmoonlight, cool colors,\nmy extra, <lora:foo:0.8>", "scene output = MAIN without the prefix")
+            c.eq(out[0], mp.join_prompt([out[4], out[5]]), "MAIN = prefix + scene (unchanged)")
 
             # ultra, free, history shared with the picker
             c.eq(node.compose(prefix, "bedroom", 7, ultra_detailed=True, **none)[1], stock[0]["ultra"], "ultra_detailed = hand-written ultra")
-            main, bg, short, info = node.compose(prefix, "free", 0, custom_background="  my own place, lamp  ", **none)
+            main, bg, short, info, *_ = node.compose(prefix, "free", 0, custom_background="  my own place, lamp  ", **none)
             c.eq((bg, short), ("my own place, lamp", "free"), "free = custom_background as written (stripped)")
             c.eq(node.compose(prefix, "free", 0, **none)[0], prefix, "free without text: MAIN = prefix only")
             c.eq(bp.read_history()[0]["bg"], stock[0]["ultra"], "history shared with the picker (last stock draw)")

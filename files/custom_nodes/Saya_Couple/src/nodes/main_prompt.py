@@ -74,8 +74,10 @@ class SayaMainPrompt:
             },
         }
 
-    RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING")
-    RETURN_NAMES = ("main_prompt", "background", "short_name", "info")
+    # prefix / scene appended last (saved workflows resolve outputs by slot index): encode them apart and wire
+    # prefix to SayaMultiCouple 'quality', scene to 'main', so quality is read first and the scenery last.
+    RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING", "STRING", "STRING")
+    RETURN_NAMES = ("main_prompt", "background", "short_name", "info", "prefix", "scene")
     FUNCTION = "compose"
     CATEGORY = "saya/couple"
     DESCRIPTION = ("MAIN prompt in one node: prefix (verbatim) + background from the stock (locked / random / free, "
@@ -89,11 +91,12 @@ class SayaMainPrompt:
         return f"{prefix}|{background}|{seed}|{history}|{ultra_detailed}|{custom_background}|{extra}|{unsafe_backgrounds}|{sorted(tags.items())}|{state}"
 
     def compose(self, prefix: str, background: str, seed: int, history: str = picker.NEW, ultra_detailed: bool = False,
-                custom_background: str = "", extra: str = "", unsafe_backgrounds: bool = False, **tags: str) -> tuple[str, str, str, str]:
+                custom_background: str = "", extra: str = "", unsafe_backgrounds: bool = False, **tags: str) -> tuple[str, str, str, str, str, str]:
         bg_text, short, info = picker.SayaBackgroundPicker().choose(background, seed, history, ultra_detailed, custom_background, unsafe_backgrounds)
         chosen = [tags[group["name"]] for group in tag_groups() if tags.get(group["name"], NONE) != NONE]
         main = join_prompt([prefix, bg_text, ", ".join(chosen), extra])
-        return main, bg_text, short, f"{info} | tags: {', '.join(chosen) or NONE}"
+        scene = join_prompt([bg_text, ", ".join(chosen), extra])
+        return main, bg_text, short, f"{info} | tags: {', '.join(chosen) or NONE}", join_prompt([prefix]), scene
 
 
 # ---------------------------------------------------------------------------
@@ -156,7 +159,7 @@ class SayaMainPromptFR:
         }
 
     RETURN_TYPES = SayaMainPrompt.RETURN_TYPES
-    RETURN_NAMES = ("prompt_main", "decor", "nom_court", "info")
+    RETURN_NAMES = ("prompt_main", "decor", "nom_court", "info", "prefixe", "scene")
     FUNCTION = "composer"
     CATEGORY = SayaMainPrompt.CATEGORY
     DESCRIPTION = ("Prompt MAIN en un nœud (version française) : préfixe (tel quel) + décor du stock (verrouillé / aléatoire / "
@@ -178,6 +181,6 @@ class SayaMainPromptFR:
         return SayaMainPrompt.IS_CHANGED(prefixe, background, seed, history, ultra_detaille, decor_libre, complement, decors_unsafe, **tags)
 
     def composer(self, prefixe: str, decor: str, seed: int, historique: str = HISTORY_FR[picker.NEW], ultra_detaille: bool = False,
-                 decor_libre: str = "", complement: str = "", decors_unsafe: bool = False, **tags_fr: str) -> tuple[str, str, str, str]:
+                 decor_libre: str = "", complement: str = "", decors_unsafe: bool = False, **tags_fr: str) -> tuple[str, str, str, str, str, str]:
         background, history, tags = self._english(decor, historique, tags_fr)
         return SayaMainPrompt().compose(prefixe, background, seed, history, ultra_detaille, decor_libre, complement, decors_unsafe, **tags)

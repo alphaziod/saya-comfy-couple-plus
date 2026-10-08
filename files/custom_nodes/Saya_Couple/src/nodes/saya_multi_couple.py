@@ -239,7 +239,7 @@ class SayaMultiCouple:
             "optional": {
                 "model_2": ("MODEL",),
                 "main": ("CONDITIONING", {"tooltip": "Required in Couple mode (base of the dual attention)."}),
-                "action": ("CONDITIONING", {"tooltip": "Optional pose / act prompt, kept apart from MAIN (scene, framing, "
+                "action": ("CONDITIONING", {"tooltip":"Optional pose / act prompt, kept apart from MAIN (scene, framing, "
                                                         "style). Persons get MAIN + ACTION. With ownership dynamic the "
                                                         "background gets MAIN only, so the act is never drawn into the scenery."}),
                 "solo": ("BOOLEAN", {
@@ -288,6 +288,10 @@ class SayaMultiCouple:
                                                                             "(historic: woman; it already covers men). auto = woman, "
                                                                             "plus man when a P1/P2 text names a male character "
                                                                             "(experimental). Any other value is used as is."}),
+                "quality": ("CONDITIONING", {"tooltip": "Optional quality tags + LoRA triggers, encoded alone. When wired, "
+                                                         "MAIN must be the background only (SayaMainPrompt 'scene' output): "
+                                                         "the positive reads QUALITY first and the background last. "
+                                                         "Unwired = historic behaviour, bit-identical."}),
             },
             "hidden": {"prompt": "PROMPT"},
         }
@@ -331,21 +335,35 @@ class SayaMultiCouple:
         p2_text="",
         person_anchor=PERSON_ANCHOR,
         prompt=None,
+        quality=None,
     ):
+        def _concat(parts):
+            out = None
+            for part in parts:
+                if part is not None:
+                    out = part if out is None else ConditioningConcat().concat(out, part)[0]
+            return out
+
         if solo:
             # Solo = ONE conditioning MAIN ++ ACTION ++ P1 (token concat), neg_1; P2 is never read.
             # Same as the phases rebuilt from the imprint (one text "MAIN, ACTION, PERSON 1", encoded in 77-token
             # chunks). Never ConditioningCombine: it averages two separate predictions, so half of the guidance came
             # from MAIN + ACTION alone (scenery + pose, no person, no nudity): clothes, censorship, wrong person.
-            positive = main
-            for part in (action, pos_1):
-                if part is not None:
-                    positive = part if positive is None else ConditioningConcat().concat(positive, part)[0]
-            return (model_1, model_2, positive, neg_1, None)
+            # With QUALITY wired, MAIN is the background only: QUALITY ++ ACTION ++ P1 ++ MAIN (quality read
+            # first, scenery read last).
+            if quality is not None:
+                return (model_1, model_2, _concat((quality, action, pos_1, main)), neg_1, None)
+            return (model_1, model_2, _concat((main, action, pos_1)), neg_1, None)
 
-        scene = main
-        if action is not None:
-            main = ConditioningConcat().concat(main, action)[0]
+        if quality is not None:
+            # MAIN = background only: the sampler MAIN is QUALITY ++ ACTION ++ MAIN, the scene-only MAIN of the
+            # background pixels QUALITY ++ MAIN (quality first, scenery last). P1 / P2 stay separate contexts.
+            scene = _concat((quality, main))
+            main = _concat((quality, action, main))
+        else:
+            scene = main
+            if action is not None:
+                main = ConditioningConcat().concat(main, action)[0]
         params = {}
         if ownership == "dynamic":
             params["start_sigma"] = float(dynamic_start_sigma)

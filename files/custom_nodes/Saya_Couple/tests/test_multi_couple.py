@@ -144,7 +144,7 @@ def test_multi_couple_schema_and_outputs():
         ["model_1", "clip", "mask_1", "mask_2", "pos_1", "neg_1", "pos_2", "neg_2", "strength_1", "strength_2"],
         "required input order",
     )
-    c.eq(list(schema["optional"]), ["model_2", "main", "action", "solo", "ownership", "dynamic_start_sigma", "background_main", "zone_fallback", "anchor_tokens", "p1_anchors", "p2_anchors", "p1_text", "p2_text", "person_anchor"], "model_2/main/solo/ownership/dynamic_start_sigma/anchor_tokens/anchors/texts/person_anchor optional (new entries at the end only)")
+    c.eq(list(schema["optional"]), ["model_2", "main", "action", "solo", "ownership", "dynamic_start_sigma", "background_main", "zone_fallback", "anchor_tokens", "p1_anchors", "p2_anchors", "p1_text", "p2_text", "person_anchor", "quality"], "model_2/main/solo/ownership/dynamic_start_sigma/anchor_tokens/anchors/texts/person_anchor/quality optional (new entries at the end only)")
     c.eq(schema["optional"]["anchor_tokens"][1]["default"], "phrase", "anchor_tokens defaults to the validated phrase mode")
     c.eq(schema["optional"]["ownership"][1]["default"], "static_split", "ownership defaults to the historic static split")
     c.eq(node.RETURN_TYPES, ("MODEL", "MODEL", "CONDITIONING", "CONDITIONING", "SAYA_COUPLE_RECIPE"), "return types")
@@ -278,10 +278,47 @@ def test_multi_couple_solo():
          "solo + action: positive = MAIN ++ ACTION ++ pos_1, same order as the rebuilt phases (pos_2 absent)")
     c.ok(negative is neg_1, "solo + action: negative = neg_1")
 
+    # QUALITY wired: MAIN is the background only, read last: QUALITY ++ ACTION ++ pos_1 ++ MAIN.
+    m1, m2, positive, negative, _recipe = node.apply(
+        model_1, clip, _mask(1), _mask(0), _cond(1.0), neg_1, _cond(2.0), _cond(-0.3),
+        model_2=model_2, main=_cond(9.0), action=_cond(4.0, tokens=3), quality=_cond(7.0, tokens=2), solo=True,
+    )
+    tokens = positive[0][0][0, :, 0].tolist()
+    c.eq(tokens, [7.0] * 2 + [4.0] * 3 + [1.0] * 5 + [9.0] * 5,
+         "solo + quality: positive = QUALITY ++ ACTION ++ pos_1 ++ MAIN (quality first, background last)")
+    c.ok(m1 is model_1 and negative is neg_1, "solo + quality: model unpatched, negative = neg_1")
+
+    return c.report()
+
+
+def test_multi_couple_quality_order():
+    """Couple + QUALITY: sampler MAIN = QUALITY ++ ACTION ++ MAIN, background scene = QUALITY ++ MAIN; unwired = historic."""
+    module = _module()
+    c = Check("multi_couple_quality_order")
+    seen = []
+    saved = module.enable_dual_attention, module.apply_multimask_couple, module._anchor
+    module.enable_dual_attention = lambda model, main, pos_1, pos_2, m1, m2, ownership, p: seen.append((main, p)) or "m1"
+    module.apply_multimask_couple = lambda *args, **kw: "m2"
+    module._anchor = lambda clip, *a, **kw: None  # anchors are not under test here, only the MAIN order
+    try:
+        node = module.SayaMultiCouple()
+        args = ("model", _FakeClip(), _mask(1), _mask(0), _cond(1.0), _cond(0.3), _cond(2.0), _cond(-0.3))
+        out = node.apply(*args, model_2="raw", main=_cond(9.0), action=_cond(4.0, tokens=3), quality=_cond(7.0, tokens=2))
+        main, _ = seen[-1]
+        c.eq(main[0][0][0, :, 0].tolist(), [7.0] * 2 + [4.0] * 3 + [9.0] * 5, "couple + quality: MAIN = QUALITY ++ ACTION ++ MAIN")
+        c.ok(out[2] is main, "couple + quality: the CONDITIONING output is that MAIN")
+        node.apply(*args, model_2="raw", main=_cond(9.0), action=_cond(4.0, tokens=3), quality=_cond(7.0, tokens=2), ownership="dynamic",
+                   p1_anchors="red hair", p2_anchors="blue hair")
+        c.eq(seen[-1][1]["main_scene"][0, :, 0].tolist(), [7.0] * 2 + [9.0] * 5, "couple + quality + dynamic: background scene = QUALITY ++ MAIN")
+        node.apply(*args, model_2="raw", main=_cond(9.0), action=_cond(4.0, tokens=3))
+        c.eq(seen[-1][0][0][0][0, :, 0].tolist(), [9.0] * 5 + [4.0] * 3, "unwired quality: historic MAIN ++ ACTION")
+    finally:
+        module.enable_dual_attention, module.apply_multimask_couple, module._anchor = saved
     return c.report()
 
 
 TESTS = (
+    test_multi_couple_quality_order,
     test_multi_couple_schema_and_outputs,
     test_multi_couple_main_conditioning_merge,
     test_multi_couple_patch_independence,
