@@ -47,7 +47,8 @@ def main():
         private = [l.strip() for l in open(os.path.expanduser(a.private), encoding="utf-8") if l.strip()]
     findings = []
     for dirpath, dirs, files in os.walk(PKG):
-        dirs[:] = [d for d in dirs if d not in (".git", "__pycache__")]
+        # Build outputs of Saya Studio (studio/) are never committed.
+        dirs[:] = [d for d in dirs if d not in (".git", "__pycache__", "node_modules", "target", "dist", "test-results")]
         for n in files:
             rel = os.path.relpath(os.path.join(dirpath, n), PKG).replace(os.sep, "/")
             if rel in SKIP or n.endswith((".pyc", ".jpg")):

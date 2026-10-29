@@ -35,6 +35,34 @@ HISTORY_PATH = DATA_DIR / "background_history.json"
 _stock_cache: dict[str, Any] = {}
 
 
+# Backgrounds that saturate the picture to white made softer, natural colours (Saya, 2026-10-14). Same rules in
+# Saya_Couple_Upated/src/nodes/background_picker.py and in the nude pack's run_all.py.
+_SOFT_RULES = (
+    (r'\b(?:\w+[ -])*(?:palette|tones|colou?rs)\s*$', 'natural colors'),  # random palette (pearl white, sepia, neon...) tints the whole picture
+    (r'\bbright (?:sun|day)light\b', 'soft sunlight'),
+    (r'\b(?:harsh|blinding|glaring|stark|bright white) (\w+ )?(light|lighting|glow)\b', r'soft \1\2'),
+    (r'\b(?:pale |cold |cool |bright |blue-white )?fluorescents?\b.*$', 'soft warm lamplight'),
+    (r'\bclinical (?:glow|light|lighting|white)\b', 'soft warm light'),
+    (r'\b(?:pure |stark |bright |brilliant |snow-?|pearl |frosty )?white (walls?|tiles?|tiling|marble|sheets|bedsheets|bed sheets|curtains|room|floor|interior|plaster|ceiling|stone)\b', r'warm beige \1'),
+    (r'\bdaylight\b', 'soft daylight'),
+    (r'^(\s*)(?:cool|cold|pure|bright|stark|clinical|icy|snow) white\s*$', r'\1natural colors'),  # a lone 'cool white' is a palette too
+)
+_SOFT_DROP = re.compile(r'\b(?:hazy glow|haze|light rays|light particles|dappled sunlight|depth of field|bokeh|bloom|god rays|lens flare|overexposed|glare)\b', re.I)
+
+
+def soften_background(text):
+    parts = []
+    for chunk in text.split(','):
+        if not chunk.strip() or _SOFT_DROP.search(chunk):
+            continue
+        if not chunk.strip().startswith('('):  # the weighted place tag stays as it is
+            for rx, new in _SOFT_RULES:
+                chunk = re.sub(rx, new, chunk, flags=re.I)
+            chunk = re.sub(r'\b(soft) (?:soft )+', r'\1 ', chunk)
+        parts.append(chunk)
+    return ','.join(dict.fromkeys(parts))
+
+
 class SayaBackgroundError(ValueError):
     pass
 
@@ -190,7 +218,7 @@ class SayaBackgroundPicker:
         if category == FREE:
             return custom.strip(), "free", "free: custom text" if custom.strip() else "free: no background injected"
         chosen = pick(category, seed, unsafe)
-        text = ultra_text(chosen) if ultra_detailed else chosen["bg"]
+        text = soften_background(ultra_text(chosen) if ultra_detailed else chosen["bg"])
         # L'historique garde le texte réellement envoyé : back / forward redonne exactement la même version.
         push_history({"id": chosen["id"], "cat": chosen["cat"], "name": chosen["name"], "short": short_name(chosen),
                       "bg": text, "category": category, "seed": seed, "ultra": bool(ultra_detailed)})

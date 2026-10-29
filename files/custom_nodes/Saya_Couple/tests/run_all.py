@@ -32,6 +32,7 @@ import test_dual_wiring
 import test_nodes_compute
 import test_phase_nodes
 import test_phase_services
+import test_saya_role
 import test_phase_restart_restore
 import test_imprint_resolve
 import test_conditioning_cache
@@ -44,6 +45,7 @@ import test_hires_fix_resize
 import test_warmup_gate
 import test_hires_fix_target
 import test_registry
+import test_family_save
 import test_split_mask
 import test_workflow_compat
 import test_workflow_v030
@@ -88,6 +90,9 @@ def main() -> int:
     print("== registry ==")
     absorb(guarded(test_registry.TESTS))
 
+    print("== family_save ==")
+    absorb(guarded(test_family_save.TESTS))
+
     print("== geometry ==")
     absorb(guarded(test_geometry.TESTS))
 
@@ -124,6 +129,10 @@ def main() -> int:
     print("== phase services ==")
     with tempfile.TemporaryDirectory(prefix="saya_phase_test_") as tmp:
         absorb(test_phase_services.run(Path(tmp)))
+
+    print("== saya_role chunk ==")
+    with tempfile.TemporaryDirectory(prefix="saya_role_test_") as tmp:
+        absorb(test_saya_role.run(Path(tmp)))
 
     print("== phase restart restore ==")
     with tempfile.TemporaryDirectory(prefix="saya_restart_restore_") as tmp:

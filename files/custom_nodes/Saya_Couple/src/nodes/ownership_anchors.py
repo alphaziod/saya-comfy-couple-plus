@@ -205,6 +205,29 @@ POSE = {"spread", "crossed", "outstretched", "raised", "bound", "clenched", "hol
 PUBIC_HAIR = {"hairy", "pubic"}
 
 
+# One anatomy anchor per aspect of each organ, not one per organ: a futanari's organ is told apart by its size
+# ("small penis"), its colour ("dark penis", "translucent slime penis"), the cute LoRA trigger ("cute_penis"),
+# its state ("flaccid penis") and the colour of the pubic hair ("black pubic hair"). Every aspect the other
+# person describes differently is one more chance to be discriminant.
+ANATOMY_COLOUR = {"dark", "pale", "light", "brown", "black", "white", "pink", "red", "blue", "green", "purple", "grey",
+                  "golden", "tan", "ebony", "dusky", "translucent", "slime", "ice", "ghostly", "jelly", "crystal", "blonde",
+                  "orange", "aqua", "silver", "violet", "lavender", "chestnut", "auburn", "copper", "platinum", "magenta"}
+ANATOMY_STATE = {"erect", "flaccid", "soft", "erection"}
+
+
+def _anatomy_aspect(segment: str) -> str:
+    ws = set(words(segment))
+    if "cute" in ws:
+        return "cute"
+    if ws & ANATOMY_COLOUR:
+        return "colour"
+    if ws & SIZE:
+        return "size"
+    if ws & ANATOMY_STATE:
+        return "state"
+    return "other"
+
+
 def _head_noun(segment: str, name: str) -> str | None:
     if name == "anatomy" and PUBIC_HAIR & set(words(segment)):
         return "pubic"
@@ -219,7 +242,8 @@ def body_anchors(own: str, other: str, name: str) -> list[str]:
     """Per body part of category name (penis, pussy, anus, breasts, nipples...), the person's phrase whose words
     differ from the other person's phrases on that same part, attended whole: size or state ("small penis" /
     "medium penis", "flaccid penis" / "erect penis", "gaping anus" / "anus") tells whose part it is. Parts both
-    describe with the same words give nothing."""
+    describe with the same words give nothing. Anatomy keeps one phrase per aspect of the part (size, colour,
+    cute, state), see ANATOMY_COLOUR."""
     other_parts = {}
     for phrase in phrases(other):
         segment = head_segment(phrase)
@@ -232,8 +256,13 @@ def body_anchors(own: str, other: str, name: str) -> list[str]:
             continue
         part = _head_noun(segment, name)
         score = len([w for w in words(segment) if w not in other_parts.get(part, set()) and w not in GENERIC - SIZE])
-        if score > 0 and (part not in best or score > best[part][0]):
-            best[part] = (score, segment)
+        key = (part, _anatomy_aspect(segment)) if name == "anatomy" else part
+        # A bare organ the other person also has, even written under another category ("scrotum" against
+        # "scrotum matching skin tone"), would light both organs.
+        if name == "anatomy" and set(words(segment)) <= CATEGORIES_BY_NAME["anatomy"] and part in words(other):
+            continue
+        if score > 0 and (key not in best or score > best[key][0]):
+            best[key] = (score, segment)
     return [segment for _, segment in best.values()]
 
 

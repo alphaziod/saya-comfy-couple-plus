@@ -319,6 +319,36 @@ def build_manifest(
     }
 
 
+SAYA_ROLE_KEY = "saya_role"
+SAYA_ROLE_TOTAL = 6
+DEFAULT_CHECKPOINT_ROOT = "image/checkpoints"
+
+
+def saya_role_lineage(checkpoint_root: str, seed: int, positive_prompt: str) -> str:
+    """Stable id of one generation: its isolated run root; hash(seed+prompt) if the root is the shared default."""
+    raw = str(checkpoint_root or "").strip().replace("\\", "/").strip("/")
+    if raw and raw != DEFAULT_CHECKPOINT_ROOT:
+        return raw
+    import hashlib
+
+    digest = hashlib.sha256(f"{int(seed)}\n{positive_prompt or ''}".encode("utf-8")).hexdigest()
+    return f"hash-{digest[:16]}"
+
+
+def saya_role_json(phase: int, lineage: str) -> str:
+    """Compact JSON value of the separate ``saya_role`` tEXt chunk (never part of the imprint)."""
+    return json.dumps(
+        {
+            "role": "final" if phase == SAYA_ROLE_TOTAL else "preview",
+            "phase": int(phase),
+            "total": SAYA_ROLE_TOTAL,
+            "lineage": lineage,
+        },
+        ensure_ascii=True,
+        separators=(",", ":"),
+    )
+
+
 def save_candidate(
     *,
     images: Any,
@@ -359,6 +389,9 @@ def save_candidate(
         canonical_imprint = canonical_imprint_json(parse_imprint_json(imprint_json))
         manifest = attach_integrity_pointer(manifest, canonical_imprint)
         text_metadata[IMPRINT_METADATA_KEY] = canonical_imprint
+    text_metadata[SAYA_ROLE_KEY] = saya_role_json(
+        phase, saya_role_lineage(checkpoint_root, seed, positive_prompt)
+    )
     image_bytes = image_tensor_to_png_bytes(images, manifest, text_metadata)
     _atomic_write_bytes(paths.candidate_image, image_bytes)
     try:
