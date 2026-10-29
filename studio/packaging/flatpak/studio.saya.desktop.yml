@@ -5,7 +5,7 @@
 # node-sources.json (flatpak-node-generator npm package-lock.json) and drop `--share=network` below.
 app-id: studio.saya.desktop
 runtime: org.gnome.Platform
-runtime-version: '48'
+runtime-version: '49'  # rust-stable of SDK 25.08: Tauri 2.12 needs Rust 1.90+
 sdk: org.gnome.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.rust-stable
