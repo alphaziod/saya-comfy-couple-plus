@@ -1,7 +1,7 @@
 # Saya Studio, Nix derivation. UNTESTED: written without a Nix installation available.
 # Build (from studio/):  nix build .#default
-# First build: the npm dependency hash below is lib.fakeHash; the build fails and prints the
-# real hash ("got: sha256-..."), paste it here. Cargo dependencies use Cargo.lock directly
+# The npm dependency hash below must change with package-lock.json: set it to lib.fakeHash, build,
+# and paste the "got: sha256-..." the failure prints. Cargo dependencies use Cargo.lock directly
 # (no cargoHash needed).
 {
   lib,
@@ -32,8 +32,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   npmDeps = fetchNpmDeps {
     inherit (finalAttrs) src;
-    # Fill with the hash given by the first build (error message "got: sha256-...").
-    hash = lib.fakeHash;
+    # From the first CI build; update it whenever package-lock.json changes.
+    hash = "sha256-Dgd7ckDUDto9aLCfoXbwrxyywmQ4Gy+DwrdV391AbjE=";
   };
 
   nativeBuildInputs = [

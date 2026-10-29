@@ -17,7 +17,7 @@ optdepends=('xdg-desktop-portal-gtk: portal backend for file dialogs (or -gnome/
 install=saya-studio.install
 makedepends=('rust' 'nodejs' 'npm')
 checkdepends=('desktop-file-utils')
-options=('!debug')
+options=('!debug' '!lto')  # gcc LTO objects from bundled SQLite do not link with lld
 source=("$pkgname-$pkgver.tar.gz" 'saya-studio.desktop' 'INSTALLATION-ARCH.md' 'SAUVEGARDES.md')
 
 build() {

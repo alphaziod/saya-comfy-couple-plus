@@ -39,7 +39,7 @@
   {
    "path": "README.md",
    "type": "markdown",
-   "sha256": "5d1524c3bb1eb1d0c0ea6ef07a1053e6ccab072f5cbd222e03cc87d1393c4094",
+   "sha256": "89d51c8ec725521afe4f4b9cb9e51cf69aef2efc455b99c3097dcca6de41a268",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -161,6 +161,17 @@
    "path": "docs/RELEASE_CHECKLIST.md",
    "type": "markdown",
    "sha256": "7a10d052555206b845f3120831afbe67d6f0d2d59ebb5deb22a0c3e674b0b18f",
+   "destination": null,
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": false,
+   "component": "docs",
+   "description": ""
+  },
+  {
+   "path": "docs/SAYA_COUPLE.md",
+   "type": "markdown",
+   "sha256": "8b7239fcb7c3c36fdb3d4f4a0e1234150f0fcda2d552602e7da314d6c20d0e8f",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",

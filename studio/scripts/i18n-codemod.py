@@ -23,7 +23,9 @@ modifies = 0
 fichiers = sorted(glob.glob(str(RACINE / "src/components/*.svelte"))) + [str(RACINE / "src/App.svelte")]
 for fichier in fichiers:
     src = Path(fichier).read_text()
-    morceaux = re.split(r"(<script[^>]*>.*?</script>|<style[^>]*>.*?</style>)", src, flags=re.S)
+    # Case-insensitive; closing tags may carry whitespace or junk before `>` (`</script\t\n bar>`), as browsers
+    # accept: no script or style block is mistaken for markup.
+    morceaux = re.split(r"(<script\b[^>]*>.*?</script\b[^>]*>|<style\b[^>]*>.*?</style\b[^>]*>)", src, flags=re.S | re.IGNORECASE)
     change = False
 
     def sub_texte(m):
