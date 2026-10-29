@@ -18,7 +18,6 @@
   can group a pass-1 image with its final.
 - **Background picker**: backgrounds that wash the picture out to white are softened to natural colours (palette,
   fluorescent, harsh light and haze tags rewritten or dropped; the weighted place tag is kept).
-- **Main Prompt**: default prefix updated.
 - **Web**: `saya_close_workflow.js` closes the extra workflow tabs a batch would otherwise leave open (one per
   image); the active tab is kept.
 - **AMD VRAM patch**: the VRAM fraction is clamped when another process already holds VRAM.

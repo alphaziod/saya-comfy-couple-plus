@@ -17,7 +17,7 @@
   {
    "path": "CHANGELOG.md",
    "type": "markdown",
-   "sha256": "b34fc4e2782b6f2e1664dfbea30558ad2415487a705d5d56d6b782056771d422",
+   "sha256": "cb5ce8cf7ba2ae7c0969f06be5bd33f43c67c8e16dfd4a7d7089b8e79a8aaa4b",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -611,7 +611,7 @@
   {
    "path": "files/custom_nodes/Saya_Couple/src/nodes/main_prompt.py",
    "type": "python",
-   "sha256": "ecd3be9ee8dee93e29fc3176cbddf6347326afdc7b7b8612aa4777b11b36d784",
+   "sha256": "ddda4a96b650cfa67d8d92db1ee9269ac44dabfc06fcdb48a686ffd00d8b1643",
    "destination": "custom_nodes/Saya_Couple/src/nodes/main_prompt.py",
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",

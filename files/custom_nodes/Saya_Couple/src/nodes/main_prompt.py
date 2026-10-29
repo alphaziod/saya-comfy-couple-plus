@@ -20,7 +20,7 @@ from . import background_picker as picker
 
 TAGS_PATH = Path(__file__).resolve().parents[2] / "data" / "main_prompt_tags.json"
 NONE = "none"
-DEFAULT_PREFIX = "best quality, very aesthetic, absurdres, highres, addmicrodetails, scnr, el3gynyalia,"
+DEFAULT_PREFIX = "best quality, very aesthetic, absurdres, highres,"
 
 
 def tag_groups() -> list[dict[str, Any]]:
