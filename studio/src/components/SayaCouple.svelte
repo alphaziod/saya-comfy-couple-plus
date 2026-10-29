@@ -3,6 +3,7 @@
   import { onMount, onDestroy, type Snippet } from 'svelte';
   import { call, message } from '../lib/api';
   import { phaseRows, runControls } from '../lib/generation-state';
+  import { castingDate } from '../lib/casting-progress';
   import RunProgress from './RunProgress.svelte';
   import PhaseComparisons from './PhaseComparisons.svelte';
   import Thumbnail from './Thumbnail.svelte';
@@ -141,7 +142,7 @@
         <button class="thumb" class:cur={r.id===run?.id} disabled={busy||syncing} title={`${String(r.id).slice(0,8)} · ${runLabel(r)}`} onclick={()=>{if(r.id!==run?.id)void selectRun(r.id);else tab='preview'}}>{#if a}<Thumbnail id={a} alt={$t("Dernier résultat disponible")}/>{:else}<span class="thumb-empty">{runLabel(r)}</span>{/if}</button>
       {/each}</div>
     </div>
-    {#if run}<dl class="kv run-kv"><dt>{$t("Seed")}</dt><dd class="num">{run.masterSeed??$t("workflow")}</dd><dt>{$t("État")}</dt><dd>{runLabel(run)}</dd><dt>{$t("Passes")}</dt><dd class="num">{done}/{phases.length}</dd>{#if run.createdAt}<dt>{$t("Créée")}</dt><dd class="num">{String(run.createdAt).replace('T',' ').slice(0,16)}</dd>{/if}</dl>{/if}
+    {#if run}<dl class="kv run-kv"><dt>{$t("Seed")}</dt><dd class="num">{run.masterSeed??$t("workflow")}</dd><dt>{$t("État")}</dt><dd>{runLabel(run)}</dd><dt>{$t("Passes")}</dt><dd class="num">{done}/{phases.length}</dd>{#if run.createdAt}<dt>{$t("Créée")}</dt><dd class="num">{castingDate(run.createdAt)}</dd>{/if}</dl>{/if}
   </aside>
   {#if reviewOpen&&run}
     <div class="review-backdrop" role="presentation" onclick={e=>{if(e.target===e.currentTarget)dismissed=reviewKey}}>

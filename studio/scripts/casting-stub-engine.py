@@ -19,6 +19,13 @@ import os
 import sys
 from pathlib import Path
 
+
+# STUB_OC_NAMES="Aiko,Mira,…" gives the OCs readable names (screenshots); default "Stub OC <n>".
+def oc_name(index):
+    names = [n.strip() for n in os.environ.get("STUB_OC_NAMES", "").split(",") if n.strip()]
+    return names[index % len(names)] if names else f"Stub OC {index + 1}"
+
+
 args = sys.argv[1:]
 if os.environ.get("PYTHONHASHSEED") != "0":
     os.execvpe(sys.executable, [sys.executable, *sys.argv], {**os.environ, "PYTHONHASHSEED": "0"})
@@ -125,7 +132,7 @@ elif fixe is not None:
         shots.append({
             "id": f"CH-9{index:04d}",
             "stem": f"bny-{index + 1:05d}-stub-oc-{'noobai' if pair else 'illustrious'}",
-            "name": f"Stub OC {index + 1}",
+            "name": oc_name(index),
             "famille": "bny",
             "model": "noobai" if pair else "illustrious",
             "seed": graine + index,
@@ -158,7 +165,7 @@ else:
         shots.append({
             "id": f"CH-9{index:04d}",
             "stem": f"bny-{index + 1:05d}-stub-oc-{'noobai' if pair else 'illustrious'}",
-            "name": f"Stub OC {index + 1}",
+            "name": oc_name(index),
             "famille": "bny",
             "model": "noobai" if pair else "illustrious",
             "seed": graine + index,

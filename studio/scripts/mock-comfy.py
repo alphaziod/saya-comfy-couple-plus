@@ -9,6 +9,7 @@ one PNG output per SaveImage node, served by /view.
 Never a GPU, never a network beyond 127.0.0.1.
 """
 import argparse
+import os
 import json
 import struct
 import threading
@@ -19,6 +20,13 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 HERE = Path(__file__).resolve().parent
+
+
+# MOCK_COMFY_IMAGES=<folder>: SaveImage outputs cycle through that folder's real PNGs (screenshots);
+# unset, every output is a tiny synthetic PNG.
+REAL_IMAGES = sorted(os.path.join(os.environ['MOCK_COMFY_IMAGES'], n) for n in os.listdir(os.environ['MOCK_COMFY_IMAGES'])
+                     if n.lower().endswith('.png')) if os.environ.get('MOCK_COMFY_IMAGES') else []
+REAL_NEXT = [0]
 
 
 def png(width, height, rgb):
@@ -214,7 +222,12 @@ def handler(state, object_info):
                     if node.get('class_type') in ('SaveImage', 'DaSiWa_MetadataImageSaver'):
                         name = f'mock_{prompt_id[:8]}_{node_id}.png'
                         with state.lock:
-                            state.files[name] = png(8, 8, (digest[0], digest[1], digest[2]))
+                            if REAL_IMAGES:
+                                with open(REAL_IMAGES[REAL_NEXT[0] % len(REAL_IMAGES)], 'rb') as real:
+                                    state.files[name] = real.read()
+                                REAL_NEXT[0] += 1
+                            else:
+                                state.files[name] = png(8, 8, (digest[0], digest[1], digest[2]))
                         outputs[node_id] = {'images': [{'filename': name, 'subfolder': '', 'type': 'output'}]}
                 prefixes = [n.get('inputs', {}).get('filename_prefix', '') for n in (payload or {}).get('prompt', {}).values() if n.get('class_type') in ('SaveImage', 'SaveLatent', 'DaSiWa_MetadataImageSaver')]
                 failed = any(str(p).startswith('mock-fail') for p in prefixes)
