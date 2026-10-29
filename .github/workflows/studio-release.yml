@@ -3,6 +3,9 @@ name: Saya Studio release
 on:
   push:
     tags: ['studio-v*']
+  # Build and test every package on pull requests touching the app; the release job is skipped.
+  pull_request:
+    paths: ['studio/**', '.github/workflows/studio-release.yml']
   workflow_dispatch:
     inputs:
       tag:
@@ -216,7 +219,7 @@ jobs:
   release:
     name: Draft prerelease
     needs: [bundles, opensuse-rpm, arch, nix, flatpak, snap]
-    if: ${{ !cancelled() && needs.bundles.result == 'success' && needs.opensuse-rpm.result == 'success' && needs.arch.result == 'success' }}
+    if: ${{ !cancelled() && github.event_name != 'pull_request' && needs.bundles.result == 'success' && needs.opensuse-rpm.result == 'success' && needs.arch.result == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
