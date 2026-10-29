@@ -1,5 +1,11 @@
 # Saya Studio
 
+![Saya Studio: the six-pass generation](../docs/images/studio-generation.webp)
+
+| Casting | Gallery |
+|:---:|:---:|
+| ![Casting grid](../docs/images/studio-casting.webp) | ![Gallery](../docs/images/studio-gallery.webp) |
+
 **1.0.0-beta.1 — Linux beta.** A local desktop app (Tauri 2, Rust, Svelte 5, SQLite) that drives
 [ComfyUI](https://github.com/comfyanonymous/ComfyUI) for anime-style character images. Nothing runs in the
 cloud: Saya Studio is the interface, ComfyUI is the render engine.
