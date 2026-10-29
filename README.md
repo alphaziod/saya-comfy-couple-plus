@@ -79,6 +79,9 @@ For a first run you only need the demo workflow. It takes about ten minutes.
    ./saya install --comfyui /path/to/ComfyUI     # Windows: saya.bat install --comfyui C:\path\to\ComfyUI
    ```
 
+   The installer first asks what you want: the **Saya Couple nodes**, the **Saya Studio** desktop app, or both
+   (`--what nodes|app|both` skips the question).
+
 4. **Restart ComfyUI**, open `workflows/Saya_Couple_Demo.json`, select your SDXL / Illustrious model in both
    checkpoint loaders (the same model twice is fine), click **Run**.
 5. Something looks wrong? `./saya verify --comfyui /path/to/ComfyUI` tells you what; `./saya restore` puts
@@ -497,6 +500,9 @@ It needs a running ComfyUI with the **Saya Couple nodes 2.3.0+**. Packages are a
 | Arch, EndeavourOS | `sudo pacman -U ./saya-studio-1.0.0-beta.1-x86_64.pkg.tar.zst` |
 | Nix | `nix run github:alphaziod/saya-comfy-couple-plus?dir=studio` |
 | Any distribution | AppImage, Flatpak or Snap from the release |
+
+Or let the installer pick the right package for your distribution, check its SHA256 and install it after asking:
+`./saya studio` (add `--dry-run` to only see what it would do).
 
 It is a beta: back up your data. Full details (requirements, your data, known limitations, building from source):
 [studio/README.md](studio/README.md) · release notes: [studio/RELEASE_NOTES.md](studio/RELEASE_NOTES.md) ·

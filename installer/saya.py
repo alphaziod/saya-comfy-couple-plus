@@ -1,4 +1,4 @@
-"""Entry point: python installer/saya.py <install|verify|restore|check-compat|amd> [options]"""
+"""Entry point: python installer/saya.py <install|studio|verify|restore|check-compat|amd> [options]"""
 import os
 import sys
 
