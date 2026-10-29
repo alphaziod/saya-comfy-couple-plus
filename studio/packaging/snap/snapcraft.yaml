@@ -1,0 +1,68 @@
+# Snap for Saya Studio. Build from the studio/ directory: `snapcraft` (symlink or copy this file
+# to snap/snapcraft.yaml, or use snapcore/action-build with `path: studio`). UNTESTED.
+# Confinement: strict. The app only needs the home directory (images, ComfyUI, config), the
+# network (ComfyUI on 127.0.0.1:8188, Civitai) and the desktop/GPU plugs. Strict is workable for
+# the beta; the `home` plug does not expose hidden-directory writes outside the snap's own, and
+# ComfyUI installed on removable media would need `removable-media`. If store review or real use
+# shows this is too limiting, switch to `classic` (requires a manual store approval).
+name: saya-studio
+title: Saya Studio
+base: core24
+version: '1.0.0-beta.1'
+summary: Local image, character and ComfyUI workflow manager
+description: |
+  Saya Studio is a local desktop application for making anime-style character images
+  with ComfyUI as the external render engine. ComfyUI itself is not included.
+grade: devel
+confinement: strict
+license: GPL-3.0-or-later
+platforms:
+  amd64:
+
+apps:
+  saya-studio:
+    command: bin/saya-studio
+    extensions: [gnome]
+    plugs: [home, network, network-bind, desktop, desktop-legacy, wayland, x11, opengl, removable-media]
+    desktop: share/applications/saya-studio.desktop
+    environment:
+      SAYA_STUDIO_DATA: $SNAP/share/saya-studio
+  maintenance:
+    command: bin/saya-studio-maintenance
+    plugs: [home]
+
+parts:
+  saya-studio:
+    plugin: nil
+    source: .
+    build-snaps: [node/22/stable, rustup/latest/stable]
+    build-packages:
+      - libwebkit2gtk-4.1-dev
+      - libgtk-3-dev
+      - libsoup-3.0-dev
+      - libssl-dev
+      - librsvg2-dev
+      - build-essential
+      - curl
+      - pkg-config
+    stage-packages:
+      - libwebkit2gtk-4.1-0
+      - libsoup-3.0-0
+      - python3
+      - curl
+      - xdg-utils
+    override-build: |
+      rustup default stable
+      npm ci --no-audit --no-fund
+      npm run tauri -- build --no-bundle -- --locked
+      cargo build --release -p studio-core --bin studio-maintenance --locked
+      install -Dm755 target/release/saya-studio $CRAFT_PART_INSTALL/bin/saya-studio-bin
+      install -Dm755 packaging/linux/saya-studio-launcher.sh $CRAFT_PART_INSTALL/bin/saya-studio
+      install -Dm755 target/release/studio-maintenance $CRAFT_PART_INSTALL/bin/saya-studio-maintenance
+      install -Dm755 -t $CRAFT_PART_INSTALL/share/saya-studio scripts/civitai_bridge.py scripts/saya_native_host.py
+      install -Dm755 sidecars/f09-semantic-embed.py $CRAFT_PART_INSTALL/share/saya-studio/sidecars/f09-semantic-embed.py
+      cp -r presets $CRAFT_PART_INSTALL/share/saya-studio/presets
+      cp -r extension $CRAFT_PART_INSTALL/share/saya-studio/extension
+      sed 's|^Icon=.*|Icon=${SNAP}/share/icons/hicolor/512x512/apps/saya-studio.png|' packaging/linux/saya-studio.desktop > saya-studio.desktop.snap
+      install -Dm644 saya-studio.desktop.snap $CRAFT_PART_INSTALL/share/applications/saya-studio.desktop
+      install -Dm644 packaging/arch/icons/saya-studio-512.png $CRAFT_PART_INSTALL/share/icons/hicolor/512x512/apps/saya-studio.png

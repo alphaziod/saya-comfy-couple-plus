@@ -1,0 +1,45 @@
+{
+  "id": "fixture-module-0001",
+  "version": 2,
+  "isCurrent": true,
+  "manifest": {
+    "manifestVersion": 1,
+    "name": "Détail Saya",
+    "description": "Chaîne sampling réutilisable",
+    "inputs": [
+      {"name": "5.clip", "kind": "CLIP", "node": "5", "input": "clip"},
+      {"name": "5.model", "kind": "MODEL", "node": "5", "input": "model"},
+      {"name": "6.latent_image", "kind": "LATENT", "node": "6", "input": "latent_image"},
+      {"name": "7.vae", "kind": "VAE", "node": "7", "input": "vae"}
+    ],
+    "outputs": [
+      {"name": "7.0", "kind": "IMAGE", "node": "7", "outputIndex": 0}
+    ],
+    "parameters": [
+      {"node": "2", "input": "text", "kind": "string", "value": "P1: silver hair, blue eyes"},
+      {"node": "6", "input": "seed", "kind": "seed", "value": "123456789012345"}
+    ],
+    "dependencies": {
+      "classes": ["CLIPTextEncode", "KSampler", "Lora Loader (LoraManager)", "VAEDecode"],
+      "checkpoints": [],
+      "loras": ["saya-fix"]
+    }
+  },
+  "nodes": [
+    {"id": "2", "classType": "CLIPTextEncode"},
+    {"id": "3", "classType": "CLIPTextEncode"},
+    {"id": "5", "classType": "Lora Loader (LoraManager)"},
+    {"id": "6", "classType": "KSampler"},
+    {"id": "7", "classType": "VAEDecode"}
+  ],
+  "nodeCount": 5,
+  "document": {},
+  "versions": [
+    {"version": 1, "createdAt": "2026-10-16T10:00:00.000Z"},
+    {"version": 2, "createdAt": "2026-10-16T10:05:00.000Z"}
+  ],
+  "createdAt": "2026-10-16T10:00:00.000Z",
+  "sourceWorkflowId": "fixture-workflow-0001",
+  "sourceSha256": "4844a41253f161bc1bd8809b5d02ad9afad9f93ec48fcf1608558b42a39d95ac",
+  "warnings": []
+}

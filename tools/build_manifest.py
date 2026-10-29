@@ -64,7 +64,8 @@ def classify(rel: str) -> dict:
 def main() -> None:
     files = []
     for dirpath, dirs, names in os.walk(PKG):
-        dirs[:] = sorted(d for d in dirs if d not in SKIP_DIRS)
+        # Saya Studio (studio/) and the CI are released on their own; the node installer never ships them.
+        dirs[:] = sorted(d for d in dirs if d not in SKIP_DIRS and not (dirpath == PKG and d in ("studio", ".github")))
         for n in sorted(names):
             rel = os.path.relpath(os.path.join(dirpath, n), PKG).replace(os.sep, "/")
             if rel in SKIP_FILES or n.endswith(".pyc"):

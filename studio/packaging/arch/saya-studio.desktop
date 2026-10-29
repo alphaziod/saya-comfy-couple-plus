@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Saya Studio
+Comment=Manage local images, characters and ComfyUI workflows
+Comment[fr]=Gérer les images, personnages et workflows ComfyUI locaux
+Exec=saya-studio
+TryExec=saya-studio
+Icon=saya-studio
+Terminal=false
+Categories=Graphics;Photography;
+StartupNotify=true
+StartupWMClass=saya-studio

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>studio.saya.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Saya Studio</name>
+  <summary>Local image, character and ComfyUI workflow manager</summary>
+  <description>
+    <p>Saya Studio is a local desktop application for making anime-style character images. ComfyUI is the external render engine; nothing runs in the cloud.</p>
+    <p>Cast new characters, review and keep the results, send them through a multi-pass workflow, and organise galleries, character sheets, models and LoRAs.</p>
+    <p>ComfyUI and its models are not included and must be installed separately.</p>
+  </description>
+  <launchable type="desktop-id">studio.saya.desktop.desktop</launchable>
+  <provides>
+    <binary>saya-studio</binary>
+  </provides>
+  <categories>
+    <category>Graphics</category>
+    <category>Photography</category>
+  </categories>
+  <url type="homepage">https://github.com/alphaziod/saya-comfy-couple-plus</url>
+  <url type="bugtracker">https://github.com/alphaziod/saya-comfy-couple-plus/issues</url>
+  <developer id="io.github.alphaziod">
+    <name>alphaziod</name>
+  </developer>
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+  </supports>
+  <content_rating type="oars-1.1">
+    <!-- To be validated by the owner: the app drives an image generator that can produce adult content. -->
+    <content_attribute id="sex-nudity">moderate</content_attribute>
+    <content_attribute id="sex-themes">moderate</content_attribute>
+  </content_rating>
+  <releases>
+    <release version="1.0.0-beta.1" date="2026-10-29" type="development">
+      <description>
+        <p>First Linux beta of Saya Studio 1.0.</p>
+      </description>
+    </release>
+  </releases>
+</component>

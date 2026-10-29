@@ -16,7 +16,7 @@ One switch turns the whole pipeline into **Solo mode** (MAIN + ACTION + P1, one 
 | ![Couple: two characters, one scene](docs/images/demo_example.png) | ![Solo: one character, same scene](docs/images/solo_example.png) |
 | demo workflow, MAIN + P1 + P2 (1.x render) | full workflow, MAIN + ACTION + P1 only (1.x render) |
 
-Current version: **2.2.2** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
+Current version: **2.3.0** ([CHANGELOG.md](CHANGELOG.md)). Tested on ComfyUI `41db8f4f` (v0.34.0+77), Linux, AMD
 RDNA4 16 GB. It is first and foremost **a backup of my own ComfyUI setup**, made public in case it helps someone
 with the same problem. Take what you need.
 
@@ -31,6 +31,11 @@ with the same problem. Take what you need.
 >
 > Back up your ComfyUI folder anyway. The installer keeps its own backup and can restore, but your copy is the one
 > you can trust. **Use at your own risk.**
+
+> ### New: Saya Studio 1.0 beta (Linux)
+> A local desktop app that drives ComfyUI and these nodes: casting, the six-pass Saya workflow, gallery,
+> characters and LoRA management. Packages for Debian/Ubuntu, Fedora, openSUSE, Arch (+ AUR), Nix, AppImage,
+> Flatpak and Snap are attached to the `studio-v1.0.0-beta.1` release. See [studio/README.md](studio/README.md).
 
 ---
 

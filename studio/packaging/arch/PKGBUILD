@@ -1,0 +1,86 @@
+# Local source package. scripts/build-arch.sh supplies the Git snapshot and checksums.
+pkgname=saya-studio
+pkgver=1.0.0beta1
+pkgrel=1
+pkgdesc='Local image, character and ComfyUI workflow manager (development/validation build)'
+arch=('x86_64')
+license=('GPL-3.0-or-later')
+depends=('glibc' 'libgcc' 'glib2' 'gtk3' 'gdk-pixbuf2' 'cairo' 'dbus' 'webkit2gtk-4.1' 'libsoup3' 'wayland'
+         'python'                 # Civitai bridge, native messaging host, prompt/engine sidecars
+         'curl'                   # model library HTTPS downloads (model_library.rs)
+         'xdg-utils'              # xdg-open: open an image's folder
+         'xdg-desktop-portal')    # native file dialogs (tauri-plugin-dialog, xdg-portal feature)
+optdepends=('xdg-desktop-portal-gtk: portal backend for file dialogs (or -gnome/-kde/-wlr as fits your desktop)'
+            'ffmpeg: LoRA video previews'
+            'python-pytorch: optional F09 semantic embedding sidecar'
+            'comfyui: local generation engine (external, not packaged)')
+install=saya-studio.install
+makedepends=('rust' 'nodejs' 'npm')
+checkdepends=('desktop-file-utils')
+options=('!debug')
+source=("$pkgname-$pkgver.tar.gz" 'saya-studio.desktop' 'INSTALLATION-ARCH.md' 'SAUVEGARDES.md')
+
+build() {
+  cd "$srcdir/saya-studio"
+  # Keep build-machine paths (source tree, $HOME/.cargo registry) out of the binaries;
+  # scripts/verify-arch-package.py rejects any '/home/' string left in the package.
+  # Order matters: rustc gives later mappings precedence, so the broad $HOME goes first.
+  export RUSTFLAGS="${RUSTFLAGS:-} --remap-path-prefix=$HOME=/build-home --remap-path-prefix=${CARGO_HOME:-$HOME/.cargo}=/cargo --remap-path-prefix=${CARGO_TARGET_DIR:-$srcdir/saya-studio/target}=/target --remap-path-prefix=$srcdir=/build"
+  npm ci --offline --no-audit --no-fund
+  npm run tauri -- build --no-bundle -- --locked --offline -j 2
+  cargo build --release -p studio-core --bin studio-maintenance --locked --offline -j 2
+}
+
+check() {
+  cd "$srcdir/saya-studio"
+  cargo test --workspace --locked --offline
+  node --test scripts/*.test.mjs
+  PYTHONDONTWRITEBYTECODE=1 python3 scripts/test_subgraph_inputs.py
+  desktop-file-validate "$srcdir/saya-studio.desktop"
+}
+
+package() {
+  cd "$srcdir/saya-studio"
+  local target="${CARGO_TARGET_DIR:-$srcdir/saya-studio/target}"
+  install -Dm755 "$target/release/saya-studio" "$pkgdir/usr/bin/saya-studio"
+  install -Dm755 "$target/release/studio-maintenance" "$pkgdir/usr/bin/saya-studio-maintenance"
+  install -Dm644 "$srcdir/saya-studio.desktop" "$pkgdir/usr/share/applications/saya-studio.desktop"
+  # Every hicolor size, named after the package (the former name studio.saya.desktop stayed
+  # cached in running launchers after the icon artwork changed).
+  local size
+  for size in 16 24 32 48 64 128 256 512; do
+    install -Dm644 "$srcdir/saya-studio/packaging/arch/icons/saya-studio-$size.png" \
+      "$pkgdir/usr/share/icons/hicolor/${size}x${size}/apps/saya-studio.png"
+  done
+  install -Dm644 "$srcdir/INSTALLATION-ARCH.md" "$pkgdir/usr/share/doc/saya-studio/INSTALLATION-ARCH.md"
+  install -Dm644 "$srcdir/SAUVEGARDES.md" "$pkgdir/usr/share/doc/saya-studio/SAUVEGARDES.md"
+  install -Dm755 "$srcdir/saya-studio/scripts/civitai_bridge.py" "$pkgdir/usr/share/saya-studio/civitai_bridge.py"
+  install -Dm755 "$srcdir/saya-studio/scripts/saya_native_host.py" "$pkgdir/usr/share/saya-studio/saya_native_host.py"
+  install -Dm755 "$srcdir/saya-studio/sidecars/f09-semantic-embed.py" "$pkgdir/usr/share/saya-studio/sidecars/f09-semantic-embed.py"
+  # Base preset (validated GROK BUILD characters + multi-pass workflow), applied at startup.
+  install -d "$pkgdir/usr/share/saya-studio/presets"
+  install -Dm644 "$srcdir/saya-studio/presets/"*.json "$pkgdir/usr/share/saya-studio/presets/"
+  # Master + 6 passes (copied into ComfyUI at startup) and split / sync tools.
+  install -Dm644 -t "$pkgdir/usr/share/saya-studio/presets/passes" "$srcdir/saya-studio/presets/passes/"*.json
+  install -Dm755 -t "$pkgdir/usr/share/saya-studio/presets/outils" "$srcdir/saya-studio/presets/outils/"*.py
+  install -d "$pkgdir/usr/share/saya-studio/extension"
+  install -Dm644 "$srcdir/saya-studio/extension/"* "$pkgdir/usr/share/saya-studio/extension/"
+
+  # Native Messaging host: same manifest for the stable extension ID
+  # hgbfcjoeaddihdpccfhcgeohohfejidm (fixed key in extension/manifest.json).
+  local host_manifest="$pkgdir/usr/share/saya-studio/com.saya.studio.json"
+  cat > "$host_manifest" <<'EOF'
+{
+  "name": "com.saya.studio",
+  "description": "Saya Studio Civitai token host",
+  "path": "/usr/share/saya-studio/saya_native_host.py",
+  "type": "stdio",
+  "allowed_origins": ["chrome-extension://hgbfcjoeaddihdpccfhcgeohohfejidm/"]
+}
+EOF
+  install -Dm644 "$host_manifest" "$pkgdir/etc/opt/chrome/native-messaging-hosts/com.saya.studio.json"
+  install -Dm644 "$host_manifest" "$pkgdir/etc/chromium/native-messaging-hosts/com.saya.studio.json"
+  # Brave: same manifest, written at user level by the app at startup
+  # (~/.config/BraveSoftware/Brave-Browser/NativeMessagingHosts/). The app also writes
+  # user-level copies for Chrome/Chromium; see saya-studio.install for cleanup.
+}

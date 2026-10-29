@@ -1,0 +1,15 @@
+[workspace]
+members = ["crates/studio-core", "src-tauri"]
+default-members = ["crates/studio-core"]
+resolver = "2"
+
+[workspace.package]
+version = "1.0.0-beta.1"
+edition = "2021"
+
+[profile.dev]
+debug = 0
+
+[profile.release]
+strip = true
+lto = "thin"

@@ -1,0 +1,4446 @@
+{
+ "id": null,
+ "revision": 32,
+ "last_node_id": 100759,
+ "last_link_id": 99208,
+ "nodes": [
+  {
+   "id": 100096,
+   "type": "DaSiWa_MetadataImageSaver",
+   "pos": [
+    11116,
+    784
+   ],
+   "size": [
+    532,
+    952
+   ],
+   "flags": {
+    "pinned": false
+   },
+   "order": 65,
+   "mode": 0,
+   "inputs": [
+    {
+     "localized_name": "images",
+     "name": "images",
+     "type": "IMAGE",
+     "link": 98128
+    },
+    {
+     "localized_name": "metadata_config",
+     "name": "metadata_config",
+     "shape": 7,
+     "type": "METADATA_CONFIG",
+     "link": null
+    },
+    {
+     "localized_name": "extra_metadata",
+     "name": "extra_metadata",
+     "shape": 7,
+     "type": "EXTRA_METADATA",
+     "link": null
+    },
+    {
+     "localized_name": "filename_prefix",
+     "name": "filename_prefix",
+     "type": "STRING",
+     "widget": {
+      "name": "filename_prefix"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "file_format",
+     "name": "file_format",
+     "type": "COMBO",
+     "widget": {
+      "name": "file_format"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "compression",
+     "name": "compression",
+     "type": "INT",
+     "widget": {
+      "name": "compression"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "save_output",
+     "name": "save_output",
+     "type": "BOOLEAN",
+     "widget": {
+      "name": "save_output"
+     },
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "localized_name": "filename",
+     "name": "filename",
+     "type": "STRING",
+     "links": []
+    },
+    {
+     "localized_name": "metadata",
+     "name": "metadata",
+     "type": "STRING",
+     "links": []
+    }
+   ],
+   "title": "PREVIEW · Phase 3",
+   "properties": {
+    "cnr_id": "comfyui-dasiwa-nodes",
+    "ver": "0.2.7",
+    "Node name for S&R": "DaSiWa_MetadataImageSaver",
+    "saya_phase": 3,
+    "saya_original_mode": 0
+   },
+   "widgets_values": [
+    "image/%date:yyyy-MM-dd%/%date:hhmmss%",
+    "png",
+    15,
+    false
+   ],
+   "widgets_values_named": {
+    "filename_prefix": "image/%date:yyyy-MM-dd%/%date:hhmmss%",
+    "file_format": "png",
+    "compression": 15,
+    "save_output": false
+   },
+   "color": "#233b35",
+   "bgcolor": "#36584f"
+  },
+  {
+   "id": 100324,
+   "type": "Image Comparer (rgthree)",
+   "pos": [
+    10038,
+    2254
+   ],
+   "size": [
+    504,
+    336
+   ],
+   "flags": {
+    "pinned": false
+   },
+   "order": 67,
+   "mode": 0,
+   "inputs": [
+    {
+     "dir": 3,
+     "label": "after · right",
+     "name": "image_a",
+     "type": "IMAGE",
+     "link": 98921
+    },
+    {
+     "dir": 3,
+     "label": "before · left",
+     "name": "image_b",
+     "type": "IMAGE",
+     "link": 98920
+    }
+   ],
+   "outputs": [
+    {
+     "dir": 4,
+     "name": "images",
+     "shape": 3,
+     "type": "IMAGE",
+     "links": []
+    }
+   ],
+   "title": "Compare · Phase 3 · HiDream sampling",
+   "properties": {
+    "cnr_id": "rgthree-comfy",
+    "ver": "b775441a4c5ae2853d4ff6b97a137f7f7d11e597",
+    "comparer_mode": "Slide",
+    "ue_properties": {
+     "widget_ue_connectable": {},
+     "version": "7.8",
+     "input_ue_unconnectable": {}
+    },
+    "saya_phase": 3,
+    "saya_original_mode": 0,
+    "saya_sampling_compare": true,
+    "saya_before_left_after_right": true
+   },
+   "widgets_values": [
+    [
+     {
+      "name": "A",
+      "selected": true,
+      "url": "/api/view?filename=rgthree.compare._temp_qodpy_00001_.png&type=temp&subfolder=&rand=0.9666761464041523"
+     },
+     {
+      "name": "B",
+      "selected": true,
+      "url": "/api/view?filename=rgthree.compare._temp_qodpy_00002_.png&type=temp&subfolder=&rand=0.22116055824758307"
+     }
+    ]
+   ],
+   "widgets_values_named": {
+    "rgthree_comparer": {
+     "images": [
+      {
+       "name": "A",
+       "selected": true,
+       "url": "/api/view?filename=rgthree.compare._temp_qodpy_00001_.png&type=temp&subfolder=&rand=0.9666761464041523",
+       "img": {}
+      },
+      {
+       "name": "B",
+       "selected": true,
+       "url": "/api/view?filename=rgthree.compare._temp_qodpy_00002_.png&type=temp&subfolder=&rand=0.22116055824758307",
+       "img": {}
+      }
+     ]
+    }
+   },
+   "color": "#2f3540",
+   "bgcolor": "#485260"
+  },
+  {
+   "id": 100325,
+   "type": "Image Comparer (rgthree)",
+   "pos": [
+    10584,
+    2254
+   ],
+   "size": [
+    504,
+    336
+   ],
+   "flags": {
+    "pinned": false
+   },
+   "order": 68,
+   "mode": 0,
+   "inputs": [
+    {
+     "dir": 3,
+     "label": "after · right",
+     "name": "image_a",
+     "type": "IMAGE",
+     "link": 98924
+    },
+    {
+     "dir": 3,
+     "label": "before · left",
+     "name": "image_b",
+     "type": "IMAGE",
+     "link": 98923
+    }
+   ],
+   "outputs": [
+    {
+     "dir": 4,
+     "name": "images",
+     "shape": 3,
+     "type": "IMAGE",
+     "links": []
+    }
+   ],
+   "title": "Compare · Phase 3 · Chroma Anchor",
+   "properties": {
+    "cnr_id": "rgthree-comfy",
+    "ver": "b775441a4c5ae2853d4ff6b97a137f7f7d11e597",
+    "comparer_mode": "Slide",
+    "ue_properties": {
+     "widget_ue_connectable": {},
+     "version": "7.8",
+     "input_ue_unconnectable": {}
+    },
+    "saya_phase": 3,
+    "saya_original_mode": 0,
+    "saya_sampling_compare": true,
+    "saya_before_left_after_right": true
+   },
+   "widgets_values": [
+    [
+     {
+      "name": "A",
+      "selected": true,
+      "url": "/api/view?filename=rgthree.compare._temp_pgqmo_00001_.png&type=temp&subfolder=&rand=0.5032572570748493"
+     },
+     {
+      "name": "B",
+      "selected": true,
+      "url": "/api/view?filename=rgthree.compare._temp_pgqmo_00002_.png&type=temp&subfolder=&rand=0.05696028650021534"
+     }
+    ]
+   ],
+   "widgets_values_named": {
+    "rgthree_comparer": {
+     "images": [
+      {
+       "name": "A",
+       "selected": true,
+       "url": "/api/view?filename=rgthree.compare._temp_pgqmo_00001_.png&type=temp&subfolder=&rand=0.5032572570748493",
+       "img": {}
+      },
+      {
+       "name": "B",
+       "selected": true,
+       "url": "/api/view?filename=rgthree.compare._temp_pgqmo_00002_.png&type=temp&subfolder=&rand=0.05696028650021534",
+       "img": {}
+      }
+     ]
+    }
+   },
+   "color": "#2f3540",
+   "bgcolor": "#485260"
+  },
+  {
+   "id": 100056,
+   "type": "SayaImagePhase3Stop",
+   "pos": [
+    6930,
+    1134
+   ],
+   "size": [
+    308,
+    462
+   ],
+   "flags": {
+    "collapsed": true,
+    "pinned": false
+   },
+   "order": 66,
+   "mode": 0,
+   "inputs": [
+    {
+     "localized_name": "image",
+     "name": "image",
+     "type": "IMAGE",
+     "link": 97129
+    },
+    {
+     "localized_name": "save_receipt",
+     "name": "save_receipt",
+     "shape": 7,
+     "type": "STRING",
+     "link": null
+    },
+    {
+     "localized_name": "seed",
+     "name": "seed",
+     "type": "INT",
+     "widget": {
+      "name": "seed"
+     },
+     "link": 97130
+    },
+    {
+     "localized_name": "positive_prompt",
+     "name": "positive_prompt",
+     "type": "STRING",
+     "widget": {
+      "name": "positive_prompt"
+     },
+     "link": 97131
+    },
+    {
+     "localized_name": "negative_prompt",
+     "name": "negative_prompt",
+     "type": "STRING",
+     "widget": {
+      "name": "negative_prompt"
+     },
+     "link": 97132
+    },
+    {
+     "localized_name": "models_json",
+     "name": "models_json",
+     "type": "STRING",
+     "widget": {
+      "name": "models_json"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "vaes_json",
+     "name": "vaes_json",
+     "type": "STRING",
+     "widget": {
+      "name": "vaes_json"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "samplers_json",
+     "name": "samplers_json",
+     "type": "STRING",
+     "widget": {
+      "name": "samplers_json"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "source_path",
+     "name": "source_path",
+     "shape": 7,
+     "type": "STRING",
+     "widget": {
+      "name": "source_path"
+     },
+     "link": 97133
+    }
+   ],
+   "outputs": [
+    {
+     "localized_name": "image",
+     "name": "image",
+     "type": "IMAGE",
+     "links": []
+    },
+    {
+     "localized_name": "validated_path",
+     "name": "validated_path",
+     "type": "STRING",
+     "links": []
+    },
+    {
+     "localized_name": "manifest_json",
+     "name": "manifest_json",
+     "type": "STRING",
+     "links": []
+    }
+   ],
+   "title": "Phase 3 · Checkpoint Stop",
+   "properties": {
+    "Node name for S&R": "SayaImagePhaseCheckpointStop",
+    "cnr_id": "Saya Couple Upated",
+    "saya_phase": 3,
+    "saya_original_mode": 0
+   },
+   "widgets_values": [
+    0,
+    "",
+    "",
+    "",
+    "[\"hidream-i1-full-Q5_K_M.gguf\"]",
+    "[\"zImageClearVae_clear.safetensors\"]",
+    "{\"sampler\": \"multistep/res_2m\", \"scheduler\": \"beta57\", \"steps\": 12, \"cfg\": 3.0, \"denoise\": 0.3, \"engine\": \"ClownsharKSampler_Beta\"}",
+    ""
+   ],
+   "widgets_values_named": {
+    "seed": 0,
+    "control_after_generate": "",
+    "positive_prompt": "",
+    "negative_prompt": "",
+    "models_json": "[\"hidream-i1-full-Q5_K_M.gguf\"]",
+    "vaes_json": "[\"zImageClearVae_clear.safetensors\"]",
+    "samplers_json": "{\"sampler\": \"multistep/res_2m\", \"scheduler\": \"beta57\", \"steps\": 12, \"cfg\": 3.0, \"denoise\": 0.3, \"engine\": \"ClownsharKSampler_Beta\"}",
+    "source_path": ""
+   },
+   "color": "#4a2b2b",
+   "bgcolor": "#673d3d"
+  },
+  {
+   "id": 100055,
+   "type": "saya-auto-phase-3",
+   "pos": [
+    6860,
+    1064
+   ],
+   "size": [
+    336,
+    182
+   ],
+   "flags": {
+    "collapsed": false,
+    "pinned": false
+   },
+   "order": 35,
+   "mode": 0,
+   "inputs": [
+    {
+     "localized_name": "HiDream Quad CLIP",
+     "name": "HiDream Quad CLIP",
+     "type": "CLIP",
+     "link": 98095
+    },
+    {
+     "localized_name": "Solo (Couple Mode OFF)",
+     "name": "solo",
+     "type": "BOOLEAN",
+     "link": 98487
+    }
+   ],
+   "outputs": [
+    {
+     "localized_name": "image",
+     "name": "image",
+     "type": "IMAGE",
+     "links": [
+      97129,
+      98128
+     ]
+    },
+    {
+     "localized_name": "seed",
+     "name": "seed",
+     "type": "INT",
+     "links": [
+      97130
+     ]
+    },
+    {
+     "localized_name": "positive_prompt",
+     "name": "positive_prompt",
+     "type": "STRING",
+     "links": [
+      97131
+     ]
+    },
+    {
+     "localized_name": "negative_prompt",
+     "name": "negative_prompt",
+     "type": "STRING",
+     "links": [
+      97132
+     ]
+    },
+    {
+     "localized_name": "source_path",
+     "name": "source_path",
+     "type": "STRING",
+     "links": [
+      97133
+     ]
+    },
+    {
+     "localized_name": "Compare image 100090:0",
+     "name": "Compare image 100090:0",
+     "type": "IMAGE",
+     "links": [
+      98920
+     ]
+    },
+    {
+     "localized_name": "Compare image 10144:0",
+     "name": "Compare image 10144:0",
+     "type": "IMAGE",
+     "links": [
+      98921,
+      98923
+     ]
+    },
+    {
+     "localized_name": "Compare image 12428:0",
+     "name": "Compare image 12428:0",
+     "type": "IMAGE",
+     "links": [
+      98924
+     ]
+    }
+   ],
+   "properties": {
+    "cnr_id": "comfy-core",
+    "ver": "0.26.0",
+    "proxyWidgets": [],
+    "Node name for S&R": "saya-auto-phase-3",
+    "saya_phase": 3,
+    "saya_original_mode": 0,
+    "previewExposures": [
+     {
+      "name": "$$canvas-image-preview",
+      "sourceNodeId": "10143",
+      "sourcePreviewName": "$$canvas-image-preview"
+     }
+    ]
+   },
+   "color": "#315f86",
+   "bgcolor": "#1c3850"
+  },
+  {
+   "id": 100220,
+   "type": "saya-couple-mode-toggle",
+   "pos": [
+    5796,
+    1764
+   ],
+   "size": [
+    300,
+    130
+   ],
+   "flags": {
+    "pinned": false
+   },
+   "order": 19,
+   "mode": 0,
+   "inputs": [
+    {
+     "localized_name": "Couple Mode",
+     "name": "Couple Mode",
+     "type": "COMBO",
+     "widget": {
+      "name": "Couple Mode"
+     },
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "label": "SOLO flag",
+     "localized_name": "SOLO flag",
+     "name": "Solo",
+     "type": "BOOLEAN",
+     "links": [
+      98487
+     ]
+    }
+   ],
+   "title": "Couple Mode · Couple / Solo",
+   "properties": {
+    "cnr_id": "comfy-core",
+    "ver": "0.27.0",
+    "Node name for S&R": "saya-couple-mode-toggle",
+    "previewExposures": []
+   },
+   "widgets_values": [
+    "OFF"
+   ],
+   "widgets_values_named": {
+    "Couple Mode": "OFF"
+   },
+   "color": "#4a2f46",
+   "bgcolor": "#68435f"
+  },
+  {
+   "id": 810,
+   "type": "f997914d-608a-4c45-b914-7a66a3017156-hub-output-fix-v4",
+   "pos": [
+    5796,
+    784
+   ],
+   "size": [
+    350,
+    378
+   ],
+   "flags": {
+    "pinned": false
+   },
+   "order": 24,
+   "mode": 0,
+   "inputs": [
+    {
+     "label": "Illustrious / SDXL Checkpoint",
+     "name": "ckpt_name",
+     "type": "COMBO",
+     "widget": {
+      "name": "ckpt_name"
+     },
+     "link": null
+    },
+    {
+     "name": "ckpt_name_1",
+     "type": "COMBO",
+     "widget": {
+      "name": "ckpt_name_1"
+     },
+     "link": null
+    },
+    {
+     "name": "vae_name",
+     "type": "COMBO",
+     "widget": {
+      "name": "vae_name"
+     },
+     "link": null
+    },
+    {
+     "name": "vae_name_1",
+     "type": "COMBO",
+     "widget": {
+      "name": "vae_name_1"
+     },
+     "link": null
+    },
+    {
+     "name": "vae_name_2",
+     "type": "COMBO",
+     "widget": {
+      "name": "vae_name_2"
+     },
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "localized_name": "CLIP",
+     "name": "CLIP",
+     "type": "CLIP",
+     "links": []
+    },
+    {
+     "label": "MODEL_toLora",
+     "localized_name": "MODEL",
+     "name": "MODEL_toLora",
+     "type": "MODEL",
+     "links": []
+    },
+    {
+     "name": "MODEL_pass2",
+     "type": "MODEL",
+     "links": []
+    },
+    {
+     "localized_name": "VAE",
+     "name": "Main Model VAE",
+     "type": "VAE",
+     "links": []
+    },
+    {
+     "localized_name": "VAE",
+     "name": "Custom VAE 1",
+     "type": "VAE",
+     "links": []
+    },
+    {
+     "localized_name": "VAE",
+     "name": "Custom VAE 2",
+     "type": "VAE",
+     "links": []
+    },
+    {
+     "localized_name": "VAE",
+     "name": "Custom VAE 3",
+     "type": "VAE",
+     "links": []
+    },
+    {
+     "label": "Hidream Clip",
+     "name": "CLIP_1",
+     "type": "CLIP",
+     "links": [
+      98095
+     ]
+    },
+    {
+     "label": "Model 2 CLIP",
+     "localized_name": "CLIP_pass2",
+     "name": "CLIP_pass2",
+     "type": "CLIP",
+     "links": []
+    },
+    {
+     "localized_name": "Model 1 Identifier",
+     "name": "Model 1 Identifier",
+     "type": "STRING",
+     "links": []
+    },
+    {
+     "localized_name": "Model 2 Identifier",
+     "name": "Model 2 Identifier",
+     "type": "STRING",
+     "links": []
+    }
+   ],
+   "properties": {
+    "cnr_id": "comfy-core",
+    "ver": "0.26.0",
+    "saya_original_mode": 0,
+    "saya_shared_base": true,
+    "Node name for S&R": "a4cf22f8-558e-405a-9000-af81afd8a02b",
+    "previewExposures": []
+   },
+   "widgets_values": [
+    "NoobAI/no tags/MKLAN POISONED NOOB AI FUTA_00001_.safetensors",
+    "SDXL 1.0/anime/Mklan-AnimeTest6SDXL-AnimeCartoonSFWv1.safetensors",
+    "AAA%20Anime%20VAE%20SDXL%20v2.safetensors",
+    "Dark%20VAE%20SDXL%20Weak.safetensors",
+    "SDXL_anime_natural_vae.safetensors"
+   ],
+   "widgets_values_named": {
+    "ckpt_name": "NoobAI/no tags/MKLAN POISONED NOOB AI FUTA_00001_.safetensors",
+    "ckpt_name_1": "SDXL 1.0/anime/Mklan-AnimeTest6SDXL-AnimeCartoonSFWv1.safetensors",
+    "vae_name": "AAA%20Anime%20VAE%20SDXL%20v2.safetensors",
+    "vae_name_1": "Dark%20VAE%20SDXL%20Weak.safetensors",
+    "vae_name_2": "SDXL_anime_natural_vae.safetensors"
+   },
+   "color": "#243447",
+   "bgcolor": "#35526b"
+  }
+ ],
+ "links": [
+  [
+   97129,
+   100055,
+   0,
+   100056,
+   0,
+   "IMAGE"
+  ],
+  [
+   97130,
+   100055,
+   1,
+   100056,
+   2,
+   "INT"
+  ],
+  [
+   97131,
+   100055,
+   2,
+   100056,
+   3,
+   "STRING"
+  ],
+  [
+   97132,
+   100055,
+   3,
+   100056,
+   4,
+   "STRING"
+  ],
+  [
+   97133,
+   100055,
+   4,
+   100056,
+   8,
+   "STRING"
+  ],
+  [
+   98095,
+   810,
+   7,
+   100055,
+   0,
+   "CLIP"
+  ],
+  [
+   98128,
+   100055,
+   0,
+   100096,
+   0,
+   "IMAGE"
+  ],
+  [
+   98487,
+   100220,
+   0,
+   100055,
+   1,
+   "BOOLEAN"
+  ],
+  [
+   98920,
+   100055,
+   5,
+   100324,
+   1,
+   "IMAGE"
+  ],
+  [
+   98921,
+   100055,
+   6,
+   100324,
+   0,
+   "IMAGE"
+  ],
+  [
+   98923,
+   100055,
+   6,
+   100325,
+   1,
+   "IMAGE"
+  ],
+  [
+   98924,
+   100055,
+   7,
+   100325,
+   0,
+   "IMAGE"
+  ]
+ ],
+ "groups": [
+  {
+   "id": 89,
+   "title": "MAIN · Controls, Models & Routing",
+   "bounding": [
+    5782,
+    714,
+    1428,
+    1512
+   ],
+   "color": "#4f7ca4",
+   "flags": {
+    "pinned": false
+   }
+  },
+  {
+   "id": 90,
+   "title": "OUTPUTS · Phase Results & Metadata",
+   "bounding": [
+    10010,
+    714,
+    3290,
+    1036
+   ],
+   "color": "#4f7f70",
+   "flags": {
+    "pinned": false
+   }
+  },
+  {
+   "id": 3304,
+   "title": "COMPARE · Before / After",
+   "bounding": [
+    10010,
+    1750,
+    1638,
+    2114
+   ],
+   "color": "#3f789e",
+   "flags": {
+    "pinned": false
+   }
+  }
+ ],
+ "definitions": {
+  "subgraphs": [
+   {
+    "id": "f997914d-608a-4c45-b914-7a66a3017156-hub-output-fix-v4",
+    "version": 1,
+    "state": {
+     "lastGroupId": 3310,
+     "lastNodeId": 100759,
+     "lastLinkId": 99208,
+     "lastRerouteId": 575
+    },
+    "revision": 2,
+    "config": {},
+    "name": "MAIN · Checkpoints, Models & VAE",
+    "inputNode": {
+     "id": -10,
+     "bounding": [
+      0,
+      238,
+      212.689453125,
+      148
+     ]
+    },
+    "outputNode": {
+     "id": -20,
+     "bounding": [
+      994,
+      182,
+      147.703125,
+      268
+     ]
+    },
+    "inputs": [
+     {
+      "id": "a41c943d-daac-404b-97ce-5f5fd82f74a0",
+      "name": "ckpt_name",
+      "type": "COMBO",
+      "linkIds": [
+       50160,
+       98449
+      ],
+      "label": "Illustrious / SDXL Checkpoint",
+      "pos": [
+       188.689453125,
+       262
+      ]
+     },
+     {
+      "id": "fea28b1a-d810-40fe-984d-ecd8af27b55b",
+      "name": "ckpt_name_1",
+      "type": "COMBO",
+      "linkIds": [
+       50161,
+       98451
+      ],
+      "pos": [
+       188.689453125,
+       282
+      ]
+     },
+     {
+      "id": "7aefb9fb-f90d-4f29-899c-5546c93927fe",
+      "name": "vae_name",
+      "type": "COMBO",
+      "linkIds": [
+       50162
+      ],
+      "pos": [
+       188.689453125,
+       302
+      ]
+     },
+     {
+      "id": "6006c144-dd16-4b81-8a04-827fa60317b6",
+      "name": "vae_name_1",
+      "type": "COMBO",
+      "linkIds": [
+       50163
+      ],
+      "pos": [
+       188.689453125,
+       322
+      ]
+     },
+     {
+      "id": "1ce30e6b-908a-42d9-a55f-2f31793b17c1",
+      "name": "vae_name_2",
+      "type": "COMBO",
+      "linkIds": [
+       50164
+      ],
+      "pos": [
+       188.689453125,
+       342
+      ]
+     }
+    ],
+    "outputs": [
+     {
+      "id": "hub-v4-output-1",
+      "name": "CLIP",
+      "type": "CLIP",
+      "linkIds": [
+       20001
+      ],
+      "localized_name": "CLIP",
+      "pos": [
+       1018,
+       206
+      ]
+     },
+     {
+      "id": "hub-v4-output-2",
+      "name": "MODEL_toLora",
+      "type": "MODEL",
+      "linkIds": [
+       20002
+      ],
+      "localized_name": "MODEL",
+      "label": "MODEL_toLora",
+      "pos": [
+       1018,
+       226
+      ]
+     },
+     {
+      "id": "hub-v4-output-4",
+      "name": "MODEL_pass2",
+      "type": "MODEL",
+      "linkIds": [
+       20004
+      ],
+      "pos": [
+       1018,
+       246
+      ]
+     },
+     {
+      "id": "hub-v4-output-vae-3",
+      "name": "Main Model VAE",
+      "type": "VAE",
+      "linkIds": [
+       50016
+      ],
+      "localized_name": "VAE",
+      "pos": [
+       1018,
+       266
+      ]
+     },
+     {
+      "id": "hub-v4-output-vae-4",
+      "name": "Custom VAE 1",
+      "type": "VAE",
+      "linkIds": [
+       50017
+      ],
+      "localized_name": "VAE",
+      "pos": [
+       1018,
+       286
+      ]
+     },
+     {
+      "id": "hub-v4-output-vae-5",
+      "name": "Custom VAE 2",
+      "type": "VAE",
+      "linkIds": [
+       50018
+      ],
+      "localized_name": "VAE",
+      "pos": [
+       1018,
+       306
+      ]
+     },
+     {
+      "id": "hub-v4-output-vae-6",
+      "name": "Custom VAE 3",
+      "type": "VAE",
+      "linkIds": [
+       50019
+      ],
+      "localized_name": "VAE",
+      "pos": [
+       1018,
+       326
+      ]
+     },
+     {
+      "id": "7eb37759-14ec-4e88-89fe-6b230c24803e",
+      "name": "CLIP_1",
+      "type": "CLIP",
+      "linkIds": [
+       52077
+      ],
+      "label": "Hidream Clip",
+      "pos": [
+       1018,
+       346
+      ]
+     },
+     {
+      "id": "574261a5-d008-4ed4-bb76-8262064ddbd4",
+      "name": "CLIP_pass2",
+      "type": "CLIP",
+      "linkIds": [
+       98140
+      ],
+      "localized_name": "CLIP_pass2",
+      "pos": [
+       1018,
+       366
+      ]
+     },
+     {
+      "id": "checkpoint-hub-model-1-identifier",
+      "name": "Model 1 Identifier",
+      "type": "STRING",
+      "linkIds": [
+       98450
+      ],
+      "localized_name": "Model 1 Identifier",
+      "pos": [
+       1018,
+       386
+      ]
+     },
+     {
+      "id": "checkpoint-hub-model-2-identifier",
+      "name": "Model 2 Identifier",
+      "type": "STRING",
+      "linkIds": [
+       98452
+      ],
+      "localized_name": "Model 2 Identifier",
+      "pos": [
+       1018,
+       406
+      ]
+     }
+    ],
+    "widgets": [],
+    "nodes": [
+     {
+      "id": 488,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+       238,
+       140
+      ],
+      "size": [
+       280,
+       98
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+       {
+        "label": "Illustrious / SDXL Checkpoint",
+        "localized_name": "nom_ckpt",
+        "name": "ckpt_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "ckpt_name"
+        },
+        "link": 50160
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "MODÈLE",
+        "name": "MODEL",
+        "type": "MODEL",
+        "links": [
+         20002
+        ]
+       },
+       {
+        "localized_name": "CLIP",
+        "name": "CLIP",
+        "type": "CLIP",
+        "links": [
+         20001
+        ]
+       },
+       {
+        "localized_name": "VAE",
+        "name": "VAE",
+        "type": "VAE",
+        "links": [
+         50016
+        ]
+       }
+      ],
+      "title": "Checkpoint · Main Model",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.26.0",
+       "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+       "Illustrious/no tags/Mklan-Sayapacito-Echo_00001_.safetensors"
+      ],
+      "widgets_values_named": {
+       "ckpt_name": "Illustrious/no tags/Mklan-Sayapacito-Echo_00001_.safetensors"
+      },
+      "color": "#243447",
+      "bgcolor": "#35526b"
+     },
+     {
+      "id": 489,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+       238,
+       280
+      ],
+      "size": [
+       280,
+       98
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "nom_ckpt",
+        "name": "ckpt_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "ckpt_name"
+        },
+        "link": 50161
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "MODÈLE",
+        "name": "MODEL",
+        "type": "MODEL",
+        "links": [
+         20004
+        ]
+       },
+       {
+        "localized_name": "CLIP",
+        "name": "CLIP",
+        "type": "CLIP",
+        "links": [
+         98140
+        ]
+       },
+       {
+        "localized_name": "VAE",
+        "name": "VAE",
+        "type": "VAE",
+        "links": []
+       }
+      ],
+      "title": "Checkpoint · Sampler 2",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.26.0",
+       "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+       "SDXL 1.0/anime/Mklan-AnimeTest6SDXL-AnimeCartoonSFWv1.safetensors"
+      ],
+      "widgets_values_named": {
+       "ckpt_name": "SDXL 1.0/anime/Mklan-AnimeTest6SDXL-AnimeCartoonSFWv1.safetensors"
+      },
+      "color": "#243447",
+      "bgcolor": "#35526b"
+     },
+     {
+      "id": 3006,
+      "type": "VAELoader",
+      "pos": [
+       238,
+       420
+      ],
+      "size": [
+       280,
+       70
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "nom_vae",
+        "name": "vae_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "vae_name"
+        },
+        "link": 50162
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "VAE",
+        "name": "VAE",
+        "type": "VAE",
+        "links": [
+         50017
+        ]
+       }
+      ],
+      "title": "VAE · Custom 1",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.26.0",
+       "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+       "AAA%20Anime%20VAE%20SDXL%20v2.safetensors"
+      ],
+      "widgets_values_named": {
+       "vae_name": "AAA%20Anime%20VAE%20SDXL%20v2.safetensors"
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 3007,
+      "type": "VAELoader",
+      "pos": [
+       532,
+       420
+      ],
+      "size": [
+       210,
+       70
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "nom_vae",
+        "name": "vae_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "vae_name"
+        },
+        "link": 50163
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "VAE",
+        "name": "VAE",
+        "type": "VAE",
+        "links": [
+         50018
+        ]
+       }
+      ],
+      "title": "VAE · Custom 2",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.26.0",
+       "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+       "Dark%20VAE%20SDXL%20Weak.safetensors"
+      ],
+      "widgets_values_named": {
+       "vae_name": "Dark%20VAE%20SDXL%20Weak.safetensors"
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 100223,
+      "type": "SayaValueToString",
+      "pos": [
+       630,
+       252
+      ],
+      "size": [
+       238,
+       70
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "value",
+        "name": "value",
+        "type": "*",
+        "link": 98449
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "value",
+        "name": "value",
+        "type": "STRING",
+        "links": [
+         98450
+        ]
+       }
+      ],
+      "title": "Identifier · Model 1 (live)",
+      "properties": {
+       "Node name for S&R": "SayaValueToString",
+       "cnr_id": "Saya Couple Upated"
+      },
+      "color": "#2b3038",
+      "bgcolor": "#3d4652"
+     },
+     {
+      "id": 3008,
+      "type": "VAELoader",
+      "pos": [
+       756,
+       420
+      ],
+      "size": [
+       210,
+       70
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "nom_vae",
+        "name": "vae_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "vae_name"
+        },
+        "link": 50164
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "VAE",
+        "name": "VAE",
+        "type": "VAE",
+        "links": [
+         50019
+        ]
+       }
+      ],
+      "title": "VAE · Custom 3",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.26.0",
+       "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+       "SDXL_anime_natural_vae.safetensors"
+      ],
+      "widgets_values_named": {
+       "vae_name": "SDXL_anime_natural_vae.safetensors"
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 100224,
+      "type": "SayaValueToString",
+      "pos": [
+       686,
+       336
+      ],
+      "size": [
+       238,
+       70
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "value",
+        "name": "value",
+        "type": "*",
+        "link": 98451
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "value",
+        "name": "value",
+        "type": "STRING",
+        "links": [
+         98452
+        ]
+       }
+      ],
+      "title": "Identifier · Model 2 (live)",
+      "properties": {
+       "Node name for S&R": "SayaValueToString",
+       "cnr_id": "Saya Couple Upated"
+      },
+      "color": "#2b3038",
+      "bgcolor": "#3d4652"
+     },
+     {
+      "id": 12401,
+      "type": "QuadrupleCLIPLoader",
+      "pos": [
+       532,
+       140
+      ],
+      "size": [
+       434,
+       238
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "clip_name1",
+        "name": "clip_name1",
+        "type": "COMBO",
+        "widget": {
+         "name": "clip_name1"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "clip_name2",
+        "name": "clip_name2",
+        "type": "COMBO",
+        "widget": {
+         "name": "clip_name2"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "clip_name3",
+        "name": "clip_name3",
+        "type": "COMBO",
+        "widget": {
+         "name": "clip_name3"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "clip_name4",
+        "name": "clip_name4",
+        "type": "COMBO",
+        "widget": {
+         "name": "clip_name4"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "CLIP",
+        "name": "CLIP",
+        "type": "CLIP",
+        "links": [
+         52077
+        ]
+       }
+      ],
+      "title": "HiDream · Shared Quad CLIP",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.34.0",
+       "Node name for S&R": "QuadrupleCLIPLoader",
+       "saya_note": "HiDream Quad CLIP (text encoders only). Loaded only on a HiDream conditioning cache miss; the HiDream MODEL stays in Phase 3.",
+       "saya_phase": 1
+      },
+      "widgets_values": [
+       "clip_l_hidream.safetensors",
+       "clip_g_hidream.safetensors",
+       "t5xxl_fp8_e4m3fn.safetensors",
+       "llama_3.1_8b_instruct_fp8_scaled.safetensors"
+      ],
+      "widgets_values_named": {
+       "clip_name1": "clip_l_hidream.safetensors",
+       "clip_name2": "clip_g_hidream.safetensors",
+       "clip_name3": "t5xxl_fp8_e4m3fn.safetensors",
+       "clip_name4": "llama_3.1_8b_instruct_fp8_scaled.safetensors"
+      },
+      "color": "#243447",
+      "bgcolor": "#35526b"
+     }
+    ],
+    "groups": [],
+    "links": [
+     {
+      "id": 20001,
+      "origin_id": 488,
+      "origin_slot": 1,
+      "target_id": -20,
+      "target_slot": 0,
+      "type": "CLIP"
+     },
+     {
+      "id": 20002,
+      "origin_id": 488,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 1,
+      "type": "MODEL"
+     },
+     {
+      "id": 20004,
+      "origin_id": 489,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 2,
+      "type": "MODEL"
+     },
+     {
+      "id": 50016,
+      "origin_id": 488,
+      "origin_slot": 2,
+      "target_id": -20,
+      "target_slot": 3,
+      "type": "VAE"
+     },
+     {
+      "id": 50017,
+      "origin_id": 3006,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 4,
+      "type": "VAE"
+     },
+     {
+      "id": 50018,
+      "origin_id": 3007,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 5,
+      "type": "VAE"
+     },
+     {
+      "id": 50019,
+      "origin_id": 3008,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 6,
+      "type": "VAE"
+     },
+     {
+      "id": 50160,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 488,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 50161,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 489,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 50162,
+      "origin_id": -10,
+      "origin_slot": 2,
+      "target_id": 3006,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 50163,
+      "origin_id": -10,
+      "origin_slot": 3,
+      "target_id": 3007,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 50164,
+      "origin_id": -10,
+      "origin_slot": 4,
+      "target_id": 3008,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 52077,
+      "origin_id": 12401,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 7,
+      "type": "CLIP"
+     },
+     {
+      "id": 98140,
+      "origin_id": 489,
+      "origin_slot": 1,
+      "target_id": -20,
+      "target_slot": 8,
+      "type": "CLIP"
+     },
+     {
+      "id": 98449,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 100223,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 98450,
+      "origin_id": 100223,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 9,
+      "type": "STRING"
+     },
+     {
+      "id": 98451,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 100224,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 98452,
+      "origin_id": 100224,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 10,
+      "type": "STRING"
+     }
+    ],
+    "extra": {}
+   },
+   {
+    "id": "saya-auto-phase-3",
+    "version": 1,
+    "state": {
+     "lastGroupId": 3310,
+     "lastNodeId": 100759,
+     "lastLinkId": 99208,
+     "lastRerouteId": 575
+    },
+    "revision": 4,
+    "config": {},
+    "name": "Phase 3 · HiDream Refiner",
+    "inputNode": {
+     "id": -10,
+     "bounding": [
+      602,
+      7658,
+      187.904296875,
+      88
+     ]
+    },
+    "outputNode": {
+     "id": -20,
+     "bounding": [
+      1974,
+      8050,
+      194.8828125,
+      208
+     ]
+    },
+    "inputs": [
+     {
+      "id": "saya-phase3-hidream-clip-input",
+      "name": "HiDream Quad CLIP",
+      "type": "CLIP",
+      "linkIds": [
+       98107
+      ],
+      "localized_name": "HiDream Quad CLIP",
+      "pos": [
+       765.904296875,
+       7682
+      ]
+     },
+     {
+      "id": "saya-phase3-solo",
+      "name": "solo",
+      "type": "BOOLEAN",
+      "linkIds": [
+       98482,
+       98483
+      ],
+      "localized_name": "Solo (Couple Mode OFF)",
+      "pos": [
+       765.904296875,
+       7702
+      ]
+     }
+    ],
+    "outputs": [
+     {
+      "id": "7b478a43-c09b-4f24-b33b-dfb4b31da2f5",
+      "name": "image",
+      "type": "IMAGE",
+      "linkIds": [
+       98127
+      ],
+      "localized_name": "image",
+      "pos": [
+       1998,
+       8074
+      ]
+     },
+     {
+      "id": "5c58ed5c-c4fd-42cf-bbcb-a69ce1b31364",
+      "name": "seed",
+      "type": "INT",
+      "linkIds": [
+       40214
+      ],
+      "localized_name": "seed",
+      "pos": [
+       1998,
+       8094
+      ]
+     },
+     {
+      "id": "63a4b8db-7f47-4463-8fcc-70aa8bd153a3",
+      "name": "positive_prompt",
+      "type": "STRING",
+      "linkIds": [
+       98123
+      ],
+      "localized_name": "positive_prompt",
+      "pos": [
+       1998,
+       8114
+      ]
+     },
+     {
+      "id": "b4d47815-9b43-4645-94be-f0ceff6811c0",
+      "name": "negative_prompt",
+      "type": "STRING",
+      "linkIds": [
+       40216
+      ],
+      "localized_name": "negative_prompt",
+      "pos": [
+       1998,
+       8134
+      ]
+     },
+     {
+      "id": "df62519d-c7e0-46b6-8f88-02ae97cbf223",
+      "name": "source_path",
+      "type": "STRING",
+      "linkIds": [
+       40217
+      ],
+      "localized_name": "source_path",
+      "pos": [
+       1998,
+       8154
+      ]
+     },
+     {
+      "id": "c1cb0c4d-9d74-4e34-a1ba-c2e278ed9546",
+      "name": "Compare image 100090:0",
+      "type": "IMAGE",
+      "linkIds": [
+       98918
+      ],
+      "localized_name": "Compare image 100090:0",
+      "pos": [
+       1998,
+       8174
+      ]
+     },
+     {
+      "id": "4c43fd1a-dc42-4200-a2b3-3ee076b5a271",
+      "name": "Compare image 10144:0",
+      "type": "IMAGE",
+      "linkIds": [
+       98919
+      ],
+      "localized_name": "Compare image 10144:0",
+      "pos": [
+       1998,
+       8194
+      ]
+     },
+     {
+      "id": "c6957074-44a2-4487-9053-68c021afffba",
+      "name": "Compare image 12428:0",
+      "type": "IMAGE",
+      "linkIds": [
+       98922
+      ],
+      "localized_name": "Compare image 12428:0",
+      "pos": [
+       1998,
+       8214
+      ]
+     }
+    ],
+    "widgets": [],
+    "nodes": [
+     {
+      "id": 10150,
+      "type": "SayaImagePhase3Load",
+      "pos": [
+       812,
+       7658
+      ],
+      "size": [
+       350,
+       210
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+       {
+        "localized_name": "image",
+        "name": "image",
+        "type": "IMAGE",
+        "links": [
+         40211
+        ]
+       },
+       {
+        "localized_name": "manifest_json",
+        "name": "manifest_json",
+        "type": "STRING",
+        "links": []
+       },
+       {
+        "localized_name": "checkpoint_path",
+        "name": "checkpoint_path",
+        "type": "STRING",
+        "links": [
+         40217,
+         98105
+        ]
+       },
+       {
+        "localized_name": "seed",
+        "name": "seed",
+        "type": "INT",
+        "links": [
+         40214,
+         98121
+        ]
+       },
+       {
+        "localized_name": "positive_prompt",
+        "name": "positive_prompt",
+        "type": "STRING",
+        "links": [
+         98123
+        ]
+       },
+       {
+        "localized_name": "negative_prompt",
+        "name": "negative_prompt",
+        "type": "STRING",
+        "links": [
+         40216
+        ]
+       },
+       {
+        "localized_name": "hidream_main_positive",
+        "name": "hidream_main_positive",
+        "type": "CONDITIONING",
+        "links": []
+       },
+       {
+        "localized_name": "hidream_person_1_positive",
+        "name": "hidream_person_1_positive",
+        "type": "CONDITIONING",
+        "links": []
+       },
+       {
+        "localized_name": "hidream_person_2_positive",
+        "name": "hidream_person_2_positive",
+        "type": "CONDITIONING",
+        "links": []
+       },
+       {
+        "localized_name": "hidream_negative",
+        "name": "hidream_negative",
+        "type": "CONDITIONING",
+        "links": []
+       }
+      ],
+      "title": "Phase 3 · Load Phase 2 Checkpoint",
+      "properties": {
+       "Node name for S&R": "SayaImagePhaseCheckpointLoad",
+       "cnr_id": "Saya Couple Upated"
+      },
+      "color": "#2f5a35",
+      "bgcolor": "#18351e"
+     },
+     {
+      "id": 10149,
+      "type": "VAELoader",
+      "pos": [
+       812,
+       7910
+      ],
+      "size": [
+       350,
+       70
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "nom_vae",
+        "name": "vae_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "vae_name"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "VAE",
+        "name": "VAE",
+        "type": "VAE",
+        "links": [
+         40209,
+         40210
+        ]
+       }
+      ],
+      "title": "HiDream · VAE Loader",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.3.57",
+       "Node name for S&R": "VAELoader",
+       "saya_note": "Native HiDream VAE. Pick the real HiDream VAE here.",
+       "ue_properties": {
+        "widget_ue_connectable": {
+         "vae_name": true
+        },
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       "zImageClearVae_clear.safetensors"
+      ],
+      "widgets_values_named": {
+       "vae_name": "zImageClearVae_clear.safetensors"
+      },
+      "color": "#223",
+      "bgcolor": "#335"
+     },
+     {
+      "id": 12422,
+      "type": "SayaHiDreamLoraLoader",
+      "pos": [
+       1176,
+       7924
+      ],
+      "size": [
+       322,
+       98
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "model",
+        "name": "model",
+        "type": "MODEL",
+        "link": 40629
+       },
+       {
+        "localized_name": "lora_config",
+        "name": "lora_config",
+        "type": "SAYA_HIDREAM_LORA",
+        "link": 52140
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "hidream_model",
+        "name": "hidream_model",
+        "type": "MODEL",
+        "links": [
+         52142
+        ]
+       }
+      ],
+      "title": "Phase 3 · HiDream LoRA Loader",
+      "properties": {
+       "Node name for S&R": "SayaHiDreamLoraLoader",
+       "cnr_id": "Saya Couple Upated",
+       "saya_phase": 3
+      },
+      "color": "#3d3347",
+      "bgcolor": "#533f63"
+     },
+     {
+      "id": 100084,
+      "type": "SayaCoupleImprintResolve",
+      "pos": [
+       1176,
+       7798
+      ],
+      "size": [
+       322,
+       84
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "checkpoint_path",
+        "name": "checkpoint_path",
+        "type": "STRING",
+        "link": 98105
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "imprint",
+        "name": "imprint",
+        "type": "SAYA_IMPRINT",
+        "links": [
+         98106
+        ]
+       },
+       {
+        "localized_name": "imprint_json",
+        "name": "imprint_json",
+        "type": "STRING",
+        "links": []
+       }
+      ],
+      "title": "Couple · Resolve Imprint (ancestry)",
+      "properties": {
+       "Node name for S&R": "SayaCoupleImprintResolve"
+      },
+      "color": "#4a2f46",
+      "bgcolor": "#68435f"
+     },
+     {
+      "id": 10146,
+      "type": "ImageScaleBy",
+      "pos": [
+       1176,
+       7658
+      ],
+      "size": [
+       322,
+       98
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "image",
+        "name": "image",
+        "type": "IMAGE",
+        "link": 40211
+       },
+       {
+        "localized_name": "méthode_d'agrandissement",
+        "name": "upscale_method",
+        "type": "COMBO",
+        "widget": {
+         "name": "upscale_method"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "agrandir_par",
+        "name": "scale_by",
+        "type": "FLOAT",
+        "widget": {
+         "name": "scale_by"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "IMAGE",
+        "name": "IMAGE",
+        "type": "IMAGE",
+        "links": [
+         98124
+        ]
+       }
+      ],
+      "title": "HiDream · Input Scale",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.3.57",
+       "Node name for S&R": "ImageScaleBy",
+       "ue_properties": {
+        "widget_ue_connectable": {
+         "upscale_method": true,
+         "scale_by": true,
+         "width": true,
+         "height": true,
+         "crop": true
+        },
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       "bicubic",
+       1
+      ],
+      "widgets_values_named": {
+       "upscale_method": "bicubic",
+       "scale_by": 1
+      },
+      "color": "#233",
+      "bgcolor": "#355"
+     },
+     {
+      "id": 100085,
+      "type": "SayaCoupleHiDreamReconstruct",
+      "pos": [
+       1512,
+       7658
+      ],
+      "size": [
+       406,
+       224
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "imprint",
+        "name": "imprint",
+        "type": "SAYA_IMPRINT",
+        "link": 98106
+       },
+       {
+        "localized_name": "clip",
+        "name": "clip",
+        "type": "CLIP",
+        "link": 98107
+       },
+       {
+        "localized_name": "latent",
+        "name": "latent",
+        "type": "LATENT",
+        "link": 98108
+       },
+       {
+        "localized_name": "clip_identity",
+        "name": "clip_identity",
+        "type": "STRING",
+        "link": 98110
+       },
+       {
+        "localized_name": "hidream_trigger",
+        "name": "hidream_trigger",
+        "shape": 7,
+        "type": "STRING",
+        "link": 98109
+       },
+       {
+        "localized_name": "solo",
+        "name": "solo",
+        "shape": 7,
+        "type": "BOOLEAN",
+        "link": 98482
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "conditioning_a",
+        "name": "conditioning_a",
+        "type": "CONDITIONING",
+        "links": [
+         98111
+        ]
+       },
+       {
+        "localized_name": "conditioning_b",
+        "name": "conditioning_b",
+        "type": "CONDITIONING",
+        "links": [
+         98112
+        ]
+       },
+       {
+        "localized_name": "conditioning_solo",
+        "name": "conditioning_solo",
+        "type": "CONDITIONING",
+        "links": [
+         98484
+        ]
+       },
+       {
+        "localized_name": "negative",
+        "name": "negative",
+        "type": "CONDITIONING",
+        "links": [
+         98119
+        ]
+       },
+       {
+        "localized_name": "mask_a",
+        "name": "mask_a",
+        "type": "MASK",
+        "links": [
+         98114
+        ]
+       },
+       {
+        "localized_name": "mask_b",
+        "name": "mask_b",
+        "type": "MASK",
+        "links": [
+         98115
+        ]
+       },
+       {
+        "localized_name": "regional_enabled",
+        "name": "regional_enabled",
+        "type": "BOOLEAN",
+        "links": [
+         98486
+        ]
+       }
+      ],
+      "title": "Phase 3 · HiDream Reconstruct · P1 / P2 / Solo",
+      "properties": {
+       "Node name for S&R": "SayaCoupleHiDreamReconstruct"
+      },
+      "color": "#4a2f46",
+      "bgcolor": "#68435f"
+     },
+     {
+      "id": 100086,
+      "type": "ClownRegionalConditioning_AB",
+      "pos": [
+       1932,
+       7658
+      ],
+      "size": [
+       392,
+       378
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "conditioning_A",
+        "name": "conditioning_A",
+        "shape": 7,
+        "type": "CONDITIONING",
+        "link": 98111
+       },
+       {
+        "localized_name": "conditioning_B",
+        "name": "conditioning_B",
+        "shape": 7,
+        "type": "CONDITIONING",
+        "link": 98112
+       },
+       {
+        "localized_name": "mask_A",
+        "name": "mask_A",
+        "shape": 7,
+        "type": "MASK",
+        "link": 98114
+       },
+       {
+        "localized_name": "mask_B",
+        "name": "mask_B",
+        "shape": 7,
+        "type": "MASK",
+        "link": 98115
+       },
+       {
+        "localized_name": "weights",
+        "name": "weights",
+        "shape": 7,
+        "type": "SIGMAS",
+        "link": null
+       },
+       {
+        "localized_name": "region_bleeds",
+        "name": "region_bleeds",
+        "shape": 7,
+        "type": "SIGMAS",
+        "link": null
+       },
+       {
+        "localized_name": "weight",
+        "name": "weight",
+        "type": "FLOAT",
+        "widget": {
+         "name": "weight"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "region_bleed",
+        "name": "region_bleed",
+        "type": "FLOAT",
+        "widget": {
+         "name": "region_bleed"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "region_bleed_start_step",
+        "name": "region_bleed_start_step",
+        "type": "INT",
+        "widget": {
+         "name": "region_bleed_start_step"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "weight_scheduler",
+        "name": "weight_scheduler",
+        "type": "COMBO",
+        "widget": {
+         "name": "weight_scheduler"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "start_step",
+        "name": "start_step",
+        "type": "INT",
+        "widget": {
+         "name": "start_step"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "end_step",
+        "name": "end_step",
+        "type": "INT",
+        "widget": {
+         "name": "end_step"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "mask_type",
+        "name": "mask_type",
+        "type": "COMBO",
+        "widget": {
+         "name": "mask_type"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "edge_width",
+        "name": "edge_width",
+        "type": "INT",
+        "widget": {
+         "name": "edge_width"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "invert_mask",
+        "name": "invert_mask",
+        "type": "BOOLEAN",
+        "widget": {
+         "name": "invert_mask"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "conditioning",
+        "name": "conditioning",
+        "type": "CONDITIONING",
+        "links": [
+         98118
+        ]
+       }
+      ],
+      "title": "Phase 3 · Regional Conditioning · P1 / P2",
+      "properties": {
+       "cnr_id": "comfyui_fearnworksnodes",
+       "ver": "0.1.2",
+       "Node name for S&R": "ClownRegionalConditioning_AB"
+      },
+      "widgets_values": [
+       1,
+       0,
+       0,
+       "constant",
+       0,
+       100,
+       "boolean",
+       0,
+       false
+      ],
+      "widgets_values_named": {
+       "weight": 1,
+       "region_bleed": 0,
+       "region_bleed_start_step": 0,
+       "weight_scheduler": "constant",
+       "start_step": 0,
+       "end_step": 100,
+       "mask_type": "boolean",
+       "edge_width": 0,
+       "invert_mask": false
+      },
+      "color": "#4a2f46",
+      "bgcolor": "#68435f"
+     },
+     {
+      "id": 100088,
+      "type": "ClownsharKSampler_Beta",
+      "pos": [
+       2338,
+       7658
+      ],
+      "size": [
+       336,
+       420
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "model",
+        "name": "model",
+        "shape": 7,
+        "type": "MODEL",
+        "link": 98117
+       },
+       {
+        "localized_name": "positive",
+        "name": "positive",
+        "shape": 7,
+        "type": "CONDITIONING",
+        "link": 98485
+       },
+       {
+        "localized_name": "negative",
+        "name": "negative",
+        "shape": 7,
+        "type": "CONDITIONING",
+        "link": 98119
+       },
+       {
+        "localized_name": "latent_image",
+        "name": "latent_image",
+        "shape": 7,
+        "type": "LATENT",
+        "link": 98120
+       },
+       {
+        "localized_name": "sigmas",
+        "name": "sigmas",
+        "shape": 7,
+        "type": "SIGMAS",
+        "link": null
+       },
+       {
+        "localized_name": "guides",
+        "name": "guides",
+        "shape": 7,
+        "type": "GUIDES",
+        "link": null
+       },
+       {
+        "localized_name": "options",
+        "name": "options",
+        "shape": 7,
+        "type": "OPTIONS",
+        "link": null
+       },
+       {
+        "localized_name": "eta",
+        "name": "eta",
+        "type": "FLOAT",
+        "widget": {
+         "name": "eta"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "sampler_name",
+        "name": "sampler_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "sampler_name"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "scheduler",
+        "name": "scheduler",
+        "type": "COMBO",
+        "widget": {
+         "name": "scheduler"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "steps",
+        "name": "steps",
+        "type": "INT",
+        "widget": {
+         "name": "steps"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "steps_to_run",
+        "name": "steps_to_run",
+        "type": "INT",
+        "widget": {
+         "name": "steps_to_run"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "denoise",
+        "name": "denoise",
+        "type": "FLOAT",
+        "widget": {
+         "name": "denoise"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "cfg",
+        "name": "cfg",
+        "type": "FLOAT",
+        "widget": {
+         "name": "cfg"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "seed",
+        "name": "seed",
+        "type": "INT",
+        "widget": {
+         "name": "seed"
+        },
+        "link": 98121
+       },
+       {
+        "localized_name": "sampler_mode",
+        "name": "sampler_mode",
+        "type": "COMBO",
+        "widget": {
+         "name": "sampler_mode"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "bongmath",
+        "name": "bongmath",
+        "type": "BOOLEAN",
+        "widget": {
+         "name": "bongmath"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "output",
+        "name": "output",
+        "type": "LATENT",
+        "slot_index": 0,
+        "links": [
+         98122
+        ]
+       },
+       {
+        "localized_name": "denoised",
+        "name": "denoised",
+        "type": "LATENT",
+        "links": []
+       },
+       {
+        "localized_name": "options",
+        "name": "options",
+        "type": "OPTIONS",
+        "links": []
+       }
+      ],
+      "title": "Phase 3 · HiDream Sampler · RES4LYF",
+      "properties": {
+       "cnr_id": "RES4LYF",
+       "ver": "119679d8d8d26e6db52757e705488abb6399d7d4",
+       "Node name for S&R": "ClownsharKSampler_Beta"
+      },
+      "widgets_values": [
+       0.5,
+       "multistep/res_2m",
+       "beta57",
+       12,
+       -1,
+       0.2,
+       3,
+       624074396997494,
+       "fixed",
+       "resample",
+       true
+      ],
+      "widgets_values_named": {
+       "eta": 0.5,
+       "sampler_name": "multistep/res_2m",
+       "scheduler": "beta57",
+       "steps": 12,
+       "steps_to_run": -1,
+       "denoise": 0.2,
+       "cfg": 3,
+       "seed": 624074396997494,
+       "control_after_generate": "fixed",
+       "sampler_mode": "resample",
+       "bongmath": true
+      },
+      "color": "#243447",
+      "bgcolor": "#35526b"
+     },
+     {
+      "id": 100087,
+      "type": "ReHiDreamPatcher",
+      "pos": [
+       1526,
+       7938
+      ],
+      "size": [
+       406,
+       112
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "model",
+        "name": "model",
+        "type": "MODEL",
+        "link": 98116
+       },
+       {
+        "localized_name": "style_dtype",
+        "name": "style_dtype",
+        "type": "COMBO",
+        "widget": {
+         "name": "style_dtype"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "enable",
+        "name": "enable",
+        "type": "BOOLEAN",
+        "widget": {
+         "name": "enable"
+        },
+        "link": 98486
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "model",
+        "name": "model",
+        "type": "MODEL",
+        "links": [
+         98117
+        ]
+       }
+      ],
+      "title": "HiDream · Regional Attention Patcher",
+      "properties": {
+       "cnr_id": "comfyui_fearnworksnodes",
+       "ver": "0.1.2",
+       "Node name for S&R": "ReHiDreamPatcher"
+      },
+      "widgets_values": [
+       "float32",
+       true
+      ],
+      "widgets_values_named": {
+       "style_dtype": "float32",
+       "enable": true
+      },
+      "color": "#4a2f46",
+      "bgcolor": "#68435f"
+     },
+     {
+      "id": 10144,
+      "type": "VAEDecode",
+      "pos": [
+       1512,
+       8092
+      ],
+      "size": [
+       322,
+       112
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "échantillons",
+        "name": "samples",
+        "type": "LATENT",
+        "link": 98122
+       },
+       {
+        "localized_name": "vae",
+        "name": "vae",
+        "type": "VAE",
+        "link": 40210
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "IMAGE",
+        "name": "IMAGE",
+        "type": "IMAGE",
+        "links": [
+         40202,
+         98919
+        ]
+       }
+      ],
+      "title": "HiDream · Decode",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.3.57",
+       "Node name for S&R": "VAEDecode",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "color": "#323",
+      "bgcolor": "#535"
+     },
+     {
+      "id": 10142,
+      "type": "VAEEncode",
+      "pos": [
+       1512,
+       8134
+      ],
+      "size": [
+       406,
+       112
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "pixels",
+        "name": "pixels",
+        "type": "IMAGE",
+        "link": 40204
+       },
+       {
+        "localized_name": "vae",
+        "name": "vae",
+        "type": "VAE",
+        "link": 40209
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "LATENT",
+        "name": "LATENT",
+        "type": "LATENT",
+        "links": [
+         40199,
+         98108
+        ]
+       }
+      ],
+      "title": "HiDream · Encode",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.3.57",
+       "Node name for S&R": "VAEEncode",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "color": "#323",
+      "bgcolor": "#535"
+     },
+     {
+      "id": 100234,
+      "type": "SayaLazyBooleanSelect",
+      "pos": [
+       1694,
+       8092
+      ],
+      "size": [
+       280,
+       98
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "switch",
+        "name": "switch",
+        "type": "BOOLEAN",
+        "link": 98483
+       },
+       {
+        "localized_name": "on_false",
+        "name": "on_false",
+        "type": "*",
+        "link": 98118
+       },
+       {
+        "localized_name": "on_true",
+        "name": "on_true",
+        "type": "*",
+        "link": 98484
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "value",
+        "name": "value",
+        "type": "*",
+        "links": [
+         98485
+        ]
+       }
+      ],
+      "title": "Solo · Bypass Regional Conditioning",
+      "properties": {
+       "Node name for S&R": "SayaLazyBooleanSelect",
+       "cnr_id": "Saya Couple Upated"
+      },
+      "color": "#4a2f46",
+      "bgcolor": "#68435f"
+     },
+     {
+      "id": 100089,
+      "type": "PrimitiveStringMultiline",
+      "pos": [
+       1694,
+       8134
+      ],
+      "size": [
+       322,
+       112
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "valeur",
+        "name": "value",
+        "type": "STRING",
+        "widget": {
+         "name": "value"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "CHAÎNE",
+        "name": "STRING",
+        "type": "STRING",
+        "links": [
+         98110
+        ]
+       }
+      ],
+      "title": "Phase 3 · Quad CLIP Cache Key",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.34.0",
+       "Node name for S&R": "PrimitiveStringMultiline"
+      },
+      "widgets_values": [
+       "[\"clip_l_hidream.safetensors\", \"clip_g_hidream.safetensors\", \"t5xxl_fp8_e4m3fn.safetensors\", \"llama_3.1_8b_instruct_fp8_scaled.safetensors\"]"
+      ],
+      "widgets_values_named": {
+       "value": "[\"clip_l_hidream.safetensors\", \"clip_g_hidream.safetensors\", \"t5xxl_fp8_e4m3fn.safetensors\", \"llama_3.1_8b_instruct_fp8_scaled.safetensors\"]"
+      },
+      "color": "#2b3d3a",
+      "bgcolor": "#405b56"
+     },
+     {
+      "id": 10139,
+      "type": "ModelSamplingSD3",
+      "pos": [
+       1512,
+       8176
+      ],
+      "size": [
+       350,
+       70
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "modèle",
+        "name": "model",
+        "type": "MODEL",
+        "link": 52142
+       },
+       {
+        "localized_name": "décalage",
+        "name": "shift",
+        "type": "FLOAT",
+        "widget": {
+         "name": "shift"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "MODÈLE",
+        "name": "MODEL",
+        "type": "MODEL",
+        "links": [
+         40196
+        ]
+       }
+      ],
+      "title": "Refiner · Model Shift",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.24.0",
+       "Node name for S&R": "ModelSamplingSD3",
+       "ue_properties": {
+        "widget_ue_connectable": {
+         "shift": true
+        },
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       2
+      ],
+      "widgets_values_named": {
+       "shift": 2
+      },
+      "color": "#223",
+      "bgcolor": "#335"
+     },
+     {
+      "id": 100090,
+      "type": "SayaHiDreamSafeScale",
+      "pos": [
+       1176,
+       8064
+      ],
+      "size": [
+       322,
+       224
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "image",
+        "name": "image",
+        "type": "IMAGE",
+        "link": 98124
+       },
+       {
+        "localized_name": "hard_safe_work_token_budget",
+        "name": "hard_safe_work_token_budget",
+        "type": "INT",
+        "widget": {
+         "name": "hard_safe_work_token_budget"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "snap_tolerance",
+        "name": "snap_tolerance",
+        "type": "FLOAT",
+        "widget": {
+         "name": "snap_tolerance"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "image",
+        "name": "image",
+        "type": "IMAGE",
+        "links": [
+         40204,
+         52143,
+         52148,
+         98918
+        ]
+       },
+       {
+        "localized_name": "original_width",
+        "name": "original_width",
+        "type": "INT",
+        "links": []
+       },
+       {
+        "localized_name": "original_height",
+        "name": "original_height",
+        "type": "INT",
+        "links": []
+       },
+       {
+        "localized_name": "working_width",
+        "name": "working_width",
+        "type": "INT",
+        "links": []
+       },
+       {
+        "localized_name": "working_height",
+        "name": "working_height",
+        "type": "INT",
+        "links": []
+       },
+       {
+        "localized_name": "was_scaled",
+        "name": "was_scaled",
+        "type": "BOOLEAN",
+        "links": []
+       },
+       {
+        "localized_name": "scale_factor",
+        "name": "scale_factor",
+        "type": "FLOAT",
+        "links": []
+       },
+       {
+        "localized_name": "report",
+        "name": "report",
+        "type": "STRING",
+        "links": []
+       }
+      ],
+      "title": "HiDream · Safe Scale (auto, reduce only)",
+      "properties": {
+       "Node name for S&R": "SayaHiDreamSafeScale"
+      },
+      "widgets_values": [
+       4032,
+       0.01
+      ],
+      "widgets_values_named": {
+       "hard_safe_work_token_budget": 4032,
+       "snap_tolerance": 0.01
+      },
+      "color": "#3d3347",
+      "bgcolor": "#533f63"
+     },
+     {
+      "id": 12421,
+      "type": "SayaHiDreamLoraSettings",
+      "pos": [
+       812,
+       8148
+      ],
+      "size": [
+       350,
+       182
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "enabled",
+        "name": "enabled",
+        "type": "BOOLEAN",
+        "widget": {
+         "name": "enabled"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "lora_name",
+        "name": "lora_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "lora_name"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "strength_model",
+        "name": "strength_model",
+        "type": "FLOAT",
+        "widget": {
+         "name": "strength_model"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "trigger_text",
+        "name": "trigger_text",
+        "type": "STRING",
+        "widget": {
+         "name": "trigger_text"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "lora_config",
+        "name": "lora_config",
+        "type": "SAYA_HIDREAM_LORA",
+        "links": [
+         52140
+        ]
+       },
+       {
+        "localized_name": "hidream_trigger",
+        "name": "hidream_trigger",
+        "type": "STRING",
+        "links": [
+         98109
+        ]
+       }
+      ],
+      "title": "Phase 3 · HiDream LoRA · Base / P1 / P2",
+      "properties": {
+       "Node name for S&R": "SayaHiDreamLoraSettings",
+       "cnr_id": "Saya Couple Upated",
+       "saya_phase": 3
+      },
+      "widgets_values": [
+       true,
+       "HiDream/anime/m3ssyStyl3_000002750.safetensors",
+       0.35,
+       "m3ssyStyl3"
+      ],
+      "widgets_values_named": {
+       "enabled": true,
+       "lora_name": "HiDream/anime/m3ssyStyl3_000002750.safetensors",
+       "strength_model": 0.35,
+       "trigger_text": "m3ssyStyl3"
+      },
+      "color": "#3d3347",
+      "bgcolor": "#533f63"
+     },
+     {
+      "id": 12425,
+      "type": "MaskPreview",
+      "pos": [
+       826,
+       8498
+      ],
+      "size": [
+       434,
+       266
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "mask",
+        "name": "mask",
+        "type": "MASK",
+        "link": 52146
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "mask",
+        "name": "mask",
+        "type": "MASK",
+        "links": []
+       }
+      ],
+      "title": "Phase 3 · Shadow Protection · Preview",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.34.0",
+       "Node name for S&R": "MaskPreview"
+      },
+      "color": "#332",
+      "bgcolor": "#553"
+     },
+     {
+      "id": 12428,
+      "type": "SayaChromaAnchor",
+      "pos": [
+       1162,
+       8526
+      ],
+      "size": [
+       378,
+       140
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "refined",
+        "name": "refined",
+        "type": "IMAGE",
+        "link": 40202
+       },
+       {
+        "localized_name": "reference",
+        "name": "reference",
+        "type": "IMAGE",
+        "link": 52148
+       },
+       {
+        "localized_name": "max_chroma_gain",
+        "name": "max_chroma_gain",
+        "type": "FLOAT",
+        "widget": {
+         "name": "max_chroma_gain"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "neutral_allowance",
+        "name": "neutral_allowance",
+        "type": "FLOAT",
+        "widget": {
+         "name": "neutral_allowance"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "strength",
+        "name": "strength",
+        "type": "FLOAT",
+        "widget": {
+         "name": "strength"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "IMAGE",
+        "name": "IMAGE",
+        "type": "IMAGE",
+        "links": [
+         98127,
+         98922
+        ]
+       }
+      ],
+      "title": "HiDream · Chroma Anchor",
+      "properties": {
+       "Node name for S&R": "SayaChromaAnchor",
+       "cnr_id": "Saya Couple Upated",
+       "saya_phase": 3,
+       "saya_note": "Reference = Phase 03 pre-HiDream scaled frame. Defaults from final reviewed plugin 1.0.0; strength 0 is exact bypass."
+      },
+      "widgets_values": [
+       1.15,
+       0.01,
+       1
+      ],
+      "widgets_values_named": {
+       "max_chroma_gain": 1.15,
+       "neutral_allowance": 0.01,
+       "strength": 1
+      },
+      "color": "#3d3347",
+      "bgcolor": "#533f63"
+     },
+     {
+      "id": 12424,
+      "type": "SetLatentNoiseMask",
+      "pos": [
+       1204,
+       8456
+      ],
+      "size": [
+       322,
+       70
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "échantillons",
+        "name": "samples",
+        "type": "LATENT",
+        "link": 40199
+       },
+       {
+        "localized_name": "masque",
+        "name": "mask",
+        "type": "MASK",
+        "link": 52144
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "LATENT",
+        "name": "LATENT",
+        "type": "LATENT",
+        "links": [
+         98120
+        ]
+       }
+      ],
+      "title": "Phase 3 · Shadow Protection · Noise Mask",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.34.0",
+       "Node name for S&R": "SetLatentNoiseMask"
+      },
+      "color": "#332",
+      "bgcolor": "#553"
+     },
+     {
+      "id": 12427,
+      "type": "DifferentialDiffusion",
+      "pos": [
+       1162,
+       8414
+      ],
+      "size": [
+       378,
+       70
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "modèle",
+        "name": "model",
+        "type": "MODEL",
+        "link": 40196
+       },
+       {
+        "localized_name": "intensité",
+        "name": "strength",
+        "shape": 7,
+        "type": "FLOAT",
+        "widget": {
+         "name": "strength"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "MODÈLE",
+        "name": "MODEL",
+        "type": "MODEL",
+        "links": [
+         98116
+        ]
+       }
+      ],
+      "title": "Phase 3 · Shadow Protection · Differential Diffusion",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.34.0",
+       "Node name for S&R": "DifferentialDiffusion",
+       "saya_note": "Required so the Shadow Control mask controls WHEN each zone starts being denoised, not just a constant per-step blend. strength=1 (default): threshold-based per-pixel reveal."
+      },
+      "widgets_values": [
+       1
+      ],
+      "widgets_values_named": {
+       "strength": 1
+      },
+      "color": "#332",
+      "bgcolor": "#553"
+     },
+     {
+      "id": 12423,
+      "type": "SayaHiDreamShadowControlMask",
+      "pos": [
+       812,
+       8414
+      ],
+      "size": [
+       322,
+       210
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "image",
+        "name": "image",
+        "type": "IMAGE",
+        "link": 52143
+       },
+       {
+        "localized_name": "black_threshold",
+        "name": "black_threshold",
+        "type": "FLOAT",
+        "widget": {
+         "name": "black_threshold"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "shadow_threshold",
+        "name": "shadow_threshold",
+        "type": "FLOAT",
+        "widget": {
+         "name": "shadow_threshold"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "softness",
+        "name": "softness",
+        "type": "FLOAT",
+        "widget": {
+         "name": "softness"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "protection_strength",
+        "name": "protection_strength",
+        "type": "FLOAT",
+        "widget": {
+         "name": "protection_strength"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "minimum_refine_strength",
+        "name": "minimum_refine_strength",
+        "type": "FLOAT",
+        "widget": {
+         "name": "minimum_refine_strength"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "invert",
+        "name": "invert",
+        "type": "BOOLEAN",
+        "widget": {
+         "name": "invert"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "refine_mask",
+        "name": "refine_mask",
+        "type": "MASK",
+        "links": [
+         52144
+        ]
+       },
+       {
+        "localized_name": "protect_mask",
+        "name": "protect_mask",
+        "type": "MASK",
+        "links": [
+         52146
+        ]
+       }
+      ],
+      "title": "HiDream · Shadow Protection",
+      "properties": {
+       "Node name for S&R": "SayaHiDreamShadowControlMask",
+       "cnr_id": "Saya Couple Upated",
+       "saya_note": "protection_strength=0 disables this node entirely (mask stays all white, identical to no mask)."
+      },
+      "widgets_values": [
+       0.08,
+       0.42,
+       0.07,
+       1,
+       0.08,
+       false
+      ],
+      "widgets_values_named": {
+       "black_threshold": 0.08,
+       "shadow_threshold": 0.42,
+       "softness": 0.07,
+       "protection_strength": 1,
+       "minimum_refine_strength": 0.08,
+       "invert": false
+      },
+      "color": "#332",
+      "bgcolor": "#553"
+     },
+     {
+      "id": 10147,
+      "type": "UnetLoaderGGUF",
+      "pos": [
+       812,
+       8036
+      ],
+      "size": [
+       350,
+       70
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "unet_name",
+        "name": "unet_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "unet_name"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "MODÈLE",
+        "name": "MODEL",
+        "type": "MODEL",
+        "links": [
+         40629
+        ]
+       }
+      ],
+      "title": "Phase 3 · HiDream GGUF Model",
+      "properties": {
+       "cnr_id": "ComfyUI-GGUF",
+       "ver": "unknown",
+       "Node name for S&R": "UnetLoaderGGUF",
+       "saya_note": "The heavy HiDream MODEL stays here and is not loaded at the Couple/Phase-01 stage.",
+       "ue_properties": {
+        "widget_ue_connectable": {
+         "unet_name": true
+        },
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       "HiDream/e4m3fn/hidream-i1-full-Q5_K_M.gguf"
+      ],
+      "widgets_values_named": {
+       "unet_name": "HiDream/e4m3fn/hidream-i1-full-Q5_K_M.gguf"
+      },
+      "color": "#223",
+      "bgcolor": "#335"
+     }
+    ],
+    "groups": [
+     {
+      "id": 3063,
+      "title": "Phase 3 · HiDream · LoRA & Positive Conditioning",
+      "bounding": [
+       798,
+       7588,
+       1890,
+       756
+      ],
+      "color": "#6c557d",
+      "flags": {
+       "pinned": false
+      }
+     },
+     {
+      "id": 3302,
+      "title": "Phase 3 · HiDream · Shadow Protection",
+      "bounding": [
+       798,
+       8344,
+       756,
+       336
+      ],
+      "color": "#7b4d78",
+      "flags": {
+       "pinned": false
+      }
+     }
+    ],
+    "links": [
+     {
+      "id": 40196,
+      "origin_id": 10139,
+      "origin_slot": 0,
+      "target_id": 12427,
+      "target_slot": 0,
+      "type": "MODEL"
+     },
+     {
+      "id": 40199,
+      "origin_id": 10142,
+      "origin_slot": 0,
+      "target_id": 12424,
+      "target_slot": 0,
+      "type": "LATENT"
+     },
+     {
+      "id": 40202,
+      "origin_id": 10144,
+      "origin_slot": 0,
+      "target_id": 12428,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 40204,
+      "origin_id": 100090,
+      "origin_slot": 0,
+      "target_id": 10142,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 40209,
+      "origin_id": 10149,
+      "origin_slot": 0,
+      "target_id": 10142,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 40210,
+      "origin_id": 10149,
+      "origin_slot": 0,
+      "target_id": 10144,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 40211,
+      "origin_id": 10150,
+      "origin_slot": 0,
+      "target_id": 10146,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 40214,
+      "origin_id": 10150,
+      "origin_slot": 3,
+      "target_id": -20,
+      "target_slot": 1,
+      "type": "INT"
+     },
+     {
+      "id": 40216,
+      "origin_id": 10150,
+      "origin_slot": 5,
+      "target_id": -20,
+      "target_slot": 3,
+      "type": "STRING"
+     },
+     {
+      "id": 40217,
+      "origin_id": 10150,
+      "origin_slot": 2,
+      "target_id": -20,
+      "target_slot": 4,
+      "type": "STRING"
+     },
+     {
+      "id": 40629,
+      "origin_id": 10147,
+      "origin_slot": 0,
+      "target_id": 12422,
+      "target_slot": 0,
+      "type": "MODEL"
+     },
+     {
+      "id": 52140,
+      "origin_id": 12421,
+      "origin_slot": 0,
+      "target_id": 12422,
+      "target_slot": 1,
+      "type": "SAYA_HIDREAM_LORA"
+     },
+     {
+      "id": 52142,
+      "origin_id": 12422,
+      "origin_slot": 0,
+      "target_id": 10139,
+      "target_slot": 0,
+      "type": "MODEL"
+     },
+     {
+      "id": 52143,
+      "origin_id": 100090,
+      "origin_slot": 0,
+      "target_id": 12423,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 52144,
+      "origin_id": 12423,
+      "origin_slot": 0,
+      "target_id": 12424,
+      "target_slot": 1,
+      "type": "MASK"
+     },
+     {
+      "id": 52146,
+      "origin_id": 12423,
+      "origin_slot": 1,
+      "target_id": 12425,
+      "target_slot": 0,
+      "type": "MASK"
+     },
+     {
+      "id": 52148,
+      "origin_id": 100090,
+      "origin_slot": 0,
+      "target_id": 12428,
+      "target_slot": 1,
+      "type": "IMAGE"
+     },
+     {
+      "id": 98105,
+      "origin_id": 10150,
+      "origin_slot": 2,
+      "target_id": 100084,
+      "target_slot": 0,
+      "type": "STRING"
+     },
+     {
+      "id": 98106,
+      "origin_id": 100084,
+      "origin_slot": 0,
+      "target_id": 100085,
+      "target_slot": 0,
+      "type": "SAYA_IMPRINT"
+     },
+     {
+      "id": 98107,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 100085,
+      "target_slot": 1,
+      "type": "CLIP"
+     },
+     {
+      "id": 98108,
+      "origin_id": 10142,
+      "origin_slot": 0,
+      "target_id": 100085,
+      "target_slot": 2,
+      "type": "LATENT"
+     },
+     {
+      "id": 98109,
+      "origin_id": 12421,
+      "origin_slot": 1,
+      "target_id": 100085,
+      "target_slot": 4,
+      "type": "STRING"
+     },
+     {
+      "id": 98110,
+      "origin_id": 100089,
+      "origin_slot": 0,
+      "target_id": 100085,
+      "target_slot": 3,
+      "type": "STRING"
+     },
+     {
+      "id": 98111,
+      "origin_id": 100085,
+      "origin_slot": 0,
+      "target_id": 100086,
+      "target_slot": 0,
+      "type": "CONDITIONING"
+     },
+     {
+      "id": 98112,
+      "origin_id": 100085,
+      "origin_slot": 1,
+      "target_id": 100086,
+      "target_slot": 1,
+      "type": "CONDITIONING"
+     },
+     {
+      "id": 98114,
+      "origin_id": 100085,
+      "origin_slot": 4,
+      "target_id": 100086,
+      "target_slot": 2,
+      "type": "MASK"
+     },
+     {
+      "id": 98115,
+      "origin_id": 100085,
+      "origin_slot": 5,
+      "target_id": 100086,
+      "target_slot": 3,
+      "type": "MASK"
+     },
+     {
+      "id": 98116,
+      "origin_id": 12427,
+      "origin_slot": 0,
+      "target_id": 100087,
+      "target_slot": 0,
+      "type": "MODEL"
+     },
+     {
+      "id": 98117,
+      "origin_id": 100087,
+      "origin_slot": 0,
+      "target_id": 100088,
+      "target_slot": 0,
+      "type": "MODEL"
+     },
+     {
+      "id": 98118,
+      "origin_id": 100086,
+      "origin_slot": 0,
+      "target_id": 100234,
+      "target_slot": 1,
+      "type": "CONDITIONING"
+     },
+     {
+      "id": 98119,
+      "origin_id": 100085,
+      "origin_slot": 3,
+      "target_id": 100088,
+      "target_slot": 2,
+      "type": "CONDITIONING"
+     },
+     {
+      "id": 98120,
+      "origin_id": 12424,
+      "origin_slot": 0,
+      "target_id": 100088,
+      "target_slot": 3,
+      "type": "LATENT"
+     },
+     {
+      "id": 98121,
+      "origin_id": 10150,
+      "origin_slot": 3,
+      "target_id": 100088,
+      "target_slot": 14,
+      "type": "INT"
+     },
+     {
+      "id": 98122,
+      "origin_id": 100088,
+      "origin_slot": 0,
+      "target_id": 10144,
+      "target_slot": 0,
+      "type": "LATENT"
+     },
+     {
+      "id": 98123,
+      "origin_id": 10150,
+      "origin_slot": 4,
+      "target_id": -20,
+      "target_slot": 2,
+      "type": "STRING"
+     },
+     {
+      "id": 98124,
+      "origin_id": 10146,
+      "origin_slot": 0,
+      "target_id": 100090,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 98127,
+      "origin_id": 12428,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 98482,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 100085,
+      "target_slot": 5,
+      "type": "BOOLEAN"
+     },
+     {
+      "id": 98483,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 100234,
+      "target_slot": 0,
+      "type": "BOOLEAN"
+     },
+     {
+      "id": 98484,
+      "origin_id": 100085,
+      "origin_slot": 2,
+      "target_id": 100234,
+      "target_slot": 2,
+      "type": "CONDITIONING"
+     },
+     {
+      "id": 98485,
+      "origin_id": 100234,
+      "origin_slot": 0,
+      "target_id": 100088,
+      "target_slot": 1,
+      "type": "CONDITIONING"
+     },
+     {
+      "id": 98486,
+      "origin_id": 100085,
+      "origin_slot": 6,
+      "target_id": 100087,
+      "target_slot": 2,
+      "type": "BOOLEAN"
+     },
+     {
+      "id": 98918,
+      "origin_id": 100090,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 5,
+      "type": "IMAGE"
+     },
+     {
+      "id": 98919,
+      "origin_id": 10144,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 6,
+      "type": "IMAGE"
+     },
+     {
+      "id": 98922,
+      "origin_id": 12428,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 7,
+      "type": "IMAGE"
+     }
+    ],
+    "extra": {
+     "saya_auto_isolated_phase": true,
+     "source": "Saya_Image_Phases_Isolated.json",
+     "bounds": [
+      900,
+      7700,
+      7382,
+      11010
+     ]
+    }
+   },
+   {
+    "id": "saya-couple-mode-toggle",
+    "version": 1,
+    "state": {
+     "lastGroupId": 3310,
+     "lastNodeId": 100759,
+     "lastLinkId": 99208,
+     "lastRerouteId": 575
+    },
+    "revision": 0,
+    "config": {},
+    "name": "MAIN · Couple / Solo",
+    "inputNode": {
+     "id": -10,
+     "bounding": [
+      -210,
+      70,
+      128,
+      68
+     ]
+    },
+    "outputNode": {
+     "id": -20,
+     "bounding": [
+      210,
+      70,
+      187.904296875,
+      68
+     ]
+    },
+    "inputs": [
+     {
+      "id": "saya-couple-mode-toggle-selector-couple-mode",
+      "name": "Couple Mode",
+      "type": "COMBO",
+      "linkIds": [
+       98448
+      ],
+      "localized_name": "Couple Mode",
+      "pos": [
+       -106,
+       94
+      ]
+     }
+    ],
+    "outputs": [
+     {
+      "id": "cm-out-solo",
+      "name": "Solo",
+      "type": "BOOLEAN",
+      "linkIds": [
+       98412
+      ],
+      "localized_name": "Solo (Couple Mode OFF)",
+      "pos": [
+       234,
+       94
+      ]
+     }
+    ],
+    "widgets": [],
+    "nodes": [
+     {
+      "id": 100219,
+      "type": "StringCompare",
+      "pos": [
+       -56,
+       -112
+      ],
+      "size": [
+       300,
+       130
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "chaîne_a",
+        "name": "string_a",
+        "type": "STRING",
+        "widget": {
+         "name": "string_a"
+        },
+        "link": 98411
+       },
+       {
+        "localized_name": "chaîne_b",
+        "name": "string_b",
+        "type": "STRING",
+        "widget": {
+         "name": "string_b"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "mode",
+        "name": "mode",
+        "type": "COMBO",
+        "widget": {
+         "name": "mode"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "sensible_casse",
+        "name": "case_sensitive",
+        "type": "BOOLEAN",
+        "widget": {
+         "name": "case_sensitive"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "label": "SOLO flag",
+        "localized_name": "SOLO flag",
+        "name": "BOOLEAN",
+        "type": "BOOLEAN",
+        "links": [
+         98412
+        ]
+       }
+      ],
+      "title": "Couple Mode · Couple / Solo",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.27.0",
+       "Node name for S&R": "StringCompare"
+      },
+      "widgets_values": [
+       "",
+       "OFF",
+       "Equal",
+       true
+      ],
+      "widgets_values_named": {
+       "string_a": "",
+       "string_b": "OFF",
+       "mode": "Equal",
+       "case_sensitive": true
+      },
+      "color": "#4a2f46",
+      "bgcolor": "#68435f"
+     },
+     {
+      "id": 100218,
+      "type": "CustomCombo",
+      "pos": [
+       -56,
+       126
+      ],
+      "size": [
+       300,
+       130
+      ],
+      "flags": {
+       "collapsed": false,
+       "pinned": false
+      },
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "choix",
+        "name": "choice",
+        "type": "COMBO",
+        "widget": {
+         "name": "choice"
+        },
+        "link": 98448
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "CHAÎNE",
+        "name": "STRING",
+        "type": "STRING",
+        "links": [
+         98411
+        ]
+       },
+       {
+        "localized_name": "INDEX",
+        "name": "INDEX",
+        "type": "INT",
+        "links": []
+       }
+      ],
+      "title": "Couple Mode · Couple / Solo",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.27.0",
+       "Node name for S&R": "CustomCombo",
+       "saya_note": "ON = normal Couple (unchanged). OFF = SOLO: MAIN + Person 1 only, Person 2 ignored, no attention-couple patch."
+      },
+      "widgets_values": [
+       "ON",
+       0,
+       "ON",
+       "OFF",
+       ""
+      ],
+      "widgets_values_named": {
+       "choice": "ON",
+       "index": 0,
+       "option1": "ON",
+       "option2": "OFF",
+       "option3": ""
+      },
+      "color": "#4a2f46",
+      "bgcolor": "#68435f"
+     }
+    ],
+    "groups": [],
+    "links": [
+     {
+      "id": 98411,
+      "origin_id": 100218,
+      "origin_slot": 0,
+      "target_id": 100219,
+      "target_slot": 0,
+      "type": "STRING"
+     },
+     {
+      "id": 98412,
+      "origin_id": 100219,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 0,
+      "type": "BOOLEAN"
+     },
+     {
+      "id": 98448,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 100218,
+      "target_slot": 0,
+      "type": "COMBO"
+     }
+    ],
+    "extra": {
+     "saya_note": "One visible ON/OFF toggle. OFF sets solo=True on every SayaCoupleReconstruct call site (Phase 2, Phase 5, Phase 6)."
+    }
+   }
+  ]
+ },
+ "config": {},
+ "extra": {
+  "frontendVersion": "1.51.10",
+  "VHS_latentpreview": false,
+  "VHS_latentpreviewrate": 0,
+  "VHS_MetadataImage": true,
+  "VHS_KeepIntermediate": true,
+  "saya_couple_version": "0.3.0",
+  "ds": {
+   "scale": 0.7627768444385485,
+   "offset": [
+    -6305.583365264227,
+    -1008.0103125929925
+   ]
+  },
+  "saya_split": "passe 3"
+ },
+ "version": 0.4
+}

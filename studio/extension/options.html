@@ -1,0 +1,12 @@
+<!doctype html><meta charset="utf-8"><title>Saya Studio Bridge</title>
+<body style="font:14px sans-serif;padding:20px;max-width:720px">
+<h1>Saya Studio — appairage Civitai</h1>
+<p>Bridge local : <code>http://127.0.0.1:47821</code>. Le jeton reste dans le stockage de l’extension, jamais dans la page Civitai.</p>
+<p>Hôte Native Messaging : <code>com.saya.studio</code> — <strong id="native">vérification…</strong></p>
+<p><small>Avec Saya Studio installé et lancé, le jeton est fourni automatiquement.<br>Les champs ci-dessous ne servent que de secours manuel si l’hôte est indisponible.</small></p>
+<label>Jeton d’appairage Saya Studio (secours) <input id="token" type="password" size="70" autocomplete="off" placeholder="laisser vide pour conserver le jeton actuel"></label>
+<p><small>Le jeton se trouve dans <code>~/.local/share/studio.saya.desktop/civitai-token</code>.<br>Ne le collez pas dans une page web.</small></p>
+<label>Dossier de destination (facultatif) <input id="dest" size="70" placeholder="défaut : app data Saya / civitai-downloads"></label>
+<p><button id="save">Enregistrer</button> <button id="test">Tester le bridge</button> <button id="clear">Supprimer le jeton enregistré</button> <span id="msg"></span></p>
+<script src="options.js"></script>
+</body>

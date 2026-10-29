@@ -1,0 +1,17 @@
+{
+  "bundle": {
+    "linux": {
+      "rpm": {
+        "depends": [
+          "libwebkit2gtk-4_1-0",
+          "libgtk-3-0",
+          "libsoup-3_0-0",
+          "python3",
+          "curl",
+          "xdg-utils",
+          "xdg-desktop-portal"
+        ]
+      }
+    }
+  }
+}

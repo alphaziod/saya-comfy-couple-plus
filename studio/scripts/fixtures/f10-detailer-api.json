@@ -1,0 +1,8 @@
+{
+ "1":{"class_type":"LoadImage","inputs":{"image":"source.png"}},
+ "2":{"class_type":"CheckpointLoaderSimple","inputs":{"ckpt_name":"saya.safetensors"}},
+ "3":{"class_type":"CLIPTextEncode","inputs":{"clip":["2",1],"text":"detail P1,  exact\nligne"}},
+ "4":{"class_type":"CLIPTextEncode","inputs":{"clip":["2",1],"text":"bad anatomy"}},
+ "5":{"class_type":"FaceDetailer","inputs":{"image":["1",0],"model":["2",0],"positive":["3",0],"negative":["4",0],"seed":123456789012345,"steps":24}},
+ "6":{"class_type":"SaveImage","inputs":{"images":["5",0],"filename_prefix":"detail"}}
+}

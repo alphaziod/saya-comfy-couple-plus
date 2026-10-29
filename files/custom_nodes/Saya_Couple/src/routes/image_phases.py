@@ -54,6 +54,15 @@ def register_image_phase_routes() -> None:
         del request
         return web.json_response({"ok": True, "unload": {"disabled": True, "reason": "automatic model unload removed"}})
 
+    @routes.post("/saya/close-workflow")
+    async def close_workflow(request: Any) -> Any:
+        """Ask every open Comfy tab to drop the previous workflow. The PNG already holds it."""
+        del request
+        from server import PromptServer
+
+        PromptServer.instance.send_sync("saya_close_workflow", {})
+        return web.json_response({"ok": True})
+
     @routes.post("/saya/image-phases/status")
     async def status_phase(request: Any) -> Any:
         try:

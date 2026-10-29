@@ -1,0 +1,1434 @@
+{
+ "CLIPTextEncode": {
+  "category": "model/conditioning",
+  "description": "Encodes a text prompt using a CLIP model into an embedding that can be used to guide the diffusion model towards generating specific images.",
+  "display_name": "CLIP Text Encode (Prompt)",
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "clip": [
+     "CLIP",
+     {
+      "tooltip": "The CLIP model used for encoding the text."
+     }
+    ],
+    "text": [
+     "STRING",
+     {
+      "dynamicPrompts": true,
+      "multiline": true,
+      "tooltip": "The text to be encoded."
+     }
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "text",
+    "clip"
+   ]
+  },
+  "is_input_list": false,
+  "name": "CLIPTextEncode",
+  "output": [
+   "CONDITIONING"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_name": [
+   "CONDITIONING"
+  ],
+  "output_node": false,
+  "output_tooltips": [
+   "A conditioning containing the embedded text used to guide the diffusion model."
+  ],
+  "python_module": "nodes",
+  "search_aliases": [
+   "text",
+   "prompt",
+   "text prompt",
+   "positive prompt",
+   "negative prompt",
+   "encode text",
+   "text encoder",
+   "encode prompt"
+  ]
+ },
+ "CheckpointLoaderSimple": {
+  "category": "model/loaders",
+  "description": "Loads a diffusion model checkpoint, diffusion models are used to denoise latents.",
+  "display_name": "Load Checkpoint",
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "ckpt_name": [
+     [
+      "fixture-ckpt_name.safetensors"
+     ],
+     {
+      "tooltip": "The name of the checkpoint (model) to load."
+     }
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "ckpt_name"
+   ]
+  },
+  "is_input_list": false,
+  "name": "CheckpointLoaderSimple",
+  "output": [
+   "MODEL",
+   "CLIP",
+   "VAE"
+  ],
+  "output_is_list": [
+   false,
+   false,
+   false
+  ],
+  "output_name": [
+   "MODEL",
+   "CLIP",
+   "VAE"
+  ],
+  "output_node": false,
+  "output_tooltips": [
+   "The model used for denoising latents.",
+   "The CLIP model used for encoding text prompts.",
+   "The VAE model used for encoding and decoding images to and from latent space."
+  ],
+  "python_module": "nodes",
+  "search_aliases": [
+   "load model",
+   "checkpoint",
+   "model loader",
+   "load checkpoint",
+   "ckpt",
+   "model"
+  ]
+ },
+ "ConditioningCombine": {
+  "category": "model/conditioning/transform",
+  "description": "",
+  "display_name": "Conditioning (Combine)",
+  "essentials_category": "Image Generation",
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "conditioning_1": [
+     "CONDITIONING"
+    ],
+    "conditioning_2": [
+     "CONDITIONING"
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "conditioning_1",
+    "conditioning_2"
+   ]
+  },
+  "is_input_list": false,
+  "name": "ConditioningCombine",
+  "output": [
+   "CONDITIONING"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_name": [
+   "CONDITIONING"
+  ],
+  "output_node": false,
+  "python_module": "nodes",
+  "search_aliases": [
+   "combine",
+   "merge conditioning",
+   "combine prompts",
+   "merge prompts",
+   "mix prompts",
+   "add prompt"
+  ]
+ },
+ "EmptyLatentImage": {
+  "category": "model/latent",
+  "description": "Create a new batch of empty latent images to be denoised via sampling.",
+  "display_name": "Empty Latent Image",
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "batch_size": [
+     "INT",
+     {
+      "default": 1,
+      "max": 4096,
+      "min": 1,
+      "tooltip": "The number of latent images in the batch."
+     }
+    ],
+    "height": [
+     "INT",
+     {
+      "default": 512,
+      "max": 16384,
+      "min": 16,
+      "step": 8,
+      "tooltip": "The height of the latent images in pixels."
+     }
+    ],
+    "width": [
+     "INT",
+     {
+      "default": 512,
+      "max": 16384,
+      "min": 16,
+      "step": 8,
+      "tooltip": "The width of the latent images in pixels."
+     }
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "width",
+    "height",
+    "batch_size"
+   ]
+  },
+  "is_input_list": false,
+  "name": "EmptyLatentImage",
+  "output": [
+   "LATENT"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_name": [
+   "LATENT"
+  ],
+  "output_node": false,
+  "output_tooltips": [
+   "The empty latent image batch."
+  ],
+  "python_module": "nodes",
+  "search_aliases": [
+   "empty",
+   "empty latent",
+   "new latent",
+   "create latent",
+   "blank latent",
+   "blank"
+  ]
+ },
+ "ImageScale": {
+  "category": "image/upscaling",
+  "description": "",
+  "display_name": "Upscale Image",
+  "essentials_category": "Image Tools",
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "crop": [
+     [
+      "disabled",
+      "center"
+     ]
+    ],
+    "height": [
+     "INT",
+     {
+      "default": 512,
+      "max": 16384,
+      "min": 0,
+      "step": 1
+     }
+    ],
+    "image": [
+     "IMAGE"
+    ],
+    "upscale_method": [
+     [
+      "nearest-exact",
+      "bilinear",
+      "area",
+      "bicubic",
+      "lanczos"
+     ]
+    ],
+    "width": [
+     "INT",
+     {
+      "default": 512,
+      "max": 16384,
+      "min": 0,
+      "step": 1
+     }
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "image",
+    "upscale_method",
+    "width",
+    "height",
+    "crop"
+   ]
+  },
+  "is_input_list": false,
+  "name": "ImageScale",
+  "output": [
+   "IMAGE"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_name": [
+   "IMAGE"
+  ],
+  "output_node": false,
+  "python_module": "nodes",
+  "search_aliases": [
+   "resize",
+   "resize image",
+   "scale image",
+   "image resize",
+   "zoom",
+   "zoom in",
+   "change size"
+  ]
+ },
+ "ImageScaleBy": {
+  "category": "image/upscaling",
+  "description": "",
+  "display_name": "Upscale Image By",
+  "essentials_category": "Image Tools",
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "image": [
+     "IMAGE"
+    ],
+    "scale_by": [
+     "FLOAT",
+     {
+      "default": 1.0,
+      "max": 8.0,
+      "min": 0.01,
+      "step": 0.01
+     }
+    ],
+    "upscale_method": [
+     [
+      "nearest-exact",
+      "bilinear",
+      "area",
+      "bicubic",
+      "lanczos"
+     ]
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "image",
+    "upscale_method",
+    "scale_by"
+   ]
+  },
+  "is_input_list": false,
+  "name": "ImageScaleBy",
+  "output": [
+   "IMAGE"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_name": [
+   "IMAGE"
+  ],
+  "output_node": false,
+  "python_module": "nodes",
+  "search_aliases": []
+ },
+ "ImageToMask": {
+  "api_node": false,
+  "category": "image/mask",
+  "deprecated": false,
+  "description": "",
+  "dev_only": false,
+  "display_name": "Convert Image to Mask",
+  "essentials_category": null,
+  "experimental": false,
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "channel": [
+     "COMBO",
+     {
+      "multiselect": false,
+      "options": [
+       "red",
+       "green",
+       "blue",
+       "alpha"
+      ]
+     }
+    ],
+    "image": [
+     "IMAGE",
+     {}
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "image",
+    "channel"
+   ]
+  },
+  "is_input_list": false,
+  "name": "ImageToMask",
+  "output": [
+   "MASK"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_matchtypes": null,
+  "output_name": [
+   "MASK"
+  ],
+  "output_node": false,
+  "output_tooltips": [
+   null
+  ],
+  "price_badge": null,
+  "python_module": "comfy_extras.nodes_mask",
+  "search_aliases": [
+   "extract channel",
+   "channel to mask"
+  ]
+ },
+ "ImageUpscaleWithModel": {
+  "api_node": false,
+  "category": "image/upscaling",
+  "deprecated": false,
+  "description": "",
+  "dev_only": false,
+  "display_name": "Upscale Image (using Model)",
+  "essentials_category": null,
+  "experimental": false,
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "image": [
+     "IMAGE",
+     {}
+    ],
+    "upscale_model": [
+     "UPSCALE_MODEL",
+     {}
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "upscale_model",
+    "image"
+   ]
+  },
+  "is_input_list": false,
+  "name": "ImageUpscaleWithModel",
+  "output": [
+   "IMAGE"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_matchtypes": null,
+  "output_name": [
+   "IMAGE"
+  ],
+  "output_node": false,
+  "output_tooltips": [
+   null
+  ],
+  "price_badge": null,
+  "python_module": "comfy_extras.nodes_upscale_model",
+  "search_aliases": [
+   "upscale",
+   "upscaler",
+   "upsc",
+   "enlarge image",
+   "super resolution",
+   "hires",
+   "superres",
+   "increase resolution"
+  ]
+ },
+ "KSampler": {
+  "category": "model/sampling",
+  "description": "Uses the provided model, positive and negative conditioning to denoise the latent image.",
+  "display_name": "KSampler",
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "cfg": [
+     "FLOAT",
+     {
+      "default": 8.0,
+      "max": 100.0,
+      "min": 0.0,
+      "round": 0.01,
+      "step": 0.1,
+      "tooltip": "The Classifier-Free Guidance scale balances creativity and adherence to the prompt. Higher values result in images more closely matching the prompt however too high values will negatively impact quality."
+     }
+    ],
+    "denoise": [
+     "FLOAT",
+     {
+      "default": 1.0,
+      "max": 1.0,
+      "min": 0.0,
+      "step": 0.01,
+      "tooltip": "The amount of denoising applied, lower values will maintain the structure of the initial image allowing for image to image sampling."
+     }
+    ],
+    "latent_image": [
+     "LATENT",
+     {
+      "tooltip": "The latent image to denoise."
+     }
+    ],
+    "model": [
+     "MODEL",
+     {
+      "tooltip": "The model used for denoising the input latent."
+     }
+    ],
+    "negative": [
+     "CONDITIONING",
+     {
+      "tooltip": "The conditioning describing the attributes you want to exclude from the image."
+     }
+    ],
+    "positive": [
+     "CONDITIONING",
+     {
+      "tooltip": "The conditioning describing the attributes you want to include in the image."
+     }
+    ],
+    "sampler_name": [
+     [
+      "euler",
+      "euler_cfg_pp",
+      "euler_ancestral",
+      "euler_ancestral_cfg_pp",
+      "heun",
+      "heunpp2",
+      "exp_heun_2_x0",
+      "exp_heun_2_x0_sde",
+      "dpm_2",
+      "dpm_2_ancestral",
+      "lms",
+      "dpm_fast",
+      "dpm_adaptive",
+      "dpmpp_2s_ancestral",
+      "dpmpp_2s_ancestral_cfg_pp",
+      "dpmpp_sde",
+      "dpmpp_sde_gpu",
+      "dpmpp_2m",
+      "dpmpp_2m_cfg_pp",
+      "dpmpp_2m_sde",
+      "dpmpp_2m_sde_gpu",
+      "dpmpp_2m_sde_heun",
+      "dpmpp_2m_sde_heun_gpu",
+      "dpmpp_3m_sde",
+      "dpmpp_3m_sde_gpu",
+      "ddpm",
+      "lcm",
+      "ipndm",
+      "ipndm_v",
+      "deis",
+      "cfgpp_ud10_ab",
+      "res_multistep",
+      "res_multistep_cfg_pp",
+      "res_multistep_ancestral",
+      "res_multistep_ancestral_cfg_pp",
+      "gradient_estimation",
+      "gradient_estimation_cfg_pp",
+      "er_sde",
+      "seeds_2",
+      "seeds_3",
+      "sa_solver",
+      "sa_solver_pece",
+      "ddim",
+      "uni_pc",
+      "uni_pc_bh2",
+      "legacy_rk",
+      "rk",
+      "rk_beta",
+      "deis_3m_ode",
+      "deis_2m_ode",
+      "deis_3m",
+      "deis_2m",
+      "res_6s_ode",
+      "res_5s_ode",
+      "res_3s_ode",
+      "res_2s_ode",
+      "res_3m_ode",
+      "res_2m_ode",
+      "res_6s",
+      "res_5s",
+      "res_3s",
+      "res_2s",
+      "res_3m",
+      "res_2m"
+     ],
+     {
+      "tooltip": "The algorithm used when sampling, this can affect the quality, speed, and style of the generated output."
+     }
+    ],
+    "scheduler": [
+     [
+      "simple",
+      "sgm_uniform",
+      "karras",
+      "exponential",
+      "ddim_uniform",
+      "beta",
+      "normal",
+      "linear_quadratic",
+      "kl_optimal",
+      "bong_tangent",
+      "beta57",
+      "beta45"
+     ],
+     {
+      "tooltip": "The scheduler controls how noise is gradually removed to form the image."
+     }
+    ],
+    "seed": [
+     "INT",
+     {
+      "control_after_generate": true,
+      "default": 0,
+      "max": 18446744073709551615,
+      "min": 0,
+      "tooltip": "The random seed used for creating the noise."
+     }
+    ],
+    "steps": [
+     "INT",
+     {
+      "default": 20,
+      "max": 10000,
+      "min": 1,
+      "tooltip": "The number of steps used in the denoising process."
+     }
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "model",
+    "seed",
+    "steps",
+    "cfg",
+    "sampler_name",
+    "scheduler",
+    "positive",
+    "negative",
+    "latent_image",
+    "denoise"
+   ]
+  },
+  "is_input_list": false,
+  "name": "KSampler",
+  "output": [
+   "LATENT"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_name": [
+   "LATENT"
+  ],
+  "output_node": false,
+  "output_tooltips": [
+   "The denoised latent."
+  ],
+  "python_module": "nodes",
+  "search_aliases": [
+   "sampler",
+   "sample",
+   "generate",
+   "denoise",
+   "diffuse",
+   "txt2img",
+   "img2img"
+  ]
+ },
+ "KSamplerAdvanced": {
+  "category": "model/sampling",
+  "description": "",
+  "display_name": "KSampler (Advanced)",
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "add_noise": [
+     [
+      "enable",
+      "disable"
+     ],
+     {
+      "advanced": true
+     }
+    ],
+    "cfg": [
+     "FLOAT",
+     {
+      "default": 8.0,
+      "max": 100.0,
+      "min": 0.0,
+      "round": 0.01,
+      "step": 0.1
+     }
+    ],
+    "end_at_step": [
+     "INT",
+     {
+      "advanced": true,
+      "default": 10000,
+      "max": 10000,
+      "min": 0
+     }
+    ],
+    "latent_image": [
+     "LATENT"
+    ],
+    "model": [
+     "MODEL"
+    ],
+    "negative": [
+     "CONDITIONING"
+    ],
+    "noise_seed": [
+     "INT",
+     {
+      "control_after_generate": true,
+      "default": 0,
+      "max": 18446744073709551615,
+      "min": 0
+     }
+    ],
+    "positive": [
+     "CONDITIONING"
+    ],
+    "return_with_leftover_noise": [
+     [
+      "disable",
+      "enable"
+     ],
+     {
+      "advanced": true
+     }
+    ],
+    "sampler_name": [
+     [
+      "euler",
+      "euler_cfg_pp",
+      "euler_ancestral",
+      "euler_ancestral_cfg_pp",
+      "heun",
+      "heunpp2",
+      "exp_heun_2_x0",
+      "exp_heun_2_x0_sde",
+      "dpm_2",
+      "dpm_2_ancestral",
+      "lms",
+      "dpm_fast",
+      "dpm_adaptive",
+      "dpmpp_2s_ancestral",
+      "dpmpp_2s_ancestral_cfg_pp",
+      "dpmpp_sde",
+      "dpmpp_sde_gpu",
+      "dpmpp_2m",
+      "dpmpp_2m_cfg_pp",
+      "dpmpp_2m_sde",
+      "dpmpp_2m_sde_gpu",
+      "dpmpp_2m_sde_heun",
+      "dpmpp_2m_sde_heun_gpu",
+      "dpmpp_3m_sde",
+      "dpmpp_3m_sde_gpu",
+      "ddpm",
+      "lcm",
+      "ipndm",
+      "ipndm_v",
+      "deis",
+      "cfgpp_ud10_ab",
+      "res_multistep",
+      "res_multistep_cfg_pp",
+      "res_multistep_ancestral",
+      "res_multistep_ancestral_cfg_pp",
+      "gradient_estimation",
+      "gradient_estimation_cfg_pp",
+      "er_sde",
+      "seeds_2",
+      "seeds_3",
+      "sa_solver",
+      "sa_solver_pece",
+      "ddim",
+      "uni_pc",
+      "uni_pc_bh2",
+      "legacy_rk",
+      "rk",
+      "rk_beta",
+      "deis_3m_ode",
+      "deis_2m_ode",
+      "deis_3m",
+      "deis_2m",
+      "res_6s_ode",
+      "res_5s_ode",
+      "res_3s_ode",
+      "res_2s_ode",
+      "res_3m_ode",
+      "res_2m_ode",
+      "res_6s",
+      "res_5s",
+      "res_3s",
+      "res_2s",
+      "res_3m",
+      "res_2m"
+     ]
+    ],
+    "scheduler": [
+     [
+      "simple",
+      "sgm_uniform",
+      "karras",
+      "exponential",
+      "ddim_uniform",
+      "beta",
+      "normal",
+      "linear_quadratic",
+      "kl_optimal",
+      "bong_tangent",
+      "beta57",
+      "beta45"
+     ]
+    ],
+    "start_at_step": [
+     "INT",
+     {
+      "advanced": true,
+      "default": 0,
+      "max": 10000,
+      "min": 0
+     }
+    ],
+    "steps": [
+     "INT",
+     {
+      "default": 20,
+      "max": 10000,
+      "min": 1
+     }
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "model",
+    "add_noise",
+    "noise_seed",
+    "steps",
+    "cfg",
+    "sampler_name",
+    "scheduler",
+    "positive",
+    "negative",
+    "latent_image",
+    "start_at_step",
+    "end_at_step",
+    "return_with_leftover_noise"
+   ]
+  },
+  "is_input_list": false,
+  "name": "KSamplerAdvanced",
+  "output": [
+   "LATENT"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_name": [
+   "LATENT"
+  ],
+  "output_node": false,
+  "python_module": "nodes",
+  "search_aliases": []
+ },
+ "LatentUpscaleBy": {
+  "category": "model/latent",
+  "description": "",
+  "display_name": "Upscale Latent By",
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "samples": [
+     "LATENT"
+    ],
+    "scale_by": [
+     "FLOAT",
+     {
+      "default": 1.5,
+      "max": 8.0,
+      "min": 0.01,
+      "step": 0.01
+     }
+    ],
+    "upscale_method": [
+     [
+      "nearest-exact",
+      "bilinear",
+      "area",
+      "bicubic",
+      "bislerp"
+     ]
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "samples",
+    "upscale_method",
+    "scale_by"
+   ]
+  },
+  "is_input_list": false,
+  "name": "LatentUpscaleBy",
+  "output": [
+   "LATENT"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_name": [
+   "LATENT"
+  ],
+  "output_node": false,
+  "python_module": "nodes",
+  "search_aliases": [
+   "enlarge latent",
+   "resize latent",
+   "scale latent"
+  ]
+ },
+ "LoadImage": {
+  "category": "image",
+  "description": "",
+  "display_name": "Load Image",
+  "essentials_category": "Basics",
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "image": [
+     [
+      "fixture-image.png"
+     ],
+     {
+      "image_upload": true
+     }
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "image"
+   ]
+  },
+  "is_input_list": false,
+  "name": "LoadImage",
+  "output": [
+   "IMAGE",
+   "MASK"
+  ],
+  "output_is_list": [
+   false,
+   false
+  ],
+  "output_name": [
+   "IMAGE",
+   "MASK"
+  ],
+  "output_node": false,
+  "python_module": "nodes",
+  "search_aliases": [
+   "load image",
+   "open image",
+   "import image",
+   "image input",
+   "upload image",
+   "read image",
+   "image loader"
+  ]
+ },
+ "LoadLatent": {
+  "category": "model/latent",
+  "description": "",
+  "display_name": "Load Latent",
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "latent": [
+     []
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "latent"
+   ]
+  },
+  "is_input_list": false,
+  "name": "LoadLatent",
+  "output": [
+   "LATENT"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_name": [
+   "LATENT"
+  ],
+  "output_node": false,
+  "python_module": "nodes",
+  "search_aliases": [
+   "import latent",
+   "open latent"
+  ]
+ },
+ "LoraLoader": {
+  "category": "model/loaders",
+  "description": "This LoRA loader is used to modify both diffusion and CLIP models, altering the way in which latents are denoised such as applying styles. Multiple LoRA nodes can be linked together.",
+  "display_name": "Load LoRA (Model and CLIP)",
+  "essentials_category": "Image Generation",
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "clip": [
+     "CLIP",
+     {
+      "tooltip": "The CLIP model the LoRA will be applied to."
+     }
+    ],
+    "lora_name": [
+     [
+      "fixture-lora_name.safetensors"
+     ],
+     {
+      "tooltip": "The name of the LoRA."
+     }
+    ],
+    "model": [
+     "MODEL",
+     {
+      "tooltip": "The diffusion model the LoRA will be applied to."
+     }
+    ],
+    "strength_clip": [
+     "FLOAT",
+     {
+      "default": 1.0,
+      "max": 100.0,
+      "min": -100.0,
+      "step": 0.01,
+      "tooltip": "How strongly to modify the CLIP model. This value can be negative."
+     }
+    ],
+    "strength_model": [
+     "FLOAT",
+     {
+      "default": 1.0,
+      "max": 100.0,
+      "min": -100.0,
+      "step": 0.01,
+      "tooltip": "How strongly to modify the diffusion model. This value can be negative."
+     }
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "model",
+    "clip",
+    "lora_name",
+    "strength_model",
+    "strength_clip"
+   ]
+  },
+  "is_input_list": false,
+  "name": "LoraLoader",
+  "output": [
+   "MODEL",
+   "CLIP"
+  ],
+  "output_is_list": [
+   false,
+   false
+  ],
+  "output_name": [
+   "MODEL",
+   "CLIP"
+  ],
+  "output_node": false,
+  "output_tooltips": [
+   "The modified diffusion model.",
+   "The modified CLIP model."
+  ],
+  "python_module": "nodes",
+  "search_aliases": [
+   "lora",
+   "load lora",
+   "apply lora",
+   "lora loader",
+   "lora model"
+  ]
+ },
+ "PreviewImage": {
+  "category": "image",
+  "description": "Preview the images without saving them to the ComfyUI output directory.",
+  "display_name": "Preview Image",
+  "essentials_category": "Basics",
+  "has_intermediate_output": false,
+  "input": {
+   "hidden": {
+    "extra_pnginfo": "EXTRA_PNGINFO",
+    "prompt": "PROMPT"
+   },
+   "required": {
+    "images": [
+     "IMAGE"
+    ]
+   }
+  },
+  "input_order": {
+   "hidden": [
+    "prompt",
+    "extra_pnginfo"
+   ],
+   "required": [
+    "images"
+   ]
+  },
+  "is_input_list": false,
+  "name": "PreviewImage",
+  "output": [
+   "IMAGE"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_name": [
+   "images"
+  ],
+  "output_node": true,
+  "python_module": "nodes",
+  "search_aliases": [
+   "preview",
+   "preview image",
+   "show image",
+   "view image",
+   "display image",
+   "image viewer"
+  ]
+ },
+ "SaveImage": {
+  "category": "image",
+  "description": "Saves the input images to your ComfyUI output directory.",
+  "display_name": "Save Image",
+  "essentials_category": "Basics",
+  "has_intermediate_output": false,
+  "input": {
+   "hidden": {
+    "extra_pnginfo": "EXTRA_PNGINFO",
+    "prompt": "PROMPT"
+   },
+   "required": {
+    "filename_prefix": [
+     "STRING",
+     {
+      "default": "ComfyUI",
+      "tooltip": "The prefix for the file to save. This may include formatting information such as %date:yyyy-MM-dd% or %Empty Latent Image.width% to include values from nodes."
+     }
+    ],
+    "images": [
+     "IMAGE",
+     {
+      "tooltip": "The images to save."
+     }
+    ]
+   }
+  },
+  "input_order": {
+   "hidden": [
+    "prompt",
+    "extra_pnginfo"
+   ],
+   "required": [
+    "images",
+    "filename_prefix"
+   ]
+  },
+  "is_input_list": false,
+  "name": "SaveImage",
+  "output": [
+   "IMAGE"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_name": [
+   "images"
+  ],
+  "output_node": true,
+  "python_module": "nodes",
+  "search_aliases": [
+   "save",
+   "save image",
+   "export image",
+   "output image",
+   "write image",
+   "download"
+  ]
+ },
+ "SaveLatent": {
+  "category": "model/latent",
+  "description": "",
+  "display_name": "Save Latent",
+  "has_intermediate_output": false,
+  "input": {
+   "hidden": {
+    "extra_pnginfo": "EXTRA_PNGINFO",
+    "prompt": "PROMPT"
+   },
+   "required": {
+    "filename_prefix": [
+     "STRING",
+     {
+      "default": "latents/ComfyUI"
+     }
+    ],
+    "samples": [
+     "LATENT"
+    ]
+   }
+  },
+  "input_order": {
+   "hidden": [
+    "prompt",
+    "extra_pnginfo"
+   ],
+   "required": [
+    "samples",
+    "filename_prefix"
+   ]
+  },
+  "is_input_list": false,
+  "name": "SaveLatent",
+  "output": [
+   "LATENT"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_name": [
+   "samples"
+  ],
+  "output_node": true,
+  "python_module": "nodes",
+  "search_aliases": [
+   "export latent"
+  ]
+ },
+ "SetLatentNoiseMask": {
+  "category": "model/latent",
+  "description": "",
+  "display_name": "Set Latent Noise Mask",
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "mask": [
+     "MASK"
+    ],
+    "samples": [
+     "LATENT"
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "samples",
+    "mask"
+   ]
+  },
+  "is_input_list": false,
+  "name": "SetLatentNoiseMask",
+  "output": [
+   "LATENT"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_name": [
+   "LATENT"
+  ],
+  "output_node": false,
+  "python_module": "nodes",
+  "search_aliases": []
+ },
+ "UpscaleModelLoader": {
+  "api_node": false,
+  "category": "model/loaders",
+  "deprecated": false,
+  "description": "",
+  "dev_only": false,
+  "display_name": "Load Upscale Model",
+  "essentials_category": null,
+  "experimental": false,
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "model_name": [
+     "COMBO",
+     {
+      "multiselect": false,
+      "options": [
+       "fixture-model_name.safetensors"
+      ]
+     }
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "model_name"
+   ]
+  },
+  "is_input_list": false,
+  "name": "UpscaleModelLoader",
+  "output": [
+   "UPSCALE_MODEL"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_matchtypes": null,
+  "output_name": [
+   "UPSCALE_MODEL"
+  ],
+  "output_node": false,
+  "output_tooltips": [
+   null
+  ],
+  "price_badge": null,
+  "python_module": "comfy_extras.nodes_upscale_model",
+  "search_aliases": null
+ },
+ "VAEDecode": {
+  "category": "model/latent",
+  "description": "Decodes latent images back into pixel space images.",
+  "display_name": "VAE Decode",
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "samples": [
+     "LATENT",
+     {
+      "tooltip": "The latent to be decoded."
+     }
+    ],
+    "vae": [
+     "VAE",
+     {
+      "tooltip": "The VAE model used for decoding the latent."
+     }
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "samples",
+    "vae"
+   ]
+  },
+  "is_input_list": false,
+  "name": "VAEDecode",
+  "output": [
+   "IMAGE"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_name": [
+   "IMAGE"
+  ],
+  "output_node": false,
+  "output_tooltips": [
+   "The decoded image."
+  ],
+  "python_module": "nodes",
+  "search_aliases": [
+   "decode",
+   "decode latent",
+   "latent to image",
+   "render latent"
+  ]
+ },
+ "VAEEncode": {
+  "category": "model/latent",
+  "description": "",
+  "display_name": "VAE Encode",
+  "has_intermediate_output": false,
+  "input": {
+   "required": {
+    "pixels": [
+     "IMAGE"
+    ],
+    "vae": [
+     "VAE"
+    ]
+   }
+  },
+  "input_order": {
+   "required": [
+    "pixels",
+    "vae"
+   ]
+  },
+  "is_input_list": false,
+  "name": "VAEEncode",
+  "output": [
+   "LATENT"
+  ],
+  "output_is_list": [
+   false
+  ],
+  "output_name": [
+   "LATENT"
+  ],
+  "output_node": false,
+  "python_module": "nodes",
+  "search_aliases": [
+   "encode",
+   "encode image",
+   "image to latent"
+  ]
+ }
+}

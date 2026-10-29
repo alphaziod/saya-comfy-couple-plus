@@ -70,6 +70,18 @@ def test_ownership_anchors():
     c.eq(head_category("otoko no ko"), "body", "otoko no ko = otokonoko")
     c.eq([head_category(p) for p in ("honey-blonde waves", "stubble", "red lipstick", "doll joints", "silver hairclip", "hourglass figure")],
          ["hair", "skin", "skin", "species", "outfit", "parts"], "pack vocabulary: waves, facial hair, lipstick, doll joints, hairclip, figure")
+    # 2026-10-29: one anchor per aspect of the organ (GROK anatomy blocks): size, colour, cute LoRA trigger, state,
+    # pubic hair colour. Only what differs from the other person is kept.
+    g_1 = "1futanari, black hair, (small penis:1.25), cute_penis, flaccid penis, dark penis, (small testicles:1.2), black pubic hair"
+    g_2 = "1futanari, white hair, (medium penis:1.25), erect penis, erection, pale penis, (medium testicles:1.2), white pubic hair"
+    c.eq(phrase_anatomy_anchors(g_1, g_2), ["black hair", "small penis", "cute_penis", "flaccid penis", "dark penis", "small testicles", "black pubic hair"],
+         "GROK anatomy: size, cute, state, colour of the penis, testicles and pubic hair colour all anchored")
+    c.eq(phrase_anatomy_anchors("1futanari, pink hair, small penis, cute_penis, flaccid penis", "1futanari, blue hair, small penis, cute_penis, flaccid penis"),
+         ["pink hair"], "same anatomy on both persons: still nothing")
+    c.eq(phrase_anatomy_anchors("1futanari, green hair, translucent slime penis, small penis", "1futanari, red hair, small penis"),
+         ["green hair", "translucent slime penis"], "colour of the organ alone is discriminant")
+    c.eq(phrase_anatomy_anchors("1futanari, pink hair, small penis, scrotum", "1futanari, blue hair, medium penis, scrotum matching skin tone"),
+         ["pink hair", "small penis"], "a bare organ the other also has is never an anchor")
     c.eq(phrase_anatomy_anchors("1boy, femboy, pink hair, small penis", "1girl, blue hair, pussy"), ["small penis", "pink hair", "1boy", "femboy"],
          "femboy vs girl: organ, hair, then body / gender tags")
     c.eq(phrase_anatomy_anchors("1boy, adult man, black hair, stubble, large penis", "1girl, adult woman, blonde hair, pussy"),

@@ -1,0 +1,1 @@
+{"apiVersion": 1, "appVersion": "1.0.0-beta.1", "schemaVersion": 31, "counts": {"characters": 0, "assets": 0, "jobs": 0}, "comfyConnected": false, "implemented": ["gallery", "characters", "preferences", "comfy", "generation"]}

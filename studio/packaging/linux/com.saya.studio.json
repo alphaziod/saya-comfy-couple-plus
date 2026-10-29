@@ -1,0 +1,7 @@
+{
+  "name": "com.saya.studio",
+  "description": "Saya Studio Civitai token host",
+  "path": "/usr/share/saya-studio/saya_native_host.py",
+  "type": "stdio",
+  "allowed_origins": ["chrome-extension://hgbfcjoeaddihdpccfhcgeohohfejidm/"]
+}

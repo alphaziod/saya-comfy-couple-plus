@@ -1,0 +1,18 @@
+post_remove() {
+  cat <<'MSG'
+==> Saya Studio removed. pacman never touches home directories, so these
+    user-level files are left behind. Delete them yourself if you want them gone:
+
+    Native messaging manifests written by the app at startup (respect $XDG_CONFIG_HOME):
+      ~/.config/google-chrome/NativeMessagingHosts/com.saya.studio.json
+      ~/.config/chromium/NativeMessagingHosts/com.saya.studio.json
+      ~/.config/BraveSoftware/Brave-Browser/NativeMessagingHosts/com.saya.studio.json
+    (They point at /usr/share/saya-studio/saya_native_host.py, which no longer exists.)
+
+    Also remove the browser extension from brave://extensions or chrome://extensions.
+
+    Application data (database, backups, Civitai bridge token and jobs) is kept in:
+      ~/.local/share/studio.saya.desktop   (or $XDG_DATA_HOME/studio.saya.desktop)
+    Delete it only after making a backup; models, images and workflows are never removed.
+MSG
+}

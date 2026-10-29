@@ -74,6 +74,7 @@ from .src.nodes.couple_reconstruct import (
 )
 from .src.nodes.region_masks import SayaCoupleRegionMasks
 from .src.nodes.couple_context import SayaCoupleContextInspect, SayaCoupleContextLoad
+from .src.nodes.saya_family_save import SayaFamilySave
 from .src.duo_geometry.nodes import SayaDuoTiledUpscale
 from .src.duo_geometry.usdu_pass_node import SayaCoupleUSDUPass
 from .src.nodes.deprecated import deprecate
@@ -156,6 +157,7 @@ NODE_CLASS_MAPPINGS: dict[str, type[Any]] = {
     "SayaMainPromptFR": SayaMainPromptFR,
     "SayaCoupleContextLoad": SayaCoupleContextLoad,
     "SayaCoupleContextInspect": SayaCoupleContextInspect,
+    "SayaFamilySave": SayaFamilySave,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -219,4 +221,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "SayaMainPromptFR": "Saya Prompt MAIN · Préfixe + Décor + Tags (FR)",
     "SayaCoupleContextLoad": "Saya Couple Context · Load (imprint + identities, one per model)",
     "SayaCoupleContextInspect": "Saya Couple Context · Inspect",
+    "SayaFamilySave": "Saya Family Save · PNG par famille (+ sidecar JSON)",
 }

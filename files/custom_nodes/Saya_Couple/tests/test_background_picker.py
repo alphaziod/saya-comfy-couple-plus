@@ -38,6 +38,12 @@ def test_background_picker():
             c.eq(bp.ultra_text(stock[0]), stock[0]["ultra"], "ultra = the version written for this background")
             c.raises(bp.SayaBackgroundError, lambda: bp.ultra_text({"id": "BG-X", "bg": "x"}), "no written ultra: clear error")
             c.ok("ultra" in node.choose("horror", 5, ultra_detailed=True)[2], "info says ultra")
+            soft = bp.soften_background
+            c.eq(soft("indoors, (white marble hall:1.2), white walls, pearl white palette, depth of field, rich detailed background"),
+                 "indoors, (white marble hall:1.2), warm beige walls, natural colors, rich detailed background",
+                 "2026-10-14: white-saturating background made softer (weighted place kept, palette -> natural colors, blur out)")
+            c.eq(soft("outdoors, beach, bright sunlight, light rays, fluorescent lights, cool white"),
+                 "outdoors, beach, soft sunlight, soft warm lamplight, natural colors", "harsh / cold light softened, veils dropped")
 
             bp.HISTORY_PATH.unlink()
             c.raises(bp.SayaBackgroundError, lambda: node.choose("all", 1, "back"), "back with an empty history: clear error")

@@ -1,0 +1,11 @@
+{
+  "_lire": "Base Saya preset installed with the package. At startup, when « version » changes: the generation workspace is prepared on pass 1 and the master + six passes are copied to ComfyUI/user/default/workflows/ILUSTCOUPLE_PASSES (an existing pass is never overwritten). Adjust the master, then outils/synchro_maitre.py copies its settings to the six passes. Nothing is deleted. No characters are shipped.",
+  "version": "1.0.0-beta.1",
+  "workflow": "passes/ILUSTCOUPLE_01_PASSE_1_Generation.json",
+  "workflow_nom": "Preset de base · ILUSTCOUPLE passe 1 (maître + 6 passes)",
+  "passes": {
+    "dossier": "passes",
+    "comfy": "ILUSTCOUPLE_PASSES",
+    "source": "ILUSTCOUPLECLEAN.json"
+  }
+}

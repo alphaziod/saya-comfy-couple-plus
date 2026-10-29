@@ -15,8 +15,8 @@ def _mods(tmp: Path):
     from saya_couple.src.nodes import background_picker as bp
     from saya_couple.src.nodes import main_prompt as mp
 
-    stock = [{"id": "BG-001", "cat": "bedroom", "name": "chambre", "short": "chambre", "bg": "indoors, (cozy bedroom:1.2), bed, lamp, depth of field",
-              "ultra": "indoors, (cozy bedroom:1.2), bed, lamp, creased linen, brass lamp base, depth of field"},
+    stock = [{"id": "BG-001", "cat": "bedroom", "name": "chambre", "short": "chambre", "bg": "indoors, (cozy bedroom:1.2), bed, lamp, warm lamplight",
+              "ultra": "indoors, (cozy bedroom:1.2), bed, lamp, creased linen, brass lamp base, warm lamplight"},
              {"id": "BG-002", "cat": "forest", "name": "forêt", "short": "forêt", "bg": "outdoors, (deep forest:1.2), ferns, moss", "ultra": "outdoors, (deep forest:1.2), ferns, moss, bark"},
              {"id": "BF-0001", "cat": "dream", "name": "rêve", "short": "rêve", "bg": "outdoors, (giant leaf:1.2), dew", "ultra": "outdoors, (giant leaf:1.2), dew, veins"}]
     (tmp / "backgrounds.json").write_text(json.dumps({"backgrounds": stock}))
