@@ -58,6 +58,7 @@ class SameHostRedirect(HTTPRedirectHandler):
         return new
 
 OPENER=build_opener(SameHostRedirect)
+EXTENSION_ORIGIN=re.compile(r"chrome-extension://[a-p]{32}")
 def urlopen(req, timeout=None): return OPENER.open(req, timeout=timeout)
 
 def token():
@@ -76,13 +77,15 @@ def bridge_token():
     return path.read_text().strip()
 
 def allowed_root(dest):
-    raw=Path(dest).expanduser() if dest else (Path(ALLOWED_ROOTS[0]) if ALLOWED_ROOTS else DEFAULT)
-    root=raw.resolve()
-    roots=[Path(p).expanduser().resolve() for p in ALLOWED_ROOTS] or [DEFAULT.resolve()]
-    if not any(root == p or root.is_relative_to(p) for p in roots):
-        raise ValueError("Destination hors des racines Saya autorisées")
-    root.mkdir(parents=True,exist_ok=True)
-    return root
+    # The destination comes from the HTTP request: normalized (symlinks resolved), then accepted only
+    # inside one of the allowed roots; nothing is created before that check.
+    roots=[os.path.realpath(os.path.expanduser(p)) for p in ALLOWED_ROOTS] or [os.path.realpath(DEFAULT)]
+    root=os.path.realpath(os.path.expanduser(dest)) if dest else roots[0]
+    for base in roots:
+        if root==base or root.startswith(base.rstrip(os.sep)+os.sep):
+            os.makedirs(root,exist_ok=True)
+            return Path(root)
+    raise ValueError("Destination hors des racines Saya autorisées")
 
 def api(path):
     req=Request(API_BASE.rstrip("/")+path,headers={"User-Agent":"SayaStudio/1.0"})
@@ -263,7 +266,8 @@ def spawn(job, version_id, file_id, dest):
 class H(BaseHTTPRequestHandler):
     def cors(self):
         origin=self.headers.get("Origin","")
-        if origin.startswith("chrome-extension://"): self.send_header("Access-Control-Allow-Origin",origin)
+        # Echo only a well-formed extension origin (32 letters a-p): no CR/LF can reach the header.
+        if EXTENSION_ORIGIN.fullmatch(origin): self.send_header("Access-Control-Allow-Origin",origin)
         self.send_header("Access-Control-Allow-Headers","Content-Type, X-Saya-Token, X-Saya-Extension"); self.send_header("Access-Control-Allow-Methods","POST,GET,OPTIONS")
     def out(self,code,obj):
         body=json.dumps(obj).encode(); self.send_response(code); self.cors(); self.send_header("Content-Type","application/json"); self.send_header("Content-Length",str(len(body))); self.end_headers(); self.wfile.write(body)
