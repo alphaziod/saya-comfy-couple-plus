@@ -58,7 +58,8 @@ class SameHostRedirect(HTTPRedirectHandler):
         return new
 
 OPENER=build_opener(SameHostRedirect)
-EXTENSION_ORIGIN=re.compile(r"chrome-extension://[a-p]{32}")
+# The Saya Studio extension's fixed ID (pinned by the "key" of extension/manifest.json, same as the native host).
+EXTENSION_ORIGIN="chrome-extension://hgbfcjoeaddihdpccfhcgeohohfejidm"
 def urlopen(req, timeout=None): return OPENER.open(req, timeout=timeout)
 
 def token():
@@ -79,10 +80,16 @@ def bridge_token():
 def allowed_root(dest):
     # The destination comes from the HTTP request: normalized (symlinks resolved), then accepted only
     # inside one of the allowed roots; nothing is created before that check.
-    roots=[os.path.realpath(os.path.expanduser(p)) for p in ALLOWED_ROOTS] or [os.path.realpath(DEFAULT)]
-    root=os.path.realpath(os.path.expanduser(dest)) if dest else roots[0]
+    roots=[os.path.normpath(os.path.realpath(os.path.expanduser(p))) for p in ALLOWED_ROOTS] or [os.path.normpath(os.path.realpath(DEFAULT))]
+    if not dest:
+        os.makedirs(roots[0],exist_ok=True)
+        return Path(roots[0])
+    root=os.path.normpath(os.path.realpath(os.path.expanduser(dest)))
     for base in roots:
-        if root==base or root.startswith(base.rstrip(os.sep)+os.sep):
+        if root==base:  # the root itself: use the trusted value
+            os.makedirs(base,exist_ok=True)
+            return Path(base)
+        if root.startswith(base.rstrip(os.sep)+os.sep):
             os.makedirs(root,exist_ok=True)
             return Path(root)
     raise ValueError("Destination hors des racines Saya autorisées")
@@ -266,8 +273,8 @@ def spawn(job, version_id, file_id, dest):
 class H(BaseHTTPRequestHandler):
     def cors(self):
         origin=self.headers.get("Origin","")
-        # Echo only a well-formed extension origin (32 letters a-p): no CR/LF can reach the header.
-        if EXTENSION_ORIGIN.fullmatch(origin): self.send_header("Access-Control-Allow-Origin",origin)
+        # The header carries our constant, never the request's value: nothing from the request reaches it.
+        if origin==EXTENSION_ORIGIN: self.send_header("Access-Control-Allow-Origin",EXTENSION_ORIGIN)
         self.send_header("Access-Control-Allow-Headers","Content-Type, X-Saya-Token, X-Saya-Extension"); self.send_header("Access-Control-Allow-Methods","POST,GET,OPTIONS")
     def out(self,code,obj):
         body=json.dumps(obj).encode(); self.send_response(code); self.cors(); self.send_header("Content-Type","application/json"); self.send_header("Content-Length",str(len(body))); self.end_headers(); self.wfile.write(body)
