@@ -16,7 +16,7 @@ import shutil
 import subprocess
 import sys
 
-from . import compat, gpu, patchlib
+from . import compat, gpu, patchlib, studio_app
 
 PKG = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 STATE_FILE = ".saya_install.json"
@@ -542,8 +542,30 @@ def cmd_amd(args) -> int:
     return 0
 
 
+def choose_what(what: str, assume_yes: bool = False) -> str:
+    """What to install: the ComfyUI nodes, the desktop app, or both. The user decides; without a
+    terminal or with --yes the installer keeps its historical behaviour (the nodes only)."""
+    if what != "ask":
+        return what
+    if assume_yes or not sys.stdin.isatty():
+        return "nodes"
+    say("What do you want to install?")
+    say("  1) Saya Couple nodes into ComfyUI")
+    say("  2) Saya Studio desktop app (Linux)")
+    say("  3) both")
+    try:
+        answer = input("Choice [1/2/3] (default 1): ").strip()
+    except EOFError:
+        answer = ""
+    return {"2": "app", "3": "both"}.get(answer, "nodes")
+
+
+def cmd_studio(args) -> int:
+    return studio_app.install(say, ask, True if args.yes else None, args.dry_run, args.format)
+
+
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(prog="saya", description="Saya Couple installer (install / verify / restore / check-compat / amd)")
+    ap = argparse.ArgumentParser(prog="saya", description="Saya installer: Saya Couple nodes for ComfyUI and/or the Saya Studio desktop app (install / studio / verify / restore / check-compat / amd)")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     def common(p):
@@ -551,11 +573,18 @@ def main(argv=None) -> int:
         p.add_argument("--python", help="ComfyUI's Python (default: auto-detect .venv / venv / python_embeded)")
         return p
 
-    p = common(sub.add_parser("install", help="install Saya Couple"))
+    p = common(sub.add_parser("install", help="install the Saya Couple nodes and/or the Saya Studio app (asks which)"))
+    p.add_argument("--what", choices=("ask", "nodes", "app", "both"), default="ask",
+                   help="what to install: the ComfyUI nodes, the desktop app, or both (default: ask)")
+    p.add_argument("--format", choices=studio_app.FORMATS, help="app package format (default: detected from the distribution)")
     p.add_argument("--yes", action="store_true", help="no questions (AMD patch follows the recommendation)")
     p.add_argument("--amd", choices=("ask", "yes", "no"), default="ask")
     p.add_argument("--dry-run", action="store_true")
     p.add_argument("--full", action="store_true", help="also run the pack's full test suite")
+    p = sub.add_parser("studio", help="install the Saya Studio desktop app only (Linux)")
+    p.add_argument("--format", choices=studio_app.FORMATS, help="package format (default: detected from the distribution)")
+    p.add_argument("--yes", action="store_true", help="no confirmation question")
+    p.add_argument("--dry-run", action="store_true", help="show what would be downloaded and run")
     p = common(sub.add_parser("verify", help="short support report"))
     p.add_argument("--full", action="store_true")
     p = common(sub.add_parser("restore", help="put back the files saved at install"))
@@ -569,4 +598,16 @@ def main(argv=None) -> int:
     p.add_argument("--no", action="store_true")
     p.add_argument("--force", action="store_true")
     args = ap.parse_args(argv)
-    return {"install": cmd_install, "verify": cmd_verify, "restore": cmd_restore, "check-compat": cmd_check_compat, "amd": cmd_amd}[args.cmd](args)
+    if args.cmd == "install":
+        what = choose_what(args.what, args.yes)
+        code = 0
+        if what in ("nodes", "both"):
+            code = cmd_install(args)
+            if code != 0:
+                return code
+        if what in ("app", "both"):
+            code = cmd_studio(args)
+        elif sys.stdin.isatty() and args.what == "ask":
+            say("\nThe Saya Studio desktop app can be installed later with: ./saya studio")
+        return code
+    return {"studio": cmd_studio, "install": cmd_install, "verify": cmd_verify, "restore": cmd_restore, "check-compat": cmd_check_compat, "amd": cmd_amd}[args.cmd](args)

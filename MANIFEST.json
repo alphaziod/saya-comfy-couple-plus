@@ -39,7 +39,7 @@
   {
    "path": "README.md",
    "type": "markdown",
-   "sha256": "5f0cc7ed8e0832dd63eede39881f3d71c9df8e070dd2b16d16ff5ffa0aedd038",
+   "sha256": "6b68fe30a2963fc4b8a8ca1e8d99f77e3d31c09f897c703915f339a5b78bba39",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -72,7 +72,7 @@
   {
    "path": "saya",
    "type": "script",
-   "sha256": "f00c654f0f8b3844d1553c717f1a40ea043fe6899d80a2cea6941e7f9fff08e6",
+   "sha256": "b75b41b9a4d29e50a2011f93ed014e0a0dbd3be30340c857d4e07c22b7e329ae",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -83,7 +83,7 @@
   {
    "path": "saya.bat",
    "type": "script",
-   "sha256": "9f9203dd3d09e39ef14a4e6a514ba97a285f156fe322450292e3075c0fe389d9",
+   "sha256": "cffdb5a9fa8aea0b7ec5201f31039020e3efd5177c85c031e41cc7637e143178",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1590,7 +1590,7 @@
   {
    "path": "installer/saya.py",
    "type": "python",
-   "sha256": "fb0415781466e19693c5476a3825372e474570b1a2f77edae5f784ab7e22f61e",
+   "sha256": "1605964de6ce89cc1351b5fb93e4e33c018beed3c2f245b0c87a5c8e6ebe20b6",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1612,7 +1612,7 @@
   {
    "path": "installer/saya_installer/cli.py",
    "type": "python",
-   "sha256": "1b3b0d0bcda96bdb298a8d7c9a0a3aacaec3eb2ebdea02cea8780de3c4928d81",
+   "sha256": "2d8cb108e4143191da97ebd364c26ce84a0dcf258260b12ba8676d1be909e36a",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1657,6 +1657,17 @@
    "path": "installer/saya_installer/smoke.py",
    "type": "python",
    "sha256": "79e96e3b091517084668c90c3196a3dca0ec8ee7ed737955140a27be26c57d7b",
+   "destination": null,
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": false,
+   "component": "installer",
+   "description": "installer / release tooling"
+  },
+  {
+   "path": "installer/saya_installer/studio_app.py",
+   "type": "python",
+   "sha256": "d8ebabdd82041b8f0a853c11ece71543148175d467156d123b51e9e7cf8f2446",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1783,6 +1794,17 @@
    "path": "tests/run_campaign.py",
    "type": "python",
    "sha256": "24a5a28279acdebbc0b655b59d50ef3554843ee058f74c3157f4af9fd9e2a429",
+   "destination": null,
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": false,
+   "component": "test",
+   "description": "public test and validation scripts"
+  },
+  {
+   "path": "tests/test_studio_app.py",
+   "type": "python",
+   "sha256": "0e215a083610cd16146625bd9ae3f6a0f8d9dd70c3fb43521d63ef326e6bebb0",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
