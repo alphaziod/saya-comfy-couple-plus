@@ -42,6 +42,8 @@ with the same problem. Take what you need.
 > ### New: Saya Studio 1.0 beta (Linux)
 > A local desktop app that drives ComfyUI and these nodes. Packages for Debian/Ubuntu, Fedora, openSUSE, Arch
 > (+ AUR), Nix, AppImage, Flatpak and Snap. See [Saya Studio](#saya-studio-desktop-app-linux-beta) below.
+>
+> ![Saya Studio](docs/images/studio-generation.webp)
 
 ---
 
@@ -479,6 +481,12 @@ Full story: [docs/DEVELOPMENT_HISTORY.md](docs/DEVELOPMENT_HISTORY.md).
 
 **Saya Studio 1.0.0-beta.1** is a local desktop app (Tauri 2, Rust, Svelte, SQLite) that drives ComfyUI and the
 Saya Couple nodes. ComfyUI renders, Saya Studio organizes; nothing runs in the cloud.
+
+![Saya Studio: the six-pass generation, with the session on the right](docs/images/studio-generation.webp)
+
+| Casting: a batch of original characters, pass 1 only | Gallery: kept images, filters by character, model, LoRA |
+|:---:|:---:|
+| ![Saya Studio casting grid](docs/images/studio-casting.webp) | ![Saya Studio gallery](docs/images/studio-gallery.webp) |
 
 - **Generation**: open a ComfyUI workflow, check its faithful API conversion, edit inputs, submit, follow.
 - **Saya preset**: six passes (composition, hires fix, HiDream, post, detailers, final upscale) with memory

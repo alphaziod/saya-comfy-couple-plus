@@ -39,7 +39,7 @@
   {
    "path": "README.md",
    "type": "markdown",
-   "sha256": "6b68fe30a2963fc4b8a8ca1e8d99f77e3d31c09f897c703915f339a5b78bba39",
+   "sha256": "7fe06f1d1ef23463780686adf58b487edfbe8f9d28ed537aec96511b45c164e1",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -183,6 +183,39 @@
    "path": "docs/images/solo_example.png",
    "type": "png",
    "sha256": "36211898720350a81cf2f64d5942c93687596bcaf282436dcd00cc5f281eae46",
+   "destination": null,
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": false,
+   "component": "docs",
+   "description": ""
+  },
+  {
+   "path": "docs/images/studio-casting.webp",
+   "type": "webp",
+   "sha256": "2df8a095e095cd24fcb8a14b6a67e787247f6a3fb1ff2e888260f9e760f01cce",
+   "destination": null,
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": false,
+   "component": "docs",
+   "description": ""
+  },
+  {
+   "path": "docs/images/studio-gallery.webp",
+   "type": "webp",
+   "sha256": "963fc04941bf8a50b58eea0e26e0de3208e83bc8c777b0dd1c05d24ba181b336",
+   "destination": null,
+   "origin": "Saya Couple (original)",
+   "license": "GPL-3.0-or-later",
+   "required": false,
+   "component": "docs",
+   "description": ""
+  },
+  {
+   "path": "docs/images/studio-generation.webp",
+   "type": "webp",
+   "sha256": "153762f8dc7b6ebfb1be5f3a93040b94264d1ed5874a3de398e6900d037c6d34",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
