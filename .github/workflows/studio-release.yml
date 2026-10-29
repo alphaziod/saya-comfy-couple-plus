@@ -224,6 +224,11 @@ jobs:
     permissions:
       contents: write
     steps:
+      # Only for the release notes (studio/RELEASE_NOTES.md).
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: studio/RELEASE_NOTES.md
+          sparse-checkout-cone-mode: false
       - uses: actions/download-artifact@v4
         with:
           path: assets
@@ -234,20 +239,11 @@ jobs:
           ls -l
           sha256sum * > SHA256SUMS
           cat SHA256SUMS
-      - name: Release notes
-        run: |
-          cat > notes.md <<'EOF'
-          Saya Studio 1.0.0-beta.1 (Linux beta).
-
-          Packages: Debian/Ubuntu (.deb), Fedora and openSUSE (.rpm), Arch (.pkg.tar.zst), AppImage, and, when they built, Nix, Flatpak and Snap. Verify downloads against SHA256SUMS.
-
-          This is a beta. ComfyUI and its models are not included. See studio/docs/PACKAGING.md for per-format notes and known limits.
-          EOF
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
           name: Saya Studio 1.0.0-beta.1 (Linux beta)
-          body_path: notes.md
+          body_path: studio/RELEASE_NOTES.md
           draft: true
           prerelease: true
           files: assets/*
