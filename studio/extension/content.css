@@ -1,0 +1,4 @@
+.saya-civitai-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.saya-civitai-primary{background:#2f7d5c;color:#fff;border:0;border-radius:6px;padding:10px 16px;font-weight:700;cursor:pointer}
+.saya-civitai-secondary{background:transparent;color:inherit;border:1px solid #667;border-radius:6px;padding:8px 12px;cursor:pointer}
+.saya-civitai-status{font-size:12px;opacity:.8}

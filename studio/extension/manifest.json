@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Saya Studio — Civitai Bridge",
+  "version": "1.1.0",
+  "description": "Télécharge les modèles Civitai directement dans Saya Studio.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0hJNT+GFgdutAW/Kw9sTQMxs6ikxXcL6TZXhhlMO960QU3uhx5NxDeSF2oVcWPdVvMxtIXZeGL+7h9KWt5VWFP6zaLJlZpHukV9EHXwi87Wd/Jlms1RptxL428uxu1mFoq/y1lJrmebzw70BTOmv88nFZX6OZeRmQx9ayZwtHhettX2Vbuzw0jJ0FFiQC0AC43/9075XEkizbi+WK/sd4Gb85J30hEPpnKW15wBp7ODYXAiD/ubMqXATVDNAYO5bchdM+UXnxrRIbC0WwQ54ESUVgb9xbPSVJyPAbdiPKoM7TqHRpo1Q0HYS9gvr8nyRNfZXOfJtYyK3dEZDOWsH5wIDAQAB",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "nativeMessaging"
+  ],
+  "host_permissions": [
+    "https://civitai.com/*",
+    "https://*.civitai.com/*",
+    "https://civitai.red/*",
+    "https://*.civitai.red/*",
+    "http://127.0.0.1:47821/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://civitai.com/*",
+        "https://*.civitai.com/*",
+        "https://civitai.red/*",
+        "https://*.civitai.red/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Saya Studio Civitai Bridge"
+  },
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "background.js"
+  }
+}
