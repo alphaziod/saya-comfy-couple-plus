@@ -1,0 +1,55 @@
+# Flatpak manifest for Saya Studio. Build from the studio/ directory:
+#   flatpak-builder --user --install --force-clean build-dir packaging/flatpak/studio.saya.desktop.yml
+# UNTESTED. Beta limitation: the build needs network (cargo + npm). Flathub requires offline
+# sources: generate cargo-sources.json (flatpak-cargo-generator.py Cargo.lock) and
+# node-sources.json (flatpak-node-generator npm package-lock.json) and drop `--share=network` below.
+app-id: studio.saya.desktop
+runtime: org.gnome.Platform
+runtime-version: '48'
+sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+  - org.freedesktop.Sdk.Extension.node22
+command: saya-studio
+finish-args:
+  # ComfyUI runs on the host and listens on 127.0.0.1:8188; the Civitai bridge also needs the network.
+  - --share=network
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  # WebKitGTK GPU rendering.
+  - --device=dri
+  # Images, the ComfyUI install (~/AI/ComfyUI), models and the config dir
+  # (~/Documents/saya studio config) all live in the user's home and are read and written directly.
+  - --filesystem=home
+  - --talk-name=org.freedesktop.portal.Desktop
+build-options:
+  append-path: /usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/node22/bin
+  env:
+    CARGO_HOME: /run/build/saya-studio/cargo
+  build-args:
+    - --share=network
+modules:
+  - name: saya-studio
+    buildsystem: simple
+    build-commands:
+      - npm ci --no-audit --no-fund
+      - npm run tauri -- build --no-bundle -- --locked
+      - install -Dm755 target/release/saya-studio /app/bin/saya-studio-bin
+      - install -Dm755 packaging/linux/saya-studio-launcher.sh /app/bin/saya-studio
+      - cargo build --release -p studio-core --bin studio-maintenance --locked
+      - install -Dm755 target/release/studio-maintenance /app/bin/saya-studio-maintenance
+      - install -Dm755 -t /app/share/saya-studio scripts/civitai_bridge.py scripts/saya_native_host.py
+      - install -Dm755 sidecars/f09-semantic-embed.py /app/share/saya-studio/sidecars/f09-semantic-embed.py
+      - cp -r presets /app/share/saya-studio/presets
+      - cp -r extension /app/share/saya-studio/extension
+      - sed 's/^Icon=.*/Icon=studio.saya.desktop/' packaging/linux/saya-studio.desktop > studio.saya.desktop.desktop
+      - install -Dm644 studio.saya.desktop.desktop /app/share/applications/studio.saya.desktop.desktop
+      - install -Dm644 packaging/linux/studio.saya.desktop.metainfo.xml /app/share/metainfo/studio.saya.desktop.metainfo.xml
+      - |
+        for s in 16 24 32 48 64 128 256 512; do
+          install -Dm644 packaging/arch/icons/saya-studio-$s.png /app/share/icons/hicolor/${s}x${s}/apps/studio.saya.desktop.png
+        done
+    sources:
+      - type: dir
+        path: ../..

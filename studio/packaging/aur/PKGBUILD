@@ -1,0 +1,34 @@
+# Maintainer: alphaziod
+# Binary package: repackages the .deb built by CI and attached to the GitHub release.
+# UNTESTED until the release exists. After the release is published:
+#   updpkgsums && makepkg --printsrcinfo > .SRCINFO
+pkgname=saya-studio-bin
+_upstream=saya-studio
+_tag=1.0.0-beta.1
+pkgver=1.0.0beta1
+pkgrel=1
+pkgdesc='Local image, character and ComfyUI workflow manager (Linux beta, binary release)'
+arch=('x86_64')
+url='https://github.com/alphaziod/saya-comfy-couple-plus'
+license=('GPL-3.0-or-later')
+depends=('glibc' 'libgcc' 'glib2' 'gtk3' 'gdk-pixbuf2' 'cairo' 'dbus' 'webkit2gtk-4.1' 'libsoup3' 'wayland'
+         'python' 'curl' 'xdg-utils' 'xdg-desktop-portal')
+optdepends=('xdg-desktop-portal-gtk: portal backend for file dialogs (or -gnome/-kde/-wlr as fits your desktop)'
+            'ffmpeg: LoRA video previews'
+            'python-pytorch: optional F09 semantic embedding sidecar'
+            'comfyui: local generation engine (external, not packaged)')
+provides=('saya-studio')
+conflicts=('saya-studio')
+options=('!strip' '!debug')
+source=("${_upstream}_${_tag}_amd64.deb::${url}/releases/download/studio-v${_tag}/${_upstream}_${_tag}_amd64.deb")
+noextract=("${_upstream}_${_tag}_amd64.deb")
+# To be filled in after the release: run `updpkgsums`.
+sha256sums=('SKIP')
+
+package() {
+  bsdtar -xf "${srcdir}/${_upstream}_${_tag}_amd64.deb" -C "${srcdir}"
+  bsdtar -xf "${srcdir}"/data.tar.* -C "${pkgdir}"
+  # Debian-only metadata that must not land in an Arch package.
+  rm -rf "${pkgdir}/usr/share/doc/${_upstream}/changelog.gz" 2>/dev/null || true
+  chmod -R go-w "${pkgdir}"
+}
