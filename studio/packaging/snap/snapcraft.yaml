@@ -52,6 +52,10 @@ parts:
       - curl
       - xdg-utils
     override-build: |
+      # The gnome extension points LD_LIBRARY_PATH at the GNOME SDK, whose libc breaks the rustup
+      # snap (undefined symbol __nptl_change_stack_perm). Linking still finds the SDK through
+      # pkg-config.
+      unset LD_LIBRARY_PATH
       rustup default stable
       npm ci --no-audit --no-fund
       npm run tauri -- build --no-bundle -- --locked
