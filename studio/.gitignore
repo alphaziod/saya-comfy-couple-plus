@@ -1,0 +1,12 @@
+
+dist/
+.DS_Store
+/node_modules
+node_modules/
+*.pkg.tar.zst
+__pycache__/
+*.sqlite3*
+src-tauri/gen/
+target/
+test-results/
+RESUME.local.md

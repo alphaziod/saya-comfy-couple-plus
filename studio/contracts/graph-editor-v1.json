@@ -1,0 +1,192 @@
+{
+  "formatVersion": 1,
+  "id": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+  "name": "SOLO exemple",
+  "nodes": [
+    {
+      "id": "6d01f5d7-5831-475a-af56-962172066e77",
+      "classType": "CheckpointLoaderSimple",
+      "position": { "x": 0.0, "y": 0.0 },
+      "size": null,
+      "inputs": [
+        { "name": "ckpt_name", "type": "STRING", "optional": false }
+      ],
+      "outputs": [
+        { "name": "MODEL", "type": "MODEL" },
+        { "name": "CLIP", "type": "CLIP" },
+        { "name": "VAE", "type": "VAE" }
+      ],
+      "params": { "ckpt_name": "model.safetensors" }
+    },
+    {
+      "id": "7df10df5-3bbf-40ee-a25e-907295abcb73",
+      "classType": "CLIPTextEncode",
+      "position": { "x": 280.0, "y": -40.0 },
+      "size": null,
+      "inputs": [
+        { "name": "text", "type": "STRING", "optional": false },
+        { "name": "clip", "type": "CLIP", "optional": false }
+      ],
+      "outputs": [
+        { "name": "CONDITIONING", "type": "CONDITIONING" }
+      ],
+      "params": { "text": "saya" }
+    },
+    {
+      "id": "ee209ad1-05ff-4ca0-852e-c9533bd5437a",
+      "classType": "CLIPTextEncode",
+      "position": { "x": 280.0, "y": 160.0 },
+      "size": null,
+      "inputs": [
+        { "name": "text", "type": "STRING", "optional": false },
+        { "name": "clip", "type": "CLIP", "optional": false }
+      ],
+      "outputs": [
+        { "name": "CONDITIONING", "type": "CONDITIONING" }
+      ],
+      "params": { "text": "flou" }
+    },
+    {
+      "id": "28d5874a-c248-4f9b-97ee-bcdc742b9ec5",
+      "classType": "EmptyLatentImage",
+      "position": { "x": 280.0, "y": 360.0 },
+      "size": null,
+      "inputs": [
+        { "name": "width", "type": "INT", "optional": false },
+        { "name": "height", "type": "INT", "optional": false },
+        { "name": "batch", "type": "INT", "optional": false }
+      ],
+      "outputs": [
+        { "name": "LATENT", "type": "LATENT" }
+      ],
+      "params": { "width": 1024, "height": 1024, "batch": 1 }
+    },
+    {
+      "id": "2f97c049-5ce5-4b5a-9631-11e5b6a4b1c9",
+      "classType": "KSampler",
+      "position": { "x": 580.0, "y": 40.0 },
+      "size": null,
+      "inputs": [
+        { "name": "seed", "type": "INT", "optional": false },
+        { "name": "steps", "type": "INT", "optional": false },
+        { "name": "cfg", "type": "FLOAT", "optional": false },
+        { "name": "sampler_name", "type": "COMBO", "optional": false },
+        { "name": "scheduler", "type": "COMBO", "optional": false },
+        { "name": "denoise", "type": "FLOAT", "optional": false },
+        { "name": "model", "type": "MODEL", "optional": false },
+        { "name": "positive", "type": "CONDITIONING", "optional": false },
+        { "name": "negative", "type": "CONDITIONING", "optional": false },
+        { "name": "latent_image", "type": "LATENT", "optional": false }
+      ],
+      "outputs": [
+        { "name": "LATENT", "type": "LATENT" }
+      ],
+      "params": {
+        "seed": 1234567890,
+        "steps": 20,
+        "cfg": 7.0,
+        "sampler_name": "euler",
+        "scheduler": "normal",
+        "denoise": 1.0
+      }
+    },
+    {
+      "id": "fb28d1b5-b614-4f3d-aaa3-ed4037132993",
+      "classType": "VAEDecode",
+      "position": { "x": 880.0, "y": 40.0 },
+      "size": null,
+      "inputs": [
+        { "name": "samples", "type": "LATENT", "optional": false },
+        { "name": "vae", "type": "VAE", "optional": false }
+      ],
+      "outputs": [
+        { "name": "IMAGE", "type": "IMAGE" }
+      ],
+      "params": {}
+    },
+    {
+      "id": "26b2623b-63c9-4bfd-889a-22cdb5cde4dc",
+      "classType": "SaveImage",
+      "position": { "x": 1140.0, "y": 40.0 },
+      "size": null,
+      "inputs": [
+        { "name": "images", "type": "IMAGE", "optional": false },
+        { "name": "filename_prefix", "type": "STRING", "optional": false }
+      ],
+      "outputs": [],
+      "params": { "filename_prefix": "saya" }
+    }
+  ],
+  "connections": [
+    {
+      "id": "0c1d2e3f-4a5b-4c6d-8e9f-a0b1c2d3e4f5",
+      "from": { "node": "6d01f5d7-5831-475a-af56-962172066e77", "output": 1 },
+      "to": { "node": "7df10df5-3bbf-40ee-a25e-907295abcb73", "input": "clip" }
+    },
+    {
+      "id": "1c2d3e4f-5a6b-4c7d-8e9f-b0c1d2e3f4a5",
+      "from": { "node": "6d01f5d7-5831-475a-af56-962172066e77", "output": 1 },
+      "to": { "node": "ee209ad1-05ff-4ca0-852e-c9533bd5437a", "input": "clip" }
+    },
+    {
+      "id": "2c3d4e5f-6a7b-4c8d-8e9f-c0d1e2f3a4b5",
+      "from": { "node": "6d01f5d7-5831-475a-af56-962172066e77", "output": 0 },
+      "to": { "node": "2f97c049-5ce5-4b5a-9631-11e5b6a4b1c9", "input": "model" }
+    },
+    {
+      "id": "3c4d5e6f-7a8b-4c9d-8e9f-d0e1f2a3b4c5",
+      "from": { "node": "7df10df5-3bbf-40ee-a25e-907295abcb73", "output": 0 },
+      "to": { "node": "2f97c049-5ce5-4b5a-9631-11e5b6a4b1c9", "input": "positive" }
+    },
+    {
+      "id": "4c5d6e7f-8a9b-4c0d-8e9f-e0f1a2b3c4d5",
+      "from": { "node": "ee209ad1-05ff-4ca0-852e-c9533bd5437a", "output": 0 },
+      "to": { "node": "2f97c049-5ce5-4b5a-9631-11e5b6a4b1c9", "input": "negative" }
+    },
+    {
+      "id": "5c6d7e8f-9a0b-4c1d-8e9f-f0a1b2c3d4e5",
+      "from": { "node": "28d5874a-c248-4f9b-97ee-bcdc742b9ec5", "output": 0 },
+      "to": { "node": "2f97c049-5ce5-4b5a-9631-11e5b6a4b1c9", "input": "latent_image" }
+    },
+    {
+      "id": "6c7d8e9f-a0b1-4c2d-8e9f-0a1b2c3d4e5f",
+      "from": { "node": "2f97c049-5ce5-4b5a-9631-11e5b6a4b1c9", "output": 0 },
+      "to": { "node": "fb28d1b5-b614-4f3d-aaa3-ed4037132993", "input": "samples" }
+    },
+    {
+      "id": "7c8d9eaf-b0c1-4c3d-8e9f-1a2b3c4d5e6f",
+      "from": { "node": "6d01f5d7-5831-475a-af56-962172066e77", "output": 2 },
+      "to": { "node": "fb28d1b5-b614-4f3d-aaa3-ed4037132993", "input": "vae" }
+    },
+    {
+      "id": "8c9dab0e-c1d2-4c4d-8e9f-2b3c4d5e6f7a",
+      "from": { "node": "fb28d1b5-b614-4f3d-aaa3-ed4037132993", "output": 0 },
+      "to": { "node": "26b2623b-63c9-4bfd-889a-22cdb5cde4dc", "input": "images" }
+    }
+  ],
+  "groups": [
+    {
+      "id": "5c4e1a2b-1111-4c4c-8d8d-222233334444",
+      "title": "Échantillonnage",
+      "nodeIds": [
+        "28d5874a-c248-4f9b-97ee-bcdc742b9ec5",
+        "2f97c049-5ce5-4b5a-9631-11e5b6a4b1c9"
+      ]
+    }
+  ],
+  "subgraphs": [
+    {
+      "id": "9fa2ddf8-f360-4622-a35c-a483378f48cf",
+      "title": "Chargeur",
+      "nodeIds": ["6d01f5d7-5831-475a-af56-962172066e77"],
+      "inputs": [
+        { "name": "ckpt_name", "type": "STRING" }
+      ],
+      "outputs": [
+        { "name": "MODEL", "type": "MODEL" },
+        { "name": "CLIP", "type": "CLIP" },
+        { "name": "VAE", "type": "VAE" }
+      ]
+    }
+  ]
+}
