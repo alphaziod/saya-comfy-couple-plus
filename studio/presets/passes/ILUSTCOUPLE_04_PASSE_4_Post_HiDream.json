@@ -1,0 +1,7712 @@
+{
+ "id": null,
+ "revision": 32,
+ "last_node_id": 100759,
+ "last_link_id": 99208,
+ "nodes": [
+  {
+   "id": 2678,
+   "type": "SetNode",
+   "pos": [
+    5838,
+    896
+   ],
+   "size": [
+    266,
+    42
+   ],
+   "flags": {
+    "collapsed": true,
+    "pinned": false
+   },
+   "order": 72,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "MODEL",
+     "type": "MODEL",
+     "link": 25173
+    }
+   ],
+   "outputs": [
+    {
+     "name": "MODEL",
+     "type": "MODEL",
+     "links": []
+    }
+   ],
+   "title": "Shared · Model 1 · Main",
+   "properties": {
+    "Node name for S&R": "SetNode",
+    "aux_id": "kijai/ComfyUI-KJNodes",
+    "previousName": "saya_base_main_model",
+    "saya_phase": 1,
+    "saya_original_mode": 0,
+    "saya_shared_base": true
+   },
+   "widgets_values": [
+    "saya_base_main_model"
+   ],
+   "widgets_values_named": {
+    "Constant": "saya_base_main_model"
+   },
+   "color": "#2b3038",
+   "bgcolor": "#3d4652"
+  },
+  {
+   "id": 2679,
+   "type": "SetNode",
+   "pos": [
+    5824,
+    924
+   ],
+   "size": [
+    210,
+    42
+   ],
+   "flags": {
+    "collapsed": true,
+    "pinned": false
+   },
+   "order": 73,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "CLIP",
+     "type": "CLIP",
+     "link": 25174
+    }
+   ],
+   "outputs": [
+    {
+     "name": "CLIP",
+     "type": "CLIP",
+     "links": []
+    }
+   ],
+   "title": "Shared · Model 1 · CLIP",
+   "properties": {
+    "Node name for S&R": "SetNode",
+    "aux_id": "kijai/ComfyUI-KJNodes",
+    "previousName": "saya_base_clip",
+    "saya_phase": 1,
+    "saya_original_mode": 0,
+    "saya_shared_base": true
+   },
+   "widgets_values": [
+    "saya_base_clip"
+   ],
+   "widgets_values_named": {
+    "Constant": "saya_base_clip"
+   },
+   "color": "#2b3038",
+   "bgcolor": "#3d4652"
+  },
+  {
+   "id": 10295,
+   "type": "SetNode",
+   "pos": [
+    6188,
+    1064
+   ],
+   "size": [
+    294,
+    42
+   ],
+   "flags": {
+    "collapsed": true,
+    "pinned": false
+   },
+   "order": 63,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "VAE",
+     "type": "VAE",
+     "link": 50053
+    }
+   ],
+   "outputs": [
+    {
+     "name": "VAE",
+     "type": "VAE",
+     "links": []
+    }
+   ],
+   "title": "VAE Route · 09 Pre-Detail Hires",
+   "properties": {
+    "Node name for S&R": "SetNode",
+    "aux_id": "kijai/ComfyUI-KJNodes",
+    "previousName": "ilust_vae_route_09",
+    "ue_properties": {
+     "widget_ue_connectable": {},
+     "version": "7.8",
+     "input_ue_unconnectable": {}
+    }
+   },
+   "widgets_values": [
+    "ilust_vae_route_09"
+   ],
+   "widgets_values_named": {
+    "Constant": "ilust_vae_route_09"
+   },
+   "color": "#303650",
+   "bgcolor": "#485176"
+  },
+  {
+   "id": 100097,
+   "type": "DaSiWa_MetadataImageSaver",
+   "pos": [
+    11662,
+    784
+   ],
+   "size": [
+    532,
+    952
+   ],
+   "flags": {
+    "pinned": false
+   },
+   "order": 39,
+   "mode": 0,
+   "inputs": [
+    {
+     "localized_name": "images",
+     "name": "images",
+     "type": "IMAGE",
+     "link": 98129
+    },
+    {
+     "localized_name": "metadata_config",
+     "name": "metadata_config",
+     "shape": 7,
+     "type": "METADATA_CONFIG",
+     "link": null
+    },
+    {
+     "localized_name": "extra_metadata",
+     "name": "extra_metadata",
+     "shape": 7,
+     "type": "EXTRA_METADATA",
+     "link": null
+    },
+    {
+     "localized_name": "filename_prefix",
+     "name": "filename_prefix",
+     "type": "STRING",
+     "widget": {
+      "name": "filename_prefix"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "file_format",
+     "name": "file_format",
+     "type": "COMBO",
+     "widget": {
+      "name": "file_format"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "compression",
+     "name": "compression",
+     "type": "INT",
+     "widget": {
+      "name": "compression"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "save_output",
+     "name": "save_output",
+     "type": "BOOLEAN",
+     "widget": {
+      "name": "save_output"
+     },
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "localized_name": "filename",
+     "name": "filename",
+     "type": "STRING",
+     "links": []
+    },
+    {
+     "localized_name": "metadata",
+     "name": "metadata",
+     "type": "STRING",
+     "links": []
+    }
+   ],
+   "title": "PREVIEW · Phase 4",
+   "properties": {
+    "cnr_id": "comfyui-dasiwa-nodes",
+    "ver": "0.2.7",
+    "Node name for S&R": "DaSiWa_MetadataImageSaver",
+    "saya_phase": 4,
+    "saya_original_mode": 0
+   },
+   "widgets_values": [
+    "image/%date:yyyy-MM-dd%/%date:hhmmss%",
+    "png",
+    15,
+    false
+   ],
+   "widgets_values_named": {
+    "filename_prefix": "image/%date:yyyy-MM-dd%/%date:hhmmss%",
+    "file_format": "png",
+    "compression": 15,
+    "save_output": false
+   },
+   "color": "#233b35",
+   "bgcolor": "#36584f"
+  },
+  {
+   "id": 100225,
+   "type": "SetNode",
+   "pos": [
+    5824,
+    966
+   ],
+   "size": [
+    280,
+    42
+   ],
+   "flags": {
+    "collapsed": true,
+    "pinned": false
+   },
+   "order": 37,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "STRING",
+     "type": "STRING",
+     "link": 98453
+    }
+   ],
+   "outputs": [
+    {
+     "name": "STRING",
+     "type": "STRING",
+     "links": []
+    }
+   ],
+   "title": "Shared · Model 1 · Identifier",
+   "properties": {
+    "Node name for S&R": "SetNode",
+    "aux_id": "kijai/ComfyUI-KJNodes",
+    "previousName": "saya_base_model_1_identifier",
+    "saya_shared_base": true
+   },
+   "widgets_values": [
+    "saya_base_model_1_identifier"
+   ],
+   "widgets_values_named": {
+    "Constant": "saya_base_model_1_identifier"
+   },
+   "color": "#2b3038",
+   "bgcolor": "#3d4652"
+  },
+  {
+   "id": 100226,
+   "type": "SetNode",
+   "pos": [
+    5824,
+    980
+   ],
+   "size": [
+    280,
+    42
+   ],
+   "flags": {
+    "collapsed": true,
+    "pinned": false
+   },
+   "order": 38,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "STRING",
+     "type": "STRING",
+     "link": 98454
+    }
+   ],
+   "outputs": [
+    {
+     "name": "STRING",
+     "type": "STRING",
+     "links": []
+    }
+   ],
+   "title": "Shared · Model 2 · Identifier",
+   "properties": {
+    "Node name for S&R": "SetNode",
+    "aux_id": "kijai/ComfyUI-KJNodes",
+    "previousName": "saya_base_model_2_identifier",
+    "saya_shared_base": true
+   },
+   "widgets_values": [
+    "saya_base_model_2_identifier"
+   ],
+   "widgets_values_named": {
+    "Constant": "saya_base_model_2_identifier"
+   },
+   "color": "#2b3038",
+   "bgcolor": "#3d4652"
+  },
+  {
+   "id": 100326,
+   "type": "Image Comparer (rgthree)",
+   "pos": [
+    11130,
+    2254
+   ],
+   "size": [
+    504,
+    336
+   ],
+   "flags": {
+    "pinned": false
+   },
+   "order": 41,
+   "mode": 0,
+   "inputs": [
+    {
+     "dir": 3,
+     "label": "after · right",
+     "name": "image_a",
+     "type": "IMAGE",
+     "link": 98928
+    },
+    {
+     "dir": 3,
+     "label": "before · left",
+     "name": "image_b",
+     "type": "IMAGE",
+     "link": 98927
+    }
+   ],
+   "outputs": [
+    {
+     "dir": 4,
+     "name": "images",
+     "shape": 3,
+     "type": "IMAGE",
+     "links": []
+    }
+   ],
+   "title": "Compare · Phase 4 · Hires Fix",
+   "properties": {
+    "cnr_id": "rgthree-comfy",
+    "ver": "b775441a4c5ae2853d4ff6b97a137f7f7d11e597",
+    "comparer_mode": "Slide",
+    "ue_properties": {
+     "widget_ue_connectable": {},
+     "version": "7.8",
+     "input_ue_unconnectable": {}
+    },
+    "saya_phase": 4,
+    "saya_original_mode": 0,
+    "saya_sampling_compare": true,
+    "saya_before_left_after_right": true
+   },
+   "widgets_values": [
+    [
+     {
+      "name": "A",
+      "selected": true,
+      "url": "/api/view?filename=rgthree.compare._temp_yfnqx_00001_.png&type=temp&subfolder=&rand=0.4844415290016737"
+     },
+     {
+      "name": "B",
+      "selected": true,
+      "url": "/api/view?filename=rgthree.compare._temp_yfnqx_00002_.png&type=temp&subfolder=&rand=0.5451985993321417"
+     }
+    ]
+   ],
+   "widgets_values_named": {
+    "rgthree_comparer": {
+     "images": [
+      {
+       "name": "A",
+       "selected": true,
+       "url": "/api/view?filename=rgthree.compare._temp_yfnqx_00001_.png&type=temp&subfolder=&rand=0.4844415290016737",
+       "img": {}
+      },
+      {
+       "name": "B",
+       "selected": true,
+       "url": "/api/view?filename=rgthree.compare._temp_yfnqx_00002_.png&type=temp&subfolder=&rand=0.5451985993321417",
+       "img": {}
+      }
+     ]
+    }
+   },
+   "color": "#2f3540",
+   "bgcolor": "#485260"
+  },
+  {
+   "id": 100058,
+   "type": "SayaImagePhase4Stop",
+   "pos": [
+    6902,
+    1344
+   ],
+   "size": [
+    308,
+    448
+   ],
+   "flags": {
+    "collapsed": true,
+    "pinned": false
+   },
+   "order": 40,
+   "mode": 0,
+   "inputs": [
+    {
+     "localized_name": "image",
+     "name": "image",
+     "type": "IMAGE",
+     "link": 97134
+    },
+    {
+     "localized_name": "save_receipt",
+     "name": "save_receipt",
+     "shape": 7,
+     "type": "STRING",
+     "link": null
+    },
+    {
+     "localized_name": "seed",
+     "name": "seed",
+     "type": "INT",
+     "widget": {
+      "name": "seed"
+     },
+     "link": 97135
+    },
+    {
+     "localized_name": "positive_prompt",
+     "name": "positive_prompt",
+     "type": "STRING",
+     "widget": {
+      "name": "positive_prompt"
+     },
+     "link": 97136
+    },
+    {
+     "localized_name": "negative_prompt",
+     "name": "negative_prompt",
+     "type": "STRING",
+     "widget": {
+      "name": "negative_prompt"
+     },
+     "link": 97137
+    },
+    {
+     "localized_name": "models_json",
+     "name": "models_json",
+     "type": "STRING",
+     "widget": {
+      "name": "models_json"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "vaes_json",
+     "name": "vaes_json",
+     "type": "STRING",
+     "widget": {
+      "name": "vaes_json"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "samplers_json",
+     "name": "samplers_json",
+     "type": "STRING",
+     "widget": {
+      "name": "samplers_json"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "source_path",
+     "name": "source_path",
+     "shape": 7,
+     "type": "STRING",
+     "widget": {
+      "name": "source_path"
+     },
+     "link": 97138
+    }
+   ],
+   "outputs": [
+    {
+     "localized_name": "image",
+     "name": "image",
+     "type": "IMAGE",
+     "links": []
+    },
+    {
+     "localized_name": "validated_path",
+     "name": "validated_path",
+     "type": "STRING",
+     "links": []
+    },
+    {
+     "localized_name": "manifest_json",
+     "name": "manifest_json",
+     "type": "STRING",
+     "links": []
+    }
+   ],
+   "title": "Phase 4 · Checkpoint Stop",
+   "properties": {
+    "Node name for S&R": "SayaImagePhaseCheckpointStop",
+    "cnr_id": "Saya Couple Upated",
+    "saya_phase": 4,
+    "saya_original_mode": 0
+   },
+   "widgets_values": [
+    0,
+    "",
+    "",
+    "",
+    "[\"Illustrious/no tags/Mklan-Sayapacito-Echo_00001_.safetensors\",\"RealESRGAN_x4plus_anime_6B.safetensors\"]",
+    "[\"AAA%20Anime%20VAE%20SDXL%20v2.safetensors\"]",
+    "{\"upscale_factor\":1.4,\"upscale_method\":\"nearest-exact\",\"hires\":{\"sampler\":\"dpmpp_2m_sde\",\"scheduler\":\"karras\",\"steps\":14,\"cfg\":3.2,\"denoise\":0.2}}",
+    ""
+   ],
+   "widgets_values_named": {
+    "seed": 0,
+    "control_after_generate": "",
+    "positive_prompt": "",
+    "negative_prompt": "",
+    "models_json": "[\"Illustrious/no tags/Mklan-Sayapacito-Echo_00001_.safetensors\",\"RealESRGAN_x4plus_anime_6B.safetensors\"]",
+    "vaes_json": "[\"AAA%20Anime%20VAE%20SDXL%20v2.safetensors\"]",
+    "samplers_json": "{\"upscale_factor\":1.4,\"upscale_method\":\"nearest-exact\",\"hires\":{\"sampler\":\"dpmpp_2m_sde\",\"scheduler\":\"karras\",\"steps\":14,\"cfg\":3.2,\"denoise\":0.2}}",
+    "source_path": ""
+   },
+   "color": "#4a2b2b",
+   "bgcolor": "#673d3d"
+  },
+  {
+   "id": 655,
+   "type": "Lora Loader (LoraManager)",
+   "pos": [
+    3542,
+    784
+   ],
+   "size": [
+    546,
+    1106
+   ],
+   "flags": {
+    "pinned": false
+   },
+   "order": 55,
+   "mode": 0,
+   "inputs": [
+    {
+     "localized_name": "model",
+     "name": "model",
+     "type": "MODEL",
+     "link": 25096
+    },
+    {
+     "localized_name": "text",
+     "name": "text",
+     "type": "AUTOCOMPLETE_TEXT_LORAS",
+     "widget": {
+      "name": "text"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "loras",
+     "name": "loras",
+     "type": "LORAS",
+     "widget": {
+      "name": "loras"
+     },
+     "link": null
+    },
+    {
+     "name": "clip",
+     "shape": 7,
+     "type": "CLIP",
+     "link": 25097
+    },
+    {
+     "name": "lora_stack",
+     "shape": 7,
+     "type": "LORA_STACK",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "localized_name": "MODÈLE",
+     "name": "MODEL",
+     "type": "MODEL",
+     "links": [
+      25098
+     ]
+    },
+    {
+     "localized_name": "CLIP",
+     "name": "CLIP",
+     "type": "CLIP",
+     "links": [
+      25099
+     ]
+    },
+    {
+     "localized_name": "trigger_words",
+     "name": "trigger_words",
+     "type": "STRING",
+     "links": []
+    },
+    {
+     "localized_name": "loaded_loras",
+     "name": "loaded_loras",
+     "type": "STRING",
+     "links": []
+    }
+   ],
+   "title": "LoRA Stack · Character",
+   "properties": {
+    "cnr_id": "comfyui-lora-manager",
+    "ver": "0.8.25",
+    "Node name for S&R": "Lora Loader (LoraManager)",
+    "aux_id": "willmiao/ComfyUI-Lora-Manager",
+    "ttNbgOverride": {
+     "color": "#332922",
+     "bgcolor": "#593930",
+     "groupcolor": "#b06634"
+    },
+    "ue_properties": {
+     "widget_ue_connectable": {
+      "text": true
+     },
+     "version": "7.0.1",
+     "input_ue_unconnectable": {}
+    },
+    "__lm_widget_ids": [
+     "__lm_autocomplete_meta_text",
+     "text",
+     "loras"
+    ],
+    "saya_phase": 1,
+    "saya_original_mode": 0,
+    "saya_shared_base": true
+   },
+   "widgets_values": [
+    {
+     "version": 1,
+     "textWidgetName": "text"
+    },
+    "",
+    []
+   ],
+   "widgets_values_named": {
+    "__lm_autocomplete_meta_text": {
+     "version": 1,
+     "textWidgetName": "text"
+    },
+    "text": "",
+    "loras": []
+   },
+   "color": "#453128",
+   "bgcolor": "#65483a"
+  },
+  {
+   "id": 10272,
+   "type": "saya-vae-switch-hub-main-supports-only",
+   "pos": [
+    6160,
+    784
+   ],
+   "size": [
+    322,
+    462
+   ],
+   "flags": {
+    "pinned": false
+   },
+   "order": 34,
+   "mode": 0,
+   "inputs": [
+    {
+     "localized_name": "Main Model VAE",
+     "name": "Main Model VAE",
+     "type": "VAE",
+     "link": 50020
+    },
+    {
+     "localized_name": "Custom VAE 1",
+     "name": "Custom VAE 1",
+     "type": "VAE",
+     "link": 50021
+    },
+    {
+     "localized_name": "Custom VAE 2",
+     "name": "Custom VAE 2",
+     "type": "VAE",
+     "link": 50022
+    },
+    {
+     "localized_name": "Custom VAE 3",
+     "name": "Custom VAE 3",
+     "type": "VAE",
+     "link": 50023
+    },
+    {
+     "localized_name": "03 Sampler 2 Decode VAE",
+     "name": "03 Sampler 2 Decode VAE",
+     "type": "COMBO",
+     "widget": {
+      "name": "03 Sampler 2 Decode VAE"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "04 Hires 1 VAE",
+     "name": "04 Hires 1 VAE",
+     "type": "COMBO",
+     "widget": {
+      "name": "04 Hires 1 VAE"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "05 USDU 1 Tile VAE",
+     "name": "05 USDU 1 Tile VAE",
+     "type": "COMBO",
+     "widget": {
+      "name": "05 USDU 1 Tile VAE"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "06 Hires 2 VAE",
+     "name": "06 Hires 2 VAE",
+     "type": "COMBO",
+     "widget": {
+      "name": "06 Hires 2 VAE"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "07 USDU 2 Tile VAE",
+     "name": "07 USDU 2 Tile VAE",
+     "type": "COMBO",
+     "widget": {
+      "name": "07 USDU 2 Tile VAE"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "08 Hires 3 VAE",
+     "name": "08 Hires 3 VAE",
+     "type": "COMBO",
+     "widget": {
+      "name": "08 Hires 3 VAE"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "09 Pre-Detail Hires VAE",
+     "name": "09 Pre-Detail Hires VAE",
+     "type": "COMBO",
+     "widget": {
+      "name": "09 Pre-Detail Hires VAE"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "10 Detailers VAE",
+     "name": "10 Detailers VAE",
+     "type": "COMBO",
+     "widget": {
+      "name": "10 Detailers VAE"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "11 Final Hires VAE",
+     "name": "11 Final Hires VAE",
+     "type": "COMBO",
+     "widget": {
+      "name": "11 Final Hires VAE"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "12 Final Naturalize VAE",
+     "name": "12 Final Naturalize VAE",
+     "type": "COMBO",
+     "widget": {
+      "name": "12 Final Naturalize VAE"
+     },
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "localized_name": "10 Detailers VAE",
+     "name": "10 Detailers VAE",
+     "type": "VAE",
+     "links": []
+    },
+    {
+     "localized_name": "03 Sampler 2 Decode VAE",
+     "name": "03 Sampler 2 Decode VAE",
+     "type": "VAE",
+     "links": []
+    },
+    {
+     "localized_name": "04 Hires 1 VAE",
+     "name": "04 Hires 1 VAE",
+     "type": "VAE",
+     "links": []
+    },
+    {
+     "localized_name": "05 USDU 1 Tile VAE",
+     "name": "05 USDU 1 Tile VAE",
+     "type": "VAE",
+     "links": []
+    },
+    {
+     "localized_name": "06 Hires 2 VAE",
+     "name": "06 Hires 2 VAE",
+     "type": "VAE",
+     "links": []
+    },
+    {
+     "localized_name": "07 USDU 2 Tile VAE",
+     "name": "07 USDU 2 Tile VAE",
+     "type": "VAE",
+     "links": []
+    },
+    {
+     "localized_name": "08 Hires 3 VAE",
+     "name": "08 Hires 3 VAE",
+     "type": "VAE",
+     "links": []
+    },
+    {
+     "localized_name": "09 Pre-Detail Hires VAE",
+     "name": "09 Pre-Detail Hires VAE",
+     "type": "VAE",
+     "links": [
+      50053
+     ]
+    },
+    {
+     "localized_name": "11 Final Hires VAE",
+     "name": "11 Final Hires VAE",
+     "type": "VAE",
+     "links": []
+    }
+   ],
+   "properties": {
+    "cnr_id": "comfy-core",
+    "ver": "0.3.57",
+    "Node name for S&R": "saya-vae-switch-hub-main-supports-only",
+    "ue_properties": {
+     "widget_ue_connectable": {
+      "01 Sampler 1 Decode VAE": true,
+      "02 Sampler 2 Encode VAE": true,
+      "03 Sampler 2 Decode VAE": true,
+      "04 Hires 1 VAE": true,
+      "05 USDU 1 Tile VAE": true,
+      "06 Hires 2 VAE": true,
+      "07 USDU 2 Tile VAE": true,
+      "08 Hires 3 VAE": true,
+      "09 Pre-Detail Hires VAE": true,
+      "10 Detailers VAE": true,
+      "11 Final Hires VAE": true,
+      "12 Final Naturalize VAE": true
+     },
+     "version": "7.8",
+     "input_ue_unconnectable": {}
+    },
+    "previewExposures": []
+   },
+   "widgets_values": [
+    "Custom VAE 2",
+    "Custom VAE 1",
+    "Custom VAE 1",
+    "Custom VAE 1",
+    "Custom VAE 1",
+    "Custom VAE 1",
+    "Custom VAE 1",
+    "Custom VAE 3",
+    "Custom VAE 1",
+    "Custom VAE 3"
+   ],
+   "widgets_values_named": {
+    "03 Sampler 2 Decode VAE": "Custom VAE 2",
+    "04 Hires 1 VAE": "Custom VAE 1",
+    "05 USDU 1 Tile VAE": "Custom VAE 1",
+    "06 Hires 2 VAE": "Custom VAE 1",
+    "07 USDU 2 Tile VAE": "Custom VAE 1",
+    "08 Hires 3 VAE": "Custom VAE 1",
+    "09 Pre-Detail Hires VAE": "Custom VAE 1",
+    "10 Detailers VAE": "Custom VAE 3",
+    "11 Final Hires VAE": "Custom VAE 1",
+    "12 Final Naturalize VAE": "Custom VAE 3"
+   },
+   "color": "#303650",
+   "bgcolor": "#485176"
+  },
+  {
+   "id": 100057,
+   "type": "saya-auto-phase-4",
+   "pos": [
+    6860,
+    1288
+   ],
+   "size": [
+    336,
+    182
+   ],
+   "flags": {
+    "collapsed": false,
+    "pinned": false
+   },
+   "order": 29,
+   "mode": 0,
+   "inputs": [
+    {
+     "localized_name": "Solo (Couple Mode OFF)",
+     "name": "solo",
+     "shape": 7,
+     "type": "BOOLEAN",
+     "widget": {
+      "name": "solo"
+     },
+     "link": 98429
+    }
+   ],
+   "outputs": [
+    {
+     "localized_name": "image",
+     "name": "image",
+     "type": "IMAGE",
+     "links": [
+      97134,
+      98129
+     ]
+    },
+    {
+     "localized_name": "seed",
+     "name": "seed",
+     "type": "INT",
+     "links": [
+      97135
+     ]
+    },
+    {
+     "localized_name": "positive_prompt",
+     "name": "positive_prompt",
+     "type": "STRING",
+     "links": [
+      97136
+     ]
+    },
+    {
+     "localized_name": "negative_prompt",
+     "name": "negative_prompt",
+     "type": "STRING",
+     "links": [
+      97137
+     ]
+    },
+    {
+     "localized_name": "source_path",
+     "name": "source_path",
+     "type": "STRING",
+     "links": [
+      97138
+     ]
+    },
+    {
+     "localized_name": "Compare image 100092:0",
+     "name": "Compare image 100092:0",
+     "type": "IMAGE",
+     "links": [
+      98927
+     ]
+    },
+    {
+     "localized_name": "Compare image 10153:0",
+     "name": "Compare image 10153:0",
+     "type": "IMAGE",
+     "links": [
+      98928
+     ]
+    }
+   ],
+   "properties": {
+    "cnr_id": "comfy-core",
+    "ver": "0.26.0",
+    "proxyWidgets": [],
+    "Node name for S&R": "saya-auto-phase-4",
+    "saya_phase": 4,
+    "saya_original_mode": 0,
+    "previewExposures": []
+   },
+   "widgets_values": [
+    false
+   ],
+   "widgets_values_named": {
+    "solo": false
+   },
+   "color": "#315f86",
+   "bgcolor": "#1c3850"
+  },
+  {
+   "id": 100220,
+   "type": "saya-couple-mode-toggle",
+   "pos": [
+    5796,
+    1764
+   ],
+   "size": [
+    300,
+    130
+   ],
+   "flags": {
+    "pinned": false
+   },
+   "order": 19,
+   "mode": 0,
+   "inputs": [
+    {
+     "localized_name": "Couple Mode",
+     "name": "Couple Mode",
+     "type": "COMBO",
+     "widget": {
+      "name": "Couple Mode"
+     },
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "label": "SOLO flag",
+     "localized_name": "SOLO flag",
+     "name": "Solo",
+     "type": "BOOLEAN",
+     "links": [
+      98429
+     ]
+    }
+   ],
+   "title": "Couple Mode · Couple / Solo",
+   "properties": {
+    "cnr_id": "comfy-core",
+    "ver": "0.27.0",
+    "Node name for S&R": "saya-couple-mode-toggle",
+    "previewExposures": []
+   },
+   "widgets_values": [
+    "OFF"
+   ],
+   "widgets_values_named": {
+    "Couple Mode": "OFF"
+   },
+   "color": "#4a2f46",
+   "bgcolor": "#68435f"
+  },
+  {
+   "id": 654,
+   "type": "Lora Loader (LoraManager)",
+   "pos": [
+    4662,
+    784
+   ],
+   "size": [
+    546,
+    1106
+   ],
+   "flags": {
+    "pinned": false
+   },
+   "order": 70,
+   "mode": 0,
+   "inputs": [
+    {
+     "localized_name": "model",
+     "name": "model",
+     "type": "MODEL",
+     "link": 25100
+    },
+    {
+     "localized_name": "text",
+     "name": "text",
+     "type": "AUTOCOMPLETE_TEXT_LORAS",
+     "widget": {
+      "name": "text"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "loras",
+     "name": "loras",
+     "type": "LORAS",
+     "widget": {
+      "name": "loras"
+     },
+     "link": null
+    },
+    {
+     "name": "clip",
+     "shape": 7,
+     "type": "CLIP",
+     "link": 25101
+    },
+    {
+     "name": "lora_stack",
+     "shape": 7,
+     "type": "LORA_STACK",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "localized_name": "MODÈLE",
+     "name": "MODEL",
+     "type": "MODEL",
+     "links": [
+      25102
+     ]
+    },
+    {
+     "localized_name": "CLIP",
+     "name": "CLIP",
+     "type": "CLIP",
+     "links": [
+      25103
+     ]
+    },
+    {
+     "localized_name": "trigger_words",
+     "name": "trigger_words",
+     "type": "STRING",
+     "links": []
+    },
+    {
+     "localized_name": "loaded_loras",
+     "name": "loaded_loras",
+     "type": "STRING",
+     "links": []
+    }
+   ],
+   "title": "LoRA Stack · Tools",
+   "properties": {
+    "cnr_id": "comfyui-lora-manager",
+    "ver": "0.8.25",
+    "Node name for S&R": "Lora Loader (LoraManager)",
+    "aux_id": "willmiao/ComfyUI-Lora-Manager",
+    "ttNbgOverride": {
+     "color": "#332922",
+     "bgcolor": "#593930",
+     "groupcolor": "#b06634"
+    },
+    "ue_properties": {
+     "widget_ue_connectable": {
+      "text": true
+     },
+     "version": "7.0.1",
+     "input_ue_unconnectable": {}
+    },
+    "__lm_widget_ids": [
+     "__lm_autocomplete_meta_text",
+     "text",
+     "loras"
+    ],
+    "saya_phase": 1,
+    "saya_original_mode": 0,
+    "saya_shared_base": true
+   },
+   "widgets_values": [
+    {
+     "version": 1,
+     "textWidgetName": "text"
+    },
+    "",
+    []
+   ],
+   "widgets_values_named": {
+    "__lm_autocomplete_meta_text": {
+     "version": 1,
+     "textWidgetName": "text"
+    },
+    "text": "",
+    "loras": []
+   },
+   "color": "#453128",
+   "bgcolor": "#65483a"
+  },
+  {
+   "id": 662,
+   "type": "Lora Loader (LoraManager)",
+   "pos": [
+    2982,
+    784
+   ],
+   "size": [
+    546,
+    1106
+   ],
+   "flags": {
+    "pinned": false
+   },
+   "order": 32,
+   "mode": 0,
+   "inputs": [
+    {
+     "localized_name": "model",
+     "name": "model",
+     "type": "MODEL",
+     "link": 1409
+    },
+    {
+     "localized_name": "text",
+     "name": "text",
+     "type": "AUTOCOMPLETE_TEXT_LORAS",
+     "widget": {
+      "name": "text"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "loras",
+     "name": "loras",
+     "type": "LORAS",
+     "widget": {
+      "name": "loras"
+     },
+     "link": null
+    },
+    {
+     "name": "clip",
+     "shape": 7,
+     "type": "CLIP",
+     "link": 1408
+    },
+    {
+     "name": "lora_stack",
+     "shape": 7,
+     "type": "LORA_STACK",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "localized_name": "MODÈLE",
+     "name": "MODEL",
+     "type": "MODEL",
+     "links": [
+      25096
+     ]
+    },
+    {
+     "localized_name": "CLIP",
+     "name": "CLIP",
+     "type": "CLIP",
+     "links": [
+      25097
+     ]
+    },
+    {
+     "localized_name": "trigger_words",
+     "name": "trigger_words",
+     "type": "STRING",
+     "links": []
+    },
+    {
+     "localized_name": "loaded_loras",
+     "name": "loaded_loras",
+     "type": "STRING",
+     "links": []
+    }
+   ],
+   "title": "LoRA Stack · Style",
+   "properties": {
+    "cnr_id": "comfyui-lora-manager",
+    "ver": "0.8.25",
+    "Node name for S&R": "Lora Loader (LoraManager)",
+    "aux_id": "willmiao/ComfyUI-Lora-Manager",
+    "ttNbgOverride": {
+     "color": "#332922",
+     "bgcolor": "#593930",
+     "groupcolor": "#b06634"
+    },
+    "ue_properties": {
+     "widget_ue_connectable": {
+      "text": true
+     },
+     "version": "7.0.1",
+     "input_ue_unconnectable": {}
+    },
+    "__lm_widget_ids": [
+     "__lm_autocomplete_meta_text",
+     "text",
+     "loras"
+    ],
+    "saya_original_mode": 0,
+    "saya_shared_base": true,
+    "saya_phase": 1
+   },
+   "widgets_values": [
+    {
+     "version": 1,
+     "textWidgetName": "text"
+    },
+    "",
+    []
+   ],
+   "widgets_values_named": {
+    "__lm_autocomplete_meta_text": {
+     "version": 1,
+     "textWidgetName": "text"
+    },
+    "text": "",
+    "loras": []
+   },
+   "color": "#453128",
+   "bgcolor": "#65483a"
+  },
+  {
+   "id": 663,
+   "type": "Lora Loader (LoraManager)",
+   "pos": [
+    4102,
+    784
+   ],
+   "size": [
+    546,
+    1106
+   ],
+   "flags": {
+    "pinned": false
+   },
+   "order": 69,
+   "mode": 0,
+   "inputs": [
+    {
+     "localized_name": "model",
+     "name": "model",
+     "type": "MODEL",
+     "link": 25098
+    },
+    {
+     "localized_name": "text",
+     "name": "text",
+     "type": "AUTOCOMPLETE_TEXT_LORAS",
+     "widget": {
+      "name": "text"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "loras",
+     "name": "loras",
+     "type": "LORAS",
+     "widget": {
+      "name": "loras"
+     },
+     "link": null
+    },
+    {
+     "name": "clip",
+     "shape": 7,
+     "type": "CLIP",
+     "link": 25099
+    },
+    {
+     "name": "lora_stack",
+     "shape": 7,
+     "type": "LORA_STACK",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "localized_name": "MODÈLE",
+     "name": "MODEL",
+     "type": "MODEL",
+     "links": [
+      25100
+     ]
+    },
+    {
+     "localized_name": "CLIP",
+     "name": "CLIP",
+     "type": "CLIP",
+     "links": [
+      25101
+     ]
+    },
+    {
+     "localized_name": "trigger_words",
+     "name": "trigger_words",
+     "type": "STRING",
+     "links": []
+    },
+    {
+     "localized_name": "loaded_loras",
+     "name": "loaded_loras",
+     "type": "STRING",
+     "links": []
+    }
+   ],
+   "title": "LoRA Stack · Detail",
+   "properties": {
+    "cnr_id": "comfyui-lora-manager",
+    "ver": "0.8.25",
+    "Node name for S&R": "Lora Loader (LoraManager)",
+    "aux_id": "willmiao/ComfyUI-Lora-Manager",
+    "ttNbgOverride": {
+     "color": "#332922",
+     "bgcolor": "#593930",
+     "groupcolor": "#b06634"
+    },
+    "ue_properties": {
+     "widget_ue_connectable": {
+      "text": true
+     },
+     "version": "7.0.1",
+     "input_ue_unconnectable": {}
+    },
+    "__lm_widget_ids": [
+     "__lm_autocomplete_meta_text",
+     "text",
+     "loras"
+    ],
+    "saya_phase": 1,
+    "saya_original_mode": 0,
+    "saya_shared_base": true
+   },
+   "widgets_values": [
+    {
+     "version": 1,
+     "textWidgetName": "text"
+    },
+    "",
+    []
+   ],
+   "widgets_values_named": {
+    "__lm_autocomplete_meta_text": {
+     "version": 1,
+     "textWidgetName": "text"
+    },
+    "text": "",
+    "loras": []
+   },
+   "color": "#453128",
+   "bgcolor": "#65483a"
+  },
+  {
+   "id": 664,
+   "type": "Lora Loader (LoraManager)",
+   "pos": [
+    5222,
+    784
+   ],
+   "size": [
+    546,
+    1106
+   ],
+   "flags": {
+    "pinned": false
+   },
+   "order": 71,
+   "mode": 0,
+   "inputs": [
+    {
+     "localized_name": "model",
+     "name": "model",
+     "type": "MODEL",
+     "link": 25102
+    },
+    {
+     "localized_name": "text",
+     "name": "text",
+     "type": "AUTOCOMPLETE_TEXT_LORAS",
+     "widget": {
+      "name": "text"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "loras",
+     "name": "loras",
+     "type": "LORAS",
+     "widget": {
+      "name": "loras"
+     },
+     "link": null
+    },
+    {
+     "name": "clip",
+     "shape": 7,
+     "type": "CLIP",
+     "link": 25103
+    },
+    {
+     "name": "lora_stack",
+     "shape": 7,
+     "type": "LORA_STACK",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "localized_name": "MODÈLE",
+     "name": "MODEL",
+     "type": "MODEL",
+     "links": [
+      25173
+     ]
+    },
+    {
+     "localized_name": "CLIP",
+     "name": "CLIP",
+     "type": "CLIP",
+     "links": [
+      25174
+     ]
+    },
+    {
+     "localized_name": "trigger_words",
+     "name": "trigger_words",
+     "type": "STRING",
+     "links": []
+    },
+    {
+     "localized_name": "loaded_loras",
+     "name": "loaded_loras",
+     "type": "STRING",
+     "links": []
+    }
+   ],
+   "title": "LoRA Stack · Concept",
+   "properties": {
+    "cnr_id": "comfyui-lora-manager",
+    "ver": "0.8.25",
+    "Node name for S&R": "Lora Loader (LoraManager)",
+    "aux_id": "willmiao/ComfyUI-Lora-Manager",
+    "ttNbgOverride": {
+     "color": "#332922",
+     "bgcolor": "#593930",
+     "groupcolor": "#b06634"
+    },
+    "ue_properties": {
+     "widget_ue_connectable": {
+      "text": true
+     },
+     "version": "7.0.1",
+     "input_ue_unconnectable": {}
+    },
+    "__lm_widget_ids": [
+     "__lm_autocomplete_meta_text",
+     "text",
+     "loras"
+    ],
+    "saya_original_mode": 0,
+    "saya_shared_base": true,
+    "saya_phase": 1
+   },
+   "widgets_values": [
+    {
+     "version": 1,
+     "textWidgetName": "text"
+    },
+    "",
+    []
+   ],
+   "widgets_values_named": {
+    "__lm_autocomplete_meta_text": {
+     "version": 1,
+     "textWidgetName": "text"
+    },
+    "text": "",
+    "loras": []
+   },
+   "color": "#453128",
+   "bgcolor": "#65483a"
+  },
+  {
+   "id": 810,
+   "type": "f997914d-608a-4c45-b914-7a66a3017156-hub-output-fix-v4",
+   "pos": [
+    5796,
+    784
+   ],
+   "size": [
+    350,
+    378
+   ],
+   "flags": {
+    "pinned": false
+   },
+   "order": 24,
+   "mode": 0,
+   "inputs": [
+    {
+     "label": "Illustrious / SDXL Checkpoint",
+     "name": "ckpt_name",
+     "type": "COMBO",
+     "widget": {
+      "name": "ckpt_name"
+     },
+     "link": null
+    },
+    {
+     "name": "ckpt_name_1",
+     "type": "COMBO",
+     "widget": {
+      "name": "ckpt_name_1"
+     },
+     "link": null
+    },
+    {
+     "name": "vae_name",
+     "type": "COMBO",
+     "widget": {
+      "name": "vae_name"
+     },
+     "link": null
+    },
+    {
+     "name": "vae_name_1",
+     "type": "COMBO",
+     "widget": {
+      "name": "vae_name_1"
+     },
+     "link": null
+    },
+    {
+     "name": "vae_name_2",
+     "type": "COMBO",
+     "widget": {
+      "name": "vae_name_2"
+     },
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "localized_name": "CLIP",
+     "name": "CLIP",
+     "type": "CLIP",
+     "links": [
+      1408
+     ]
+    },
+    {
+     "label": "MODEL_toLora",
+     "localized_name": "MODEL",
+     "name": "MODEL_toLora",
+     "type": "MODEL",
+     "links": [
+      1409
+     ]
+    },
+    {
+     "name": "MODEL_pass2",
+     "type": "MODEL",
+     "links": []
+    },
+    {
+     "localized_name": "VAE",
+     "name": "Main Model VAE",
+     "type": "VAE",
+     "links": [
+      50020
+     ]
+    },
+    {
+     "localized_name": "VAE",
+     "name": "Custom VAE 1",
+     "type": "VAE",
+     "links": [
+      50021
+     ]
+    },
+    {
+     "localized_name": "VAE",
+     "name": "Custom VAE 2",
+     "type": "VAE",
+     "links": [
+      50022
+     ]
+    },
+    {
+     "localized_name": "VAE",
+     "name": "Custom VAE 3",
+     "type": "VAE",
+     "links": [
+      50023
+     ]
+    },
+    {
+     "label": "Hidream Clip",
+     "name": "CLIP_1",
+     "type": "CLIP",
+     "links": []
+    },
+    {
+     "label": "Model 2 CLIP",
+     "localized_name": "CLIP_pass2",
+     "name": "CLIP_pass2",
+     "type": "CLIP",
+     "links": []
+    },
+    {
+     "localized_name": "Model 1 Identifier",
+     "name": "Model 1 Identifier",
+     "type": "STRING",
+     "links": [
+      98453
+     ]
+    },
+    {
+     "localized_name": "Model 2 Identifier",
+     "name": "Model 2 Identifier",
+     "type": "STRING",
+     "links": [
+      98454
+     ]
+    }
+   ],
+   "properties": {
+    "cnr_id": "comfy-core",
+    "ver": "0.26.0",
+    "saya_original_mode": 0,
+    "saya_shared_base": true,
+    "Node name for S&R": "a4cf22f8-558e-405a-9000-af81afd8a02b",
+    "previewExposures": []
+   },
+   "widgets_values": [
+    "NoobAI/no tags/MKLAN POISONED NOOB AI FUTA_00001_.safetensors",
+    "SDXL 1.0/anime/Mklan-AnimeTest6SDXL-AnimeCartoonSFWv1.safetensors",
+    "AAA%20Anime%20VAE%20SDXL%20v2.safetensors",
+    "Dark%20VAE%20SDXL%20Weak.safetensors",
+    "SDXL_anime_natural_vae.safetensors"
+   ],
+   "widgets_values_named": {
+    "ckpt_name": "NoobAI/no tags/MKLAN POISONED NOOB AI FUTA_00001_.safetensors",
+    "ckpt_name_1": "SDXL 1.0/anime/Mklan-AnimeTest6SDXL-AnimeCartoonSFWv1.safetensors",
+    "vae_name": "AAA%20Anime%20VAE%20SDXL%20v2.safetensors",
+    "vae_name_1": "Dark%20VAE%20SDXL%20Weak.safetensors",
+    "vae_name_2": "SDXL_anime_natural_vae.safetensors"
+   },
+   "color": "#243447",
+   "bgcolor": "#35526b"
+  }
+ ],
+ "links": [
+  [
+   1408,
+   810,
+   0,
+   662,
+   3,
+   "CLIP"
+  ],
+  [
+   1409,
+   810,
+   1,
+   662,
+   0,
+   "MODEL"
+  ],
+  [
+   25096,
+   662,
+   0,
+   655,
+   0,
+   "MODEL"
+  ],
+  [
+   25097,
+   662,
+   1,
+   655,
+   3,
+   "CLIP"
+  ],
+  [
+   25098,
+   655,
+   0,
+   663,
+   0,
+   "MODEL"
+  ],
+  [
+   25099,
+   655,
+   1,
+   663,
+   3,
+   "CLIP"
+  ],
+  [
+   25100,
+   663,
+   0,
+   654,
+   0,
+   "MODEL"
+  ],
+  [
+   25101,
+   663,
+   1,
+   654,
+   3,
+   "CLIP"
+  ],
+  [
+   25102,
+   654,
+   0,
+   664,
+   0,
+   "MODEL"
+  ],
+  [
+   25103,
+   654,
+   1,
+   664,
+   3,
+   "CLIP"
+  ],
+  [
+   25173,
+   664,
+   0,
+   2678,
+   0,
+   "MODEL"
+  ],
+  [
+   25174,
+   664,
+   1,
+   2679,
+   0,
+   "CLIP"
+  ],
+  [
+   50020,
+   810,
+   3,
+   10272,
+   0,
+   "VAE"
+  ],
+  [
+   50021,
+   810,
+   4,
+   10272,
+   1,
+   "VAE"
+  ],
+  [
+   50022,
+   810,
+   5,
+   10272,
+   2,
+   "VAE"
+  ],
+  [
+   50023,
+   810,
+   6,
+   10272,
+   3,
+   "VAE"
+  ],
+  [
+   50053,
+   10272,
+   7,
+   10295,
+   0,
+   "VAE"
+  ],
+  [
+   97134,
+   100057,
+   0,
+   100058,
+   0,
+   "IMAGE"
+  ],
+  [
+   97135,
+   100057,
+   1,
+   100058,
+   2,
+   "INT"
+  ],
+  [
+   97136,
+   100057,
+   2,
+   100058,
+   3,
+   "STRING"
+  ],
+  [
+   97137,
+   100057,
+   3,
+   100058,
+   4,
+   "STRING"
+  ],
+  [
+   97138,
+   100057,
+   4,
+   100058,
+   8,
+   "STRING"
+  ],
+  [
+   98129,
+   100057,
+   0,
+   100097,
+   0,
+   "IMAGE"
+  ],
+  [
+   98429,
+   100220,
+   0,
+   100057,
+   0,
+   "BOOLEAN"
+  ],
+  [
+   98453,
+   810,
+   9,
+   100225,
+   0,
+   "STRING"
+  ],
+  [
+   98454,
+   810,
+   10,
+   100226,
+   0,
+   "STRING"
+  ],
+  [
+   98927,
+   100057,
+   5,
+   100326,
+   1,
+   "IMAGE"
+  ],
+  [
+   98928,
+   100057,
+   6,
+   100326,
+   0,
+   "IMAGE"
+  ]
+ ],
+ "groups": [
+  {
+   "id": 89,
+   "title": "MAIN · Controls, Models & Routing",
+   "bounding": [
+    5782,
+    714,
+    1428,
+    1512
+   ],
+   "color": "#4f7ca4",
+   "flags": {
+    "pinned": false
+   }
+  },
+  {
+   "id": 90,
+   "title": "OUTPUTS · Phase Results & Metadata",
+   "bounding": [
+    10010,
+    714,
+    3290,
+    1036
+   ],
+   "color": "#4f7f70",
+   "flags": {
+    "pinned": false
+   }
+  },
+  {
+   "id": 94,
+   "title": "LORAS · Style → Character → Detail → Tools → Concept",
+   "bounding": [
+    2968,
+    714,
+    2814,
+    1190
+   ],
+   "color": "#8a6048",
+   "flags": {
+    "pinned": false
+   }
+  },
+  {
+   "id": 3304,
+   "title": "COMPARE · Before / After",
+   "bounding": [
+    10010,
+    1750,
+    1638,
+    2114
+   ],
+   "color": "#3f789e",
+   "flags": {
+    "pinned": false
+   }
+  }
+ ],
+ "definitions": {
+  "subgraphs": [
+   {
+    "id": "f997914d-608a-4c45-b914-7a66a3017156-hub-output-fix-v4",
+    "version": 1,
+    "state": {
+     "lastGroupId": 3310,
+     "lastNodeId": 100759,
+     "lastLinkId": 99208,
+     "lastRerouteId": 575
+    },
+    "revision": 2,
+    "config": {},
+    "name": "MAIN · Checkpoints, Models & VAE",
+    "inputNode": {
+     "id": -10,
+     "bounding": [
+      0,
+      238,
+      212.689453125,
+      148
+     ]
+    },
+    "outputNode": {
+     "id": -20,
+     "bounding": [
+      994,
+      182,
+      147.703125,
+      268
+     ]
+    },
+    "inputs": [
+     {
+      "id": "a41c943d-daac-404b-97ce-5f5fd82f74a0",
+      "name": "ckpt_name",
+      "type": "COMBO",
+      "linkIds": [
+       50160,
+       98449
+      ],
+      "label": "Illustrious / SDXL Checkpoint",
+      "pos": [
+       188.689453125,
+       262
+      ]
+     },
+     {
+      "id": "fea28b1a-d810-40fe-984d-ecd8af27b55b",
+      "name": "ckpt_name_1",
+      "type": "COMBO",
+      "linkIds": [
+       50161,
+       98451
+      ],
+      "pos": [
+       188.689453125,
+       282
+      ]
+     },
+     {
+      "id": "7aefb9fb-f90d-4f29-899c-5546c93927fe",
+      "name": "vae_name",
+      "type": "COMBO",
+      "linkIds": [
+       50162
+      ],
+      "pos": [
+       188.689453125,
+       302
+      ]
+     },
+     {
+      "id": "6006c144-dd16-4b81-8a04-827fa60317b6",
+      "name": "vae_name_1",
+      "type": "COMBO",
+      "linkIds": [
+       50163
+      ],
+      "pos": [
+       188.689453125,
+       322
+      ]
+     },
+     {
+      "id": "1ce30e6b-908a-42d9-a55f-2f31793b17c1",
+      "name": "vae_name_2",
+      "type": "COMBO",
+      "linkIds": [
+       50164
+      ],
+      "pos": [
+       188.689453125,
+       342
+      ]
+     }
+    ],
+    "outputs": [
+     {
+      "id": "hub-v4-output-1",
+      "name": "CLIP",
+      "type": "CLIP",
+      "linkIds": [
+       20001
+      ],
+      "localized_name": "CLIP",
+      "pos": [
+       1018,
+       206
+      ]
+     },
+     {
+      "id": "hub-v4-output-2",
+      "name": "MODEL_toLora",
+      "type": "MODEL",
+      "linkIds": [
+       20002
+      ],
+      "localized_name": "MODEL",
+      "label": "MODEL_toLora",
+      "pos": [
+       1018,
+       226
+      ]
+     },
+     {
+      "id": "hub-v4-output-4",
+      "name": "MODEL_pass2",
+      "type": "MODEL",
+      "linkIds": [
+       20004
+      ],
+      "pos": [
+       1018,
+       246
+      ]
+     },
+     {
+      "id": "hub-v4-output-vae-3",
+      "name": "Main Model VAE",
+      "type": "VAE",
+      "linkIds": [
+       50016
+      ],
+      "localized_name": "VAE",
+      "pos": [
+       1018,
+       266
+      ]
+     },
+     {
+      "id": "hub-v4-output-vae-4",
+      "name": "Custom VAE 1",
+      "type": "VAE",
+      "linkIds": [
+       50017
+      ],
+      "localized_name": "VAE",
+      "pos": [
+       1018,
+       286
+      ]
+     },
+     {
+      "id": "hub-v4-output-vae-5",
+      "name": "Custom VAE 2",
+      "type": "VAE",
+      "linkIds": [
+       50018
+      ],
+      "localized_name": "VAE",
+      "pos": [
+       1018,
+       306
+      ]
+     },
+     {
+      "id": "hub-v4-output-vae-6",
+      "name": "Custom VAE 3",
+      "type": "VAE",
+      "linkIds": [
+       50019
+      ],
+      "localized_name": "VAE",
+      "pos": [
+       1018,
+       326
+      ]
+     },
+     {
+      "id": "7eb37759-14ec-4e88-89fe-6b230c24803e",
+      "name": "CLIP_1",
+      "type": "CLIP",
+      "linkIds": [
+       52077
+      ],
+      "label": "Hidream Clip",
+      "pos": [
+       1018,
+       346
+      ]
+     },
+     {
+      "id": "574261a5-d008-4ed4-bb76-8262064ddbd4",
+      "name": "CLIP_pass2",
+      "type": "CLIP",
+      "linkIds": [
+       98140
+      ],
+      "localized_name": "CLIP_pass2",
+      "pos": [
+       1018,
+       366
+      ]
+     },
+     {
+      "id": "checkpoint-hub-model-1-identifier",
+      "name": "Model 1 Identifier",
+      "type": "STRING",
+      "linkIds": [
+       98450
+      ],
+      "localized_name": "Model 1 Identifier",
+      "pos": [
+       1018,
+       386
+      ]
+     },
+     {
+      "id": "checkpoint-hub-model-2-identifier",
+      "name": "Model 2 Identifier",
+      "type": "STRING",
+      "linkIds": [
+       98452
+      ],
+      "localized_name": "Model 2 Identifier",
+      "pos": [
+       1018,
+       406
+      ]
+     }
+    ],
+    "widgets": [],
+    "nodes": [
+     {
+      "id": 488,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+       238,
+       140
+      ],
+      "size": [
+       280,
+       98
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+       {
+        "label": "Illustrious / SDXL Checkpoint",
+        "localized_name": "nom_ckpt",
+        "name": "ckpt_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "ckpt_name"
+        },
+        "link": 50160
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "MODÈLE",
+        "name": "MODEL",
+        "type": "MODEL",
+        "links": [
+         20002
+        ]
+       },
+       {
+        "localized_name": "CLIP",
+        "name": "CLIP",
+        "type": "CLIP",
+        "links": [
+         20001
+        ]
+       },
+       {
+        "localized_name": "VAE",
+        "name": "VAE",
+        "type": "VAE",
+        "links": [
+         50016
+        ]
+       }
+      ],
+      "title": "Checkpoint · Main Model",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.26.0",
+       "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+       "Illustrious/no tags/Mklan-Sayapacito-Echo_00001_.safetensors"
+      ],
+      "widgets_values_named": {
+       "ckpt_name": "Illustrious/no tags/Mklan-Sayapacito-Echo_00001_.safetensors"
+      },
+      "color": "#243447",
+      "bgcolor": "#35526b"
+     },
+     {
+      "id": 489,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+       238,
+       280
+      ],
+      "size": [
+       280,
+       98
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "nom_ckpt",
+        "name": "ckpt_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "ckpt_name"
+        },
+        "link": 50161
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "MODÈLE",
+        "name": "MODEL",
+        "type": "MODEL",
+        "links": [
+         20004
+        ]
+       },
+       {
+        "localized_name": "CLIP",
+        "name": "CLIP",
+        "type": "CLIP",
+        "links": [
+         98140
+        ]
+       },
+       {
+        "localized_name": "VAE",
+        "name": "VAE",
+        "type": "VAE",
+        "links": []
+       }
+      ],
+      "title": "Checkpoint · Sampler 2",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.26.0",
+       "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+       "SDXL 1.0/anime/Mklan-AnimeTest6SDXL-AnimeCartoonSFWv1.safetensors"
+      ],
+      "widgets_values_named": {
+       "ckpt_name": "SDXL 1.0/anime/Mklan-AnimeTest6SDXL-AnimeCartoonSFWv1.safetensors"
+      },
+      "color": "#243447",
+      "bgcolor": "#35526b"
+     },
+     {
+      "id": 3006,
+      "type": "VAELoader",
+      "pos": [
+       238,
+       420
+      ],
+      "size": [
+       280,
+       70
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "nom_vae",
+        "name": "vae_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "vae_name"
+        },
+        "link": 50162
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "VAE",
+        "name": "VAE",
+        "type": "VAE",
+        "links": [
+         50017
+        ]
+       }
+      ],
+      "title": "VAE · Custom 1",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.26.0",
+       "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+       "AAA%20Anime%20VAE%20SDXL%20v2.safetensors"
+      ],
+      "widgets_values_named": {
+       "vae_name": "AAA%20Anime%20VAE%20SDXL%20v2.safetensors"
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 3007,
+      "type": "VAELoader",
+      "pos": [
+       532,
+       420
+      ],
+      "size": [
+       210,
+       70
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "nom_vae",
+        "name": "vae_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "vae_name"
+        },
+        "link": 50163
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "VAE",
+        "name": "VAE",
+        "type": "VAE",
+        "links": [
+         50018
+        ]
+       }
+      ],
+      "title": "VAE · Custom 2",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.26.0",
+       "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+       "Dark%20VAE%20SDXL%20Weak.safetensors"
+      ],
+      "widgets_values_named": {
+       "vae_name": "Dark%20VAE%20SDXL%20Weak.safetensors"
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 100223,
+      "type": "SayaValueToString",
+      "pos": [
+       630,
+       252
+      ],
+      "size": [
+       238,
+       70
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "value",
+        "name": "value",
+        "type": "*",
+        "link": 98449
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "value",
+        "name": "value",
+        "type": "STRING",
+        "links": [
+         98450
+        ]
+       }
+      ],
+      "title": "Identifier · Model 1 (live)",
+      "properties": {
+       "Node name for S&R": "SayaValueToString",
+       "cnr_id": "Saya Couple Upated"
+      },
+      "color": "#2b3038",
+      "bgcolor": "#3d4652"
+     },
+     {
+      "id": 3008,
+      "type": "VAELoader",
+      "pos": [
+       756,
+       420
+      ],
+      "size": [
+       210,
+       70
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "nom_vae",
+        "name": "vae_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "vae_name"
+        },
+        "link": 50164
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "VAE",
+        "name": "VAE",
+        "type": "VAE",
+        "links": [
+         50019
+        ]
+       }
+      ],
+      "title": "VAE · Custom 3",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.26.0",
+       "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+       "SDXL_anime_natural_vae.safetensors"
+      ],
+      "widgets_values_named": {
+       "vae_name": "SDXL_anime_natural_vae.safetensors"
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 100224,
+      "type": "SayaValueToString",
+      "pos": [
+       686,
+       336
+      ],
+      "size": [
+       238,
+       70
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "value",
+        "name": "value",
+        "type": "*",
+        "link": 98451
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "value",
+        "name": "value",
+        "type": "STRING",
+        "links": [
+         98452
+        ]
+       }
+      ],
+      "title": "Identifier · Model 2 (live)",
+      "properties": {
+       "Node name for S&R": "SayaValueToString",
+       "cnr_id": "Saya Couple Upated"
+      },
+      "color": "#2b3038",
+      "bgcolor": "#3d4652"
+     },
+     {
+      "id": 12401,
+      "type": "QuadrupleCLIPLoader",
+      "pos": [
+       532,
+       140
+      ],
+      "size": [
+       434,
+       238
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "clip_name1",
+        "name": "clip_name1",
+        "type": "COMBO",
+        "widget": {
+         "name": "clip_name1"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "clip_name2",
+        "name": "clip_name2",
+        "type": "COMBO",
+        "widget": {
+         "name": "clip_name2"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "clip_name3",
+        "name": "clip_name3",
+        "type": "COMBO",
+        "widget": {
+         "name": "clip_name3"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "clip_name4",
+        "name": "clip_name4",
+        "type": "COMBO",
+        "widget": {
+         "name": "clip_name4"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "CLIP",
+        "name": "CLIP",
+        "type": "CLIP",
+        "links": [
+         52077
+        ]
+       }
+      ],
+      "title": "HiDream · Shared Quad CLIP",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.34.0",
+       "Node name for S&R": "QuadrupleCLIPLoader",
+       "saya_note": "HiDream Quad CLIP (text encoders only). Loaded only on a HiDream conditioning cache miss; the HiDream MODEL stays in Phase 3.",
+       "saya_phase": 1
+      },
+      "widgets_values": [
+       "clip_l_hidream.safetensors",
+       "clip_g_hidream.safetensors",
+       "t5xxl_fp8_e4m3fn.safetensors",
+       "llama_3.1_8b_instruct_fp8_scaled.safetensors"
+      ],
+      "widgets_values_named": {
+       "clip_name1": "clip_l_hidream.safetensors",
+       "clip_name2": "clip_g_hidream.safetensors",
+       "clip_name3": "t5xxl_fp8_e4m3fn.safetensors",
+       "clip_name4": "llama_3.1_8b_instruct_fp8_scaled.safetensors"
+      },
+      "color": "#243447",
+      "bgcolor": "#35526b"
+     }
+    ],
+    "groups": [],
+    "links": [
+     {
+      "id": 20001,
+      "origin_id": 488,
+      "origin_slot": 1,
+      "target_id": -20,
+      "target_slot": 0,
+      "type": "CLIP"
+     },
+     {
+      "id": 20002,
+      "origin_id": 488,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 1,
+      "type": "MODEL"
+     },
+     {
+      "id": 20004,
+      "origin_id": 489,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 2,
+      "type": "MODEL"
+     },
+     {
+      "id": 50016,
+      "origin_id": 488,
+      "origin_slot": 2,
+      "target_id": -20,
+      "target_slot": 3,
+      "type": "VAE"
+     },
+     {
+      "id": 50017,
+      "origin_id": 3006,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 4,
+      "type": "VAE"
+     },
+     {
+      "id": 50018,
+      "origin_id": 3007,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 5,
+      "type": "VAE"
+     },
+     {
+      "id": 50019,
+      "origin_id": 3008,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 6,
+      "type": "VAE"
+     },
+     {
+      "id": 50160,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 488,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 50161,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 489,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 50162,
+      "origin_id": -10,
+      "origin_slot": 2,
+      "target_id": 3006,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 50163,
+      "origin_id": -10,
+      "origin_slot": 3,
+      "target_id": 3007,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 50164,
+      "origin_id": -10,
+      "origin_slot": 4,
+      "target_id": 3008,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 52077,
+      "origin_id": 12401,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 7,
+      "type": "CLIP"
+     },
+     {
+      "id": 98140,
+      "origin_id": 489,
+      "origin_slot": 1,
+      "target_id": -20,
+      "target_slot": 8,
+      "type": "CLIP"
+     },
+     {
+      "id": 98449,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 100223,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 98450,
+      "origin_id": 100223,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 9,
+      "type": "STRING"
+     },
+     {
+      "id": 98451,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 100224,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 98452,
+      "origin_id": 100224,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 10,
+      "type": "STRING"
+     }
+    ],
+    "extra": {}
+   },
+   {
+    "id": "saya-vae-switch-hub-main-supports-only",
+    "version": 1,
+    "state": {
+     "lastGroupId": 3310,
+     "lastNodeId": 100759,
+     "lastLinkId": 99208,
+     "lastRerouteId": 575
+    },
+    "revision": 0,
+    "config": {},
+    "name": "MAIN · VAE Routing",
+    "inputNode": {
+     "id": -10,
+     "bounding": [
+      -300,
+      20,
+      197.51953125,
+      328
+     ]
+    },
+    "outputNode": {
+     "id": -20,
+     "bounding": [
+      868,
+      308,
+      197.51953125,
+      228
+     ]
+    },
+    "inputs": [
+     {
+      "id": "saya-vae-router-input-main_vae",
+      "name": "Main Model VAE",
+      "type": "VAE",
+      "linkIds": [
+       3,
+       24,
+       31,
+       38,
+       45,
+       52,
+       59,
+       66,
+       72,
+       50233
+      ],
+      "localized_name": "Main Model VAE",
+      "pos": [
+       -126.48046875,
+       44
+      ]
+     },
+     {
+      "id": "saya-vae-router-input-support1_vae",
+      "name": "Custom VAE 1",
+      "type": "VAE",
+      "linkIds": [
+       4,
+       25,
+       32,
+       39,
+       46,
+       53,
+       60,
+       67,
+       73,
+       50234
+      ],
+      "localized_name": "Custom VAE 1",
+      "pos": [
+       -126.48046875,
+       64
+      ]
+     },
+     {
+      "id": "saya-vae-router-input-support2_vae",
+      "name": "Custom VAE 2",
+      "type": "VAE",
+      "linkIds": [
+       5,
+       26,
+       33,
+       40,
+       47,
+       54,
+       61,
+       68,
+       74,
+       50235
+      ],
+      "localized_name": "Custom VAE 2",
+      "pos": [
+       -126.48046875,
+       84
+      ]
+     },
+     {
+      "id": "saya-vae-router-input-support3_vae",
+      "name": "Custom VAE 3",
+      "type": "VAE",
+      "linkIds": [
+       6,
+       27,
+       34,
+       41,
+       48,
+       55,
+       62,
+       69,
+       75,
+       50236
+      ],
+      "localized_name": "Custom VAE 3",
+      "pos": [
+       -126.48046875,
+       104
+      ]
+     },
+     {
+      "id": "saya-vae-router-selector-decode_switch_out_vae",
+      "name": "03 Sampler 2 Decode VAE",
+      "type": "COMBO",
+      "linkIds": [
+       57
+      ],
+      "localized_name": "03 Sampler 2 Decode VAE",
+      "pos": [
+       -126.48046875,
+       124
+      ]
+     },
+     {
+      "id": "saya-vae-router-selector-base_hires_vae",
+      "name": "04 Hires 1 VAE",
+      "type": "COMBO",
+      "linkIds": [
+       1
+      ],
+      "localized_name": "04 Hires 1 VAE",
+      "pos": [
+       -126.48046875,
+       144
+      ]
+     },
+     {
+      "id": "saya-vae-router-selector-usdu1_vae",
+      "name": "05 USDU 1 Tile VAE",
+      "type": "COMBO",
+      "linkIds": [
+       43
+      ],
+      "localized_name": "05 USDU 1 Tile VAE",
+      "pos": [
+       -126.48046875,
+       164
+      ]
+     },
+     {
+      "id": "saya-vae-router-selector-mid_hires_vae",
+      "name": "06 Hires 2 VAE",
+      "type": "COMBO",
+      "linkIds": [
+       22
+      ],
+      "localized_name": "06 Hires 2 VAE",
+      "pos": [
+       -126.48046875,
+       184
+      ]
+     },
+     {
+      "id": "saya-vae-router-selector-usdu2_vae",
+      "name": "07 USDU 2 Tile VAE",
+      "type": "COMBO",
+      "linkIds": [
+       50
+      ],
+      "localized_name": "07 USDU 2 Tile VAE",
+      "pos": [
+       -126.48046875,
+       204
+      ]
+     },
+     {
+      "id": "saya-vae-router-selector-final_hires_vae",
+      "name": "08 Hires 3 VAE",
+      "type": "COMBO",
+      "linkIds": [
+       29
+      ],
+      "localized_name": "08 Hires 3 VAE",
+      "pos": [
+       -126.48046875,
+       224
+      ]
+     },
+     {
+      "id": "saya-vae-router-selector-post_hidream_vae",
+      "name": "09 Pre-Detail Hires VAE",
+      "type": "COMBO",
+      "linkIds": [
+       36
+      ],
+      "localized_name": "09 Pre-Detail Hires VAE",
+      "pos": [
+       -126.48046875,
+       244
+      ]
+     },
+     {
+      "id": "saya-vae-router-selector-detailers_vae",
+      "name": "10 Detailers VAE",
+      "type": "COMBO",
+      "linkIds": [
+       70
+      ],
+      "localized_name": "10 Detailers VAE",
+      "pos": [
+       -126.48046875,
+       264
+      ]
+     },
+     {
+      "id": "saya-vae-router-selector-final_hires_vae_11",
+      "name": "11 Final Hires VAE",
+      "type": "COMBO",
+      "linkIds": [
+       64
+      ],
+      "localized_name": "11 Final Hires VAE",
+      "pos": [
+       -126.48046875,
+       284
+      ]
+     },
+     {
+      "id": "saya-vae-router-selector-naturalize_vae_12",
+      "name": "12 Final Naturalize VAE",
+      "type": "COMBO",
+      "linkIds": [
+       50231
+      ],
+      "localized_name": "12 Final Naturalize VAE",
+      "pos": [
+       -126.48046875,
+       304
+      ]
+     }
+    ],
+    "outputs": [
+     {
+      "id": "saya-vae-router-output-detailers_vae",
+      "name": "10 Detailers VAE",
+      "type": "VAE",
+      "linkIds": [
+       50035
+      ],
+      "localized_name": "10 Detailers VAE",
+      "pos": [
+       892,
+       332
+      ]
+     },
+     {
+      "id": "vae-route-output-1",
+      "name": "03 Sampler 2 Decode VAE",
+      "type": "VAE",
+      "linkIds": [
+       50038
+      ],
+      "localized_name": "03 Sampler 2 Decode VAE",
+      "pos": [
+       892,
+       352
+      ]
+     },
+     {
+      "id": "vae-route-output-2",
+      "name": "04 Hires 1 VAE",
+      "type": "VAE",
+      "linkIds": [
+       50039
+      ],
+      "localized_name": "04 Hires 1 VAE",
+      "pos": [
+       892,
+       372
+      ]
+     },
+     {
+      "id": "vae-route-output-3",
+      "name": "05 USDU 1 Tile VAE",
+      "type": "VAE",
+      "linkIds": [
+       50040
+      ],
+      "localized_name": "05 USDU 1 Tile VAE",
+      "pos": [
+       892,
+       392
+      ]
+     },
+     {
+      "id": "vae-route-output-4",
+      "name": "06 Hires 2 VAE",
+      "type": "VAE",
+      "linkIds": [
+       50041
+      ],
+      "localized_name": "06 Hires 2 VAE",
+      "pos": [
+       892,
+       412
+      ]
+     },
+     {
+      "id": "vae-route-output-5",
+      "name": "07 USDU 2 Tile VAE",
+      "type": "VAE",
+      "linkIds": [
+       50042
+      ],
+      "localized_name": "07 USDU 2 Tile VAE",
+      "pos": [
+       892,
+       432
+      ]
+     },
+     {
+      "id": "vae-route-output-6",
+      "name": "08 Hires 3 VAE",
+      "type": "VAE",
+      "linkIds": [
+       50043
+      ],
+      "localized_name": "08 Hires 3 VAE",
+      "pos": [
+       892,
+       452
+      ]
+     },
+     {
+      "id": "vae-route-output-7",
+      "name": "09 Pre-Detail Hires VAE",
+      "type": "VAE",
+      "linkIds": [
+       50044
+      ],
+      "localized_name": "09 Pre-Detail Hires VAE",
+      "pos": [
+       892,
+       472
+      ]
+     },
+     {
+      "id": "saya-vae-router-output-final_hires_vae_11",
+      "name": "11 Final Hires VAE",
+      "type": "VAE",
+      "linkIds": [
+       50045
+      ],
+      "localized_name": "11 Final Hires VAE",
+      "pos": [
+       892,
+       492
+      ]
+     }
+    ],
+    "widgets": [],
+    "nodes": [
+     {
+      "id": 2538,
+      "type": "CustomCombo",
+      "pos": [
+       -56,
+       70
+      ],
+      "size": [
+       266,
+       126
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "choix",
+        "name": "choice",
+        "type": "COMBO",
+        "widget": {
+         "name": "choice"
+        },
+        "link": 1
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "CHAÎNE",
+        "name": "STRING",
+        "type": "STRING",
+        "links": [
+         2
+        ]
+       },
+       {
+        "localized_name": "INDEX",
+        "name": "INDEX",
+        "type": "INT",
+        "links": []
+       }
+      ],
+      "title": "Route 04 · Hires Fix 1 VAE",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.27.0",
+       "Node name for S&R": "CustomCombo"
+      },
+      "widgets_values": [
+       "Custom VAE 1",
+       1,
+       "Main Model VAE",
+       "Custom VAE 1",
+       "Custom VAE 2",
+       "Custom VAE 3",
+       ""
+      ],
+      "widgets_values_named": {
+       "choice": "Custom VAE 1",
+       "index": 1,
+       "option1": "Main Model VAE",
+       "option2": "Custom VAE 1",
+       "option3": "Custom VAE 2",
+       "option4": "Custom VAE 3",
+       "option5": ""
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 2546,
+      "type": "CustomCombo",
+      "pos": [
+       -56,
+       126
+      ],
+      "size": [
+       266,
+       126
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "choix",
+        "name": "choice",
+        "type": "COMBO",
+        "widget": {
+         "name": "choice"
+        },
+        "link": 70
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "CHAÎNE",
+        "name": "STRING",
+        "type": "STRING",
+        "links": [
+         71
+        ]
+       },
+       {
+        "localized_name": "INDEX",
+        "name": "INDEX",
+        "type": "INT",
+        "links": []
+       }
+      ],
+      "title": "Route 10 · Detailers VAE",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.27.0",
+       "Node name for S&R": "CustomCombo"
+      },
+      "widgets_values": [
+       "Main Model VAE",
+       0,
+       "Main Model VAE",
+       "Custom VAE 1",
+       "Custom VAE 2",
+       "Custom VAE 3",
+       ""
+      ],
+      "widgets_values_named": {
+       "choice": "Main Model VAE",
+       "index": 0,
+       "option1": "Main Model VAE",
+       "option2": "Custom VAE 1",
+       "option3": "Custom VAE 2",
+       "option4": "Custom VAE 3",
+       "option5": ""
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 2541,
+      "type": "CustomCombo",
+      "pos": [
+       -56,
+       182
+      ],
+      "size": [
+       266,
+       126
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "choix",
+        "name": "choice",
+        "type": "COMBO",
+        "widget": {
+         "name": "choice"
+        },
+        "link": 22
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "CHAÎNE",
+        "name": "STRING",
+        "type": "STRING",
+        "links": [
+         23
+        ]
+       },
+       {
+        "localized_name": "INDEX",
+        "name": "INDEX",
+        "type": "INT",
+        "links": []
+       }
+      ],
+      "title": "Route 06 · Hires Fix 2 VAE",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.27.0",
+       "Node name for S&R": "CustomCombo"
+      },
+      "widgets_values": [
+       "Custom VAE 1",
+       1,
+       "Main Model VAE",
+       "Custom VAE 1",
+       "Custom VAE 2",
+       "Custom VAE 3",
+       ""
+      ],
+      "widgets_values_named": {
+       "choice": "Custom VAE 1",
+       "index": 1,
+       "option1": "Main Model VAE",
+       "option2": "Custom VAE 1",
+       "option3": "Custom VAE 2",
+       "option4": "Custom VAE 3",
+       "option5": ""
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 2542,
+      "type": "CustomCombo",
+      "pos": [
+       -56,
+       238
+      ],
+      "size": [
+       308,
+       210
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "choix",
+        "name": "choice",
+        "type": "COMBO",
+        "widget": {
+         "name": "choice"
+        },
+        "link": 29
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "CHAÎNE",
+        "name": "STRING",
+        "type": "STRING",
+        "links": [
+         30
+        ]
+       },
+       {
+        "localized_name": "INDEX",
+        "name": "INDEX",
+        "type": "INT",
+        "links": []
+       }
+      ],
+      "title": "Route 08 · Hires Fix 3 VAE",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.27.0",
+       "Node name for S&R": "CustomCombo"
+      },
+      "widgets_values": [
+       "Custom VAE 1",
+       1,
+       "Main Model VAE",
+       "Custom VAE 1",
+       "Custom VAE 2",
+       "Custom VAE 3",
+       ""
+      ],
+      "widgets_values_named": {
+       "choice": "Custom VAE 1",
+       "index": 1,
+       "option1": "Main Model VAE",
+       "option2": "Custom VAE 1",
+       "option3": "Custom VAE 2",
+       "option4": "Custom VAE 3",
+       "option5": ""
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 2543,
+      "type": "CustomCombo",
+      "pos": [
+       -56,
+       294
+      ],
+      "size": [
+       266,
+       126
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "choix",
+        "name": "choice",
+        "type": "COMBO",
+        "widget": {
+         "name": "choice"
+        },
+        "link": 36
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "CHAÎNE",
+        "name": "STRING",
+        "type": "STRING",
+        "links": [
+         37
+        ]
+       },
+       {
+        "localized_name": "INDEX",
+        "name": "INDEX",
+        "type": "INT",
+        "links": []
+       }
+      ],
+      "title": "Route 09 · Pre-Detail Hires VAE",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.27.0",
+       "Node name for S&R": "CustomCombo"
+      },
+      "widgets_values": [
+       "Custom VAE 1",
+       1,
+       "Main Model VAE",
+       "Custom VAE 1",
+       "Custom VAE 2",
+       "Custom VAE 3",
+       ""
+      ],
+      "widgets_values_named": {
+       "choice": "Custom VAE 1",
+       "index": 1,
+       "option1": "Main Model VAE",
+       "option2": "Custom VAE 1",
+       "option3": "Custom VAE 2",
+       "option4": "Custom VAE 3",
+       "option5": ""
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 106,
+      "type": "CustomCombo",
+      "pos": [
+       -56,
+       350
+      ],
+      "size": [
+       266,
+       126
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "choix",
+        "name": "choice",
+        "type": "COMBO",
+        "widget": {
+         "name": "choice"
+        },
+        "link": 43
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "CHAÎNE",
+        "name": "STRING",
+        "type": "STRING",
+        "links": [
+         44
+        ]
+       },
+       {
+        "localized_name": "INDEX",
+        "name": "INDEX",
+        "type": "INT",
+        "links": []
+       }
+      ],
+      "title": "Route 05 · USDU 1 Tile VAE",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.27.0",
+       "Node name for S&R": "CustomCombo"
+      },
+      "widgets_values": [
+       "Custom VAE 1",
+       1,
+       "Main Model VAE",
+       "Custom VAE 1",
+       "Custom VAE 2",
+       "Custom VAE 3",
+       ""
+      ],
+      "widgets_values_named": {
+       "choice": "Custom VAE 1",
+       "index": 1,
+       "option1": "Main Model VAE",
+       "option2": "Custom VAE 1",
+       "option3": "Custom VAE 2",
+       "option4": "Custom VAE 3",
+       "option5": ""
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 107,
+      "type": "CustomCombo",
+      "pos": [
+       -56,
+       406
+      ],
+      "size": [
+       266,
+       126
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "choix",
+        "name": "choice",
+        "type": "COMBO",
+        "widget": {
+         "name": "choice"
+        },
+        "link": 50
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "CHAÎNE",
+        "name": "STRING",
+        "type": "STRING",
+        "links": [
+         51
+        ]
+       },
+       {
+        "localized_name": "INDEX",
+        "name": "INDEX",
+        "type": "INT",
+        "links": []
+       }
+      ],
+      "title": "Route 07 · USDU 2 Tile VAE",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.27.0",
+       "Node name for S&R": "CustomCombo"
+      },
+      "widgets_values": [
+       "Custom VAE 1",
+       1,
+       "Main Model VAE",
+       "Custom VAE 1",
+       "Custom VAE 2",
+       "Custom VAE 3",
+       ""
+      ],
+      "widgets_values_named": {
+       "choice": "Custom VAE 1",
+       "index": 1,
+       "option1": "Main Model VAE",
+       "option2": "Custom VAE 1",
+       "option3": "Custom VAE 2",
+       "option4": "Custom VAE 3",
+       "option5": ""
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 2544,
+      "type": "CustomCombo",
+      "pos": [
+       -56,
+       462
+      ],
+      "size": [
+       266,
+       126
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "choix",
+        "name": "choice",
+        "type": "COMBO",
+        "widget": {
+         "name": "choice"
+        },
+        "link": 57
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "CHAÎNE",
+        "name": "STRING",
+        "type": "STRING",
+        "links": [
+         58
+        ]
+       },
+       {
+        "localized_name": "INDEX",
+        "name": "INDEX",
+        "type": "INT",
+        "links": []
+       }
+      ],
+      "title": "Route 03 · Sampler 2 Decode VAE",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.27.0",
+       "Node name for S&R": "CustomCombo"
+      },
+      "widgets_values": [
+       "Custom VAE 1",
+       1,
+       "Main Model VAE",
+       "Custom VAE 1",
+       "Custom VAE 2",
+       "Custom VAE 3",
+       ""
+      ],
+      "widgets_values_named": {
+       "choice": "Custom VAE 1",
+       "index": 1,
+       "option1": "Main Model VAE",
+       "option2": "Custom VAE 1",
+       "option3": "Custom VAE 2",
+       "option4": "Custom VAE 3",
+       "option5": ""
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 2545,
+      "type": "CustomCombo",
+      "pos": [
+       -56,
+       518
+      ],
+      "size": [
+       266,
+       126
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "choix",
+        "name": "choice",
+        "type": "COMBO",
+        "widget": {
+         "name": "choice"
+        },
+        "link": 64
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "CHAÎNE",
+        "name": "STRING",
+        "type": "STRING",
+        "links": [
+         65
+        ]
+       },
+       {
+        "localized_name": "INDEX",
+        "name": "INDEX",
+        "type": "INT",
+        "links": []
+       }
+      ],
+      "title": "Route 11 · Final Hires VAE",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.27.0",
+       "Node name for S&R": "CustomCombo"
+      },
+      "widgets_values": [
+       "Custom VAE 1",
+       1,
+       "Main Model VAE",
+       "Custom VAE 1",
+       "Custom VAE 2",
+       "Custom VAE 3",
+       ""
+      ],
+      "widgets_values_named": {
+       "choice": "Custom VAE 1",
+       "index": 1,
+       "option1": "Main Model VAE",
+       "option2": "Custom VAE 1",
+       "option3": "Custom VAE 2",
+       "option4": "Custom VAE 3",
+       "option5": ""
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 205,
+      "type": "Power Puter (rgthree)",
+      "pos": [
+       224,
+       294
+      ],
+      "size": [
+       322,
+       140
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+       {
+        "name": "a",
+        "type": "*",
+        "link": 37
+       },
+       {
+        "name": "b",
+        "type": "*",
+        "link": 38
+       },
+       {
+        "name": "c",
+        "type": "*",
+        "link": 39
+       },
+       {
+        "name": "d",
+        "type": "*",
+        "link": 40
+       },
+       {
+        "name": "e",
+        "type": "*",
+        "link": 41
+       },
+       {
+        "name": "f",
+        "type": "*",
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "label": "*",
+        "name": "*",
+        "shape": 3,
+        "type": "*",
+        "links": [
+         50044
+        ]
+       }
+      ],
+      "title": "Route 09 · Pre-Detail Hires · Selector",
+      "properties": {
+       "cnr_id": "rgthree-comfy",
+       "ver": "1.0.2605082257",
+       "Node name for S&R": "Power Puter (rgthree)",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       {
+        "outputs": [
+         "*"
+        ]
+       },
+       "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      ],
+      "widgets_values_named": {
+       "outputs": {
+        "outputs": [
+         "*"
+        ]
+       },
+       "code": "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 206,
+      "type": "Power Puter (rgthree)",
+      "pos": [
+       224,
+       350
+      ],
+      "size": [
+       308,
+       140
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+       {
+        "name": "a",
+        "type": "*",
+        "link": 44
+       },
+       {
+        "name": "b",
+        "type": "*",
+        "link": 45
+       },
+       {
+        "name": "c",
+        "type": "*",
+        "link": 46
+       },
+       {
+        "name": "d",
+        "type": "*",
+        "link": 47
+       },
+       {
+        "name": "e",
+        "type": "*",
+        "link": 48
+       },
+       {
+        "name": "f",
+        "type": "*",
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "label": "*",
+        "name": "*",
+        "shape": 3,
+        "type": "*",
+        "links": [
+         50040
+        ]
+       }
+      ],
+      "title": "Route 05 · USDU 1 · Selector",
+      "properties": {
+       "cnr_id": "rgthree-comfy",
+       "ver": "1.0.2605082257",
+       "Node name for S&R": "Power Puter (rgthree)",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       {
+        "outputs": [
+         "*"
+        ]
+       },
+       "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      ],
+      "widgets_values_named": {
+       "outputs": {
+        "outputs": [
+         "*"
+        ]
+       },
+       "code": "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 208,
+      "type": "Power Puter (rgthree)",
+      "pos": [
+       224,
+       462
+      ],
+      "size": [
+       336,
+       140
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+       {
+        "name": "a",
+        "type": "*",
+        "link": 58
+       },
+       {
+        "name": "b",
+        "type": "*",
+        "link": 59
+       },
+       {
+        "name": "c",
+        "type": "*",
+        "link": 60
+       },
+       {
+        "name": "d",
+        "type": "*",
+        "link": 61
+       },
+       {
+        "name": "e",
+        "type": "*",
+        "link": 62
+       },
+       {
+        "name": "f",
+        "type": "*",
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "label": "*",
+        "name": "*",
+        "shape": 3,
+        "type": "*",
+        "links": [
+         50038
+        ]
+       }
+      ],
+      "title": "Route 03 · Sampler 2 Decode · Selector",
+      "properties": {
+       "cnr_id": "rgthree-comfy",
+       "ver": "1.0.2605082257",
+       "Node name for S&R": "Power Puter (rgthree)",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       {
+        "outputs": [
+         "*"
+        ]
+       },
+       "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      ],
+      "widgets_values_named": {
+       "outputs": {
+        "outputs": [
+         "*"
+        ]
+       },
+       "code": "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 204,
+      "type": "Power Puter (rgthree)",
+      "pos": [
+       224,
+       238
+      ],
+      "size": [
+       308,
+       140
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+       {
+        "name": "a",
+        "type": "*",
+        "link": 30
+       },
+       {
+        "name": "b",
+        "type": "*",
+        "link": 31
+       },
+       {
+        "name": "c",
+        "type": "*",
+        "link": 32
+       },
+       {
+        "name": "d",
+        "type": "*",
+        "link": 33
+       },
+       {
+        "name": "e",
+        "type": "*",
+        "link": 34
+       },
+       {
+        "name": "f",
+        "type": "*",
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "label": "*",
+        "name": "*",
+        "shape": 3,
+        "type": "*",
+        "links": [
+         50043
+        ]
+       }
+      ],
+      "title": "Route 08 · Hires Fix 3 · Selector",
+      "properties": {
+       "cnr_id": "rgthree-comfy",
+       "ver": "1.0.2605082257",
+       "Node name for S&R": "Power Puter (rgthree)",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       {
+        "outputs": [
+         "*"
+        ]
+       },
+       "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      ],
+      "widgets_values_named": {
+       "outputs": {
+        "outputs": [
+         "*"
+        ]
+       },
+       "code": "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 203,
+      "type": "Power Puter (rgthree)",
+      "pos": [
+       224,
+       182
+      ],
+      "size": [
+       308,
+       140
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+       {
+        "name": "a",
+        "type": "*",
+        "link": 23
+       },
+       {
+        "name": "b",
+        "type": "*",
+        "link": 24
+       },
+       {
+        "name": "c",
+        "type": "*",
+        "link": 25
+       },
+       {
+        "name": "d",
+        "type": "*",
+        "link": 26
+       },
+       {
+        "name": "e",
+        "type": "*",
+        "link": 27
+       },
+       {
+        "name": "f",
+        "type": "*",
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "label": "*",
+        "name": "*",
+        "shape": 3,
+        "type": "*",
+        "links": [
+         50041
+        ]
+       }
+      ],
+      "title": "Route 06 · Hires Fix 2 · Selector",
+      "properties": {
+       "cnr_id": "rgthree-comfy",
+       "ver": "1.0.2605082257",
+       "Node name for S&R": "Power Puter (rgthree)",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       {
+        "outputs": [
+         "*"
+        ]
+       },
+       "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      ],
+      "widgets_values_named": {
+       "outputs": {
+        "outputs": [
+         "*"
+        ]
+       },
+       "code": "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 210,
+      "type": "Power Puter (rgthree)",
+      "pos": [
+       224,
+       126
+      ],
+      "size": [
+       308,
+       140
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+       {
+        "name": "a",
+        "type": "*",
+        "link": 71
+       },
+       {
+        "name": "b",
+        "type": "*",
+        "link": 72
+       },
+       {
+        "name": "c",
+        "type": "*",
+        "link": 73
+       },
+       {
+        "name": "d",
+        "type": "*",
+        "link": 74
+       },
+       {
+        "name": "e",
+        "type": "*",
+        "link": 75
+       },
+       {
+        "name": "f",
+        "type": "*",
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "label": "*",
+        "name": "*",
+        "shape": 3,
+        "type": "*",
+        "links": [
+         50035
+        ]
+       }
+      ],
+      "title": "Route 10 · Detailers · Selector",
+      "properties": {
+       "cnr_id": "rgthree-comfy",
+       "ver": "1.0.2606200020",
+       "Node name for S&R": "Power Puter (rgthree)"
+      },
+      "widgets_values": [
+       {
+        "outputs": [
+         "*"
+        ]
+       },
+       "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      ],
+      "widgets_values_named": {
+       "outputs": {
+        "outputs": [
+         "*"
+        ]
+       },
+       "code": "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 209,
+      "type": "Power Puter (rgthree)",
+      "pos": [
+       224,
+       518
+      ],
+      "size": [
+       308,
+       140
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+       {
+        "name": "a",
+        "type": "*",
+        "link": 65
+       },
+       {
+        "name": "b",
+        "type": "*",
+        "link": 66
+       },
+       {
+        "name": "c",
+        "type": "*",
+        "link": 67
+       },
+       {
+        "name": "d",
+        "type": "*",
+        "link": 68
+       },
+       {
+        "name": "e",
+        "type": "*",
+        "link": 69
+       },
+       {
+        "name": "f",
+        "type": "*",
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "label": "*",
+        "name": "*",
+        "shape": 3,
+        "type": "*",
+        "links": [
+         50045
+        ]
+       }
+      ],
+      "title": "Route 11 · Final Hires · Selector",
+      "properties": {
+       "cnr_id": "rgthree-comfy",
+       "ver": "1.0.2605082257",
+       "Node name for S&R": "Power Puter (rgthree)",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       {
+        "outputs": [
+         "*"
+        ]
+       },
+       "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      ],
+      "widgets_values_named": {
+       "outputs": {
+        "outputs": [
+         "*"
+        ]
+       },
+       "code": "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 207,
+      "type": "Power Puter (rgthree)",
+      "pos": [
+       224,
+       406
+      ],
+      "size": [
+       308,
+       140
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+       {
+        "name": "a",
+        "type": "*",
+        "link": 51
+       },
+       {
+        "name": "b",
+        "type": "*",
+        "link": 52
+       },
+       {
+        "name": "c",
+        "type": "*",
+        "link": 53
+       },
+       {
+        "name": "d",
+        "type": "*",
+        "link": 54
+       },
+       {
+        "name": "e",
+        "type": "*",
+        "link": 55
+       },
+       {
+        "name": "f",
+        "type": "*",
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "label": "*",
+        "name": "*",
+        "shape": 3,
+        "type": "*",
+        "links": [
+         50042
+        ]
+       }
+      ],
+      "title": "Route 07 · USDU 2 · Selector",
+      "properties": {
+       "cnr_id": "rgthree-comfy",
+       "ver": "1.0.2605082257",
+       "Node name for S&R": "Power Puter (rgthree)",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       {
+        "outputs": [
+         "*"
+        ]
+       },
+       "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      ],
+      "widgets_values_named": {
+       "outputs": {
+        "outputs": [
+         "*"
+        ]
+       },
+       "code": "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 200,
+      "type": "Power Puter (rgthree)",
+      "pos": [
+       224,
+       70
+      ],
+      "size": [
+       308,
+       140
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+       {
+        "name": "a",
+        "type": "*",
+        "link": 2
+       },
+       {
+        "name": "b",
+        "type": "*",
+        "link": 3
+       },
+       {
+        "name": "c",
+        "type": "*",
+        "link": 4
+       },
+       {
+        "name": "d",
+        "type": "*",
+        "link": 5
+       },
+       {
+        "name": "e",
+        "type": "*",
+        "link": 6
+       },
+       {
+        "name": "f",
+        "type": "*",
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "label": "*",
+        "name": "*",
+        "shape": 3,
+        "type": "*",
+        "links": [
+         50039
+        ]
+       }
+      ],
+      "title": "Route 04 · Hires Fix 1 · Selector",
+      "properties": {
+       "cnr_id": "rgthree-comfy",
+       "ver": "1.0.2605082257",
+       "Node name for S&R": "Power Puter (rgthree)",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       {
+        "outputs": [
+         "*"
+        ]
+       },
+       "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      ],
+      "widgets_values_named": {
+       "outputs": {
+        "outputs": [
+         "*"
+        ]
+       },
+       "code": "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 10379,
+      "type": "Power Puter (rgthree)",
+      "pos": [
+       504,
+       70
+      ],
+      "size": [
+       336,
+       224
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "a",
+        "name": "a",
+        "type": "*",
+        "link": 50232
+       },
+       {
+        "localized_name": "b",
+        "name": "b",
+        "type": "*",
+        "link": 50233
+       },
+       {
+        "localized_name": "c",
+        "name": "c",
+        "type": "*",
+        "link": 50234
+       },
+       {
+        "localized_name": "d",
+        "name": "d",
+        "type": "*",
+        "link": 50235
+       },
+       {
+        "localized_name": "e",
+        "name": "e",
+        "type": "*",
+        "link": 50236
+       },
+       {
+        "name": "f",
+        "type": "*",
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "label": "*",
+        "localized_name": "*",
+        "name": "*",
+        "type": "*",
+        "links": []
+       }
+      ],
+      "title": "Route 12 · Final Naturalize · Selector",
+      "properties": {
+       "cnr_id": "rgthree-comfy",
+       "ver": "1.0.2606200020",
+       "Node name for S&R": "Power Puter (rgthree)"
+      },
+      "widgets_values": [
+       {
+        "outputs": [
+         "*"
+        ]
+       },
+       "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      ],
+      "widgets_values_named": {
+       "outputs": {
+        "outputs": [
+         "*"
+        ]
+       },
+       "code": "if a == 'Main Model VAE':\n    return b\nif a == 'Custom VAE 2':\n    return d\nif a == 'Custom VAE 3':\n    return e\nreturn c\n"
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     },
+     {
+      "id": 90013,
+      "type": "CustomCombo",
+      "pos": [
+       532,
+       336
+      ],
+      "size": [
+       322,
+       210
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "choix",
+        "name": "choice",
+        "type": "COMBO",
+        "widget": {
+         "name": "choice"
+        },
+        "link": 50231
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "CHAÎNE",
+        "name": "STRING",
+        "type": "STRING",
+        "links": [
+         50232
+        ]
+       },
+       {
+        "localized_name": "INDEX",
+        "name": "INDEX",
+        "type": "INT",
+        "links": []
+       }
+      ],
+      "title": "Route 12 · Final Naturalize VAE",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.34.0",
+       "Node name for S&R": "CustomCombo"
+      },
+      "widgets_values": [
+       "Custom VAE 1",
+       1,
+       "Main Model VAE",
+       "Custom VAE 1",
+       "Custom VAE 2",
+       "Custom VAE 3",
+       ""
+      ],
+      "widgets_values_named": {
+       "choice": "Custom VAE 1",
+       "index": 1,
+       "option1": "Main Model VAE",
+       "option2": "Custom VAE 1",
+       "option3": "Custom VAE 2",
+       "option4": "Custom VAE 3",
+       "option5": ""
+      },
+      "color": "#303650",
+      "bgcolor": "#485176"
+     }
+    ],
+    "groups": [],
+    "links": [
+     {
+      "id": 1,
+      "origin_id": -10,
+      "origin_slot": 5,
+      "target_id": 2538,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 2,
+      "origin_id": 2538,
+      "origin_slot": 0,
+      "target_id": 200,
+      "target_slot": 0,
+      "type": "STRING"
+     },
+     {
+      "id": 3,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 200,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 4,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 200,
+      "target_slot": 2,
+      "type": "VAE"
+     },
+     {
+      "id": 5,
+      "origin_id": -10,
+      "origin_slot": 2,
+      "target_id": 200,
+      "target_slot": 3,
+      "type": "VAE"
+     },
+     {
+      "id": 6,
+      "origin_id": -10,
+      "origin_slot": 3,
+      "target_id": 200,
+      "target_slot": 4,
+      "type": "VAE"
+     },
+     {
+      "id": 22,
+      "origin_id": -10,
+      "origin_slot": 7,
+      "target_id": 2541,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 23,
+      "origin_id": 2541,
+      "origin_slot": 0,
+      "target_id": 203,
+      "target_slot": 0,
+      "type": "STRING"
+     },
+     {
+      "id": 24,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 203,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 25,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 203,
+      "target_slot": 2,
+      "type": "VAE"
+     },
+     {
+      "id": 26,
+      "origin_id": -10,
+      "origin_slot": 2,
+      "target_id": 203,
+      "target_slot": 3,
+      "type": "VAE"
+     },
+     {
+      "id": 27,
+      "origin_id": -10,
+      "origin_slot": 3,
+      "target_id": 203,
+      "target_slot": 4,
+      "type": "VAE"
+     },
+     {
+      "id": 29,
+      "origin_id": -10,
+      "origin_slot": 9,
+      "target_id": 2542,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 30,
+      "origin_id": 2542,
+      "origin_slot": 0,
+      "target_id": 204,
+      "target_slot": 0,
+      "type": "STRING"
+     },
+     {
+      "id": 31,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 204,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 32,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 204,
+      "target_slot": 2,
+      "type": "VAE"
+     },
+     {
+      "id": 33,
+      "origin_id": -10,
+      "origin_slot": 2,
+      "target_id": 204,
+      "target_slot": 3,
+      "type": "VAE"
+     },
+     {
+      "id": 34,
+      "origin_id": -10,
+      "origin_slot": 3,
+      "target_id": 204,
+      "target_slot": 4,
+      "type": "VAE"
+     },
+     {
+      "id": 36,
+      "origin_id": -10,
+      "origin_slot": 10,
+      "target_id": 2543,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 37,
+      "origin_id": 2543,
+      "origin_slot": 0,
+      "target_id": 205,
+      "target_slot": 0,
+      "type": "STRING"
+     },
+     {
+      "id": 38,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 205,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 39,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 205,
+      "target_slot": 2,
+      "type": "VAE"
+     },
+     {
+      "id": 40,
+      "origin_id": -10,
+      "origin_slot": 2,
+      "target_id": 205,
+      "target_slot": 3,
+      "type": "VAE"
+     },
+     {
+      "id": 41,
+      "origin_id": -10,
+      "origin_slot": 3,
+      "target_id": 205,
+      "target_slot": 4,
+      "type": "VAE"
+     },
+     {
+      "id": 43,
+      "origin_id": -10,
+      "origin_slot": 6,
+      "target_id": 106,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 44,
+      "origin_id": 106,
+      "origin_slot": 0,
+      "target_id": 206,
+      "target_slot": 0,
+      "type": "STRING"
+     },
+     {
+      "id": 45,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 206,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 46,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 206,
+      "target_slot": 2,
+      "type": "VAE"
+     },
+     {
+      "id": 47,
+      "origin_id": -10,
+      "origin_slot": 2,
+      "target_id": 206,
+      "target_slot": 3,
+      "type": "VAE"
+     },
+     {
+      "id": 48,
+      "origin_id": -10,
+      "origin_slot": 3,
+      "target_id": 206,
+      "target_slot": 4,
+      "type": "VAE"
+     },
+     {
+      "id": 50,
+      "origin_id": -10,
+      "origin_slot": 8,
+      "target_id": 107,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 51,
+      "origin_id": 107,
+      "origin_slot": 0,
+      "target_id": 207,
+      "target_slot": 0,
+      "type": "STRING"
+     },
+     {
+      "id": 52,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 207,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 53,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 207,
+      "target_slot": 2,
+      "type": "VAE"
+     },
+     {
+      "id": 54,
+      "origin_id": -10,
+      "origin_slot": 2,
+      "target_id": 207,
+      "target_slot": 3,
+      "type": "VAE"
+     },
+     {
+      "id": 55,
+      "origin_id": -10,
+      "origin_slot": 3,
+      "target_id": 207,
+      "target_slot": 4,
+      "type": "VAE"
+     },
+     {
+      "id": 57,
+      "origin_id": -10,
+      "origin_slot": 4,
+      "target_id": 2544,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 58,
+      "origin_id": 2544,
+      "origin_slot": 0,
+      "target_id": 208,
+      "target_slot": 0,
+      "type": "STRING"
+     },
+     {
+      "id": 59,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 208,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 60,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 208,
+      "target_slot": 2,
+      "type": "VAE"
+     },
+     {
+      "id": 61,
+      "origin_id": -10,
+      "origin_slot": 2,
+      "target_id": 208,
+      "target_slot": 3,
+      "type": "VAE"
+     },
+     {
+      "id": 62,
+      "origin_id": -10,
+      "origin_slot": 3,
+      "target_id": 208,
+      "target_slot": 4,
+      "type": "VAE"
+     },
+     {
+      "id": 64,
+      "origin_id": -10,
+      "origin_slot": 12,
+      "target_id": 2545,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 65,
+      "origin_id": 2545,
+      "origin_slot": 0,
+      "target_id": 209,
+      "target_slot": 0,
+      "type": "STRING"
+     },
+     {
+      "id": 66,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 209,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 67,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 209,
+      "target_slot": 2,
+      "type": "VAE"
+     },
+     {
+      "id": 68,
+      "origin_id": -10,
+      "origin_slot": 2,
+      "target_id": 209,
+      "target_slot": 3,
+      "type": "VAE"
+     },
+     {
+      "id": 69,
+      "origin_id": -10,
+      "origin_slot": 3,
+      "target_id": 209,
+      "target_slot": 4,
+      "type": "VAE"
+     },
+     {
+      "id": 50035,
+      "origin_id": 210,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 0,
+      "type": "VAE"
+     },
+     {
+      "id": 50038,
+      "origin_id": 208,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 50039,
+      "origin_id": 200,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 2,
+      "type": "VAE"
+     },
+     {
+      "id": 50040,
+      "origin_id": 206,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 3,
+      "type": "VAE"
+     },
+     {
+      "id": 50041,
+      "origin_id": 203,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 4,
+      "type": "VAE"
+     },
+     {
+      "id": 50042,
+      "origin_id": 207,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 5,
+      "type": "VAE"
+     },
+     {
+      "id": 50043,
+      "origin_id": 204,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 6,
+      "type": "VAE"
+     },
+     {
+      "id": 50044,
+      "origin_id": 205,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 7,
+      "type": "VAE"
+     },
+     {
+      "id": 50045,
+      "origin_id": 209,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 8,
+      "type": "VAE"
+     },
+     {
+      "id": 70,
+      "origin_id": -10,
+      "origin_slot": 11,
+      "target_id": 2546,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 71,
+      "origin_id": 2546,
+      "origin_slot": 0,
+      "target_id": 210,
+      "target_slot": 0,
+      "type": "STRING"
+     },
+     {
+      "id": 72,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 210,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 73,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 210,
+      "target_slot": 2,
+      "type": "VAE"
+     },
+     {
+      "id": 74,
+      "origin_id": -10,
+      "origin_slot": 2,
+      "target_id": 210,
+      "target_slot": 3,
+      "type": "VAE"
+     },
+     {
+      "id": 75,
+      "origin_id": -10,
+      "origin_slot": 3,
+      "target_id": 210,
+      "target_slot": 4,
+      "type": "VAE"
+     },
+     {
+      "id": 50231,
+      "origin_id": -10,
+      "origin_slot": 13,
+      "target_id": 90013,
+      "target_slot": 0,
+      "type": "COMBO"
+     },
+     {
+      "id": 50232,
+      "origin_id": 90013,
+      "origin_slot": 0,
+      "target_id": 10379,
+      "target_slot": 0,
+      "type": "STRING"
+     },
+     {
+      "id": 50233,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 10379,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 50234,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 10379,
+      "target_slot": 2,
+      "type": "VAE"
+     },
+     {
+      "id": 50235,
+      "origin_id": -10,
+      "origin_slot": 2,
+      "target_id": 10379,
+      "target_slot": 3,
+      "type": "VAE"
+     },
+     {
+      "id": 50236,
+      "origin_id": -10,
+      "origin_slot": 3,
+      "target_id": 10379,
+      "target_slot": 4,
+      "type": "VAE"
+     }
+    ],
+    "extra": {
+     "saya_note": "VAE switch subgraph. view_decode_pass1/pass2 selectors removed; detailer VAE untouched."
+    }
+   },
+   {
+    "id": "saya-auto-phase-4",
+    "version": 1,
+    "state": {
+     "lastGroupId": 3310,
+     "lastNodeId": 100759,
+     "lastLinkId": 99208,
+     "lastRerouteId": 575
+    },
+    "revision": 3,
+    "config": {},
+    "name": "Phase 4 · Post-HiDream Refine",
+    "inputNode": {
+     "id": -10,
+     "bounding": [
+      910,
+      9632,
+      187.904296875,
+      68
+     ]
+    },
+    "outputNode": {
+     "id": -20,
+     "bounding": [
+      2562,
+      9380,
+      194.630859375,
+      188
+     ]
+    },
+    "inputs": [
+     {
+      "id": "saya-auto-phase-4-solo",
+      "name": "solo",
+      "type": "BOOLEAN",
+      "linkIds": [
+       98427
+      ],
+      "localized_name": "Solo (Couple Mode OFF)",
+      "pos": [
+       1073.904296875,
+       9656
+      ]
+     }
+    ],
+    "outputs": [
+     {
+      "id": "036082b2-226e-461c-91ee-040912404b1d",
+      "name": "image",
+      "type": "IMAGE",
+      "linkIds": [
+       98762
+      ],
+      "localized_name": "image",
+      "pos": [
+       2586,
+       9404
+      ]
+     },
+     {
+      "id": "c3db4322-0898-4fd9-b45e-dfd44b315410",
+      "name": "seed",
+      "type": "INT",
+      "linkIds": [
+       40235
+      ],
+      "localized_name": "seed",
+      "pos": [
+       2586,
+       9424
+      ]
+     },
+     {
+      "id": "c59d72f9-5405-4cc4-9cb5-1462f744807c",
+      "name": "positive_prompt",
+      "type": "STRING",
+      "linkIds": [
+       98120
+      ],
+      "localized_name": "positive_prompt",
+      "pos": [
+       2586,
+       9444
+      ]
+     },
+     {
+      "id": "25468793-986d-4025-ba4c-772b193885cb",
+      "name": "negative_prompt",
+      "type": "STRING",
+      "linkIds": [
+       40237
+      ],
+      "localized_name": "negative_prompt",
+      "pos": [
+       2586,
+       9464
+      ]
+     },
+     {
+      "id": "ded1bf67-e5f5-44b8-ad6e-eb2cb0400201",
+      "name": "source_path",
+      "type": "STRING",
+      "linkIds": [
+       40238
+      ],
+      "localized_name": "source_path",
+      "pos": [
+       2586,
+       9484
+      ]
+     },
+     {
+      "id": "4a9e4f84-049d-4cd4-99dc-ab7aa9f227bd",
+      "name": "Compare image 100092:0",
+      "type": "IMAGE",
+      "linkIds": [
+       98925
+      ],
+      "localized_name": "Compare image 100092:0",
+      "pos": [
+       2586,
+       9504
+      ]
+     },
+     {
+      "id": "db4064b5-21a7-4f6b-94a4-fd84310da905",
+      "name": "Compare image 10153:0",
+      "type": "IMAGE",
+      "linkIds": [
+       98926
+      ],
+      "localized_name": "Compare image 10153:0",
+      "pos": [
+       2586,
+       9524
+      ]
+     }
+    ],
+    "widgets": [],
+    "nodes": [
+     {
+      "id": 10261,
+      "type": "GetNode",
+      "pos": [
+       1512,
+       9744
+      ],
+      "size": [
+       266,
+       56
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+       {
+        "name": "VAE",
+        "type": "VAE",
+        "links": [
+         40640
+        ]
+       }
+      ],
+      "title": "GET · 09 · Pre-Detail Hires VAE",
+      "properties": {
+       "Node name for S&R": "GetNode",
+       "aux_id": "kijai/ComfyUI-KJNodes",
+       "previousName": "ilust_vae_route_09",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       "ilust_vae_route_09"
+      ],
+      "widgets_values_named": {
+       "Constant": "ilust_vae_route_09"
+      },
+      "color": "#2b3038",
+      "bgcolor": "#3d4652"
+     },
+     {
+      "id": 100260,
+      "type": "GetNode",
+      "pos": [
+       1162,
+       9646
+      ],
+      "size": [
+       280,
+       56
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+       {
+        "name": "STRING",
+        "type": "STRING",
+        "links": [
+         98868
+        ]
+       }
+      ],
+      "title": "GET · Model 1 Identifier",
+      "properties": {
+       "Node name for S&R": "GetNode",
+       "aux_id": "kijai/ComfyUI-KJNodes",
+       "previousName": "saya_base_model_1_identifier"
+      },
+      "widgets_values": [
+       "saya_base_model_1_identifier"
+      ],
+      "widgets_values_named": {
+       "Constant": "saya_base_model_1_identifier"
+      },
+      "color": "#2b3038",
+      "bgcolor": "#3d4652"
+     },
+     {
+      "id": 100261,
+      "type": "GetNode",
+      "pos": [
+       1148,
+       9660
+      ],
+      "size": [
+       280,
+       56
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+       {
+        "name": "STRING",
+        "type": "STRING",
+        "links": [
+         98869
+        ]
+       }
+      ],
+      "title": "GET · Model 2 Identifier",
+      "properties": {
+       "Node name for S&R": "GetNode",
+       "aux_id": "kijai/ComfyUI-KJNodes",
+       "previousName": "saya_base_model_2_identifier"
+      },
+      "widgets_values": [
+       "saya_base_model_2_identifier"
+      ],
+      "widgets_values_named": {
+       "Constant": "saya_base_model_2_identifier"
+      },
+      "color": "#2b3038",
+      "bgcolor": "#3d4652"
+     },
+     {
+      "id": 10155,
+      "type": "SayaImagePhase4Load",
+      "pos": [
+       1120,
+       9534
+      ],
+      "size": [
+       350,
+       168
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+       {
+        "localized_name": "image",
+        "name": "image",
+        "type": "IMAGE",
+        "links": [
+         98106
+        ]
+       },
+       {
+        "localized_name": "manifest_json",
+        "name": "manifest_json",
+        "type": "STRING",
+        "links": []
+       },
+       {
+        "localized_name": "checkpoint_path",
+        "name": "checkpoint_path",
+        "type": "STRING",
+        "links": [
+         40238,
+         98105,
+         98867
+        ]
+       },
+       {
+        "localized_name": "seed",
+        "name": "seed",
+        "type": "INT",
+        "links": [
+         40233,
+         40235
+        ]
+       },
+       {
+        "localized_name": "positive_prompt",
+        "name": "positive_prompt",
+        "type": "STRING",
+        "links": [
+         98120
+        ]
+       },
+       {
+        "localized_name": "negative_prompt",
+        "name": "negative_prompt",
+        "type": "STRING",
+        "links": [
+         40237
+        ]
+       },
+       {
+        "localized_name": "prompt_bundle_json",
+        "name": "prompt_bundle_json",
+        "type": "STRING",
+        "links": []
+       },
+       {
+        "localized_name": "prompt_bundle_present",
+        "name": "prompt_bundle_present",
+        "type": "BOOLEAN",
+        "links": []
+       }
+      ],
+      "title": "Phase 4 · Load Phase 3 Checkpoint",
+      "properties": {
+       "Node name for S&R": "SayaImagePhaseCheckpointLoad",
+       "cnr_id": "Saya Couple Upated"
+      },
+      "color": "#2f5a35",
+      "bgcolor": "#18351e"
+     },
+     {
+      "id": 10151,
+      "type": "UpscaleModelLoader",
+      "pos": [
+       1120,
+       9422
+      ],
+      "size": [
+       350,
+       70
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "nom_du_modèle",
+        "name": "model_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "model_name"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "MODÈLE_DE_MISE_À_L'ÉCHELLE",
+        "name": "UPSCALE_MODEL",
+        "type": "UPSCALE_MODEL",
+        "links": [
+         98107
+        ]
+       }
+      ],
+      "title": "Pre-Detail · Upscale Model",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.3.57",
+       "Node name for S&R": "UpscaleModelLoader",
+       "saya_note": "4K last pass only. Not connected to HIRES FIX or USDU upscale_model inputs.",
+       "ue_properties": {
+        "widget_ue_connectable": {
+         "model_name": true
+        },
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       "RealESRGAN_x4plus_anime_6B.safetensors"
+      ],
+      "widgets_values_named": {
+       "model_name": "RealESRGAN_x4plus_anime_6B.safetensors"
+      },
+      "color": "#223",
+      "bgcolor": "#335"
+     },
+     {
+      "id": 100091,
+      "type": "SayaHiresFixTarget",
+      "pos": [
+       1484,
+       9422
+      ],
+      "size": [
+       336,
+       140
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "checkpoint_path",
+        "name": "checkpoint_path",
+        "type": "STRING",
+        "link": 98105
+       },
+       {
+        "localized_name": "output_scale",
+        "name": "output_scale",
+        "type": "FLOAT",
+        "widget": {
+         "name": "output_scale"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "original_width",
+        "name": "original_width",
+        "type": "INT",
+        "links": []
+       },
+       {
+        "localized_name": "original_height",
+        "name": "original_height",
+        "type": "INT",
+        "links": []
+       },
+       {
+        "localized_name": "target_width",
+        "name": "target_width",
+        "type": "INT",
+        "links": [
+         98108
+        ]
+       },
+       {
+        "localized_name": "target_height",
+        "name": "target_height",
+        "type": "INT",
+        "links": [
+         98109
+        ]
+       },
+       {
+        "localized_name": "report",
+        "name": "report",
+        "type": "STRING",
+        "links": []
+       }
+      ],
+      "title": "Phase 4 · Hires Target",
+      "properties": {
+       "Node name for S&R": "SayaHiresFixTarget"
+      },
+      "widgets_values": [
+       1
+      ],
+      "widgets_values_named": {
+       "output_scale": 1
+      },
+      "color": "#3b3150",
+      "bgcolor": "#574774"
+     },
+     {
+      "id": 100311,
+      "type": "SayaCoupleContextLoad",
+      "pos": [
+       1484,
+       9604
+      ],
+      "size": [
+       336,
+       154
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "checkpoint_path",
+        "name": "checkpoint_path",
+        "type": "STRING",
+        "link": 98867
+       },
+       {
+        "localized_name": "model_1_identifier",
+        "name": "model_1_identifier",
+        "shape": 7,
+        "type": "STRING",
+        "link": 98868
+       },
+       {
+        "localized_name": "model_2_identifier",
+        "name": "model_2_identifier",
+        "shape": 7,
+        "type": "STRING",
+        "link": 98869
+       },
+       {
+        "localized_name": "identities_json",
+        "name": "identities_json",
+        "shape": 7,
+        "type": "STRING",
+        "link": null
+       },
+       {
+        "localized_name": "clip_1_identifier",
+        "name": "clip_1_identifier",
+        "shape": 7,
+        "type": "STRING",
+        "link": null
+       },
+       {
+        "localized_name": "clip_2_identifier",
+        "name": "clip_2_identifier",
+        "shape": 7,
+        "type": "STRING",
+        "link": null
+       },
+       {
+        "localized_name": "imprint_json",
+        "name": "imprint_json",
+        "shape": 7,
+        "type": "STRING",
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "context_model_1",
+        "name": "context_model_1",
+        "type": "SAYA_COUPLE_CONTEXT",
+        "links": [
+         98870
+        ]
+       },
+       {
+        "localized_name": "context_model_2",
+        "name": "context_model_2",
+        "type": "SAYA_COUPLE_CONTEXT",
+        "links": []
+       },
+       {
+        "localized_name": "imprint",
+        "name": "imprint",
+        "type": "SAYA_IMPRINT",
+        "links": []
+       },
+       {
+        "localized_name": "imprint_json",
+        "name": "imprint_json",
+        "type": "STRING",
+        "links": []
+       },
+       {
+        "localized_name": "report",
+        "name": "report",
+        "type": "STRING",
+        "links": []
+       }
+      ],
+      "title": "Couple Context · Load",
+      "properties": {
+       "Node name for S&R": "SayaCoupleContextLoad",
+       "cnr_id": "saya_couple_upated"
+      },
+      "color": "#4a2f46",
+      "bgcolor": "#68435f"
+     },
+     {
+      "id": 10156,
+      "type": "GetNode",
+      "pos": [
+       1918,
+       9492
+      ],
+      "size": [
+       308,
+       56
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+       {
+        "name": "MODEL",
+        "type": "MODEL",
+        "links": [
+         98112
+        ]
+       }
+      ],
+      "title": "GET · Base Main Model",
+      "properties": {
+       "Node name for S&R": "GetNode",
+       "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "widgets_values": [
+       "saya_base_main_model"
+      ],
+      "widgets_values_named": {
+       "Constant": "saya_base_main_model"
+      },
+      "color": "#2b3038",
+      "bgcolor": "#3d4652"
+     },
+     {
+      "id": 10159,
+      "type": "GetNode",
+      "pos": [
+       1932,
+       9492
+      ],
+      "size": [
+       252,
+       56
+      ],
+      "flags": {
+       "collapsed": true,
+       "pinned": false
+      },
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+       {
+        "name": "CLIP",
+        "type": "CLIP",
+        "links": [
+         98113
+        ]
+       }
+      ],
+      "title": "GET · Shared Base CLIP",
+      "properties": {
+       "Node name for S&R": "GetNode",
+       "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "widgets_values": [
+       "saya_base_clip"
+      ],
+      "widgets_values_named": {
+       "Constant": "saya_base_clip"
+      },
+      "color": "#432",
+      "bgcolor": "#653"
+     },
+     {
+      "id": 100092,
+      "type": "SayaHiresFixResize",
+      "pos": [
+       1834,
+       9422
+      ],
+      "size": [
+       434,
+       140
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "image",
+        "name": "image",
+        "type": "IMAGE",
+        "link": 98106
+       },
+       {
+        "localized_name": "upscale_model",
+        "name": "upscale_model",
+        "type": "UPSCALE_MODEL",
+        "link": 98107
+       },
+       {
+        "localized_name": "target_width",
+        "name": "target_width",
+        "type": "INT",
+        "link": 98108
+       },
+       {
+        "localized_name": "target_height",
+        "name": "target_height",
+        "type": "INT",
+        "link": 98109
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "image",
+        "name": "image",
+        "type": "IMAGE",
+        "links": [
+         98110,
+         98115,
+         98925
+        ]
+       }
+      ],
+      "title": "Phase 4 · Conditional Resize",
+      "properties": {
+       "Node name for S&R": "SayaHiresFixResize"
+      },
+      "color": "#2b3038",
+      "bgcolor": "#3d4652"
+     },
+     {
+      "id": 100093,
+      "type": "SayaCoupleReconstruct",
+      "pos": [
+       1834,
+       9604
+      ],
+      "size": [
+       420,
+       266
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "model",
+        "name": "model",
+        "type": "MODEL",
+        "link": 98112
+       },
+       {
+        "localized_name": "clip",
+        "name": "clip",
+        "type": "CLIP",
+        "link": 98113
+       },
+       {
+        "localized_name": "image",
+        "name": "image",
+        "type": "IMAGE",
+        "link": 98115
+       },
+       {
+        "localized_name": "checkpoint_identities",
+        "name": "checkpoint_identities",
+        "shape": 7,
+        "type": "STRING",
+        "link": null
+       },
+       {
+        "localized_name": "imprint",
+        "name": "imprint",
+        "shape": 7,
+        "type": "SAYA_IMPRINT",
+        "link": null
+       },
+       {
+        "localized_name": "imprint_json",
+        "name": "imprint_json",
+        "shape": 7,
+        "type": "STRING",
+        "link": null
+       },
+       {
+        "localized_name": "context",
+        "name": "context",
+        "shape": 7,
+        "type": "SAYA_COUPLE_CONTEXT",
+        "link": 98870
+       },
+       {
+        "localized_name": "solo",
+        "name": "solo",
+        "shape": 7,
+        "type": "BOOLEAN",
+        "widget": {
+         "name": "solo"
+        },
+        "link": 98427
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "model_patched",
+        "name": "model_patched",
+        "type": "MODEL",
+        "links": [
+         98117
+        ]
+       },
+       {
+        "localized_name": "positive",
+        "name": "positive",
+        "type": "CONDITIONING",
+        "links": [
+         98118
+        ]
+       },
+       {
+        "localized_name": "negative",
+        "name": "negative",
+        "type": "CONDITIONING",
+        "links": [
+         98119
+        ]
+       },
+       {
+        "localized_name": "verification_report",
+        "name": "verification_report",
+        "type": "STRING",
+        "links": []
+       },
+       {
+        "localized_name": "model_patched_multimask",
+        "name": "model_patched_multimask",
+        "type": "MODEL",
+        "links": []
+       }
+      ],
+      "title": "Phase 4 · Couple Reconstruct · Final Size",
+      "properties": {
+       "Node name for S&R": "SayaCoupleReconstruct"
+      },
+      "widgets_values": [
+       false
+      ],
+      "widgets_values_named": {
+       "solo": false
+      },
+      "color": "#4a2f46",
+      "bgcolor": "#68435f"
+     },
+     {
+      "id": 10153,
+      "type": "cd8bcc90-3d3d-483d-b387-c8e9c7cbd678",
+      "pos": [
+       2282,
+       9422
+      ],
+      "size": [
+       266,
+       140
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "image",
+        "name": "image",
+        "type": "IMAGE",
+        "link": 98110
+       },
+       {
+        "localized_name": "model",
+        "name": "model",
+        "type": "MODEL",
+        "link": 98117
+       },
+       {
+        "localized_name": "positive",
+        "name": "positive",
+        "type": "CONDITIONING",
+        "link": 98118
+       },
+       {
+        "localized_name": "negative",
+        "name": "negative",
+        "type": "CONDITIONING",
+        "link": 98119
+       },
+       {
+        "localized_name": "vae",
+        "name": "vae",
+        "type": "VAE",
+        "link": 40640
+       },
+       {
+        "localized_name": "seed",
+        "name": "seed",
+        "type": "INT",
+        "widget": {
+         "name": "seed"
+        },
+        "link": 40233
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "IMAGE",
+        "name": "IMAGE",
+        "type": "IMAGE",
+        "links": [
+         98762,
+         98926
+        ]
+       }
+      ],
+      "title": "Phase 4 · Pre-Detail Hires Refine",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.22.0",
+       "Node name for S&R": "cd8bcc90-3d3d-483d-b387-c8e9c7cbd678",
+       "ue_properties": {
+        "widget_ue_connectable": {
+         "seed": true
+        },
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       },
+       "proxyWidgetErrorQuarantine": [
+        {
+         "originalEntry": [
+          "2168",
+          "noise_seed"
+         ],
+         "reason": "missingSourceNode",
+         "attemptedAtVersion": 1
+        }
+       ],
+       "previewExposures": []
+      },
+      "widgets_values": [
+       14
+      ],
+      "widgets_values_named": {
+       "seed": 14
+      },
+      "color": "#4a3b5f",
+      "bgcolor": "#6a5883"
+     }
+    ],
+    "groups": [],
+    "links": [
+     {
+      "id": 40233,
+      "origin_id": 10155,
+      "origin_slot": 3,
+      "target_id": 10153,
+      "target_slot": 5,
+      "type": "INT"
+     },
+     {
+      "id": 40235,
+      "origin_id": 10155,
+      "origin_slot": 3,
+      "target_id": -20,
+      "target_slot": 1,
+      "type": "INT"
+     },
+     {
+      "id": 40237,
+      "origin_id": 10155,
+      "origin_slot": 5,
+      "target_id": -20,
+      "target_slot": 3,
+      "type": "STRING"
+     },
+     {
+      "id": 40238,
+      "origin_id": 10155,
+      "origin_slot": 2,
+      "target_id": -20,
+      "target_slot": 4,
+      "type": "STRING"
+     },
+     {
+      "id": 40640,
+      "origin_id": 10261,
+      "origin_slot": 0,
+      "target_id": 10153,
+      "target_slot": 4,
+      "type": "VAE"
+     },
+     {
+      "id": 98105,
+      "origin_id": 10155,
+      "origin_slot": 2,
+      "target_id": 100091,
+      "target_slot": 0,
+      "type": "STRING"
+     },
+     {
+      "id": 98106,
+      "origin_id": 10155,
+      "origin_slot": 0,
+      "target_id": 100092,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 98107,
+      "origin_id": 10151,
+      "origin_slot": 0,
+      "target_id": 100092,
+      "target_slot": 1,
+      "type": "UPSCALE_MODEL"
+     },
+     {
+      "id": 98108,
+      "origin_id": 100091,
+      "origin_slot": 2,
+      "target_id": 100092,
+      "target_slot": 2,
+      "type": "INT"
+     },
+     {
+      "id": 98109,
+      "origin_id": 100091,
+      "origin_slot": 3,
+      "target_id": 100092,
+      "target_slot": 3,
+      "type": "INT"
+     },
+     {
+      "id": 98110,
+      "origin_id": 100092,
+      "origin_slot": 0,
+      "target_id": 10153,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 98112,
+      "origin_id": 10156,
+      "origin_slot": 0,
+      "target_id": 100093,
+      "target_slot": 0,
+      "type": "MODEL"
+     },
+     {
+      "id": 98113,
+      "origin_id": 10159,
+      "origin_slot": 0,
+      "target_id": 100093,
+      "target_slot": 1,
+      "type": "CLIP"
+     },
+     {
+      "id": 98115,
+      "origin_id": 100092,
+      "origin_slot": 0,
+      "target_id": 100093,
+      "target_slot": 2,
+      "type": "IMAGE"
+     },
+     {
+      "id": 98117,
+      "origin_id": 100093,
+      "origin_slot": 0,
+      "target_id": 10153,
+      "target_slot": 1,
+      "type": "MODEL"
+     },
+     {
+      "id": 98118,
+      "origin_id": 100093,
+      "origin_slot": 1,
+      "target_id": 10153,
+      "target_slot": 2,
+      "type": "CONDITIONING"
+     },
+     {
+      "id": 98119,
+      "origin_id": 100093,
+      "origin_slot": 2,
+      "target_id": 10153,
+      "target_slot": 3,
+      "type": "CONDITIONING"
+     },
+     {
+      "id": 98120,
+      "origin_id": 10155,
+      "origin_slot": 4,
+      "target_id": -20,
+      "target_slot": 2,
+      "type": "STRING"
+     },
+     {
+      "id": 98427,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 100093,
+      "target_slot": 7,
+      "type": "BOOLEAN"
+     },
+     {
+      "id": 98762,
+      "origin_id": 10153,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 98867,
+      "origin_id": 10155,
+      "origin_slot": 2,
+      "target_id": 100311,
+      "target_slot": 0,
+      "type": "STRING"
+     },
+     {
+      "id": 98868,
+      "origin_id": 100260,
+      "origin_slot": 0,
+      "target_id": 100311,
+      "target_slot": 1,
+      "type": "STRING"
+     },
+     {
+      "id": 98869,
+      "origin_id": 100261,
+      "origin_slot": 0,
+      "target_id": 100311,
+      "target_slot": 2,
+      "type": "STRING"
+     },
+     {
+      "id": 98870,
+      "origin_id": 100311,
+      "origin_slot": 0,
+      "target_id": 100093,
+      "target_slot": 6,
+      "type": "SAYA_COUPLE_CONTEXT"
+     },
+     {
+      "id": 98925,
+      "origin_id": 100092,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 5,
+      "type": "IMAGE"
+     },
+     {
+      "id": 98926,
+      "origin_id": 10153,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 6,
+      "type": "IMAGE"
+     }
+    ],
+    "extra": {
+     "saya_auto_isolated_phase": true,
+     "source": "Saya_Image_Phases_Isolated.json",
+     "bounds": [
+      900,
+      10000,
+      2680,
+      10762
+     ]
+    }
+   },
+   {
+    "id": "cd8bcc90-3d3d-483d-b387-c8e9c7cbd678",
+    "version": 1,
+    "state": {
+     "lastGroupId": 3310,
+     "lastNodeId": 100759,
+     "lastLinkId": 99208,
+     "lastRerouteId": 575
+    },
+    "revision": 1,
+    "config": {},
+    "name": "Post-HiDream Hires Refine",
+    "inputNode": {
+     "id": -10,
+     "bounding": [
+      56,
+      406,
+      128,
+      168
+     ]
+    },
+    "outputNode": {
+     "id": -20,
+     "bounding": [
+      1554,
+      196,
+      128,
+      68
+     ]
+    },
+    "inputs": [
+     {
+      "id": "f864a199-c70c-4097-a2c3-b82bf54ce64d",
+      "name": "image",
+      "type": "IMAGE",
+      "linkIds": [
+       1
+      ],
+      "localized_name": "image",
+      "pos": [
+       160,
+       430
+      ]
+     },
+     {
+      "id": "92838bc0-70e0-47eb-b160-e350559ead7a",
+      "name": "model",
+      "type": "MODEL",
+      "linkIds": [
+       2
+      ],
+      "localized_name": "model",
+      "pos": [
+       160,
+       450
+      ]
+     },
+     {
+      "id": "58907291-a646-4816-ae8f-4ed8e6cf47ce",
+      "name": "positive",
+      "type": "CONDITIONING",
+      "linkIds": [
+       3
+      ],
+      "localized_name": "positive",
+      "pos": [
+       160,
+       470
+      ]
+     },
+     {
+      "id": "7c98841a-ccfa-4d53-b747-658fb418c97f",
+      "name": "negative",
+      "type": "CONDITIONING",
+      "linkIds": [
+       4
+      ],
+      "localized_name": "negative",
+      "pos": [
+       160,
+       490
+      ]
+     },
+     {
+      "id": "5a956996-075c-4d52-9e03-324c74c4437e",
+      "name": "vae",
+      "type": "VAE",
+      "linkIds": [
+       5,
+       6
+      ],
+      "localized_name": "vae",
+      "pos": [
+       160,
+       510
+      ]
+     },
+     {
+      "id": "f5fd338d-ff14-4555-ad3b-567b5ab69022",
+      "name": "seed",
+      "type": "INT",
+      "linkIds": [
+       7
+      ],
+      "localized_name": "seed",
+      "pos": [
+       160,
+       530
+      ]
+     }
+    ],
+    "outputs": [
+     {
+      "id": "a067ed6b-e115-41ff-b855-0aa3725ad65d",
+      "name": "IMAGE",
+      "type": "IMAGE",
+      "linkIds": [
+       20
+      ],
+      "localized_name": "IMAGE",
+      "pos": [
+       1578,
+       220
+      ]
+     }
+    ],
+    "widgets": [],
+    "nodes": [
+     {
+      "id": 100081,
+      "type": "ImpactFloat",
+      "pos": [
+       210,
+       476
+      ],
+      "size": [
+       252,
+       112
+      ],
+      "flags": {
+       "collapsed": false,
+       "pinned": false
+      },
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "value",
+        "name": "value",
+        "type": "FLOAT",
+        "widget": {
+         "name": "value"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "FLOTTANT",
+        "name": "FLOAT",
+        "type": "FLOAT",
+        "links": [
+         10
+        ]
+       }
+      ],
+      "title": "Hires Refine · CFG",
+      "properties": {
+       "cnr_id": "ComfyUI-Impact-Pack",
+       "ver": "unknown",
+       "Node name for S&R": "ImpactFloat",
+       "aux_id": "ltdrdata/ComfyUI-Impact-Pack",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       3.2
+      ],
+      "widgets_values_named": {
+       "value": 3.2
+      },
+      "color": "#223",
+      "bgcolor": "#335"
+     },
+     {
+      "id": 100083,
+      "type": "FloatConstant",
+      "pos": [
+       560,
+       350
+      ],
+      "size": [
+       252,
+       112
+      ],
+      "flags": {
+       "collapsed": false,
+       "pinned": false
+      },
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "value",
+        "name": "value",
+        "type": "FLOAT",
+        "widget": {
+         "name": "value"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "label": "denoise",
+        "localized_name": "value",
+        "name": "value",
+        "type": "FLOAT",
+        "links": [
+         13
+        ]
+       }
+      ],
+      "title": "Hires Refine · Denoise",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.3.57",
+       "Node name for S&R": "FloatConstant",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       0.15
+      ],
+      "widgets_values_named": {
+       "value": 0.15
+      },
+      "color": "#223",
+      "bgcolor": "#335"
+     },
+     {
+      "id": 2170,
+      "type": "ClownsharKSampler_Beta",
+      "pos": [
+       840,
+       210
+      ],
+      "size": [
+       364,
+       420
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "model",
+        "name": "model",
+        "shape": 7,
+        "type": "MODEL",
+        "link": 2
+       },
+       {
+        "localized_name": "positive",
+        "name": "positive",
+        "shape": 7,
+        "type": "CONDITIONING",
+        "link": 3
+       },
+       {
+        "localized_name": "negative",
+        "name": "negative",
+        "shape": 7,
+        "type": "CONDITIONING",
+        "link": 4
+       },
+       {
+        "localized_name": "latent_image",
+        "name": "latent_image",
+        "shape": 7,
+        "type": "LATENT",
+        "link": 18
+       },
+       {
+        "localized_name": "sigmas",
+        "name": "sigmas",
+        "shape": 7,
+        "type": "SIGMAS",
+        "link": null
+       },
+       {
+        "localized_name": "guides",
+        "name": "guides",
+        "shape": 7,
+        "type": "GUIDES",
+        "link": null
+       },
+       {
+        "localized_name": "options",
+        "name": "options",
+        "shape": 7,
+        "type": "OPTIONS",
+        "link": null
+       },
+       {
+        "localized_name": "eta",
+        "name": "eta",
+        "type": "FLOAT",
+        "widget": {
+         "name": "eta"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "sampler_name",
+        "name": "sampler_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "sampler_name"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "scheduler",
+        "name": "scheduler",
+        "type": "COMBO",
+        "widget": {
+         "name": "scheduler"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "steps",
+        "name": "steps",
+        "type": "INT",
+        "widget": {
+         "name": "steps"
+        },
+        "link": 12
+       },
+       {
+        "localized_name": "steps_to_run",
+        "name": "steps_to_run",
+        "type": "INT",
+        "widget": {
+         "name": "steps_to_run"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "denoise",
+        "name": "denoise",
+        "type": "FLOAT",
+        "widget": {
+         "name": "denoise"
+        },
+        "link": 13
+       },
+       {
+        "localized_name": "cfg",
+        "name": "cfg",
+        "type": "FLOAT",
+        "widget": {
+         "name": "cfg"
+        },
+        "link": 10
+       },
+       {
+        "localized_name": "seed",
+        "name": "seed",
+        "type": "INT",
+        "widget": {
+         "name": "seed"
+        },
+        "link": 7
+       },
+       {
+        "localized_name": "sampler_mode",
+        "name": "sampler_mode",
+        "type": "COMBO",
+        "widget": {
+         "name": "sampler_mode"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "bongmath",
+        "name": "bongmath",
+        "type": "BOOLEAN",
+        "widget": {
+         "name": "bongmath"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "output",
+        "name": "output",
+        "type": "LATENT",
+        "slot_index": 0,
+        "links": [
+         19
+        ]
+       },
+       {
+        "localized_name": "denoised",
+        "name": "denoised",
+        "type": "LATENT",
+        "links": []
+       },
+       {
+        "localized_name": "options",
+        "name": "options",
+        "type": "OPTIONS",
+        "links": []
+       }
+      ],
+      "title": "Hires Refine · Sampler",
+      "properties": {
+       "cnr_id": "RES4LYF",
+       "ver": "119679d8d8d26e6db52757e705488abb6399d7d4",
+       "Node name for S&R": "ClownsharKSampler_Beta"
+      },
+      "widgets_values": [
+       0.5,
+       "multistep/dpmpp_2m",
+       "beta",
+       14,
+       -1,
+       0.2,
+       3.2,
+       0,
+       "fixed",
+       "standard",
+       true
+      ],
+      "widgets_values_named": {
+       "eta": 0.5,
+       "sampler_name": "multistep/dpmpp_2m",
+       "scheduler": "beta",
+       "steps": 14,
+       "steps_to_run": -1,
+       "denoise": 0.2,
+       "cfg": 3.2,
+       "seed": 0,
+       "control_after_generate": "fixed",
+       "sampler_mode": "standard",
+       "bongmath": true
+      },
+      "color": "#3b3150",
+      "bgcolor": "#574774"
+     },
+     {
+      "id": 100080,
+      "type": "VAEDecode",
+      "pos": [
+       1218,
+       210
+      ],
+      "size": [
+       322,
+       112
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "échantillons",
+        "name": "samples",
+        "type": "LATENT",
+        "link": 19
+       },
+       {
+        "localized_name": "vae",
+        "name": "vae",
+        "type": "VAE",
+        "link": 6
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "IMAGE",
+        "name": "IMAGE",
+        "type": "IMAGE",
+        "links": [
+         20
+        ]
+       }
+      ],
+      "title": "Hires Refine · VAE Decode",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.3.57",
+       "Node name for S&R": "VAEDecode",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "color": "#323",
+      "bgcolor": "#535"
+     },
+     {
+      "id": 100082,
+      "type": "INTConstant",
+      "pos": [
+       476,
+       504
+      ],
+      "size": [
+       252,
+       112
+      ],
+      "flags": {
+       "collapsed": false,
+       "pinned": false
+      },
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "value",
+        "name": "value",
+        "type": "INT",
+        "widget": {
+         "name": "value"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "value",
+        "name": "value",
+        "type": "INT",
+        "links": [
+         12
+        ]
+       }
+      ],
+      "title": "Hires Refine · Steps",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "unknown",
+       "Node name for S&R": "INTConstant",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "widgets_values": [
+       14
+      ],
+      "widgets_values_named": {
+       "value": 14
+      },
+      "color": "#223",
+      "bgcolor": "#335"
+     },
+     {
+      "id": 100079,
+      "type": "VAEEncode",
+      "pos": [
+       210,
+       308
+      ],
+      "size": [
+       322,
+       112
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "pixels",
+        "name": "pixels",
+        "type": "IMAGE",
+        "link": 1
+       },
+       {
+        "localized_name": "vae",
+        "name": "vae",
+        "type": "VAE",
+        "link": 5
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "LATENT",
+        "name": "LATENT",
+        "type": "LATENT",
+        "links": [
+         18
+        ]
+       }
+      ],
+      "title": "Hires Refine · VAE Encode",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.3.57",
+       "Node name for S&R": "VAEEncode",
+       "ue_properties": {
+        "widget_ue_connectable": {},
+        "version": "7.8",
+        "input_ue_unconnectable": {}
+       }
+      },
+      "color": "#323",
+      "bgcolor": "#535"
+     }
+    ],
+    "groups": [],
+    "links": [
+     {
+      "id": 1,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 100079,
+      "target_slot": 0,
+      "type": "IMAGE"
+     },
+     {
+      "id": 2,
+      "origin_id": -10,
+      "origin_slot": 1,
+      "target_id": 2170,
+      "target_slot": 0,
+      "type": "MODEL"
+     },
+     {
+      "id": 3,
+      "origin_id": -10,
+      "origin_slot": 2,
+      "target_id": 2170,
+      "target_slot": 1,
+      "type": "CONDITIONING"
+     },
+     {
+      "id": 4,
+      "origin_id": -10,
+      "origin_slot": 3,
+      "target_id": 2170,
+      "target_slot": 2,
+      "type": "CONDITIONING"
+     },
+     {
+      "id": 5,
+      "origin_id": -10,
+      "origin_slot": 4,
+      "target_id": 100079,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 6,
+      "origin_id": -10,
+      "origin_slot": 4,
+      "target_id": 100080,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 7,
+      "origin_id": -10,
+      "origin_slot": 5,
+      "target_id": 2170,
+      "target_slot": 14,
+      "type": "INT"
+     },
+     {
+      "id": 10,
+      "origin_id": 100081,
+      "origin_slot": 0,
+      "target_id": 2170,
+      "target_slot": 13,
+      "type": "FLOAT"
+     },
+     {
+      "id": 12,
+      "origin_id": 100082,
+      "origin_slot": 0,
+      "target_id": 2170,
+      "target_slot": 10,
+      "type": "INT"
+     },
+     {
+      "id": 13,
+      "origin_id": 100083,
+      "origin_slot": 0,
+      "target_id": 2170,
+      "target_slot": 12,
+      "type": "FLOAT"
+     },
+     {
+      "id": 18,
+      "origin_id": 100079,
+      "origin_slot": 0,
+      "target_id": 2170,
+      "target_slot": 3,
+      "type": "LATENT"
+     },
+     {
+      "id": 19,
+      "origin_id": 2170,
+      "origin_slot": 0,
+      "target_id": 100080,
+      "target_slot": 0,
+      "type": "LATENT"
+     },
+     {
+      "id": 20,
+      "origin_id": 100080,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 0,
+      "type": "IMAGE"
+     }
+    ],
+    "extra": {
+     "ue_links": [],
+     "links_added_by_ue": [],
+     "saya_phase4_hires_fix": {
+      "change": "Phase 4 refine engine aligned with proven Hires Fix 1/3 core",
+      "core": "VAEEncode -> ClownsharKSampler_Beta -> VAEDecode",
+      "sampler": "multistep/dpmpp_2m",
+      "scheduler": "beta",
+      "steps": 14,
+      "cfg": 3.2,
+      "denoise": 0.2,
+      "upscale": "kept upstream in SayaHiresFixResize before Couple reconstruction; no second resize in refine"
+     }
+    }
+   },
+   {
+    "id": "saya-couple-mode-toggle",
+    "version": 1,
+    "state": {
+     "lastGroupId": 3310,
+     "lastNodeId": 100759,
+     "lastLinkId": 99208,
+     "lastRerouteId": 575
+    },
+    "revision": 0,
+    "config": {},
+    "name": "MAIN · Couple / Solo",
+    "inputNode": {
+     "id": -10,
+     "bounding": [
+      -210,
+      70,
+      128,
+      68
+     ]
+    },
+    "outputNode": {
+     "id": -20,
+     "bounding": [
+      210,
+      70,
+      187.904296875,
+      68
+     ]
+    },
+    "inputs": [
+     {
+      "id": "saya-couple-mode-toggle-selector-couple-mode",
+      "name": "Couple Mode",
+      "type": "COMBO",
+      "linkIds": [
+       98448
+      ],
+      "localized_name": "Couple Mode",
+      "pos": [
+       -106,
+       94
+      ]
+     }
+    ],
+    "outputs": [
+     {
+      "id": "cm-out-solo",
+      "name": "Solo",
+      "type": "BOOLEAN",
+      "linkIds": [
+       98412
+      ],
+      "localized_name": "Solo (Couple Mode OFF)",
+      "pos": [
+       234,
+       94
+      ]
+     }
+    ],
+    "widgets": [],
+    "nodes": [
+     {
+      "id": 100219,
+      "type": "StringCompare",
+      "pos": [
+       -56,
+       -112
+      ],
+      "size": [
+       300,
+       130
+      ],
+      "flags": {
+       "pinned": false
+      },
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "chaîne_a",
+        "name": "string_a",
+        "type": "STRING",
+        "widget": {
+         "name": "string_a"
+        },
+        "link": 98411
+       },
+       {
+        "localized_name": "chaîne_b",
+        "name": "string_b",
+        "type": "STRING",
+        "widget": {
+         "name": "string_b"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "mode",
+        "name": "mode",
+        "type": "COMBO",
+        "widget": {
+         "name": "mode"
+        },
+        "link": null
+       },
+       {
+        "localized_name": "sensible_casse",
+        "name": "case_sensitive",
+        "type": "BOOLEAN",
+        "widget": {
+         "name": "case_sensitive"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "label": "SOLO flag",
+        "localized_name": "SOLO flag",
+        "name": "BOOLEAN",
+        "type": "BOOLEAN",
+        "links": [
+         98412
+        ]
+       }
+      ],
+      "title": "Couple Mode · Couple / Solo",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.27.0",
+       "Node name for S&R": "StringCompare"
+      },
+      "widgets_values": [
+       "",
+       "OFF",
+       "Equal",
+       true
+      ],
+      "widgets_values_named": {
+       "string_a": "",
+       "string_b": "OFF",
+       "mode": "Equal",
+       "case_sensitive": true
+      },
+      "color": "#4a2f46",
+      "bgcolor": "#68435f"
+     },
+     {
+      "id": 100218,
+      "type": "CustomCombo",
+      "pos": [
+       -56,
+       126
+      ],
+      "size": [
+       300,
+       130
+      ],
+      "flags": {
+       "collapsed": false,
+       "pinned": false
+      },
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "localized_name": "choix",
+        "name": "choice",
+        "type": "COMBO",
+        "widget": {
+         "name": "choice"
+        },
+        "link": 98448
+       }
+      ],
+      "outputs": [
+       {
+        "localized_name": "CHAÎNE",
+        "name": "STRING",
+        "type": "STRING",
+        "links": [
+         98411
+        ]
+       },
+       {
+        "localized_name": "INDEX",
+        "name": "INDEX",
+        "type": "INT",
+        "links": []
+       }
+      ],
+      "title": "Couple Mode · Couple / Solo",
+      "properties": {
+       "cnr_id": "comfy-core",
+       "ver": "0.27.0",
+       "Node name for S&R": "CustomCombo",
+       "saya_note": "ON = normal Couple (unchanged). OFF = SOLO: MAIN + Person 1 only, Person 2 ignored, no attention-couple patch."
+      },
+      "widgets_values": [
+       "ON",
+       0,
+       "ON",
+       "OFF",
+       ""
+      ],
+      "widgets_values_named": {
+       "choice": "ON",
+       "index": 0,
+       "option1": "ON",
+       "option2": "OFF",
+       "option3": ""
+      },
+      "color": "#4a2f46",
+      "bgcolor": "#68435f"
+     }
+    ],
+    "groups": [],
+    "links": [
+     {
+      "id": 98411,
+      "origin_id": 100218,
+      "origin_slot": 0,
+      "target_id": 100219,
+      "target_slot": 0,
+      "type": "STRING"
+     },
+     {
+      "id": 98412,
+      "origin_id": 100219,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 0,
+      "type": "BOOLEAN"
+     },
+     {
+      "id": 98448,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 100218,
+      "target_slot": 0,
+      "type": "COMBO"
+     }
+    ],
+    "extra": {
+     "saya_note": "One visible ON/OFF toggle. OFF sets solo=True on every SayaCoupleReconstruct call site (Phase 2, Phase 5, Phase 6)."
+    }
+   }
+  ]
+ },
+ "config": {},
+ "extra": {
+  "frontendVersion": "1.51.10",
+  "VHS_latentpreview": false,
+  "VHS_latentpreviewrate": 0,
+  "VHS_MetadataImage": true,
+  "VHS_KeepIntermediate": true,
+  "saya_couple_version": "0.3.0",
+  "ds": {
+   "scale": 0.7627768444385485,
+   "offset": [
+    -6305.583365264227,
+    -1008.0103125929925
+   ]
+  },
+  "saya_split": "passe 4"
+ },
+ "version": 0.4
+}
