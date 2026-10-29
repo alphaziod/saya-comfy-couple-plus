@@ -1,0 +1,32 @@
+(async()=>{
+ const report={ok:false,checks:[],errors:[]};window.__SMOKE_STAGE=report;
+ const invoke=window.__TAURI_INTERNALS__.invoke,api=(action,args={})=>invoke('studio',{request:{action,...args}});
+ const assert=(v,m)=>{if(!v)throw Error(m)};
+ const wait=async(p,m)=>{window.__SMOKE_STEP=m;const end=Date.now()+30000;while(!await p()){if(Date.now()>end)throw Error(m);await new Promise(r=>setTimeout(r,100));}};
+ window.addEventListener('error',e=>report.errors.push(e.message));window.addEventListener('unhandledrejection',e=>report.errors.push(String(e.reason)));
+ try{
+  await wait(()=>document.querySelector('.shell'),'shell');
+  const baseText=JSON.stringify({"1":{"class_type":"CheckpointLoaderSimple","inputs":{"ckpt_name":"fixture-ckpt_name.safetensors"}},"2":{"class_type":"CLIPTextEncode","inputs":{"clip":["1",1],"text":"memory"}},"3":{"class_type":"CLIPTextEncode","inputs":{"clip":["1",1],"text":"neg"}},"4":{"class_type":"EmptyLatentImage","inputs":{"width":512,"height":512,"batch_size":1}},"5":{"class_type":"KSampler","inputs":{"model":["1",0],"positive":["2",0],"negative":["3",0],"latent_image":["4",0],"seed":1,"steps":2,"cfg":6,"sampler_name":"euler","scheduler":"normal","denoise":1}},"6":{"class_type":"VAEDecode","inputs":{"samples":["5",0],"vae":["1",2]}},"7":{"class_type":"SaveImage","inputs":{"images":["6",0],"filename_prefix":"mem"}}});
+  const upText=JSON.stringify({"1":{"class_type":"LoadImage","inputs":{"image":"fixture.png"}},"2":{"class_type":"ImageScaleBy","inputs":{"image":["1",0],"upscale_method":"nearest-exact","scale_by":2}},"3":{"class_type":"SaveImage","inputs":{"images":["2",0],"filename_prefix":"up"}}});
+  const base=await api('import_workflow',{name:'Memory base',text:baseText});
+  const up=await api('import_workflow',{name:'Memory up',text:upText});
+  const manifest=JSON.stringify({"format":"saya-workflow-pipeline","version":1,"id":"aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee","name":"F03 memory","workflows":[{"id":base},{"id":up}],"steps":[{"id":"base","workflowId":base,"kind":"image","outputs":[{"name":"image","portType":"IMAGE"}]},{"id":"up","workflowId":up,"kind":"image","inputs":[{"name":"image","portType":"IMAGE"}],"outputs":[{"name":"image","portType":"IMAGE"}],"bindings":[{"port":"image","nodeId":"1","input":"image","source":{"step":"base","port":"image"}}]}]});
+  const pipeline=await api('save_pipeline',{text:manifest});
+  const run=await api('start_pipeline_run',{pipeline});
+  const first=await api('run_next_pass',{run,confirmed:true,unload_after_pass:true});
+  assert(first.step==='base'&&first.state==='completed','first pass');
+  assert(first.memory&&first.memory.prepare,'memory prepare result');
+  assert(first.memory.release,'memory release result');
+  const detail=await api('pipeline_run',{run});
+  const kinds=detail.events.map(e=>e.kind);
+  assert(kinds.includes('memory_prepare'),'prepare event');
+  assert(kinds.includes('memory_release'),'release event');
+  assert(detail.steps[0].state==='completed','state persisted');
+  report.checks.push('memory policy: prepare before pass, release after durable state, events persisted');
+  const second=await api('run_next_pass',{run,confirmed:true,unload_after_pass:false});
+  assert(second.step==='up'&&second.state==='completed','second pass');
+  assert(second.memory&&second.memory.prepare===null&&second.memory.release===null,'policy leaked to second pass');
+  report.checks.push('memory policy stays explicit per pass');
+  assert(!report.errors.length,report.errors.join(';'));report.ok=true;
+ }catch(e){report.failure=String(e.stack||e);report.uiErrors=[...document.querySelectorAll('.error')].map(n=>n.textContent)}await invoke('finish_smoke',{report});
+})();

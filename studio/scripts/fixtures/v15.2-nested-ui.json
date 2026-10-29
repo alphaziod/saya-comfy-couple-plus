@@ -1,0 +1,641 @@
+{
+ "id": "v15.2-nested-ui",
+ "revision": 0,
+ "last_node_id": 8,
+ "last_link_id": 20,
+ "nodes": [
+  {
+   "id": 1,
+   "type": "sgouter",
+   "pos": [
+    300,
+    300
+   ],
+   "size": [
+    260,
+    140
+   ],
+   "flags": {},
+   "order": 0,
+   "mode": 0,
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "image",
+     "type": "IMAGE",
+     "links": [
+      20
+     ]
+    }
+   ],
+   "properties": {},
+   "widgets_values": [
+    "hello\nmonde"
+   ],
+   "widgets_values_named": {
+    "text": "hello\nmonde"
+   }
+  },
+  {
+   "id": 2,
+   "type": "SaveImage",
+   "pos": [
+    900,
+    40
+   ],
+   "size": [
+    220,
+    120
+   ],
+   "flags": {},
+   "order": 0,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "link": 20
+    },
+    {
+     "name": "filename_prefix",
+     "type": "STRING",
+     "widget": {
+      "name": "filename_prefix"
+     },
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "IMAGE",
+     "type": "IMAGE",
+     "links": []
+    }
+   ],
+   "properties": {},
+   "widgets_values": [
+    "saya/api-smoke"
+   ],
+   "widgets_values_named": {
+    "filename_prefix": "saya/api-smoke"
+   }
+  }
+ ],
+ "links": [
+  [
+   20,
+   1,
+   0,
+   2,
+   0,
+   "IMAGE"
+  ]
+ ],
+ "groups": [],
+ "definitions": {
+  "subgraphs": [
+   {
+    "id": "sgimg",
+    "version": 1,
+    "state": {},
+    "revision": 0,
+    "config": {},
+    "name": "Smoke subgraph",
+    "inputNode": {
+     "id": -10
+    },
+    "outputNode": {
+     "id": -20
+    },
+    "inputs": [
+     {
+      "name": "text",
+      "type": "STRING",
+      "linkIds": [
+       10
+      ]
+     }
+    ],
+    "outputs": [
+     {
+      "name": "image",
+      "type": "IMAGE",
+      "linkIds": [
+       19
+      ]
+     }
+    ],
+    "widgets": [],
+    "nodes": [
+     {
+      "id": 3,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+       40,
+       40
+      ],
+      "size": [
+       220,
+       120
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "name": "ckpt_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "ckpt_name"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "name": "MODEL",
+        "type": "MODEL",
+        "links": [
+         13
+        ]
+       },
+       {
+        "name": "CLIP",
+        "type": "CLIP",
+        "links": [
+         11,
+         12
+        ]
+       },
+       {
+        "name": "VAE",
+        "type": "VAE",
+        "links": [
+         18
+        ]
+       }
+      ],
+      "properties": {},
+      "widgets_values": [
+       "fixture-ckpt_name.safetensors"
+      ],
+      "widgets_values_named": {
+       "ckpt_name": "fixture-ckpt_name.safetensors"
+      }
+     },
+     {
+      "id": 4,
+      "type": "CLIPTextEncode",
+      "pos": [
+       40,
+       220
+      ],
+      "size": [
+       220,
+       120
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "name": "text",
+        "type": "STRING",
+        "widget": {
+         "name": "text"
+        },
+        "link": 10
+       },
+       {
+        "name": "clip",
+        "type": "CLIP",
+        "link": 11
+       }
+      ],
+      "outputs": [
+       {
+        "name": "CONDITIONING",
+        "type": "CONDITIONING",
+        "links": [
+         14
+        ]
+       }
+      ],
+      "properties": {},
+      "widgets_values": [
+       "fallback"
+      ],
+      "widgets_values_named": {
+       "text": "fallback"
+      }
+     },
+     {
+      "id": 5,
+      "type": "CLIPTextEncode",
+      "pos": [
+       40,
+       400
+      ],
+      "size": [
+       220,
+       120
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "name": "text",
+        "type": "STRING",
+        "widget": {
+         "name": "text"
+        },
+        "link": null
+       },
+       {
+        "name": "clip",
+        "type": "CLIP",
+        "link": 12
+       }
+      ],
+      "outputs": [
+       {
+        "name": "CONDITIONING",
+        "type": "CONDITIONING",
+        "links": [
+         15
+        ]
+       }
+      ],
+      "properties": {},
+      "widgets_values": [
+       "negatif"
+      ],
+      "widgets_values_named": {
+       "text": "negatif"
+      }
+     },
+     {
+      "id": 6,
+      "type": "EmptyLatentImage",
+      "pos": [
+       300,
+       40
+      ],
+      "size": [
+       220,
+       120
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "name": "width",
+        "type": "INT",
+        "widget": {
+         "name": "width"
+        },
+        "link": null
+       },
+       {
+        "name": "height",
+        "type": "INT",
+        "widget": {
+         "name": "height"
+        },
+        "link": null
+       },
+       {
+        "name": "batch_size",
+        "type": "INT",
+        "widget": {
+         "name": "batch_size"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "name": "LATENT",
+        "type": "LATENT",
+        "links": [
+         16
+        ]
+       }
+      ],
+      "properties": {},
+      "widgets_values": [
+       512,
+       512,
+       1
+      ],
+      "widgets_values_named": {
+       "width": 512,
+       "height": 512,
+       "batch_size": 1
+      }
+     },
+     {
+      "id": 7,
+      "type": "KSampler",
+      "pos": [
+       540,
+       40
+      ],
+      "size": [
+       220,
+       120
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "name": "model",
+        "type": "MODEL",
+        "link": 13
+       },
+       {
+        "name": "seed",
+        "type": "INT",
+        "widget": {
+         "name": "seed"
+        },
+        "link": null
+       },
+       {
+        "name": "steps",
+        "type": "INT",
+        "widget": {
+         "name": "steps"
+        },
+        "link": null
+       },
+       {
+        "name": "cfg",
+        "type": "FLOAT",
+        "widget": {
+         "name": "cfg"
+        },
+        "link": null
+       },
+       {
+        "name": "sampler_name",
+        "type": "COMBO",
+        "widget": {
+         "name": "sampler_name"
+        },
+        "link": null
+       },
+       {
+        "name": "scheduler",
+        "type": "COMBO",
+        "widget": {
+         "name": "scheduler"
+        },
+        "link": null
+       },
+       {
+        "name": "positive",
+        "type": "CONDITIONING",
+        "link": 14
+       },
+       {
+        "name": "negative",
+        "type": "CONDITIONING",
+        "link": 15
+       },
+       {
+        "name": "latent_image",
+        "type": "LATENT",
+        "link": 16
+       },
+       {
+        "name": "denoise",
+        "type": "FLOAT",
+        "widget": {
+         "name": "denoise"
+        },
+        "link": null
+       }
+      ],
+      "outputs": [
+       {
+        "name": "LATENT",
+        "type": "LATENT",
+        "links": [
+         17
+        ]
+       }
+      ],
+      "properties": {},
+      "widgets_values": [
+       18446744073709551615,
+       "fixed",
+       20,
+       7.0,
+       "euler",
+       "normal",
+       1.0
+      ],
+      "widgets_values_named": {
+       "seed": 18446744073709551615,
+       "control_after_generate": "fixed",
+       "steps": 20,
+       "cfg": 7.0,
+       "sampler_name": "euler",
+       "scheduler": "normal",
+       "denoise": 1.0
+      }
+     },
+     {
+      "id": 8,
+      "type": "VAEDecode",
+      "pos": [
+       760,
+       40
+      ],
+      "size": [
+       220,
+       120
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+       {
+        "name": "samples",
+        "type": "LATENT",
+        "link": 17
+       },
+       {
+        "name": "vae",
+        "type": "VAE",
+        "link": 18
+       }
+      ],
+      "outputs": [
+       {
+        "name": "IMAGE",
+        "type": "IMAGE",
+        "links": [
+         19
+        ]
+       }
+      ],
+      "properties": {},
+      "widgets_values": [],
+      "widgets_values_named": {}
+     }
+    ],
+    "groups": [],
+    "links": [
+     {
+      "id": 10,
+      "origin_id": -10,
+      "origin_slot": 0,
+      "target_id": 4,
+      "target_slot": 0,
+      "type": "STRING"
+     },
+     {
+      "id": 11,
+      "origin_id": 3,
+      "origin_slot": 1,
+      "target_id": 4,
+      "target_slot": 1,
+      "type": "CLIP"
+     },
+     {
+      "id": 12,
+      "origin_id": 3,
+      "origin_slot": 1,
+      "target_id": 5,
+      "target_slot": 1,
+      "type": "CLIP"
+     },
+     {
+      "id": 13,
+      "origin_id": 3,
+      "origin_slot": 0,
+      "target_id": 7,
+      "target_slot": 0,
+      "type": "MODEL"
+     },
+     {
+      "id": 14,
+      "origin_id": 4,
+      "origin_slot": 0,
+      "target_id": 7,
+      "target_slot": 6,
+      "type": "CONDITIONING"
+     },
+     {
+      "id": 15,
+      "origin_id": 5,
+      "origin_slot": 0,
+      "target_id": 7,
+      "target_slot": 7,
+      "type": "CONDITIONING"
+     },
+     {
+      "id": 16,
+      "origin_id": 6,
+      "origin_slot": 0,
+      "target_id": 7,
+      "target_slot": 8,
+      "type": "LATENT"
+     },
+     {
+      "id": 17,
+      "origin_id": 7,
+      "origin_slot": 0,
+      "target_id": 8,
+      "target_slot": 0,
+      "type": "LATENT"
+     },
+     {
+      "id": 18,
+      "origin_id": 3,
+      "origin_slot": 2,
+      "target_id": 8,
+      "target_slot": 1,
+      "type": "VAE"
+     },
+     {
+      "id": 19,
+      "origin_id": 8,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 0,
+      "type": "IMAGE"
+     }
+    ]
+   },
+   {
+    "id": "sgouter",
+    "version": 1,
+    "name": "Outer",
+    "inputs": [],
+    "outputs": [
+     {
+      "name": "image",
+      "type": "IMAGE",
+      "linkIds": [
+       30
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "id": 10,
+      "type": "sgimg",
+      "pos": [
+       200,
+       200
+      ],
+      "size": [
+       260,
+       140
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+       {
+        "name": "image",
+        "type": "IMAGE",
+        "links": [
+         30
+        ]
+       }
+      ],
+      "properties": {},
+      "widgets_values": [
+       "nested hello"
+      ],
+      "widgets_values_named": {
+       "text": "nested hello"
+      }
+     }
+    ],
+    "groups": [],
+    "links": [
+     {
+      "id": 30,
+      "origin_id": 10,
+      "origin_slot": 0,
+      "target_id": -20,
+      "target_slot": 0,
+      "type": "IMAGE"
+     }
+    ]
+   }
+  ]
+ },
+ "config": {},
+ "extra": {},
+ "version": 0.4
+}

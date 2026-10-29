@@ -1,0 +1,37 @@
+(async()=>{
+ const report={ok:false,checks:[],errors:[]};window.__SMOKE_STAGE=report;
+ const invoke=window.__TAURI_INTERNALS__.invoke;
+ const assert=(v,m)=>{if(!v)throw Error(m)};
+ const wait=async(p,m)=>{window.__SMOKE_STEP=m;const end=Date.now()+30000;while(!await p()){if(Date.now()>end)throw Error(m);await new Promise(r=>setTimeout(r,70));}};
+ window.addEventListener('error',e=>report.errors.push(e.message));window.addEventListener('unhandledrejection',e=>report.errors.push(String(e.reason)));
+ try{
+  await wait(()=>document.querySelector('.shell')&&document.querySelector('.sidebar')&&document.querySelector('#main-content'),'layout');
+  const shell=document.querySelector('.shell'),side=document.querySelector('.sidebar'),ws=document.querySelector('.workspace'),main=document.querySelector('#main-content');
+  const css=e=>getComputedStyle(e);
+  const h=window.innerHeight;
+  assert(Math.abs(shell.getBoundingClientRect().height-h)<2,'shell full height');
+  assert(Math.abs(side.getBoundingClientRect().height-h)<2,'sidebar full height');
+  assert(css(document.body).overflow==='hidden','body scroll locked');
+  assert(css(main).overflowY==='auto','main independent scroll');
+  assert(css(side).overflowY==='auto','sidebar scrollable');
+  const top0=side.getBoundingClientRect().top;
+  const spacer=document.createElement('div');spacer.dataset.smokeSpacer='main';spacer.style.height='3000px';main.appendChild(spacer);
+  main.scrollTop=main.scrollHeight;
+  await wait(()=>main.scrollTop>200,'main scrolled');
+  assert(Math.abs(side.getBoundingClientRect().top-top0)<1,'sidebar stays fixed');
+  report.checks.push('main scrolls to bottom while sidebar stays fixed');
+  const sideSpacer=document.createElement('div');sideSpacer.dataset.smokeSpacer='side';sideSpacer.style.flex='0 0 2000px';side.appendChild(sideSpacer);
+  const mainTop=main.scrollTop;
+  side.scrollTop=600;
+  await wait(()=>side.scrollTop>100,'sidebar scrolled');
+  assert(Math.abs(main.scrollTop-mainTop)<2,'main scroll preserved');
+  report.checks.push('sidebar scrolls independently when taller than viewport');
+const NAV={'Génération':'generation','Créer':'generation','Casting':'casting','Galerie':'gallery','Personnages':'characters','Persos':'characters','LoRA':'lora','Modèles':'lora','Scènes':'scenes','Prompts':'assistant','Workflows':'workflows','Galerie personnages':'people','Labo A/B':'ablab','Modules':'modules','Pipelines':'pipelines','Éditeur graphique':'graph','ComfyUI':'engine','Moteur':'engine','Données':'data','Paramètres':'settings','Réglages':'settings'};
+const nav=async t=>{const id=NAV[t]??t;let b=document.querySelector(`[data-nav="${id}"]`);if(!b){const group={workflows:'workflows',graph:'workflows',pipelines:'workflows',modules:'workflows',scenes:'workflows',ablab:'workflows',assistant:'workflows',people:'characters'}[id];document.querySelector(`[data-nav="${group}"]`)?.click();await new Promise(r=>setTimeout(r,300));b=document.querySelector(`[data-nav="${id}"]`)}if(!b)throw Error('nav '+t);b.click()};
+  await nav('Pipelines');
+  await wait(()=>document.querySelector('.subtabs button.on[data-nav="pipelines"]'),'navigation');
+  report.checks.push('navigation reachable while main is at the bottom');
+  spacer.remove();sideSpacer.remove();main.scrollTop=0;side.scrollTop=0;
+  assert(!report.errors.length,report.errors.join(';'));report.ok=true;
+ }catch(e){report.failure=String(e);report.uiErrors=[...document.querySelectorAll('.error')].map(n=>n.textContent)}await invoke('finish_smoke',{report});
+})();

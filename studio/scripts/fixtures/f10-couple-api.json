@@ -1,0 +1,10 @@
+{
+ "1":{"class_type":"CheckpointLoaderSimple","inputs":{"ckpt_name":"saya.safetensors"}},
+ "2":{"class_type":"CLIPTextEncode","inputs":{"clip":["1",1],"text":"P1 exact,  rose\nsecond"}},
+ "3":{"class_type":"CLIPTextEncode","inputs":{"clip":["1",1],"text":"P2 exact,  night"}},
+ "4":{"class_type":"SayaMultiCouple","inputs":{"pos_1":["2",0],"pos_2":["3",0],"neg_1":["5",0]}},
+ "5":{"class_type":"CLIPTextEncode","inputs":{"clip":["1",1],"text":"negative shared"}},
+ "6":{"class_type":"KSampler","inputs":{"model":["1",0],"positive":["4",0],"negative":["5",0],"latent_image":["7",0],"seed":18446744073709551615,"steps":20}},
+ "7":{"class_type":"EmptyLatentImage","inputs":{"width":1024,"height":1024,"batch_size":1}},
+ "8":{"class_type":"SaveImage","inputs":{"images":["6",0],"filename_prefix":"couple"}}
+}
