@@ -1667,7 +1667,7 @@
   {
    "path": "installer/saya_installer/studio_app.py",
    "type": "python",
-   "sha256": "d8ebabdd82041b8f0a853c11ece71543148175d467156d123b51e9e7cf8f2446",
+   "sha256": "28440547674fc5da9307d651ddeab56183535ee9f45b32c8161ad338942cb473",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",

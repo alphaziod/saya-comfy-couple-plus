@@ -139,7 +139,12 @@ def install(say, ask, assume: bool | None, dry_run: bool, fmt: str | None = None
             say("SHA256         : OK")
         else:
             say("SHA256         : the release has no SHA256SUMS, file not verified")
-        path = os.path.join(tmp, pkg["name"])
+        # The name comes from the GitHub API: keep a plain file name inside the temporary folder.
+        name = os.path.basename(pkg["name"])
+        if not name or name != pkg["name"] or not asset_matches(name, fmt):
+            say(f"Unexpected package name {pkg['name']!r}: nothing installed.")
+            return 1
+        path = os.path.join(tmp, name)
         with open(path, "wb") as f:
             f.write(data)
         if fmt == "appimage":
