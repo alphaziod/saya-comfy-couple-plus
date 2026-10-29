@@ -13,7 +13,7 @@ import sys
 import tempfile
 import urllib.request
 
-REPO = os.environ.get("SAYA_REPO", "alphaziod/saya-comfy-couple-plus")
+REPO = os.environ.get("SAYA_REPO", "alphaziod/saya-studio-x-couple")
 TAG_PREFIX = "studio-v"
 FORMATS = ("deb", "fedora", "opensuse", "arch", "appimage", "nix")
 

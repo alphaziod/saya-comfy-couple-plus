@@ -9,7 +9,7 @@ pkgver=1.0.0beta1
 pkgrel=1
 pkgdesc='Local image, character and ComfyUI workflow manager (Linux beta, binary release)'
 arch=('x86_64')
-url='https://github.com/alphaziod/saya-comfy-couple-plus'
+url='https://github.com/alphaziod/saya-studio-x-couple'
 license=('GPL-3.0-or-later')
 depends=('glibc' 'libgcc' 'glib2' 'gtk3' 'gdk-pixbuf2' 'cairo' 'dbus' 'webkit2gtk-4.1' 'libsoup3' 'wayland'
          'python' 'curl' 'xdg-utils' 'xdg-desktop-portal')

@@ -2,7 +2,7 @@ pkgbase = saya-studio-bin
 	pkgdesc = Local image, character and ComfyUI workflow manager (Linux beta, binary release)
 	pkgver = 1.0.0beta1
 	pkgrel = 1
-	url = https://github.com/alphaziod/saya-comfy-couple-plus
+	url = https://github.com/alphaziod/saya-studio-x-couple
 	arch = x86_64
 	license = GPL-3.0-or-later
 	depends = glibc
@@ -28,7 +28,7 @@ pkgbase = saya-studio-bin
 	noextract = saya-studio_1.0.0-beta.1_amd64.deb
 	options = !strip
 	options = !debug
-	source = saya-studio_1.0.0-beta.1_amd64.deb::https://github.com/alphaziod/saya-comfy-couple-plus/releases/download/studio-v1.0.0-beta.1/saya-studio_1.0.0-beta.1_amd64.deb
+	source = saya-studio_1.0.0-beta.1_amd64.deb::https://github.com/alphaziod/saya-studio-x-couple/releases/download/studio-v1.0.0-beta.1/saya-studio_1.0.0-beta.1_amd64.deb
 	sha256sums = SKIP
 
 pkgname = saya-studio-bin

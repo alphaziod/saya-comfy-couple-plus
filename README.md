@@ -1,4 +1,4 @@
-# Saya Couple
+# Saya Studio × Saya Couple
 
 > I wanted two characters and a background to stop fighting each other. This got slightly out of hand.
 
@@ -76,7 +76,7 @@ For a first run you only need the demo workflow. It takes about ten minutes.
 3. **Install Saya Couple** (it checks your ComfyUI first and changes nothing if something is wrong):
 
    ```bash
-   git clone https://github.com/alphaziod/saya-comfy-couple-plus saya-couple
+   git clone https://github.com/alphaziod/saya-studio-x-couple saya-couple
    cd saya-couple
    ./saya install --comfyui /path/to/ComfyUI     # Windows: saya.bat install --comfyui C:\path\to\ComfyUI
    ```
@@ -498,7 +498,7 @@ Saya Couple nodes. ComfyUI renders, Saya Studio organizes; nothing runs in the c
 - **Characters, LoRA manager, graph editor, pipelines, A/B lab, scenes**; 14 interface languages.
 
 It needs a running ComfyUI with the **Saya Couple nodes 2.3.0+**. Packages are attached to the
-[`studio-v1.0.0-beta.1` release](https://github.com/alphaziod/saya-comfy-couple-plus/releases):
+[`studio-v1.0.0-beta.1` release](https://github.com/alphaziod/saya-studio-x-couple/releases):
 
 | Distribution | Install |
 |---|---|
@@ -506,7 +506,7 @@ It needs a running ComfyUI with the **Saya Couple nodes 2.3.0+**. Packages are a
 | Fedora | `sudo dnf install ./saya-studio-1.0.0-beta.1.fedora.x86_64.rpm` |
 | openSUSE | `sudo zypper install ./saya-studio-1.0.0-beta.1.opensuse.x86_64.rpm` |
 | Arch, EndeavourOS | `sudo pacman -U ./saya-studio-1.0.0-beta.1-x86_64.pkg.tar.zst` |
-| Nix | `nix run github:alphaziod/saya-comfy-couple-plus?dir=studio` |
+| Nix | `nix run github:alphaziod/saya-studio-x-couple?dir=studio` |
 | Any distribution | AppImage, Flatpak or Snap from the release |
 
 Or let the installer pick the right package for your distribution, check its SHA256 and install it after asking:
