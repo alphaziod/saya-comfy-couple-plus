@@ -47,7 +47,7 @@ Packages are attached to the GitHub release `studio-v1.0.0-beta.1`:
 | Fedora | `sudo dnf install ./saya-studio-1.0.0-beta.1.fedora.x86_64.rpm` |
 | openSUSE | `sudo zypper install ./saya-studio-1.0.0-beta.1.opensuse.x86_64.rpm` |
 | Arch, EndeavourOS | `sudo pacman -U ./saya-studio-1.0.0-beta.1-x86_64.pkg.tar.zst`, or AUR `saya-studio-bin` |
-| NixOS / Nix | `nix run github:alphaziod/saya-comfy-couple-plus?dir=studio` |
+| NixOS / Nix | `nix run github:alphaziod/saya-studio-x-couple?dir=studio` |
 | Any distribution | `saya-studio_1.0.0-beta.1_amd64.AppImage`, `saya-studio-1.0.0-beta.1-x86_64.flatpak`, `saya-studio_1.0.0-beta.1_amd64.snap` |
 
 Release notes: [RELEASE_NOTES.md](RELEASE_NOTES.md). Build steps and per-distribution dependencies: [docs/PACKAGING.md](docs/PACKAGING.md).

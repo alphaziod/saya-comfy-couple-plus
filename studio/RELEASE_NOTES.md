@@ -26,7 +26,7 @@ own setup. Back up your data and your ComfyUI folder before trying it.
 | Any distribution | `saya-studio_1.0.0-beta.1_amd64.AppImage` | `chmod +x` it, then run it |
 | Flatpak | `saya-studio-1.0.0-beta.1-x86_64.flatpak` | `flatpak install --user ./saya-studio-1.0.0-beta.1-x86_64.flatpak` |
 | Snap | `saya-studio_1.0.0-beta.1_amd64.snap` | `sudo snap install --dangerous ./saya-studio_1.0.0-beta.1_amd64.snap` |
-| Nix | flake in `studio/` | `nix run github:alphaziod/saya-comfy-couple-plus?dir=studio` |
+| Nix | flake in `studio/` | `nix run github:alphaziod/saya-studio-x-couple?dir=studio` |
 
 Check your download: `sha256sum -c SHA256SUMS --ignore-missing`.
 
@@ -63,12 +63,12 @@ Check your download: `sha256sum -c SHA256SUMS --ignore-missing`.
 
 **Saya Couple 2.3.0** (the node pack, `./saya install`): one ownership anchor per aspect of the genital anatomy
 block, Saya Family Save node, `saya_role` PNG chunk on phase images, softer background picker. See
-[CHANGELOG.md](https://github.com/alphaziod/saya-comfy-couple-plus/blob/main/CHANGELOG.md).
+[CHANGELOG.md](https://github.com/alphaziod/saya-studio-x-couple/blob/main/CHANGELOG.md).
 
 ## Documentation
 
-[README](https://github.com/alphaziod/saya-comfy-couple-plus/blob/main/studio/README.md) ·
-[Packaging](https://github.com/alphaziod/saya-comfy-couple-plus/blob/main/studio/docs/PACKAGING.md) ·
-[For AI agents and contributors](https://github.com/alphaziod/saya-comfy-couple-plus/blob/main/studio/AGENTS.md)
+[README](https://github.com/alphaziod/saya-studio-x-couple/blob/main/studio/README.md) ·
+[Packaging](https://github.com/alphaziod/saya-studio-x-couple/blob/main/studio/docs/PACKAGING.md) ·
+[For AI agents and contributors](https://github.com/alphaziod/saya-studio-x-couple/blob/main/studio/AGENTS.md)
 
 License: GPL-3.0-or-later.

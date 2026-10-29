@@ -103,7 +103,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   meta = {
     description = "Local image, character and ComfyUI workflow manager";
-    homepage = "https://github.com/alphaziod/saya-comfy-couple-plus";
+    homepage = "https://github.com/alphaziod/saya-studio-x-couple";
     license = lib.licenses.gpl3Plus;
     mainProgram = "saya-studio";
     platforms = [ "x86_64-linux" ];

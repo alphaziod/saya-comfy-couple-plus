@@ -39,7 +39,7 @@
   {
    "path": "README.md",
    "type": "markdown",
-   "sha256": "7fe06f1d1ef23463780686adf58b487edfbe8f9d28ed537aec96511b45c164e1",
+   "sha256": "6d764dc9803797ed4bf0f2f1dfbc6e10adf0e03f0c1ea88f02f26a056a8f1c04",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
@@ -1700,7 +1700,7 @@
   {
    "path": "installer/saya_installer/studio_app.py",
    "type": "python",
-   "sha256": "28440547674fc5da9307d651ddeab56183535ee9f45b32c8161ad338942cb473",
+   "sha256": "43d784856c249bb9e896a21537fe0ee72ee650817319048515650c126523a367",
    "destination": null,
    "origin": "Saya Couple (original)",
    "license": "GPL-3.0-or-later",
