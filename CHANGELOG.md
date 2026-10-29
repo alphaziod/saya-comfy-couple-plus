@@ -1,5 +1,28 @@
 # Changelog
 
+## 2.3.0 — 2026-10-29
+
+### Saya Studio 1.0 beta, and node updates it relies on
+
+- **Saya Studio** (`studio/`): a local Linux desktop app (Tauri 2 + Svelte + Rust) that drives ComfyUI for
+  casting, the six-pass Saya workflow, gallery, characters and LoRA management. First public beta 1.0.0-beta.1,
+  released on its own (`studio-v*` tags); see [studio/README.md](studio/README.md). The node installer does not
+  ship it.
+- **Ownership anchors**: the genital-anatomy block now gives one anchor per aspect of each organ (size, colour, the
+  `cute_penis` LoRA trigger, erect/flaccid state, pubic hair colour) instead of one per organ, so P1 and P2 are told
+  apart more often. A bare organ name the other person also has is never an anchor. Breasts stay identity (chest)
+  anchors, never anatomy.
+- **Saya Family Save** (new output node): standard ComfyUI PNG metadata plus a `saya_family` chunk and a
+  `<stem>.saya_family.json` sidecar carrying the character identity, so Saya Studio can file images by family.
+- **Image phases**: every phase image carries a `saya_role` PNG chunk (`role`, `phase`, `total`, `lineage`) so an app
+  can group a pass-1 image with its final.
+- **Background picker**: backgrounds that wash the picture out to white are softened to natural colours (palette,
+  fluorescent, harsh light and haze tags rewritten or dropped; the weighted place tag is kept).
+- **Main Prompt**: default prefix updated.
+- **Web**: `saya_close_workflow.js` closes the extra workflow tabs a batch would otherwise leave open (one per
+  image); the active tab is kept.
+- **AMD VRAM patch**: the VRAM fraction is clamped when another process already holds VRAM.
+
 ## 2.2.2 — 2026-10-08
 
 ### Dual sampling hand-off moved to 27 / 30 (Demo and Full)
