@@ -6,7 +6,8 @@ set -euo pipefail
 root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$root"
 stamp="$(date +%Y%m%d%H%M)"
-version="0.2.0.dev.wt${stamp}"
+# Local worktree builds: the PKGBUILD release version plus a build stamp (1.0.0beta1.dev.wt<stamp>).
+version="$(sed -n 's/^pkgver=//p' packaging/arch/PKGBUILD).dev.wt${stamp}"
 mkdir -p "$root/test-results"
 stage="$(mktemp -d "$root/test-results/arch-package-worktree-${stamp}-XXXXXX")"
 # `git ls-files -c` also lists files DELETED from the worktree (uncommitted
